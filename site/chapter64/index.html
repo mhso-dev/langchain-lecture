@@ -1,48 +1,40 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>사람이 확인한 뒤 한 번 실행하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph interrupt와 승인 후 재개 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 64 / AGENTIC SERVICE</p>
-<span class="sidebar-title">사람이 확인한 뒤 한 번 실행하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-pause"><span>02</span>등록될 문구를 보여 주고 멈추기</a><a href="#nb-resume"><span>03</span>같은 실행을 이어서 처리하기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">LangGraph interrupt와 승인 후 재개</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pause"><span>02</span>interrupt()로 승인 대기</a><a href="#nb-resume"><span>03</span>Command(resume=…)와 체크포인트</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph interrupt와 승인 후 재개 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 64 / AGENTIC SERVICE</span><span class="template-badge">학생용 교재</span></div>
-<h1>사람이 확인한 뒤 한 번 실행하기</h1>
+<h1>LangGraph interrupt와 승인 후 재개</h1>
 <p class="hero-description">과제 안내를 읽은 학생이 ‘등록 오류로 문의를 남겨 주세요’라고 했습니다. 내용을 보여 주는 순간에 문의를 등록해 버리면 학생은 취소할 기회를 잃습니다. LangGraph에서 실제로 멈춘 다음 같은 실행을 재개해 봅니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 064 · 8H</span><span>29일 thread 분리·56일 실행 상한·63일 통합 서비스</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter64.ipynb" download="chapter64.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>64장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16, langgraph-checkpoint 4.3.0입니다.</p>
 </div>
 </section>
 <section id="nb-pause" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>등록될 문구를 보여 주고 멈추기</h2>
+<h2>interrupt()로 승인 대기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>승인 화면에 문의가 나타나도 오른쪽 등록 수가 0건인지 확인하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>문의 문구가 화면에 있어도 등록 횟수는 아직 0입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>아래 그래프의 노드는 interrupt에서 실행을 멈춥니다. 체크포인터가 대기 중인 상태를 보관합니다. 여기서는 수업용 메모리를 쓰므로 커널을 다시 시작하면 기록이 사라집니다.</p>
-</figcaption>
-</figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 승인 노드와 기록 준비</h3>
+
+<p class="concept-intro">승인이 필요한 그래프는 외부 작업 직전에 실행을 멈추고 상태를 저장합니다. 승인 또는 거절을 전달하면 그 실행을 이어갑니다.</p><figure class="lesson-clip" id="concept-clip"><h3>승인 대기와 실행 재개</h3><video controls muted playsinline preload="metadata" aria-label="승인 대기와 실행 재개" src="concept.mp4"></video><figcaption>게이트 앞에서 멈춘 요청은 승인 뒤 기록부로 이동합니다. interrupt() 직후와 재개 후에 등록 건수가 어떻게 달라지는지 비교하세요.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 승인 노드와 체크포인터 구성</h3>
 <div class="cell-before"><p>노드에서 부수 효과가 생기는 줄은 interrupt 다음에만 둡니다. 같은 승인 번호로 두 번 저장하지 않도록 메모리 사전에서 확인합니다.</p>
 <p>처음 interrupt에 닿으면 제안만 보이고 문의 등록은 0건입니다. 같은 작업을 재개하면 이 줄이 승인 또는 거절 값을 반환합니다. 승인 경로만 등록 줄을 지나므로 거절 뒤에는 등록 건수가 0으로 남습니다.</p>
 </div>
@@ -58,26 +50,26 @@
 
 inquiries = {}
 <span class="tok-keyword">def</span> approve(state: Request):
-    decision = interrupt({<span class="tok-string">&quot;approval_id&quot;</span>: state[<span class="tok-string">&quot;approval_id&quot;</span>], <span class="tok-string">&quot;inquiry_text&quot;</span>: state[<span class="tok-string">&quot;text&quot;</span>]})
-    <span class="tok-keyword">if</span> decision != <span class="tok-string">&quot;approve&quot;</span>:
-        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;declined&quot;</span>}
-    inquiries.setdefault(state[<span class="tok-string">&quot;approval_id&quot;</span>], state[<span class="tok-string">&quot;text&quot;</span>])
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;completed&quot;</span>}
+    decision = interrupt({<span class="tok-string">"approval_id"</span>: state[<span class="tok-string">"approval_id"</span>], <span class="tok-string">"inquiry_text"</span>: state[<span class="tok-string">"text"</span>]})
+    <span class="tok-keyword">if</span> decision != <span class="tok-string">"approve"</span>:
+        <span class="tok-keyword">return</span> {<span class="tok-string">"status"</span>: <span class="tok-string">"declined"</span>}
+    inquiries.setdefault(state[<span class="tok-string">"approval_id"</span>], state[<span class="tok-string">"text"</span>])
+    <span class="tok-keyword">return</span> {<span class="tok-string">"status"</span>: <span class="tok-string">"completed"</span>}
 
 builder = StateGraph(Request)
-builder.add_node(<span class="tok-string">&quot;confirm&quot;</span>, approve)
-builder.add_edge(START, <span class="tok-string">&quot;confirm&quot;</span>)
-builder.add_edge(<span class="tok-string">&quot;confirm&quot;</span>, END)
+builder.add_node(<span class="tok-string">"confirm"</span>, approve)
+builder.add_edge(START, <span class="tok-string">"confirm"</span>)
+builder.add_edge(<span class="tok-string">"confirm"</span>, END)
 graph = builder.compile(checkpointer=InMemorySaver())</code></pre></figure>
 <div class="cell-after"><p>실행 순서를 연결했습니다. 아직 invoke하지 않았으므로 대기 중인 요청도, 등록된 문의도 없습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 등록 전 대기 상태 확인</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · interrupt()의 대기 상태</h3>
 <div class="cell-before"><p>대기 응답이 보여 주는 본문과 실제로 기록된 문의 건수를 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">config = {<span class="tok-string">&quot;configurable&quot;</span>: {<span class="tok-string">&quot;thread_id&quot;</span>: <span class="tok-string">&quot;chat-a-demo&quot;</span>}}
-pending = graph.invoke({<span class="tok-string">&quot;approval_id&quot;</span>: <span class="tok-string">&quot;A1&quot;</span>, <span class="tok-string">&quot;text&quot;</span>: <span class="tok-string">&quot;과제 등록 오류를 확인해 주세요.&quot;</span>}, config)
-print(pending[<span class="tok-string">&quot;__interrupt__&quot;</span>][<span class="tok-number">0</span>].value[<span class="tok-string">&quot;inquiry_text&quot;</span>])
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">config = {<span class="tok-string">"configurable"</span>: {<span class="tok-string">"thread_id"</span>: <span class="tok-string">"chat-a-demo"</span>}}
+pending = graph.invoke({<span class="tok-string">"approval_id"</span>: <span class="tok-string">"A1"</span>, <span class="tok-string">"text"</span>: <span class="tok-string">"과제 등록 오류를 확인해 주세요."</span>}, config)
+print(pending[<span class="tok-string">"__interrupt__"</span>][<span class="tok-number">0</span>].value[<span class="tok-string">"inquiry_text"</span>])
 print(len(inquiries))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제 등록 오류를 확인해 주세요.
 0</pre></div>
@@ -86,45 +78,31 @@ print(len(inquiries))</code></pre></figure>
 </article>
 </section>
 <section id="nb-resume" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>같은 실행을 이어서 처리하기</h2>
+<h2>Command(resume=…)와 체크포인트</h2>
 </div>
 </header>
 <!-- MOTION approval-latch -->
-<figure class="motion-study" id="motion-approval-latch" data-sheet="motion/approval-latch.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>문의 내용이 보이는 순간 등록도 끝났을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/approval-latch-still.webp" width="800" height="272" alt="승인 대기 중 등록 건수는 0입니다. 같은 실행을 승인해 재개한 뒤에만 등록 건수가 1로 바뀝니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>승인 대기 중 등록 건수는 0입니다. 같은 실행을 승인해 재개한 뒤에만 등록 건수가 1로 바뀝니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>승인 대기가 처리 완료로 바뀌는 순간 등록 건수를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>같은 실행을 이어서 승인하면 한 건이 등록됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>재개하려면 같은 thread_id로 체크포인트를 찾아야 합니다. 서비스에서는 여기에 소유자, 만료 시각, 승인 당시 인자의 해시도 대조합니다. 여기서는 로컬 그래프의 멈춤과 재개에 집중합니다.</p>
-</figcaption>
-</figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 승인 결정을 전달하기</h3>
+
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · Command(resume=…)로 승인 전달</h3>
 <div class="cell-before"><p>기존 대기 요청에 Command를 보냅니다. 같은 질문을 새로 시작하지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">done = graph.invoke(Command(resume=<span class="tok-string">&quot;approve&quot;</span>), config)
-print(done[<span class="tok-string">&quot;status&quot;</span>], len(inquiries))</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">done = graph.invoke(Command(resume=<span class="tok-string">"approve"</span>), config)
+print(done[<span class="tok-string">"status"</span>], len(inquiries))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">completed 1</pre></div>
 <div class="cell-after"><p>completed 1입니다. 같은 승인 번호로 문의 한 건이 생겼습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 새 문의를 거절하기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 거절 분기의 종료 상태</h3>
 <div class="cell-before"><p>별도의 대기 요청 A2를 만들고 decline을 보내세요. 기록 목록에 A2가 남는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 새 thread_id로 대기를 만들고 거절한 뒤 건수를 확인하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">other = {<span class="tok-string">&#x27;configurable&#x27;</span>: {<span class="tok-string">&#x27;thread_id&#x27;</span>: <span class="tok-string">&#x27;chat-decline&#x27;</span>}}
-graph.invoke({<span class="tok-string">&#x27;approval_id&#x27;</span>: <span class="tok-string">&#x27;A2&#x27;</span>, <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;추가 문의&#x27;</span>}, other)
-refused = graph.invoke(Command(resume=<span class="tok-string">&#x27;decline&#x27;</span>), other)
-print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="tok-string">&#x27;A2&#x27;</span> <span class="tok-keyword">in</span> inquiries)</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">other = {<span class="tok-string">'configurable'</span>: {<span class="tok-string">'thread_id'</span>: <span class="tok-string">'chat-decline'</span>}}
+graph.invoke({<span class="tok-string">'approval_id'</span>: <span class="tok-string">'A2'</span>, <span class="tok-string">'text'</span>: <span class="tok-string">'추가 문의'</span>}, other)
+refused = graph.invoke(Command(resume=<span class="tok-string">'decline'</span>), other)
+print(refused[<span class="tok-string">'status'</span>], <span class="tok-string">'A2'</span> <span class="tok-keyword">in</span> inquiries)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">declined False</pre></div>
 <div class="cell-after"><p>declined False가 보입니다. 같은 자료로 외부 문의가 실제 전송됐다고 말할 수는 없습니다.</p>
 </div>
@@ -132,36 +110,36 @@ print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>대기 전에 외부 등록 코드를 놓으면 재개 시 노드가 다시 실행될 때 문제가 생깁니다. 노드에서 어떤 줄이 다시 평가될 수 있는지 짚어 보세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>LangGraph interrupt와 승인 후 재개 심화 읽기</h2>
 </div>
 </header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>읽기 서비스와 실행 기록을 이어받기</summary><div class="prose"><p>첫 15분에는 세 가지를 확인합니다. 5분 동안 29일의 thread 분리 기록을 읽고 대화 ID와 실행 ID의 차이를 설명합니다. 다음 5분에는 Q03의 안내 답변과 “이 내용으로 문의를 등록하라”의 효과 차이를 말합니다. 마지막 5분에는 승인 대기에서 result가 null이고 등록 수가 0이어야 하는 이유를 예측합니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>읽기 서비스의 실행 기록</summary><div class="prose"><p>첫 15분에는 세 가지를 확인합니다. 5분 동안 29일의 thread 분리 기록을 읽고 대화 ID와 실행 ID의 차이를 설명합니다. 다음 5분에는 Q03의 안내 답변과 “이 내용으로 문의를 등록하라”의 효과 차이를 말합니다. 마지막 5분에는 승인 대기에서 result가 null이고 등록 수가 0이어야 하는 이유를 예측합니다.</p>
 </div>
 </details>
-<span id="read-write"></span><details class="reading-topic" id="reading-read-write"><summary>읽기 답변과 등록 효과를 분리하기</summary><div class="prose"><p>읽기 요청은 이미 있는 정보를 조회해 답합니다. 쓰기 요청은 목록 추가·수정처럼 상태를 바꿉니다. Q03에 오류 대응 방법을 안내하는 것은 읽기이고, 그 설명과 별도로 문의 한 건을 목록에 남기는 것은 쓰기입니다. 오늘의 쓰기는 실제 발송이 아니라 메모리 안의 모의 등록 한 가지입니다.</p>
+<span id="read-write"></span><details class="reading-topic" id="reading-read-write"><summary>읽기 응답과 쓰기 작업</summary><div class="prose"><p>읽기 요청은 이미 있는 정보를 조회해 답합니다. 쓰기 요청은 목록 추가·수정처럼 상태를 바꿉니다. Q03에 오류 대응 방법을 안내하는 것은 읽기이고, 그 설명과 별도로 문의 한 건을 목록에 남기는 것은 쓰기입니다. 오늘의 쓰기는 실제 발송이 아니라 메모리 안의 모의 등록 한 가지입니다.</p>
 <p>ApprovalService.answer는 63일 읽기 서비스를 그대로 호출합니다. 읽기에는 승인 대기를 붙이지 않습니다. propose는 같은 읽기 결과를 먼저 확인한 뒤 별도 문의 제안을 만들고 멈춥니다. 모델이 문장을 생성했다고 자동 등록 권한을 갖는 것은 아닙니다.</p>
 </div>
 </details>
-<span id="proposal"></span><details class="reading-topic" id="reading-proposal"><summary>무엇을 승인하는지 객체로 보여 주기</summary><div class="prose"><p>승인 대상에는 실행할 도구 이름, 검토할 인자, 효과 설명, 만료 시각이 들어갑니다. “계속할까요?”만 보여 주면 사용자가 무엇을 허용했는지 나중에 비교할 수 없습니다. 이 예제는 문의 문구 하나를 검토 가능한 arguments로 묶습니다.</p>
+<span id="proposal"></span><details class="reading-topic" id="reading-proposal"><summary>승인 대상 객체</summary><div class="prose"><p>승인 대상에는 실행할 도구 이름, 검토할 인자, 효과 설명, 만료 시각이 들어갑니다. “계속할까요?”만 보여 주면 사용자가 무엇을 허용했는지 나중에 비교할 수 없습니다. 이 예제는 문의 문구 하나를 검토 가능한 arguments로 묶습니다.</p>
 <p>request_id는 실행 요청, approval_id는 승인 대상의 식별자입니다. 둘 다 서비스가 발급합니다. arguments_hash는 정규화한 JSON 바이트의 SHA256입니다. 인자가 바뀌었는지를 비교하는 값이며 비밀번호나 암호화 토큰이 아닙니다. 소유자와 원래 요청에 연결된 대상인지도 별도로 확인해야 합니다.</p>
 </div>
 <div class="prose"><p>시연은 재현할 수 있도록 시각을 100으로 고정하고 기본 TTL 300을 더합니다. 출력 만료 값 400은 현재 날짜의 운영 만료 시간이 아니라 고정 시계의 시험 값입니다. 실제 사용에서는 신뢰된 서버 시계와 저장 정책을 별도로 연결해야 합니다.</p>
 </div>
 </details>
-<span id="context"></span><details class="reading-topic" id="reading-context"><summary>재개할 때도 같은 소유자를 확인하기</summary><div class="prose"><p>중단했다가 다시 실행하는 요청에도 신원이 필요합니다. 원래 요청에서 소유자를 확인했더라도 재개 시 대화의 소유권이 바뀌거나 다른 사용자가 요청 ID를 알게 될 수 있습니다. 따라서 원래 소유자와 현재 대화 소유 조건을 다시 검사합니다.</p>
+<span id="context"></span><details class="reading-topic" id="reading-context"><summary>재개 시 소유자 검증</summary><div class="prose"><p>중단했다가 다시 실행하는 요청에도 신원이 필요합니다. 원래 요청에서 소유자를 확인했더라도 재개 시 대화의 소유권이 바뀌거나 다른 사용자가 요청 ID를 알게 될 수 있습니다. 따라서 원래 소유자와 현재 대화 소유 조건을 다시 검사합니다.</p>
 <p>이 수업의 AppContext와 owners는 신뢰된 앱 fixture입니다. 실제 로그인이나 DB를 구현하지 않습니다. 승인 화면에서 user_id를 자유롭게 받아 AppContext로 만들면 이 계약을 지키지 못합니다. 요청 ID나 인자 해시를 아는 사실도 소유자를 대신하지 않습니다.</p>
 </div>
 <div class="prose"><p>타인 요청은 등록 0이며 원래 사용자의 재개 예산도 소모하지 않습니다. 잘못된 신원 요청과 같은 소유자의 잘못된 승인 내용은 서로 다른 경계입니다. 후자는 요청 내용을 재시도한 것이므로 해당 요청의 누적 재개 횟수에 포함합니다.</p>
 </div>
 </details>
-<span id="interrupt"></span><details class="reading-topic" id="reading-interrupt"><summary>실제 interrupt에서 대기하기</summary><div class="prose"><p>interrupt는 노드 실행 중 외부 결정을 기다리는 중단 지점입니다. LangGraph는 checkpointer에 현재 상태를 남기고 호출자에게 중단 정보를 돌려줍니다. InMemorySaver는 이 수업의 메모리 체크포인터입니다. 프로세스가 끝난 뒤 디스크에서 복구하는 저장소는 아닙니다.</p>
+<span id="interrupt"></span><details class="reading-topic" id="reading-interrupt"><summary>interrupt()의 승인 대기</summary><div class="prose"><p>interrupt는 노드 실행 중 외부 결정을 기다리는 중단 지점입니다. LangGraph는 checkpointer에 현재 상태를 남기고 호출자에게 중단 정보를 돌려줍니다. InMemorySaver는 이 수업의 메모리 체크포인터입니다. 프로세스가 끝난 뒤 디스크에서 복구하는 저장소는 아닙니다.</p>
 <p>thread_id는 어느 checkpoint를 다시 읽을지 정합니다. 이 예제는 서비스가 발급한 request_id를 내부 thread_id로 사용합니다. 대화 전체를 하나의 승인 요청으로 취급하지 않으며 두 요청을 같은 checkpoint에 섞지 않습니다.</p>
 </div>
 <details class="case-reference" id="flow-6"><summary>대기와 재개의 시간 순서</summary>
@@ -170,23 +148,23 @@ print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="
 </thead><tbody><tr><td>approve</td><td>completed · A1 등록</td></tr>
 <tr><td>decline</td><td>declined · A2 미등록</td></tr>
 </tbody></table></div>
-<article id="flow-6-step-0"><small>STEP 01 · 앱</small><h4>읽기와 제안</h4>
-<p>동일 Q03을 읽고 원래 사용자·인자·만료를 묶습니다.</p><pre>등록 0</pre></article><article id="flow-6-step-1"><small>STEP 02 · Graph</small><h4>interrupt</h4>
-<p>제안 객체를 보여 주고 checkpoint에 대기 상태를 남깁니다.</p><pre>pending_approval / result=null</pre></article><article id="flow-6-step-2"><small>STEP 03 · 사람·앱</small><h4>결정 전달</h4>
-<p>같은 요청·승인 ID·해시와 신뢰된 context로 Command를 보냅니다.</p><pre>approve 또는 decline</pre></article><article id="flow-6-step-3"><small>STEP 04 · Graph</small><h4>노드 재실행</h4>
-<p>노드 앞부분부터 다시 실행하며 소유자·대상·만료를 확인합니다.</p><pre>검사 후 write 또는 종료</pre></article><article id="flow-6-step-4"><small>STEP 05 · 모의 등록</small><h4>효과와 결과</h4>
+<article id="flow-6-step-0"><small>STEP 01 · 앱</small><h4>읽기 결과와 등록 제안</h4>
+<p>동일 Q03을 읽고 원래 사용자·인자·만료를 묶습니다.</p><pre>등록 0</pre></article><article id="flow-6-step-1"><small>STEP 02 · Graph</small><h4>interrupt()의 대기 위치</h4>
+<p>제안 객체를 보여 주고 checkpoint에 대기 상태를 남깁니다.</p><pre>pending_approval / result=null</pre></article><article id="flow-6-step-2"><small>STEP 03 · 사람·앱</small><h4>재개 결정 입력</h4>
+<p>같은 요청·승인 ID·해시와 신뢰된 context로 Command를 보냅니다.</p><pre>approve 또는 decline</pre></article><article id="flow-6-step-3"><small>STEP 04 · Graph</small><h4>승인 노드의 재실행</h4>
+<p>노드 앞부분부터 다시 실행하며 소유자·대상·만료를 확인합니다.</p><pre>검사 후 write 또는 종료</pre></article><article id="flow-6-step-4"><small>STEP 05 · 모의 등록</small><h4>등록 효과와 결과 상태</h4>
 <p>승인된 한 건만 등록하고 receipt를 A1과 분리합니다.</p><pre>승인 A1 → 등록 1건
 거절 A2 → 추가 등록 0건</pre></article></details>
 <div class="prose"><p>공개 pending의 result는 null이지만 내부 checkpoint에는 읽기 결과가 있을 수 있습니다. 내부 실행 상태를 곧바로 사용자 완료 답변으로 노출하지 않기 위해 두 객체를 구분합니다. 승인 대기·불완전 결과를 완료된 대화 이력으로 저장하는 것도 뒤에서 따로 다룰 문제입니다.</p>
 </div>
 </details>
-<span id="resume"></span><details class="reading-topic" id="reading-resume"><summary>같은 요청에 Command로 결정을 전달하기</summary><div class="prose"><p>대기 중인 Graph는 새로운 일반 입력으로 이어 가지 않습니다. 같은 thread_id와 checkpointer에 Command(resume=payload)를 전달하면 중단 지점의 interrupt가 payload를 반환합니다. 공식 권장 입력 패턴에 맞춰 이 예제는 resume만 사용합니다. 노드 상태 변경용 update를 재개 입력에 섞지 않습니다.</p>
+<span id="resume"></span><details class="reading-topic" id="reading-resume"><summary>Command로 승인·거절 전달</summary><div class="prose"><p>대기 중인 Graph는 새로운 일반 입력으로 이어 가지 않습니다. 같은 thread_id와 checkpointer에 Command(resume=payload)를 전달하면 중단 지점의 interrupt가 payload를 반환합니다. 공식 권장 입력 패턴에 맞춰 이 예제는 resume만 사용합니다. 노드 상태 변경용 update를 재개 입력에 섞지 않습니다.</p>
 <p>resume 메서드는 외부 호출자가 사용할 서비스 경계입니다. 원래 요청·승인 ID와 해시를 검사한 다음 내부 Graph를 재개합니다. 사용자가 임의의 graph.invoke를 호출하도록 노출하면 이 검사를 건너뛰게 되므로 내부 Graph는 수업용 관찰 외에는 공개 경계로 쓰지 않습니다.</p>
 </div>
 <div class="prose"><p>기본 Q03은 대기 전에 모델 2회와 근거 전달 도구 1회를 사용했습니다. 재개 시 답변 모델을 다시 부르지 않고 모의 등록 도구만 한 번 추가합니다. 승인 결과의 action_receipt는 쓰기 효과 기록이며 result는 앞의 A1 원형입니다. 등록을 했다고 출처를 새로 만들거나 generation_calls를 늘리지 않습니다.</p>
 </div>
 </details>
-<span id="decline-expiry"></span><details class="reading-topic" id="reading-decline-expiry"><summary>거절과 만료는 정상적인 종료입니다</summary><div class="prose"><p>사람이 거절하면 등록 없이 declined로 끝납니다. 거절을 실행 오류 메시지로 바꿔 계속 승인을 요구하거나, 새 재개로 다시 쓰지 않습니다. 같은 요청의 종료 상태를 보존합니다.</p>
+<span id="decline-expiry"></span><details class="reading-topic" id="reading-decline-expiry"><summary>거절·만료의 종료 상태</summary><div class="prose"><p>사람이 거절하면 등록 없이 declined로 끝납니다. 거절을 실행 오류 메시지로 바꿔 계속 승인을 요구하거나, 새 재개로 다시 쓰지 않습니다. 같은 요청의 종료 상태를 보존합니다.</p>
 <p>만료는 now&gt;=expires_at일 때입니다. 재개 시 한 번, 실제 쓰기 직전 다시 한 번 확인하므로 두 단계 사이에 만료되는 경우도 막습니다. 이 코드가 타이머를 돌려 오래된 요청을 자동 삭제하는 것은 아닙니다. 해당 요청을 다시 처리할 때 시각을 대조합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>등록 없이 종료할 수 있는 이유</caption><thead><tr><th scope="col">상태</th><th scope="col">관측</th><th scope="col">후속 판단</th></tr>
@@ -195,26 +173,26 @@ print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="
 <tr><td>error</td><td>읽기 실행/상한 등 실패</td><td>원인 단계와 예산 확인</td></tr>
 </tbody></table></div>
 </details>
-<span id="changed-duplicate"></span><details class="reading-topic" id="reading-changed-duplicate"><summary>바뀐 인자와 중복 재개를 구분하기</summary><div class="prose"><p>변경된 인자는 승인 대상이 달라졌다는 뜻입니다. 같은 소유자가 잘못된 해시나 허용되지 않은 결정을 보내면 pending을 유지하고 approval_target_mismatch를 돌려줍니다. 아직 쓰기를 실행하지 않았으며 이 시도는 재개 횟수에 포함합니다.</p>
+<span id="changed-duplicate"></span><details class="reading-topic" id="reading-changed-duplicate"><summary>인자 변경과 중복 재개</summary><div class="prose"><p>변경된 인자는 승인 대상이 달라졌다는 뜻입니다. 같은 소유자가 잘못된 해시나 허용되지 않은 결정을 보내면 pending을 유지하고 approval_target_mismatch를 돌려줍니다. 아직 쓰기를 실행하지 않았으며 이 시도는 재개 횟수에 포함합니다.</p>
 <p>중복 재개는 이미 끝난 요청을 다시 보낸 경우입니다. 원래 소유자와 승인 ID를 확인한 뒤 보존된 결과를 돌려주고 duplicate_resume_ignored=true를 남깁니다. 모델·검색·쓰기를 다시 실행하지 않으므로 등록 수가 증가하지 않습니다.</p>
 </div>
 <div class="prose"><p>이 관측의 한 번 실행은 같은 프로세스의 요청 원장·lock·모의 등록 사전에 의존합니다. 여러 서버나 실제 외부 시스템에서도 정확히 한 번 실행된다고 일반화하지 않습니다. 외부 쓰기는 요청 키·저장·트랜잭션·응답 유실의 경계를 별도로 다뤄야 합니다.</p>
 </div>
 </details>
-<span id="budgets"></span><details class="reading-topic" id="reading-budgets"><summary>대기 전후의 호출 수를 합치기</summary><div class="prose"><p>중단은 새 예산을 주는 신호가 아닙니다. 이미 모델과 도구를 사용했다면 그 수를 원장에 보존하고 재개 뒤의 실행을 더해야 합니다. 이 예제의 기본 전체 예산은 모델 3·도구 2·재개 2입니다. 63일의 읽기 제한이 이 전체 상한보다 크면 구성 시점에 거부합니다.</p>
+<span id="budgets"></span><details class="reading-topic" id="reading-budgets"><summary>승인 전후의 호출 수</summary><div class="prose"><p>중단은 새 예산을 주는 신호가 아닙니다. 이미 모델과 도구를 사용했다면 그 수를 원장에 보존하고 재개 뒤의 실행을 더해야 합니다. 이 예제의 기본 전체 예산은 모델 3·도구 2·재개 2입니다. 63일의 읽기 제한이 이 전체 상한보다 크면 구성 시점에 거부합니다.</p>
 <p>Q03 읽기는 모델 2·근거 전달 도구 1을 사용합니다. 전체 도구 상한을 1로 바꾸면 읽기에서 예산을 이미 사용했으므로 승인을 받아도 등록 도구를 실행할 수 없습니다. 승인 여부와 호출 예산은 별도의 조건입니다. 필수 검색은 retrieval_calls로 따로 기록합니다.</p>
 </div>
 <div class="prose"><p>같은 소유자의 잘못된 재개를 두 번 보낸 뒤 세 번째 요청을 보내면 resume_limit으로 멈춥니다. 관측된 resume_attempts=3은 세 번째 시도를 거부하기 위해 센 값이며 승인 세 번이 허용됐다는 뜻이 아닙니다. 종료 뒤 중복 재개는 이미 끝난 결과를 돌려주므로 추가 예산을 쓰지 않습니다.</p>
 <p>63일의 draft_generate_calls는 create_agent 모델 예산과 별도입니다. 실제 외부 generate를 주입하면 그 콜백의 비용·재시도를 이 장의 max_model_calls가 통제하지 않습니다. 현재 고정 대본의 호출 수를 외부 모델 비용으로 바꾸지 않습니다.</p>
 </div>
 </details>
-<span id="write-failure"></span><details class="reading-topic" id="reading-write-failure"><summary>오류가 나기 전에 이미 효과가 생겼을 수 있습니다</summary><div class="prose"><p>쓰기 오류를 모두 “다시 실행하면 된다”로 처리하면 중복 등록이 생길 수 있습니다. 첫 사례는 등록 전에 예외가 나서 효과가 0인 경우입니다. 두 번째는 목록에 한 건을 넣었지만 성공 receipt를 돌려주기 전에 예외가 난 경우입니다. 호출자는 실패를 보지만 효과는 1일 수 있습니다.</p>
+<span id="write-failure"></span><details class="reading-topic" id="reading-write-failure"><summary>부분 실행 후 예외</summary><div class="prose"><p>쓰기 오류를 모두 “다시 실행하면 된다”로 처리하면 중복 등록이 생길 수 있습니다. 첫 사례는 등록 전에 예외가 나서 효과가 0인 경우입니다. 두 번째는 목록에 한 건을 넣었지만 성공 receipt를 돌려주기 전에 예외가 난 경우입니다. 호출자는 실패를 보지만 효과는 1일 수 있습니다.</p>
 <p>LocalInquiryRegister의 before/after는 이 차이를 재현하는 로컬 실패 주입기입니다. 실제 외부 서비스의 상태를 관찰한 결과가 아닙니다. 쓰기 대상도 LocalInquiryRegister 타입으로 제한하므로 임의의 외부 쓰기 어댑터를 주입했다고 주장하지 않습니다.</p>
 </div>
 <div class="prose"><p>효과 전 실패는 error/write_failed_no_effect, 효과 후 오류는 needs_review/write_effect_unknown입니다. 후자는 자동 재실행하지 않고 확인 필요로 남깁니다. result도 null이므로 미완료 작업을 정상 완료 답변 이력으로 저장하지 않습니다. 실제 서비스라면 외부 작업 상태를 조회할 방법과 운영 판단이 필요하지만 오늘은 그 통합을 하지 않습니다.</p>
 </div>
 </details>
-<span id="all-cases"></span><details class="reading-topic" id="reading-all-cases"><summary>정상과 실패를 하나의 기록으로 비교하기</summary><div class="prose"><p>demo.py는 같은 Q03과 같은 문의 문구로 13개 관측을 남깁니다. 대기·승인·중복·거절·만료·타인·변경 해시·재개 상한·도구 상한·효과 전후 실패 및 그 뒤 중복을 포함합니다. 자신의 실행은 runs 아래에서 확인하고 provided는 작성자 기준으로 보존합니다.</p>
+<span id="all-cases"></span><details class="reading-topic" id="reading-all-cases"><summary>성공·실패 경로의 로그 비교</summary><div class="prose"><p>demo.py는 같은 Q03과 같은 문의 문구로 13개 관측을 남깁니다. 대기·승인·중복·거절·만료·타인·변경 해시·재개 상한·도구 상한·효과 전후 실패 및 그 뒤 중복을 포함합니다. 자신의 실행은 runs 아래에서 확인하고 provided는 작성자 기준으로 보존합니다.</p>
 <p>모든 행을 성공률 하나로 줄이지 않습니다. 거절·만료·타인 거부는 등록 0이 올바른 동작이고, 확인 필요는 효과와 수신 상태가 갈라진 경우입니다. 상태, 공개 result, receipt, 등록 수, 누적 호출을 함께 읽어야 합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>핵심 관측의 기대 의미</caption><thead><tr><th scope="col">사례</th><th scope="col">공개 result</th><th scope="col">로컬 등록 수</th><th scope="col">판단</th></tr>
@@ -226,17 +204,17 @@ print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="
 <tr><td>효과 후 오류</td><td>null</td><td>1</td><td>확인 필요·자동 재시도 안 함</td></tr>
 </tbody></table></div>
 </details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>승인 전달과 화면에 보일 상태 작성</summary><div class="prose"><p>student_task.py에서 submit_decision은 원래 요청 ID·승인 ID·인자 해시와 결정을 서비스에 전달합니다. 새 도구 인자를 받아 기존 승인을 재사용하지 않습니다. visible_state는 상태, 완료 결과, 확인 필요 여부를 요약합니다. 실제 브라우저 UI를 만드는 과제는 아닙니다.</p>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>승인 결과의 화면 상태</summary><div class="prose"><p>student_task.py에서 submit_decision은 원래 요청 ID·승인 ID·인자 해시와 결정을 서비스에 전달합니다. 새 도구 인자를 받아 기존 승인을 재사용하지 않습니다. visible_state는 상태, 완료 결과, 확인 필요 여부를 요약합니다. 실제 브라우저 UI를 만드는 과제는 아닙니다.</p>
 <p>pending/declined/expired/error/needs_review는 완료 A1을 보여 주지 않습니다. completed에는 원래 result를 그대로 둡니다. 그 A1이 no_evidence나 invalid_citation이면 상태를 정답으로 바꾸지 않습니다. needs_review는 운영자가 효과를 확인할 수 있도록 별도 표시가 필요합니다.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>읽기·쓰기·분류의 책임을 넘기기</summary><div class="prose"><p>다음 분류 학습에서 어떤 요청을 읽기·제안·추가 질문 후보로 보낼지 비교할 수 있습니다. 분류 결과는 후보 경로일 뿐 대화 소유권과 승인 완료를 만들지 않습니다. 오늘의 제안·재개 경계와 누적 예산은 그 뒤에도 유지해야 합니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>조회·등록·분류의 책임 분리</summary><div class="prose"><p>다음 분류 학습에서 어떤 요청을 읽기·제안·추가 질문 후보로 보낼지 비교할 수 있습니다. 분류 결과는 후보 경로일 뿐 대화 소유권과 승인 완료를 만들지 않습니다. 오늘의 제안·재개 경계와 누적 예산은 그 뒤에도 유지해야 합니다.</p>
 <p>66–67일의 서비스 평가는 정상 답변뿐 아니라 이 승인 경계의 실패도 받아야 합니다. 현재 계약은 로컬 수업용이며 최종 S1, HTTP 상태, B1 저장은 각각 후속 단계에서 검수합니다. 메모리 체크포인트를 영속 DB와 같다고 설명하지 않습니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer">LangGraph Interrupts 공식 문서 ↗</a><span></span></li>
@@ -248,4 +226,4 @@ print(refused[<span class="tok-string">&#x27;status&#x27;</span>], <span class="
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

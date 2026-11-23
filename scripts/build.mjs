@@ -12,7 +12,7 @@ if (chapters.length !== 116 || chapters.some((name, i) => name !== chapterName(i
 }
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
-cpSync(source, output, { recursive: true, filter: path => basename(path) !== 'figures' && basename(path) !== '.DS_Store' });
+cpSync(source, output, { recursive: true, filter: path => basename(path) !== '.DS_Store' });
 
 function courseNav(day) {
   const link = (n, text) => '<a href="../' + chapterName(n) + '/index.html">' + text + '</a>';
@@ -25,11 +25,10 @@ for (const [index, chapter] of chapters.entries()) {
   const folder = join(source, chapter);
   const notebook = JSON.parse(readFileSync(join(folder, chapter + '.ipynb'), 'utf8'));
   if (notebook.nbformat !== 4 || !notebook.cells.length) throw new Error(chapter + ' 노트북 오류');
-  for (const file of readdirSync(folder).filter(name => ['index.html', 'figures.html'].includes(name))) {
+  for (const file of readdirSync(folder).filter(name => name === 'index.html')) {
     const template = readFileSync(join(folder, file), 'utf8');
     if (!template.includes('<!-- COURSE_NAV -->')) throw new Error(chapter + ' 탐색 메뉴 위치 누락');
-    const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1))
-      .replace(/<!-- FIGURE (figures\/[\w-]+\.svg) -->/g, (_, figure) => readFileSync(join(folder, figure), 'utf8'));
+    const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1));
     writeFileSync(join(output, chapter, file), page);
   }
 }

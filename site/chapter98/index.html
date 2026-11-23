@@ -1,47 +1,47 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>품질 개선 실험 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>정규표현식 치환과 경계 조건 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 98 / FINAL PROJECT</p>
-<span class="sidebar-title">품질 개선 실험 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-hypothesis"><span>02</span>장비 이름의 공백 하나만 바꾸기</a><a href="#nb-guard"><span>03</span>장비AB를 장비 A로 오해하지 않기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">정규표현식 치환과 경계 조건</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-hypothesis"><span>02</span>re.sub()로 장비명 공백 정규화</a><a href="#nb-guard"><span>03</span>접두어 오인식을 막는 반례</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 98 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>품질 개선 실험 · 방향과 예시</h1>
+<h1>정규표현식 치환과 경계 조건</h1>
 <p class="hero-description">“장비A”라고 붙여 쓰면 같은 장비인데도 검색기가 장비명을 못 찾습니다. 이럴 때 모델이나 검색 자료를 한꺼번에 바꾸면 어떤 수정이 통했는지 알기 어렵습니다. 이번 비교에서는 장비명 띄어쓰기만 바꿉니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter98.ipynb" download="chapter98.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>98장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-hypothesis" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>장비 이름의 공백 하나만 바꾸기</h2>
+<h2>re.sub()로 장비명 공백 정규화</h2>
 </div>
 </header>
-<p>실험 카드　고정 항목 rules-v1, 공개 개발 질문·기대 근거, 점검 규칙 / 변경 항목 장비 A·B 표기 정리 / 기대 Q98-N01이 장비 A로 인식됨. 가설이 틀릴 수도 있으니 공백 정리 전의 질문을 보관합니다. 사용자가 무엇을 썼는지 복구할 수 있어야 합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Q98-N01을 정규화하기</h3>
+<p class="concept-intro">정규표현식으로 표기 차이를 정리할 때는 일치 범위를 제한해야 합니다. 바꿔야 할 이름과 접두어만 같은 다른 이름을 함께 시험합니다.</p><p>실험 카드　고정 항목 rules-v1, 공개 개발 질문·기대 근거, 점검 규칙 / 변경 항목 장비 A·B 표기 정리 / 기대 Q98-N01이 장비 A로 인식됨. 가설이 틀릴 수도 있으니 공백 정리 전의 질문을 보관합니다. 사용자가 무엇을 썼는지 복구할 수 있어야 합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · re.sub()의 장비명 정규화</h3>
 <div class="cell-before"><p>끝 또는 다음 문자가 영문·숫자가 아닌 위치에서만 한 글자 장비명을 인정합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> re
 
 <span class="tok-keyword">def</span> normalize_question(question):
-    <span class="tok-keyword">return</span> re.sub(<span class="tok-string">r&quot;장비([AB])(?=$|[^A-Za-z0-9])&quot;</span>, <span class="tok-string">r&quot;장비 \1&quot;</span>, question)
+    <span class="tok-keyword">return</span> re.sub(<span class="tok-string">r"장비([AB])(?=$|[^A-Za-z0-9])"</span>, <span class="tok-string">r"장비 \1"</span>, question)
 
-original = <span class="tok-string">&quot;장비A의 점검 전 확인 사항은?&quot;</span>
+original = <span class="tok-string">"장비A의 점검 전 확인 사항은?"</span>
 normalized = normalize_question(original)
 print(original)
 print(normalized)</code></pre></figure>
@@ -52,35 +52,29 @@ print(normalized)</code></pre></figure>
 </article>
 </section>
 <section id="nb-guard" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>장비AB를 장비 A로 오해하지 않기</h2>
+<h2>접두어 오인식을 막는 반례</h2>
 </div>
 </header>
 <p>제공 실험 결과에서는 기본 7문항이 전후 모두 통과했고, 추가한 공개 개발 3문항 중 통과한 문항은 1개에서 3개로 늘었습니다. 팀은 이 범위에서만 수정을 채택했습니다. 두 장비 중 무엇인지 모호한 장비AB까지 잘라내는 수정은 장비를 잘못 고르는 새 오류를 만듭니다.</p>
 <!-- MOTION word-boundary -->
-<figure class="motion-study" id="motion-word-boundary" data-sheet="motion/word-boundary.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>A 뒤에 B가 더 있으면 틈을 내도 될까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/word-boundary-still.webp" width="800" height="272" alt="A·B 뒤가 문자열 끝이거나 다음 글자가 영문·숫자가 아닐 때만 공백을 넣습니다. “장비A의”는 바뀌지만 “장비AB”에는 A 뒤에 B가 이어져 원문이 유지됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>A·B 뒤가 문자열 끝이거나 다음 글자가 영문·숫자가 아닐 때만 공백을 넣습니다. “장비A의”는 바뀌지만 “장비AB”에는 A 뒤에 B가 이어져 원문이 유지됩니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<div class="learn-detail"><h4>공개 개발 문항 세 개의 판정</h4>
+<div class="learn-detail"><h4>정규화 회귀 테스트의 판정 범위</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">문항 · 입력의 특징</th><th scope="col">수정 전 → 후</th><th scope="col">판정할 때 볼 점</th></tr>
 </thead><tbody><tr><td>Q98-N01 · 장비A</td><td>실패 → 통과</td><td>장비 A로 읽어야 함</td></tr>
 <tr><td>Q98-N02 · 장비B의 점검 전 확인 사항은?</td><td>실패 → 통과</td><td>장비 B로 읽고 RULE-B의 ‘점검 전 고정 장치를 확인합니다.’와 대조</td></tr>
 <tr><td>Q98-G01 · 장비AB</td><td>통과 → 통과</td><td>다른 이름을 임의로 장비 A로 고치지 않음</td></tr>
 </tbody></table><p>표는 제공된 평가 기록을 풀이한 것입니다. 셀 01과 과제 02는 입력 문자열의 변화만 직접 출력합니다.</p>
 </div>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 고치면 안 되는 표기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 치환 경계의 반례</h3>
 <div class="cell-before"><p>Q98-G01을 같은 함수에 넣고 원문이 남는 이유를 확인하세요.</p>
 <p>기본 7문항과 추가 3문항은 따로 셉니다. 추가 질문에서 고친 대상은 Q98-N01·N02이고 Q98-G01은 장비AB를 그대로 둘 수 있는지 보는 대조 문항입니다. 이 셀은 문자열을 확인하며, 1/3에서 3/3으로 바뀐 판정은 제공 평가 기록에서 읽습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">ambiguous = <span class="tok-string">&quot;장비AB의 점검 전 확인 사항은?&quot;</span>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">ambiguous = <span class="tok-string">"장비AB의 점검 전 확인 사항은?"</span>
 <span class="tok-comment"># normalize_question에 넣고 결과를 읽으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">ambiguous = <span class="tok-string">&quot;장비AB의 점검 전 확인 사항은?&quot;</span>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">ambiguous = <span class="tok-string">"장비AB의 점검 전 확인 사항은?"</span>
 print(normalize_question(ambiguous))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비AB의 점검 전 확인 사항은?</pre></div>
 <div class="cell-after"><p>장비AB 그대로입니다. A 바로 뒤에 영문 B가 와서 공백을 넣는 조건을 충족하지 않습니다. 다른 팀은 제품명이 아니라 약어·문서 코드처럼 뜻이 갈리는 최소 반례를 고를 수 있습니다.</p>
@@ -89,7 +83,7 @@ print(normalize_question(ambiguous))</code></pre></figure>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>채택 메모에는 수정한 표현(Q98-N01·Q98-N02), 그대로 둘 표현(Q98-G01), 공개 개발 범위라는 조건을 같이 적으세요. 다음 단계는 normalization-v1이라는 이름으로 이 동작을 이어받습니다.</p>

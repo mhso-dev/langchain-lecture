@@ -1,102 +1,96 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>평가 질문과 기대 근거를 고정하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>RAG 평가 데이터셋 구성 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 35 / RAG EVALUATION</p>
-<span class="sidebar-title">평가 질문과 기대 근거를 고정하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-gold-id"><span>02</span>질문과 기대 근거의 ID 나누기</a><a href="#nb-split"><span>03</span>설정에 쓸 질문과 나중에 확인할 질문 나누기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">RAG 평가 데이터셋 구성</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-gold-id"><span>02</span>질문 ID와 기대 근거 ID</a><a href="#nb-split"><span>03</span>개발용·확인용 평가 문항 분리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>RAG 평가 데이터셋 구성 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 35 / RAG EVALUATION</span><span class="template-badge">학생용 교재</span></div>
-<h1>평가 질문과 기대 근거를 고정하기</h1>
+<h1>RAG 평가 데이터셋 구성</h1>
 <p class="hero-description">어제보다 답변이 좋아졌다는 말을 확인하려면 어제와 같은 질문을 다시 물을 수 있어야 합니다. 답변을 생성하기 전에 질문, 기대 문서, 자료로 답할 수 있는지를 한 묶음으로 고정합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 035 · 8H</span><span>20장 문서·Q1, 34장 Node/Tool 비교 기록</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter35.ipynb" download="chapter35.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>35장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-gold-id" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>질문과 기대 근거의 ID 나누기</h2>
+<h2>질문 ID와 기대 근거 ID</h2>
 </div>
 </header>
-<p>question_id는 다시 시험할 질문을 찾는 이름이고 expected_document_ids는 답이 실린 원문을 찾는 이름입니다. 페이지가 여러 청크로 갈라져도 기대 근거는 원문에 연결합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 개발 질문의 근거 찾기</h3>
+<p class="concept-intro">평가 문항에는 질문 외에 기대하는 근거와 답변 가능 여부가 필요합니다. 결과를 본 뒤 기준을 바꾸지 않도록 개발용과 확인용 문항을 분리합니다.</p><p>question_id는 다시 시험할 질문을 찾는 이름이고 expected_document_ids는 답이 실린 원문을 찾는 이름입니다. 페이지가 여러 청크로 갈라져도 기대 근거는 원문에 연결합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문과 기대 근거 ID 매핑</h3>
 <div class="cell-before"><p>가상 도서관 공통 자료의 첫 개발 문항과 연결된 원문을 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-3&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>}]
-item = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;dev-01&#x27;</span>,
- <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;대출 기간은 며칠인가요?&#x27;</span>,
- <span class="tok-string">&#x27;expected_document_ids&#x27;</span>: [<span class="tok-string">&#x27;library-1&#x27;</span>],
- <span class="tok-string">&#x27;answerable&#x27;</span>: <span class="tok-keyword">True</span>,
- <span class="tok-string">&#x27;split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>,
- <span class="tok-string">&#x27;source_split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>}
-by_id = {doc[<span class="tok-string">&#x27;id&#x27;</span>]: doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> records}
-print(by_id[item[<span class="tok-string">&#x27;expected_document_ids&#x27;</span>][<span class="tok-number">0</span>]][<span class="tok-string">&#x27;text&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
+item = {<span class="tok-string">'question_id'</span>: <span class="tok-string">'dev-01'</span>,
+ <span class="tok-string">'question'</span>: <span class="tok-string">'대출 기간은 며칠인가요?'</span>,
+ <span class="tok-string">'expected_document_ids'</span>: [<span class="tok-string">'library-1'</span>],
+ <span class="tok-string">'answerable'</span>: <span class="tok-keyword">True</span>,
+ <span class="tok-string">'split'</span>: <span class="tok-string">'development'</span>,
+ <span class="tok-string">'source_split'</span>: <span class="tok-string">'development'</span>}
+by_id = {doc[<span class="tok-string">'id'</span>]: doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> records}
+print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span class="tok-number">0</span>]][<span class="tok-string">'text'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>library-1에서 14일이라는 사실을 읽었습니다. 기대 답의 표현이 달라도 이 숫자와 대출이라는 조건이 유지되는지 볼 수 있습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 자료 밖 질문 표시하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 근거 없는 평가 문항</h3>
 <div class="cell-before"><p>주차 요금 문항의 기대 문서가 왜 비어 있는지 원문 세 쪽과 대조하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">parking = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;dev-03&#x27;</span>,
- <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;주차 요금은 얼마인가요?&#x27;</span>,
- <span class="tok-string">&#x27;expected_document_ids&#x27;</span>: [],
- <span class="tok-string">&#x27;answerable&#x27;</span>: <span class="tok-keyword">False</span>,
- <span class="tok-string">&#x27;split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>,
- <span class="tok-string">&#x27;source_split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>}
-print(parking[<span class="tok-string">&#x27;answerable&#x27;</span>], parking[<span class="tok-string">&#x27;expected_document_ids&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">parking = {<span class="tok-string">'question_id'</span>: <span class="tok-string">'dev-03'</span>,
+ <span class="tok-string">'question'</span>: <span class="tok-string">'주차 요금은 얼마인가요?'</span>,
+ <span class="tok-string">'expected_document_ids'</span>: [],
+ <span class="tok-string">'answerable'</span>: <span class="tok-keyword">False</span>,
+ <span class="tok-string">'split'</span>: <span class="tok-string">'development'</span>,
+ <span class="tok-string">'source_split'</span>: <span class="tok-string">'development'</span>}
+print(parking[<span class="tok-string">'answerable'</span>], parking[<span class="tok-string">'expected_document_ids'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False []</pre></div>
 <div class="cell-after"><p>False와 빈 목록은 답을 유보해야 한다는 뜻입니다. 평가 자료를 덜 채워 둔 경우와 구분하려고 answerable을 함께 기록합니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-split" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>설정에 쓸 질문과 나중에 확인할 질문 나누기</h2>
+<h2>개발용·확인용 평가 문항 분리</h2>
 </div>
 </header>
 <p>개발 문항으로는 검색 설정을 고칩니다. 이후 확인할 질문까지 보며 여러 설정을 고르면 그 질문이 새 표현에서의 성능을 보여 주기 어렵습니다. 책에 공개된 확인 문항은 팀이 보지 못한 비공개 문항과 구분해 기록합니다.</p>
 <!-- MOTION sealed-holdout -->
-<figure class="motion-study" id="motion-sealed-holdout" data-sheet="motion/sealed-holdout.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>설정을 고르는 동안 어느 질문을 덮어 둘까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/sealed-holdout-still.webp" width="800" height="272" alt="개발 문항을 보며 설정을 조정하고 확인용 문항은 따로 보관합니다. 확인 문항을 미리 열어 설정을 고르면 마지막 비교의 의미가 달라집니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>개발 문항을 보며 설정을 조정하고 확인용 문항은 따로 보관합니다. 확인 문항을 미리 열어 설정을 고르면 마지막 비교의 의미가 달라집니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 휴관 질문 한 항목 완성하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 개발 문항의 기대값 작성</h3>
 <div class="cell-before"><p>dev-02에 ‘휴관 요일은 언제인가요?’와 기대 원문 ID, 응답 가능 여부를 넣어 문서를 찾아보세요.</p>
 <p>이 연습에서는 휴관 질문의 핵심 필드를 작성합니다. 평가 파일로 보관할 때는 개발에 사용한 질문임을 나타내는 split 값 development도 같은 항목에 기록하세요. 확인용 문항과 섞이지 않게 해 줍니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># dev-02의 질문, 기대 문서 ID, answerable을 채우세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">holiday = {<span class="tok-string">&#x27;question_id&#x27;</span>:<span class="tok-string">&#x27;dev-02&#x27;</span>, <span class="tok-string">&#x27;question&#x27;</span>:<span class="tok-string">&#x27;휴관 요일은 언제인가요?&#x27;</span>, <span class="tok-string">&#x27;expected_document_ids&#x27;</span>:[<span class="tok-string">&#x27;library-2&#x27;</span>], <span class="tok-string">&#x27;answerable&#x27;</span>: <span class="tok-keyword">True</span>, <span class="tok-string">&#x27;split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>, <span class="tok-string">&#x27;source_split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>}
-print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</span>][<span class="tok-number">0</span>]][<span class="tok-string">&#x27;text&#x27;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">holiday = {<span class="tok-string">'question_id'</span>:<span class="tok-string">'dev-02'</span>, <span class="tok-string">'question'</span>:<span class="tok-string">'휴관 요일은 언제인가요?'</span>, <span class="tok-string">'expected_document_ids'</span>:[<span class="tok-string">'library-2'</span>], <span class="tok-string">'answerable'</span>: <span class="tok-keyword">True</span>, <span class="tok-string">'split'</span>: <span class="tok-string">'development'</span>, <span class="tok-string">'source_split'</span>: <span class="tok-string">'development'</span>}
+print(by_id[holiday[<span class="tok-string">'expected_document_ids'</span>][<span class="tok-number">0</span>]][<span class="tok-string">'text'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서관은 월요일에 휴관합니다.</pre></div>
 <div class="cell-after"><p>dev-02는 개발 중 다시 볼 수 있는 문항입니다. 기대 문서 library-2를 열면 2쪽에서 월요일 휴관 문장을 찾을 수 있습니다.</p>
 </div>
@@ -104,17 +98,17 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>상담 운영 시간을 묻는 새 질문을 하나 만들고, 원문이 없을 때 어떤 응답을 기대할지 팀원과 먼저 맞춰 보세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>RAG 평가 데이터셋 구성 심화 읽기</h2>
 </div>
 </header>
-<span id="ids"></span><details class="reading-topic" id="reading-ids"><summary>문항 ID와 근거 ID를 어디에 적을까요?</summary><div class="prose"><p>question_id는 평가할 질문의 이름입니다. expected_document_ids는 그 질문에 필요한 원문들의 이름입니다. 질문이 여러 근거를 요구하면 기대 원문 ID를 여러 개 적습니다. 문항 ID dev-01을 기대 원문 목록에 넣으면 검색 문서와 연결할 수 없습니다.</p>
+<span id="ids"></span><details class="reading-topic" id="reading-ids"><summary>문항 ID와 근거 ID</summary><div class="prose"><p>question_id는 평가할 질문의 이름입니다. expected_document_ids는 그 질문에 필요한 원문들의 이름입니다. 질문이 여러 근거를 요구하면 기대 원문 ID를 여러 개 적습니다. 문항 ID dev-01을 기대 원문 목록에 넣으면 검색 문서와 연결할 수 없습니다.</p>
 <p>21장처럼 한 원문을 여러 청크로 나누면 검색 결과의 id는 library-1:0처럼 달라질 수 있습니다. Q1의 기대 근거는 여전히 library-1입니다. 평가할 때 청크의 출처표 source-map으로 원문 ID를 찾습니다. 청크 크기를 바꿀 때마다 정답을 임의로 바꾸지 않기 위한 구분입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>한 질문에서 사용하는 이름</caption><thead><tr><th scope="col">역할</th><th scope="col">예</th><th scope="col">어디서 찾나?</th></tr>
@@ -124,7 +118,7 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>청크→원문 매핑</td><td>library-1:0 → library-1</td><td>실험에 사용한 source-map.json</td></tr>
 </tbody></table></div>
 </details>
-<span id="unanswerable"></span><details class="reading-topic" id="reading-unanswerable"><summary>자료가 없는 질문의 기대 답은 무엇일까요?</summary><div class="prose"><p>주차 요금 질문은 문장이 명확하지만 원문에 답이 없습니다. 이 경우 answerable=false, expected_document_ids=[]로 기록합니다. 모르는 가격을 0원이나 무료로 채우면 자료에 없는 정답을 만든 셈이 됩니다.</p>
+<span id="unanswerable"></span><details class="reading-topic" id="reading-unanswerable"><summary>근거가 없는 문항의 기대값</summary><div class="prose"><p>주차 요금 질문은 문장이 명확하지만 원문에 답이 없습니다. 이 경우 answerable=false, expected_document_ids=[]로 기록합니다. 모르는 가격을 0원이나 무료로 채우면 자료에 없는 정답을 만든 셈이 됩니다.</p>
 <p>“언제 이용할 수 있나요?”처럼 대상이 불명확한 질문은 다른 문제입니다. 도서관 개관 시간인지 반납함 시간인지 먼저 정해야 판정자가 같은 기준으로 읽을 수 있습니다. 이 기본 세트에는 모호한 질문을 억지로 답변 가능/불가에 넣기보다 문장을 고치고 수정 이유를 기록합니다.</p>
 <p>검색 서버의 timeout은 질문의 답변 가능 여부를 바꾸지 않습니다. 원문에 14일이 있는 질문은 서버가 실패해도 답변 가능한 질문입니다. 운영 실패는 36장의 실행 기록에서 분리합니다.</p>
 </div>
@@ -134,10 +128,10 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>검색 서버 오류</td><td>기존 기대 근거 유지</td><td>retrieval 오류로 기록</td></tr>
 </tbody></table></div>
 </details>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>질문을 먼저 고정하고 평가를 시작하기</summary><div class="prose"><p>34장에서는 같은 질문을 필수 검색 Node와 선택 Tool에 넣고 실행 경로와 호출 수를 읽었습니다. 오늘은 어느 경로가 더 좋다고 결론을 내리기 전에, 무엇을 물어보고 무엇을 근거로 맞았다고 판단할지 정합니다. 질문이 바뀌면 비교 대상도 바뀌므로 질문과 판정 기준을 파일로 남깁니다.</p>
+<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>고정 평가 질문</summary><div class="prose"><p>34장에서는 같은 질문을 필수 검색 Node와 선택 Tool에 넣고 실행 경로와 호출 수를 읽었습니다. 오늘은 어느 경로가 더 좋다고 결론을 내리기 전에, 무엇을 물어보고 무엇을 근거로 맞았다고 판단할지 정합니다. 질문이 바뀌면 비교 대상도 바뀌므로 질문과 판정 기준을 파일로 남깁니다.</p>
 </div>
 </details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>20장 자료와 34장 비교 결과 이어받기</summary><div class="prose"><p>34장의 comparison-results.json은 사례마다 node와 tool 결과, 검색 문서와 A1 응답을 보존한 원본입니다. node-tool-comparison.csv는 그 기록을 비교하기 위한 요약입니다. 호출 수가 적다는 사실과 올바른 답변을 했다는 사실은 다르므로 둘을 따로 읽습니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>평가에 사용할 문서와 실행 결과</summary><div class="prose"><p>34장의 comparison-results.json은 사례마다 node와 tool 결과, 검색 문서와 A1 응답을 보존한 원본입니다. node-tool-comparison.csv는 그 기록을 비교하기 위한 요약입니다. 호출 수가 적다는 사실과 올바른 답변을 했다는 사실은 다르므로 둘을 따로 읽습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>34장 인계에서 읽을 항목</caption><thead><tr><th scope="col">항목</th><th scope="col">의미</th><th scope="col">오늘 확인할 점</th></tr>
 </thead><tbody><tr><td>question_id / case_id</td><td>원래 질문 / 같은 질문의 실행 사례</td><td>skip·repeat도 dev-01 질문을 유지</td></tr>
@@ -146,7 +140,7 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>documents / result</td><td>검색 원문 객체 / A1 응답</td><td>인용·내용 판단은 후속 평가에서 별도 확인</td></tr>
 </tbody></table></div>
 </details>
-<span id="scope"></span><details class="reading-topic" id="reading-scope"><summary>대표 질문의 범위와 한계</summary><div class="prose"><p>대표 질문은 우리가 확인하려는 사용 상황을 드러내는 질문입니다. 여기서는 대출 기간, 휴관 요일, 반납함 이용 시간만 원문에 있습니다. 따라서 이 세 주제와 원문에 없는 질문을 나누어 생각합니다. 질문 수를 늘리는 것보다 어떤 상황을 포함하고 어떤 상황을 아직 다루지 않는지 먼저 기록합니다.</p>
+<span id="scope"></span><details class="reading-topic" id="reading-scope"><summary>대표 문항의 적용 범위</summary><div class="prose"><p>대표 질문은 우리가 확인하려는 사용 상황을 드러내는 질문입니다. 여기서는 대출 기간, 휴관 요일, 반납함 이용 시간만 원문에 있습니다. 따라서 이 세 주제와 원문에 없는 질문을 나누어 생각합니다. 질문 수를 늘리는 것보다 어떤 상황을 포함하고 어떤 상황을 아직 다루지 않는지 먼저 기록합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>현재 자료의 질문 범위</caption><thead><tr><th scope="col">상황</th><th scope="col">질문 예</th><th scope="col">확인 근거</th><th scope="col">범위 밖</th></tr>
 </thead><tbody><tr><td>명시된 규칙</td><td>대출 기간은 며칠인가요?</td><td>library-1의 14일</td><td>연장·연체 규칙</td></tr>
@@ -155,17 +149,17 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>자료에 없는 정보</td><td>주차 요금은 얼마인가요?</td><td>없음</td><td>실제 기관 요금 추측</td></tr>
 </tbody></table></div>
 </details>
-<span id="question-record"></span><details class="reading-topic" id="reading-question-record"><summary>한 문항에 어떤 정보를 넣을까?</summary><div class="prose"><p>question에는 실제로 입력할 문장을 그대로 저장합니다. expected_document_ids는 답을 확인할 자료를 가리키고 answerable은 그 자료만으로 답할 수 있는지를 나타냅니다. 이 값은 모델이 그럴듯한 답을 말할 수 있는지를 뜻하지 않습니다.</p>
+<span id="question-record"></span><details class="reading-topic" id="reading-question-record"><summary>문항 레코드의 필드</summary><div class="prose"><p>question에는 실제로 입력할 문장을 그대로 저장합니다. expected_document_ids는 답을 확인할 자료를 가리키고 answerable은 그 자료만으로 답할 수 있는지를 나타냅니다. 이 값은 모델이 그럴듯한 답을 말할 수 있는지를 뜻하지 않습니다.</p>
 <p>이 장은 Q1의 네 핵심 필드를 유지하면서 split과 source_split을 덧붙입니다. split은 지금의 사용 목적이며 source_split은 원본 파일에서 온 위치입니다. 원본 holdout이라는 이름은 보존하지만, 공개된 확인 문항을 비공개라고 오해하지 않도록 사용 목적을 public_check로 적습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>필드 점검</caption><thead><tr><th scope="col">필드</th><th scope="col">정상 예</th><th scope="col">고칠 예</th></tr>
 </thead><tbody><tr><td>question_id</td><td>custom-01</td><td>빈 문자열·중복 ID</td></tr>
-<tr><td>expected_document_ids</td><td>[&quot;library-1&quot;]</td><td>[&quot;dev-01&quot;] 또는 없는 원문</td></tr>
+<tr><td>expected_document_ids</td><td>["library-1"]</td><td>["dev-01"] 또는 없는 원문</td></tr>
 <tr><td>answerable</td><td>true + 비어 있지 않은 기대 목록</td><td>true + 빈 기대 목록</td></tr>
 <tr><td>split / source_split</td><td>public_check / holdout</td><td>private_holdout / holdout</td></tr>
 </tbody></table></div>
 </details>
-<span id="splits"></span><details class="reading-topic" id="reading-splits"><summary>개발용과 공개 확인용을 나누는 이유</summary><div class="prose"><p>개발 문항은 코드를 바꾸고 오류를 고치는 동안 계속 볼 수 있는 질문입니다. 확인 문항은 설정을 정한 뒤 같은 기준이 다른 질문에도 적용되는지 읽는 데 씁니다. 두 용도를 나누면 무엇을 보고 고쳤는지 설명하기 쉬워집니다.</p>
+<span id="splits"></span><details class="reading-topic" id="reading-splits"><summary>개발 세트와 확인 세트</summary><div class="prose"><p>개발 문항은 코드를 바꾸고 오류를 고치는 동안 계속 볼 수 있는 질문입니다. 확인 문항은 설정을 정한 뒤 같은 기준이 다른 질문에도 적용되는지 읽는 데 씁니다. 두 용도를 나누면 무엇을 보고 고쳤는지 설명하기 쉬워집니다.</p>
 <p>이 교재의 확인 2문항은 파일과 교재에 공개돼 있습니다. 비공개 시험이나 모델이 보지 못한 질문이라고 부르지 않습니다. 확인 결과를 보고 다시 설정을 골랐다면 그 문항도 개발에 사용한 것입니다. 새 확인 문항을 만들고 버전과 변경 이유를 남기는 것이 다음 단계입니다.</p>
 <p>질문의 공백만 바꿔 다른 분리에 넣는 것은 새 질문을 만든 것이 아닙니다. 제공 검사는 유니코드 표기와 연속 공백을 정리한 뒤 같은 질문인지 검사합니다. 다만 뜻이 같은 모든 바꿔쓰기를 자동으로 알아내지는 못하므로 사람이 문장을 함께 읽어야 합니다.</p>
 </div>
@@ -174,7 +168,7 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>holdout</td><td>public_check</td><td>2</td><td>공개된 확인; 블라인드 아님</td></tr>
 </tbody></table></div>
 </details>
-<span id="rubric"></span><details class="reading-topic" id="reading-rubric"><summary>판정 기준을 먼저 맞추기</summary><div class="prose"><p>같은 답변을 두 사람이 다르게 채점했다면 먼저 질문과 원문, 판정 기준을 함께 봅니다. “좋은 답”처럼 넓은 말 대신 확인 가능한 조건을 나누면 차이를 설명할 수 있습니다. 검색 근거가 맞는지, 답변에 인용했는지, 숫자와 조건이 보존됐는지를 따로 기록합니다.</p>
+<span id="rubric"></span><details class="reading-topic" id="reading-rubric"><summary>평가 판정 규칙</summary><div class="prose"><p>같은 답변을 두 사람이 다르게 채점했다면 먼저 질문과 원문, 판정 기준을 함께 봅니다. “좋은 답”처럼 넓은 말 대신 확인 가능한 조건을 나누면 차이를 설명할 수 있습니다. 검색 근거가 맞는지, 답변에 인용했는지, 숫자와 조건이 보존됐는지를 따로 기록합니다.</p>
 <p>“대출은 30일입니다. [library-1]”은 인용 ID가 존재하더라도 원문의 14일과 다릅니다. 반대로 “대출은 2주입니다. [library-1]”은 이 가상 규칙에서 같은 기간을 다른 말로 표현한 것입니다. 정답 문자열의 완전 일치만으로 모든 답변 내용을 판단하지 않습니다.</p>
 <p>rubric.json은 기준표입니다. 학생 점수나 실제 사람 평가 결과가 들어 있는 파일이 아닙니다. 사람 평가를 했다면 검토자와 검토일, 대상 답변, 판단과 근거를 별도 기록해야 합니다.</p>
 </div>
@@ -186,17 +180,17 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <tr><td>실패</td><td>오류를 정상 결과로 숨기지 않았나?</td><td>error_type과 실패 구간</td></tr>
 </tbody></table></div>
 </details>
-<span id="jsonl"></span><details class="reading-topic" id="reading-jsonl"><summary>질문을 JSONL로 저장하기</summary><div class="prose"><p>JSONL은 한 줄마다 JSON 객체 하나를 적는 형식입니다. 파일 전체를 하나의 JSON 배열로 읽는 대신 각 줄을 json.loads로 읽습니다. 질문 안의 줄바꿈은 JSON 문자열 안에서 이스케이프되므로 하나의 문항을 여러 줄로 예쁘게 들여쓰기해서 저장하지 않습니다.</p>
+<span id="jsonl"></span><details class="reading-topic" id="reading-jsonl"><summary>JSONL 문항 저장</summary><div class="prose"><p>JSONL은 한 줄마다 JSON 객체 하나를 적는 형식입니다. 파일 전체를 하나의 JSON 배열로 읽는 대신 각 줄을 json.loads로 읽습니다. 질문 안의 줄바꿈은 JSON 문자열 안에서 이스케이프되므로 하나의 문항을 여러 줄로 예쁘게 들여쓰기해서 저장하지 않습니다.</p>
 </div>
 </details>
-<span id="validation"></span><details class="reading-topic" id="reading-validation"><summary>잘못된 질문을 먼저 거르기</summary><div class="prose"><p>validate_rows는 질문 ID·질문의 빈값과 중복을 확인하고 기대 원문이 실제 원문 목록에 있는지 검사합니다. answerable이 참이면 기대 목록이 있어야 하고 거짓이면 비어야 합니다. bool 값 대신 숫자 1을 넣는 경우도 명시적으로 거부합니다.</p>
+<span id="validation"></span><details class="reading-topic" id="reading-validation"><summary>평가 데이터 유효성 검사</summary><div class="prose"><p>validate_rows는 질문 ID·질문의 빈값과 중복을 확인하고 기대 원문이 실제 원문 목록에 있는지 검사합니다. answerable이 참이면 기대 목록이 있어야 하고 거짓이면 비어야 합니다. bool 값 대신 숫자 1을 넣는 경우도 명시적으로 거부합니다.</p>
 <p>구조 검사를 통과해도 질문의 뜻과 기대 원문이 맞는지는 사람이 확인합니다. 예를 들어 반납함 질문의 기대 원문을 대출 안내로 적어도 그 ID가 존재하기 때문에 단순 형식 검사는 통과할 수 있습니다. 코드는 존재 여부를, 판정자는 의미를 확인합니다.</p>
 </div>
 </details>
-<span id="manifest"></span><details class="reading-topic" id="reading-manifest"><summary>같은 버전을 다음 장에 전달하기</summary><div class="prose"><p>파일 해시는 내용이 달라졌는지 비교하는 값입니다. 진실성이나 정답 품질을 보증하는 서명이 아닙니다. 줄바꿈이나 공백이 달라도 해시가 달라질 수 있으므로 인계 파일은 다시 타이핑하지 않고 그대로 복사합니다.</p>
+<span id="manifest"></span><details class="reading-topic" id="reading-manifest"><summary>데이터셋 버전 고정</summary><div class="prose"><p>파일 해시는 내용이 달라졌는지 비교하는 값입니다. 진실성이나 정답 품질을 보증하는 서명이 아닙니다. 줄바꿈이나 공백이 달라도 해시가 달라질 수 있으므로 인계 파일은 다시 타이핑하지 않고 그대로 복사합니다.</p>
 </div>
 </details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>오류가 났을 때 확인할 순서</summary><div class="table-scroll" tabindex="0"><table><caption>오류 대응</caption><thead><tr><th scope="col">상황</th><th scope="col">원인 후보</th><th scope="col">다음 행동</th></tr>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>문항 오류 진단</summary><div class="table-scroll" tabindex="0"><table><caption>오류 대응</caption><thead><tr><th scope="col">상황</th><th scope="col">원인 후보</th><th scope="col">다음 행동</th></tr>
 </thead><tbody><tr><td>공통 파일 해시가 다름</td><td>기준 파일에 개인 편집이 섞임</td><td>개인 변경 보관 후 제공 기준 복구</td></tr>
 <tr><td>질문 중복</td><td>ID/공백만 바꾼 문장 중복</td><td>질문 목적을 확인하고 중복 제거</td></tr>
 <tr><td>기대 원문 오류</td><td>문항 ID·청크 ID·원문 ID 혼동</td><td>source_documents의 ID 대조</td></tr>
@@ -206,12 +200,12 @@ print(by_id[holiday[<span class="tok-string">&#x27;expected_document_ids&#x27;</
 <div class="prose"><p>오류를 없애려고 manifest의 해시만 새로 적으면 무엇이 바뀌었는지 숨기게 됩니다. 어떤 입력을 의도적으로 바꾸었는지 먼저 정하고, 공통 기준과 개인 확장을 구분한 뒤 새 버전을 만듭니다.</p>
 </div>
 </details>
-<span id="files"></span><details class="reading-topic" id="reading-files"><summary>실습 파일과 다음 학습</summary><div class="prose"><p>강사용 추가 과제 답안은 별도 instructor 폴더에 있습니다. 이 학생 HTML에는 넣지 않았습니다. 브라우저 클릭·모바일·학생 환경과 실제 수업 소요는 아직 확인하지 않았으며 검증 범위는 VALIDATION.md에 기록합니다.</p>
+<span id="files"></span><details class="reading-topic" id="reading-files"><summary>실습 자료와 연계 단원</summary><div class="prose"><p>강사용 추가 과제 답안은 별도 instructor 폴더에 있습니다. 이 학생 HTML에는 넣지 않았습니다. 브라우저 클릭·모바일·학생 환경과 실제 수업 소요는 아직 확인하지 않았으며 검증 범위는 VALIDATION.md에 기록합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.python.org/3.12/library/json.html" target="_blank" rel="noopener noreferrer">Python 3.12 JSON 공식 문서 ↗</a><span></span></li>

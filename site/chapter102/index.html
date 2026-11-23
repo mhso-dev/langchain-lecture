@@ -1,77 +1,77 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>API 통합 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>POST 요청·응답 계약과 저장 상태 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 102 / FINAL PROJECT</p>
-<span class="sidebar-title">API 통합 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-request"><span>02</span>POST /p1/ask에 보낼 요청</a><a href="#nb-storage"><span>03</span>답은 만들었지만 저장하지 못한 요청</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">POST 요청·응답 계약과 저장 상태</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>POST /p1/ask의 JSON 요청</a><a href="#nb-storage"><span>03</span>답변 생성과 저장 성공 여부 구분</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 102 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>API 통합 · 방향과 예시</h1>
+<h1>POST 요청·응답 계약과 저장 상태</h1>
 <p class="hero-description">팀의 조회 함수는 이미 Q01에 답합니다. 화면에서 같은 기능을 쓰려면 요청에 대화를 식별할 값과 이번 질문을 식별할 값이 함께 있어야 합니다. 요청 하나와 응답 하나로 화면과 서비스 사이의 약속을 정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter102.ipynb" download="chapter102.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>102장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>POST /p1/ask에 보낼 요청</h2>
+<h2>POST /p1/ask의 JSON 요청</h2>
 </div>
 </header>
-<p>준비 계약은 session_id·request_id·question 세 문자열을 받습니다. 수업 주체는 준비한 헤더나 서버의 검사 설정으로 결정합니다. 질문 본문에 적은 권한을 서버가 믿어서는 안 됩니다. 유효한 대화를 먼저 만든 뒤 다음 요청을 보낸다는 설정입니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 보낼 JSON 만들기</h3>
+<p class="concept-intro">API의 요청·응답 계약에는 성공만 담지 않습니다. 답은 만들었지만 저장하지 못한 경우를 호출자가 알아볼 수 있도록 결과를 나눕니다.</p><p>준비 계약은 session_id·request_id·question 세 문자열을 받습니다. 수업 주체는 준비한 헤더나 서버의 검사 설정으로 결정합니다. 질문 본문에 적은 권한을 서버가 믿어서는 안 됩니다. 유효한 대화를 먼저 만든 뒤 다음 요청을 보낸다는 설정입니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · POST 요청 JSON 직렬화</h3>
 <div class="cell-before"><p>준비된 정상 사례의 대화 lesson, 요청 normal에 정확히 어떤 문장이 실리는지 확인합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
-request = {<span class="tok-string">&quot;session_id&quot;</span>: <span class="tok-string">&quot;lesson&quot;</span>, <span class="tok-string">&quot;request_id&quot;</span>: <span class="tok-string">&quot;normal&quot;</span>,
-           <span class="tok-string">&quot;question&quot;</span>: <span class="tok-string">&quot;장비 A의 점검 전 확인 사항은?&quot;</span>}
+request = {<span class="tok-string">"session_id"</span>: <span class="tok-string">"lesson"</span>, <span class="tok-string">"request_id"</span>: <span class="tok-string">"normal"</span>,
+           <span class="tok-string">"question"</span>: <span class="tok-string">"장비 A의 점검 전 확인 사항은?"</span>}
 print(json.dumps(request, ensure_ascii=<span class="tok-keyword">False</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&quot;session_id&quot;: &quot;lesson&quot;, &quot;request_id&quot;: &quot;normal&quot;, &quot;question&quot;: &quot;장비 A의 점검 전 확인 사항은?&quot;}</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{"session_id": "lesson", "request_id": "normal", "question": "장비 A의 점검 전 확인 사항은?"}</pre></div>
 <div class="cell-after"><p>세 필드가 한 요청으로 묶입니다. session_id는 대화를 찾고 request_id는 해당 시도를 추적합니다. 이 셀은 전송 전의 JSON을 만들었습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 응답에서 출처 읽기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 응답의 출처 필드</h3>
 <div class="cell-before"><p>로컬 전송 기록 정상 행에서 화면이 읽을 필드만 발췌했습니다. 실제 응답 원본에는 job 등 추가 필드도 있습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">transport_row = {<span class="tok-string">&#x27;status_code&#x27;</span>: <span class="tok-number">200</span>,
- <span class="tok-string">&#x27;body&#x27;</span>: {<span class="tok-string">&#x27;contract_version&#x27;</span>: <span class="tok-string">&#x27;P1-H1-prepared-v1&#x27;</span>,
-          <span class="tok-string">&#x27;result_kind&#x27;</span>: <span class="tok-string">&#x27;P1&#x27;</span>,
-          <span class="tok-string">&#x27;python_response&#x27;</span>: {<span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;normal&#x27;</span>,
-                              <span class="tok-string">&#x27;session_id&#x27;</span>: <span class="tok-string">&#x27;lesson&#x27;</span>,
-                              <span class="tok-string">&#x27;boundary_status&#x27;</span>: <span class="tok-string">&#x27;ok&#x27;</span>,
-                              <span class="tok-string">&#x27;workflow_status&#x27;</span>: <span class="tok-string">&#x27;completed&#x27;</span>,
-                              <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
-                                         <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
-                                         <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
-                                                      <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 &#x27;</span>
-                                                              <span class="tok-string">&#x27;표시등을 확인합니다.&#x27;</span>,
-                                                      <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 &#x27;</span>
-                                                                <span class="tok-string">&#x27;A&#x27;</span>,
-                                                      <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
-                                                      <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
-                                                      <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-                                                      <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
-                                         <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
-                                         <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>},
-                              <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;committed&#x27;</span>,
-                              <span class="tok-string">&#x27;error&#x27;</span>: <span class="tok-keyword">None</span>}}}
-payload = transport_row[<span class="tok-string">&quot;body&quot;</span>][<span class="tok-string">&quot;python_response&quot;</span>]
-print(transport_row[<span class="tok-string">&quot;status_code&quot;</span>], payload[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;status&quot;</span>], payload[<span class="tok-string">&quot;storage_status&quot;</span>])
-print(payload[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">transport_row = {<span class="tok-string">'status_code'</span>: <span class="tok-number">200</span>,
+ <span class="tok-string">'body'</span>: {<span class="tok-string">'contract_version'</span>: <span class="tok-string">'P1-H1-prepared-v1'</span>,
+          <span class="tok-string">'result_kind'</span>: <span class="tok-string">'P1'</span>,
+          <span class="tok-string">'python_response'</span>: {<span class="tok-string">'request_id'</span>: <span class="tok-string">'normal'</span>,
+                              <span class="tok-string">'session_id'</span>: <span class="tok-string">'lesson'</span>,
+                              <span class="tok-string">'boundary_status'</span>: <span class="tok-string">'ok'</span>,
+                              <span class="tok-string">'workflow_status'</span>: <span class="tok-string">'completed'</span>,
+                              <span class="tok-string">'result'</span>: {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+                                         <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+                                         <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
+                                                      <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 '</span>
+                                                              <span class="tok-string">'표시등을 확인합니다.'</span>,
+                                                      <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 '</span>
+                                                                <span class="tok-string">'A'</span>,
+                                                      <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
+                                                      <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
+                                                      <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+                                                      <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+                                         <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+                                         <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>},
+                              <span class="tok-string">'storage_status'</span>: <span class="tok-string">'committed'</span>,
+                              <span class="tok-string">'error'</span>: <span class="tok-keyword">None</span>}}}
+payload = transport_row[<span class="tok-string">"body"</span>][<span class="tok-string">"python_response"</span>]
+print(transport_row[<span class="tok-string">"status_code"</span>], payload[<span class="tok-string">"result"</span>][<span class="tok-string">"status"</span>], payload[<span class="tok-string">"storage_status"</span>])
+print(payload[<span class="tok-string">"result"</span>][<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 answered committed
 RULE-A</pre></div>
 <div class="cell-after"><p>기록에는 200·answered·committed와 RULE-A가 있습니다. 200은 준비 코드의 전송 상태, answered는 질문 처리 결과, committed는 저장 결과입니다. 어느 하나만 보고 나머지를 추정하지 않습니다.</p>
@@ -79,65 +79,59 @@ RULE-A</pre></div>
 </article>
 </section>
 <section id="nb-storage" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>답은 만들었지만 저장하지 못한 요청</h2>
+<h2>답변 생성과 저장 성공 여부 구분</h2>
 </div>
 </header>
 <p>응답 예시　대화 lesson / 요청 unsaved / 로컬 전송 상태 503 / 업무 답 장비 B의 고정 장치 / 오류 코드 storage_failure. 이 경우 “관련 문서가 없습니다”라고 표시하면 다음 행동을 고르기 어렵습니다. 이전 요청이 저장되었는지 먼저 확인하도록 안내합니다.</p>
 <!-- MOTION split-receipt -->
-<figure class="motion-study" id="motion-split-receipt" data-sheet="motion/split-receipt.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>답을 만들었다는 영수증이 저장까지 보장할까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/split-receipt-still.webp" width="800" height="272" alt="계산한 답과 저장 결과는 독립된 필드입니다. 저장 실패 사례에서는 답이 있어도 저장을 완료했다고 표시할 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>계산한 답과 저장 결과는 독립된 필드입니다. 저장 실패 사례에서는 답이 있어도 저장을 완료했다고 표시할 수 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 저장 실패를 구분해 표시하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 답변 생성 후 저장 실패</h3>
 <div class="cell-before"><p>기록에서 계산한 답과 저장 오류명을 꺼내어 담당자가 확인할 두 줄을 만드세요.</p>
 <p>failed는 로컬에 제공한 503 기록에서 python_response에 해당하는 부분만 꺼낸 값입니다. 여기서는 result부터 읽습니다. 앞의 기록 전체에서 시작할 때만 body와 python_response를 먼저 거치세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">failed = {<span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;unsaved&#x27;</span>,
- <span class="tok-string">&#x27;session_id&#x27;</span>: <span class="tok-string">&#x27;lesson&#x27;</span>,
- <span class="tok-string">&#x27;boundary_status&#x27;</span>: <span class="tok-string">&#x27;storage_error&#x27;</span>,
- <span class="tok-string">&#x27;workflow_status&#x27;</span>: <span class="tok-string">&#x27;completed&#x27;</span>,
- <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
-            <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-            <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
-                         <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-                         <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
-                         <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
-                         <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
-                         <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-                         <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
-            <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
-            <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>},
- <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;failed&#x27;</span>,
- <span class="tok-string">&#x27;error&#x27;</span>: {<span class="tok-string">&#x27;code&#x27;</span>: <span class="tok-string">&#x27;storage_failure&#x27;</span>,
-           <span class="tok-string">&#x27;stage&#x27;</span>: <span class="tok-string">&#x27;session_commit&#x27;</span>,
-           <span class="tok-string">&#x27;error_type&#x27;</span>: <span class="tok-string">&#x27;OSError&#x27;</span>}}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">failed = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'unsaved'</span>,
+ <span class="tok-string">'session_id'</span>: <span class="tok-string">'lesson'</span>,
+ <span class="tok-string">'boundary_status'</span>: <span class="tok-string">'storage_error'</span>,
+ <span class="tok-string">'workflow_status'</span>: <span class="tok-string">'completed'</span>,
+ <span class="tok-string">'result'</span>: {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+            <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+            <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
+                         <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+                         <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
+                         <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
+                         <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
+                         <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+                         <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+            <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+            <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>},
+ <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
+ <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
+           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
+           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
 <span class="tok-comment"># result 안의 답과 error 안의 code를 각각 출력하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 21줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">failed = {<span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;unsaved&#x27;</span>,
- <span class="tok-string">&#x27;session_id&#x27;</span>: <span class="tok-string">&#x27;lesson&#x27;</span>,
- <span class="tok-string">&#x27;boundary_status&#x27;</span>: <span class="tok-string">&#x27;storage_error&#x27;</span>,
- <span class="tok-string">&#x27;workflow_status&#x27;</span>: <span class="tok-string">&#x27;completed&#x27;</span>,
- <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
-            <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-            <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
-                         <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-                         <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
-                         <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
-                         <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
-                         <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-                         <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
-            <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
-            <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>},
- <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;failed&#x27;</span>,
- <span class="tok-string">&#x27;error&#x27;</span>: {<span class="tok-string">&#x27;code&#x27;</span>: <span class="tok-string">&#x27;storage_failure&#x27;</span>,
-           <span class="tok-string">&#x27;stage&#x27;</span>: <span class="tok-string">&#x27;session_commit&#x27;</span>,
-           <span class="tok-string">&#x27;error_type&#x27;</span>: <span class="tok-string">&#x27;OSError&#x27;</span>}}
-print(failed[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;answer&quot;</span>])
-print(failed[<span class="tok-string">&quot;error&quot;</span>][<span class="tok-string">&quot;code&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 21줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">failed = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'unsaved'</span>,
+ <span class="tok-string">'session_id'</span>: <span class="tok-string">'lesson'</span>,
+ <span class="tok-string">'boundary_status'</span>: <span class="tok-string">'storage_error'</span>,
+ <span class="tok-string">'workflow_status'</span>: <span class="tok-string">'completed'</span>,
+ <span class="tok-string">'result'</span>: {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+            <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+            <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
+                         <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+                         <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
+                         <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
+                         <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
+                         <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+                         <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+            <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+            <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>},
+ <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
+ <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
+           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
+           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
+print(failed[<span class="tok-string">"result"</span>][<span class="tok-string">"answer"</span>])
+print(failed[<span class="tok-string">"error"</span>][<span class="tok-string">"code"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
 storage_failure</pre></div>
 <div class="cell-after"><p>고정 장치 답과 storage_failure가 함께 남습니다. 503이라고 해서 계산 결과까지 사라진 것은 아닙니다.</p>
@@ -146,7 +140,7 @@ storage_failure</pre></div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>103장에는 정상 Q01과 저장 실패 요청의 상태·출처를 함께 넘깁니다. 이 장은 요청과 로컬 전송 자료를 노트북에서 읽습니다. 실제 HTTP 응답, DB와 인증 결과는 이 실행으로 확인할 수 없습니다.</p>

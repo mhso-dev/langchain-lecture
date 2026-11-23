@@ -1,100 +1,94 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>데이터·도구 접근 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>자료 접근 범위와 대체 데이터 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 089 / FINAL PROJECT</p>
-<span class="sidebar-title">데이터·도구 접근 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-inventory"><span>02</span>자료 목록에 읽을 범위 적기</a><a href="#nb-fallback"><span>03</span>도구에 연결할 수 없을 때 쓸 자료</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">자료 접근 범위와 대체 데이터</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inventory"><span>02</span>공개 범위별 문서 목록</a><a href="#nb-fallback"><span>03</span>연동 실패 시 사용할 대체 자료</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 089 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>데이터·도구 접근 · 방향과 예시</h1>
+<h1>자료 접근 범위와 대체 데이터</h1>
 <p class="hero-description">자료를 받으면 팀원 한 명의 컴퓨터에서 열리는 것과 모든 사용자에게 보여 줄 수 있는 것을 구분해야 합니다. 규정 A와 내부 규정을 같은 폴더에서 읽을 수 있어도 공개 그룹에 인용할 수 있는 범위는 다릅니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter89.ipynb" download="chapter89.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>89장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-inventory" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>자료 목록에 읽을 범위 적기</h2>
+<h2>공개 범위별 문서 목록</h2>
 </div>
 </header>
-<p>자료 카드 A　RULE-A / 가상 장비실 규정 A / 1쪽 2.1절 / 개정 2026-11-01 / rules-v1 / public·admin 허용. 자료 카드 B　RULE-B / 가상 장비실 규정 B / 2쪽 2.2절 / 같은 개정일·판본 / 같은 두 그룹 허용. 별도 내부 규정 RULE-ADMIN은 admin만 읽도록 정해 둡니다. 세 문서 모두 수업용 가상 자료이며 소속 기관의 실제 방침은 별도로 확인해야 합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공개 화면이 읽을 후보</h3>
+<p class="concept-intro">자료마다 접근할 수 있는 사용자가 다릅니다. 자료 목록에 허용 범위를 적고 외부 연결이 끊겼을 때 사용할 근거를 정합니다.</p><p>자료 카드 A　RULE-A / 가상 장비실 규정 A / 1쪽 2.1절 / 개정 2026-11-01 / rules-v1 / public·admin 허용. 자료 카드 B　RULE-B / 가상 장비실 규정 B / 2쪽 2.2절 / 같은 개정일·판본 / 같은 두 그룹 허용. 별도 내부 규정 RULE-ADMIN은 admin만 읽도록 정해 둡니다. 세 문서 모두 수업용 가상 자료이며 소속 기관의 실제 방침은 별도로 확인해야 합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공개 그룹의 자료 필터</h3>
 <div class="cell-before"><p>자료 담당자가 가상 public 사용자에게 제공할 문서 ID만 고릅니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 29줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
-  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
-  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
-  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
-  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
-  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 B&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
-  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
-  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
-  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-ADMIN&#x27;</span>,
-  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-keyword">None</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 내부 규정&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>,
-  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;3.1&#x27;</span>,
-  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
-  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;admin&#x27;</span>]}]
-allowed = [doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> documents <span class="tok-keyword">if</span> <span class="tok-string">&quot;public&quot;</span> <span class="tok-keyword">in</span> doc[<span class="tok-string">&quot;groups&quot;</span>]]
-print([doc[<span class="tok-string">&quot;id&quot;</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> allowed])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;RULE-A&#x27;, &#x27;RULE-B&#x27;]</pre></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 29줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
+  <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 A'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
+  <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
+  <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+  <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
+  <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
+  <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 B'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
+  <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
+  <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+  <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
+  <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-ADMIN'</span>,
+  <span class="tok-string">'equipment'</span>: <span class="tok-keyword">None</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 내부 규정'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>,
+  <span class="tok-string">'section'</span>: <span class="tok-string">'3.1'</span>,
+  <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+  <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
+  <span class="tok-string">'groups'</span>: [<span class="tok-string">'admin'</span>]}]
+allowed = [doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> documents <span class="tok-keyword">if</span> <span class="tok-string">"public"</span> <span class="tok-keyword">in</span> doc[<span class="tok-string">"groups"</span>]]
+print([doc[<span class="tok-string">"id"</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> allowed])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['RULE-A', 'RULE-B']</pre></div>
 <div class="cell-after"><p>RULE-A와 RULE-B 두 개가 남습니다. 검색한 뒤 민감한 결과를 가리는 방식에서는 검색 기록에 본문이 남을 수 있으므로 이 예시에서는 먼저 후보를 줄입니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-fallback" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>도구에 연결할 수 없을 때 쓸 자료</h2>
+<h2>연동 실패 시 사용할 대체 자료</h2>
 </div>
 </header>
 <p>접근 기록 예시　대상 가상 장비실 규정 A / 자료 형태 교육용 JSON / 읽은 위치 1쪽 2.1절 / 입력 장비 A / 관찰 “점검 전 전원 표시등을 확인합니다.” / 실제 장비실 시스템 접근 미확인. 원격 연결을 확인하지 못한 팀도 같은 필드의 가상 레코드로 질문 흐름을 설계할 수 있습니다. 연결 상태와 데이터 읽기 상태는 따로 남기세요.</p>
 <!-- MOTION offline-copy -->
-<figure class="motion-study" id="motion-offline-copy" data-sheet="motion/offline-copy.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>연결이 끊기면 어떤 규정을 읽을 수 있을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/offline-copy-still.webp" width="800" height="272" alt="수업에서 미리 확보한 허용 규정 RULE-A와 RULE-B는 사본으로 확인할 수 있습니다. 사본 밖 자료를 읽었다고 기록할 수는 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>수업에서 미리 확보한 허용 규정 RULE-A와 RULE-B는 사본으로 확인할 수 있습니다. 사본 밖 자료를 읽었다고 기록할 수는 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 장비 B의 원문 위치</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 근거 문서의 위치</h3>
 <div class="cell-before"><p>공개 문서 후보에서 장비 B를 골라 출처 이름과 페이지, 절을 표시하세요.</p>
 <p>접근 기록을 두 칸으로 남기세요. ‘제공 JSON에서 허용된 장비 B를 찾음’은 이 셀에서 확인할 수 있습니다. ‘실제 장비실 시스템 조회’는 별도 확인 전입니다. 팀 자료에서 B가 없으면 원자료 목록에 있는지, 허용 그룹에서 제외됐는지 차례로 봅니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">selected = <span class="tok-string">&quot;장비 B&quot;</span>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">selected = <span class="tok-string">"장비 B"</span>
 <span class="tok-comment"># allowed에서 이름이 일치하는 레코드를 골라 위치를 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">selected = <span class="tok-string">&quot;장비 B&quot;</span>
-locator = next(doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> allowed <span class="tok-keyword">if</span> doc[<span class="tok-string">&quot;equipment&quot;</span>] == selected)
-print(locator[<span class="tok-string">&quot;source&quot;</span>], locator[<span class="tok-string">&quot;page&quot;</span>], locator[<span class="tok-string">&quot;section&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">selected = <span class="tok-string">"장비 B"</span>
+locator = next(doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> allowed <span class="tok-keyword">if</span> doc[<span class="tok-string">"equipment"</span>] == selected)
+print(locator[<span class="tok-string">"source"</span>], locator[<span class="tok-string">"page"</span>], locator[<span class="tok-string">"section"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">가상 장비실 규정 B 2 2.2</pre></div>
 <div class="cell-after"><p>가상 장비실 규정 B의 2쪽 2.2절을 확인합니다. 자료 ID만 발견한 경우와 원문 위치까지 읽은 경우를 목록에서 구분할 수 있습니다. 인수표에는 ‘읽은 공개 파일과 문서 ID’, ‘실제 시스템 접근 승인 여부’를 두 칸으로 나눠 적으세요. 파일만 열었다면 두 번째 칸은 미확인입니다.</p>
 </div>
@@ -102,7 +96,7 @@ print(locator[<span class="tok-string">&quot;source&quot;</span>], locator[<span
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>자료 목록에 문서 ID·판본·허용 그룹을 남기고, 화면에 보여 줄 수 있는 문장 하나를 붙이세요. 90장은 이 목록에서 기대 출처를 고릅니다.</p>

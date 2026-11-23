@@ -16,7 +16,9 @@ class Page(HTMLParser):
         self.links = []
         self.notebooks = []
         self.simulations = []
-        self.motion = []
+        self.has_practice = False
+        self.has_clip = False
+        self.title = None
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
@@ -30,8 +32,8 @@ class Page(HTMLParser):
                 self.links.extend(item.split()[0] for item in value.split(",") if item.strip())
             else:
                 self.links.append(value)
-        if tag == "figure" and "motion-study" in attrs.get("class", "").split():
-            self.motion.append(Path(attrs["data-sheet"]).stem + ".gif")
+        self.has_practice |= "data-practice" in attrs
+        self.has_clip |= tag == "video" and attrs.get("src") == "concept.mp4"
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
         if tag == "iframe" and attrs.get("src") == "simulation.html":
@@ -67,9 +69,12 @@ def main():
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
-        attachments = {name for cell in notebook["cells"] for name in cell.get("attachments", {})}
-        if not page.motion or not set(page.motion) <= attachments:
-            errors.append(f"{name} 웹 애니메이션과 노트북 GIF를 대조하세요.")
+        for present, asset in ((page.has_practice, "../assets/practice-space.js"), (page.has_clip, "concept.mp4")):
+            if present and asset not in page.links:
+                errors.append(f"{name} 새 학습 자료 연결 누락: {asset}")
+        for asset in page.links:
+            if asset.endswith((".svg", ".gif")) or asset == "simulation.html" or asset.startswith("motion/"):
+                errors.append(f"{name} 이전 시각 자료 연결: {asset}")
         for cell in notebook["cells"]:
             if cell["cell_type"] != "markdown":
                 continue
@@ -81,7 +86,7 @@ def main():
             errors.append(f"{name} 코드 셀 누락")
     if errors:
         raise SystemExit("\n".join(sorted(set(errors))))
-    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, 시뮬레이션 연결 {sum(len(p.simulations) for p in pages.values())}곳 통과")
+    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {sum(p.has_practice for p in pages.values())}곳, 개념 영상 {sum(p.has_clip for p in pages.values())}편 통과")
 
 
 if __name__ == "__main__":

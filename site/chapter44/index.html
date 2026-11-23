@@ -1,97 +1,91 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>데이터·평가 준비 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>평가 문항과 정답 근거 매핑 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 44 / MIDTERM PROJECT</p>
-<span class="sidebar-title">데이터·평가 준비 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-paragraph-map"><span>02</span>문단에 기대 질문 연결하기</a><a href="#nb-missing-answer"><span>03</span>주말 수업 질문은 어떻게 기록할까요?</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">평가 문항과 정답 근거 매핑</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-paragraph-map"><span>02</span>문단 ID와 기대 질문</a><a href="#nb-missing-answer"><span>03</span>답변할 수 없는 질문의 기대값</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 44 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>데이터·평가 준비 · 방향과 예시</h1>
+<h1>평가 문항과 정답 근거 매핑</h1>
 <p class="hero-description">가상 운영 안내 한 건에는 평일 수업, 과제 제출, 업로드 오류를 설명하는 세 문단이 있습니다. 팀은 원문을 먼저 눈으로 읽고 질문별 기대 문단을 붙입니다. 검색 결과를 본 뒤 정답을 바꾸면 어떤 문제가 고쳐졌는지 알기 어렵습니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter44.ipynb" download="chapter44.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>44장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-paragraph-map" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>문단에 기대 질문 연결하기</h2>
+<h2>문단 ID와 기대 질문</h2>
 </div>
 </header>
-<p>Q01 “과제는 어디에 내나요?”는 p2에서 답할 수 있습니다. “과제함”만 들어 있으면 충분한지, 제출 뒤 파일 이름과 등록 시간을 확인하라는 점까지 필요한지 먼저 합의합니다. Q03의 업로드 오류는 p3에 연결합니다. 문단 번호와 실제 쪽수는 구별하세요. 44장 원자료에는 쪽수 필드가 없습니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Q01의 정답 근거 찾아 읽기</h3>
+<p class="concept-intro">정답 근거는 평가 질문의 답을 뒷받침하는 문단입니다. 문서에 답이 없는 문항도 평가에 포함해야 임의의 답을 걸러낼 수 있습니다.</p><p>Q01 “과제는 어디에 내나요?”는 p2에서 답할 수 있습니다. “과제함”만 들어 있으면 충분한지, 제출 뒤 파일 이름과 등록 시간을 확인하라는 점까지 필요한지 먼저 합의합니다. Q03의 업로드 오류는 p3에 연결합니다. 문단 번호와 실제 쪽수는 구별하세요. 44장 원자료에는 쪽수 필드가 없습니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문항 ID와 정답 문단 매핑</h3>
 <div class="cell-before"><p>질문 자료에 적힌 첫 기대 ID로 원문을 고릅니다.</p>
 <p>Q01에서 ‘어디에’라는 질문의 필수 답은 과제함입니다. ‘제출 뒤 파일 이름과 등록 시간을 확인하세요’는 추가 안내로 기록하세요. 팀에서 절차 전체를 필수로 채점하려면 질문도 ‘어디에 내고 무엇을 확인하나요?’로 바꿉니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">paragraphs = [{<span class="tok-string">&#x27;paragraph_id&#x27;</span>: <span class="tok-string">&#x27;p1&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;정규 수업은 평일 오전 9시에 시작합니다. 일정 변경은 과정 게시판에서 확인합니다.&#x27;</span>},
- {<span class="tok-string">&#x27;paragraph_id&#x27;</span>: <span class="tok-string">&#x27;p2&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.&#x27;</span>},
- {<span class="tok-string">&#x27;paragraph_id&#x27;</span>: <span class="tok-string">&#x27;p3&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 &#x27;</span>
-          <span class="tok-string">&#x27;않습니다.&#x27;</span>}]
-question = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;Q01&#x27;</span>,
- <span class="tok-string">&#x27;split&#x27;</span>: <span class="tok-string">&#x27;development&#x27;</span>,
- <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;과제는 어디에 내나요?&#x27;</span>,
- <span class="tok-string">&#x27;answerable&#x27;</span>: <span class="tok-keyword">True</span>,
- <span class="tok-string">&#x27;expected_paragraph_ids&#x27;</span>: [<span class="tok-string">&#x27;p2&#x27;</span>],
- <span class="tok-string">&#x27;expected_points&#x27;</span>: [<span class="tok-string">&#x27;과제함&#x27;</span>, <span class="tok-string">&#x27;파일 이름과 등록 시간 확인&#x27;</span>]}
-by_paragraph = {row[<span class="tok-string">&#x27;paragraph_id&#x27;</span>]: row[<span class="tok-string">&#x27;text&#x27;</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> paragraphs}
-print(by_paragraph[question[<span class="tok-string">&#x27;expected_paragraph_ids&#x27;</span>][<span class="tok-number">0</span>]])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">paragraphs = [{<span class="tok-string">'paragraph_id'</span>: <span class="tok-string">'p1'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'정규 수업은 평일 오전 9시에 시작합니다. 일정 변경은 과정 게시판에서 확인합니다.'</span>},
+ {<span class="tok-string">'paragraph_id'</span>: <span class="tok-string">'p2'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.'</span>},
+ {<span class="tok-string">'paragraph_id'</span>: <span class="tok-string">'p3'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 '</span>
+          <span class="tok-string">'않습니다.'</span>}]
+question = {<span class="tok-string">'id'</span>: <span class="tok-string">'Q01'</span>,
+ <span class="tok-string">'split'</span>: <span class="tok-string">'development'</span>,
+ <span class="tok-string">'question'</span>: <span class="tok-string">'과제는 어디에 내나요?'</span>,
+ <span class="tok-string">'answerable'</span>: <span class="tok-keyword">True</span>,
+ <span class="tok-string">'expected_paragraph_ids'</span>: [<span class="tok-string">'p2'</span>],
+ <span class="tok-string">'expected_points'</span>: [<span class="tok-string">'과제함'</span>, <span class="tok-string">'파일 이름과 등록 시간 확인'</span>]}
+by_paragraph = {row[<span class="tok-string">'paragraph_id'</span>]: row[<span class="tok-string">'text'</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> paragraphs}
+print(by_paragraph[question[<span class="tok-string">'expected_paragraph_ids'</span>][<span class="tok-number">0</span>]])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.</pre></div>
 <div class="cell-after"><p>제출 위치와 제출 후 확인 절차가 한 문단에 함께 나옵니다. 검색기가 p3의 “제출 오류”를 골랐다면 단어는 비슷해도 질문의 답은 빠집니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-missing-answer" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>주말 수업 질문은 어떻게 기록할까요?</h2>
+<h2>답변할 수 없는 질문의 기대값</h2>
 </div>
 </header>
 <p>Q04는 주말 수업 시작 시각을 묻습니다. p1에 적힌 오전 9시는 평일에만 적용되므로 답변 불가가 이 질문의 기대 결과입니다. 팀의 데이터 표에도 “평일”처럼 답의 적용 범위를 바꾸는 낱말을 남기세요.</p>
 <!-- MOTION calendar-reach -->
-<figure class="motion-study" id="motion-calendar-reach" data-sheet="motion/calendar-reach.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>평일 오전 9시를 토요일에도 옮겨 적을 수 있을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/calendar-reach-still.webp" width="800" height="272" alt="문단 p1은 평일 시작 시각만 정합니다. 토·일 칸에는 시각이 없어 Q04의 답은 문서에서 확인할 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>문단 p1은 평일 시작 시각만 정합니다. 토·일 칸에는 시각이 없어 Q04의 답은 문서에서 확인할 수 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · Q04에 시간 답변이 없는 이유 읽기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 무응답 문항의 평가 근거</h3>
 <div class="cell-before"><p>제공 평가 문항의 기대 조건과 p1 원문을 차례로 읽습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">weekend = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;Q04&#x27;</span>,
- <span class="tok-string">&#x27;split&#x27;</span>: <span class="tok-string">&#x27;check&#x27;</span>,
- <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;주말 수업이 언제 시작하나요?&#x27;</span>,
- <span class="tok-string">&#x27;answerable&#x27;</span>: <span class="tok-keyword">False</span>,
- <span class="tok-string">&#x27;expected_paragraph_ids&#x27;</span>: [],
- <span class="tok-string">&#x27;expected_points&#x27;</span>: [<span class="tok-string">&#x27;주말 일정은 문서로 확인 불가&#x27;</span>]}
-print(weekend[<span class="tok-string">&#x27;expected_points&#x27;</span>])
-print(by_paragraph[<span class="tok-string">&#x27;p1&#x27;</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;주말 일정은 문서로 확인 불가&#x27;]
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">weekend = {<span class="tok-string">'id'</span>: <span class="tok-string">'Q04'</span>,
+ <span class="tok-string">'split'</span>: <span class="tok-string">'check'</span>,
+ <span class="tok-string">'question'</span>: <span class="tok-string">'주말 수업이 언제 시작하나요?'</span>,
+ <span class="tok-string">'answerable'</span>: <span class="tok-keyword">False</span>,
+ <span class="tok-string">'expected_paragraph_ids'</span>: [],
+ <span class="tok-string">'expected_points'</span>: [<span class="tok-string">'주말 일정은 문서로 확인 불가'</span>]}
+print(weekend[<span class="tok-string">'expected_points'</span>])
+print(by_paragraph[<span class="tok-string">'p1'</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['주말 일정은 문서로 확인 불가']
 정규 수업은 평일 오전 9시에 시작합니다. 일정 변경은 과정 게시판에서 확인합니다.</pre></div>
 <div class="cell-after"><p>평일 시작 시각에서 주말 시각을 추측하면 답을 만들어 낸 셈입니다. 자체 문서로 바꿀 때는 원문 버전과 문항 ID를 남겨 다음 실험도 같은 사례로 재현하세요.</p>
 </div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>수정에 쓸 개발 문항과 나중에 다시 볼 확인 문항을 나누세요. 이미 공개해 함께 읽은 확인 문항은 새 사용자 질문에서의 성능 근거와 구별해 기록합니다.</p>

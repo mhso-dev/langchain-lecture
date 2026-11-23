@@ -1,69 +1,61 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>핵심 기능 B · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>대화 턴의 현재 출처와 이전 기록 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">2027 한국경제신문 강의 · 검토용</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 97 / 120</p>
-<span class="sidebar-title">핵심 기능 B · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-transition"><span>02</span>두 번째 질문에서 현재 출처 교체하기</a><a href="#nb-third"><span>03</span>다시 답할 수 있는 세 번째 질문</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">대화 턴의 현재 출처와 이전 기록</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-transition"><span>02</span>질문 전환 시 현재 출처 교체</a><a href="#nb-third"><span>03</span>이력 보존과 다음 답변 갱신</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 97 / 120</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>핵심 기능 B · 방향과 예시</h1>
+<h1>대화 턴의 현재 출처와 이전 기록</h1>
 <p class="hero-description">장비 A 질문에 답한 직후 같은 사람이 교체 일정을 물었습니다. 바로 전 답의 RULE-A가 새 답 옆에 남으면 사용자는 규정에 교체 일정이 있다고 오해할 수 있습니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter97.ipynb" download="chapter97.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>97장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-transition" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>두 번째 질문에서 현재 출처 교체하기</h2>
+<h2>질문 전환 시 현재 출처 교체</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>새 질문의 상태가 no_evidence가 되면 RULE-A가 어디에서 사라지는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>두 번째 질문에 근거가 없으면 앞 답의 출처를 지웁니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>기능 A에서 받은 첫 답은 answered와 RULE-A였습니다. 기능 B의 일정 질문 Q03은 no_evidence와 빈 출처를 돌려줍니다. 화면 상태를 새 결과로 통째로 바꾸면 앞선 원문 링크가 새 질문의 근거로 보이지 않습니다. 아래 예시는 로컬 기록의 결과를 다시 사용합니다.</p>
-</figcaption>
-</figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 답이 있는 상태에서 Q03 받기</h3>
+
+<p class="concept-intro">현재 화면의 답변과 출처는 새 질문에 맞게 바뀌지만 지난 턴의 근거는 기록에 남습니다. 두 저장 위치를 따로 갱신합니다.</p><figure class="lesson-clip" id="concept-clip"><h3>현재 화면과 대화 이력</h3><video controls muted playsinline preload="metadata" aria-label="현재 화면과 대화 이력" src="concept.mp4"></video><figcaption>왼쪽 화면에서 새 질문을 처리하는 동안 오른쪽 기록에는 이전 턴의 출처가 남습니다. 현재 화면을 지우는 코드가 대화 이력까지 바꾸는지 확인하세요.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 현재 턴의 출처 교체</h3>
 <div class="cell-before"><p>화면에서 현재 답만 덮어쓰고 지난 답을 이력에 넣습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">first = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
- <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
-              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
-              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
-              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
-              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
-              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
- <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
- <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
-second = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.&#x27;</span>,
- <span class="tok-string">&#x27;sources&#x27;</span>: [],
- <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
- <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">first = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+ <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
+              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
+              <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
+              <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
+              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+ <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+ <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
+second = {<span class="tok-string">'status'</span>: <span class="tok-string">'no_evidence'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.'</span>,
+ <span class="tok-string">'sources'</span>: [],
+ <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+ <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
 history = [first]
 current = second
-print(current[<span class="tok-string">&quot;status&quot;</span>], current[<span class="tok-string">&quot;sources&quot;</span>])
-print(history[<span class="tok-number">0</span>][<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>])</code></pre></figure>
+print(current[<span class="tok-string">"status"</span>], current[<span class="tok-string">"sources"</span>])
+print(history[<span class="tok-number">0</span>][<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence []
 RULE-A</pre></div>
 <div class="cell-after"><p>현재 출처는 비고 이력에는 RULE-A가 그대로 있습니다. 새 질문의 화면에서는 출처가 사라지고, 앞선 질문의 이력에는 근거가 남습니다.</p>
@@ -71,50 +63,44 @@ RULE-A</pre></div>
 </article>
 </section>
 <section id="nb-third" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>다시 답할 수 있는 세 번째 질문</h2>
+<h2>이력 보존과 다음 답변 갱신</h2>
 </div>
 </header>
 <p>인계 카드　Q01 answered·RULE-A → Q03 no_evidence·인용 없음 → Q04 answered·RULE-B. 이 순서에는 근거 있는 답에서 없는 답으로 가는 경우와 다시 근거가 생기는 경우가 모두 있습니다. 팀 주제에서는 연속 질문을 보낸 다음 현재 화면과 접힌 과거 이력의 자료가 각각 어느 질문에 속하는지 표시하세요.</p>
 <!-- MOTION turn-filmstrip -->
-<figure class="motion-study" id="motion-turn-filmstrip" data-sheet="motion/turn-filmstrip.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>새 질문이 와도 예전 턴의 근거까지 지워질까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/turn-filmstrip-still.webp" width="800" height="272" alt="화면은 현재 턴의 출처만 읽습니다. Q03에서 빈 목록이 보이더라도 이력의 Q01은 RULE-A를 유지하고, Q04에는 RULE-B가 붙습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>화면은 현재 턴의 출처만 읽습니다. Q03에서 빈 목록이 보이더라도 이력의 Q01은 RULE-A를 유지하고, Q04에는 RULE-B가 붙습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 마지막 화면을 장비 B로 바꾸기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 이력과 현재 화면 분리</h3>
 <div class="cell-before"><p>장비 B 응답이 들어왔을 때 출처가 없는 이전 응답을 이력에 보존하고 새 답의 출처를 읽어 보세요.</p>
 <p>이력에 들어 있는 직전 Q03의 상태는 no_evidence입니다. 지금 Q04에서 답과 함께 보여 줄 출처는 RULE-B입니다. 직전 상태가 현재 출처를 지우거나 이전 출처가 현재 카드에 남아서는 안 됩니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">third = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
- <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
-              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
-              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
-              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
- <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
- <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">third = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+ <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
+              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
+              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
+              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
+              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+ <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+ <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
 <span class="tok-comment"># history를 복사해 current를 기록하고 새 답을 선택하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">third = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
- <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
-              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
-              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
-              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
-              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
- <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
- <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">third = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+ <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
+              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
+              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
+              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
+              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
+              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+ <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+ <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
 updated_history = [*history, current]
 current_reply = third
-print(updated_history[-<span class="tok-number">1</span>][<span class="tok-string">&quot;status&quot;</span>], current_reply[<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>])</code></pre></figure>
+print(updated_history[-<span class="tok-number">1</span>][<span class="tok-string">"status"</span>], current_reply[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence RULE-B</pre></div>
 <div class="cell-after"><p>no_evidence와 RULE-B가 나옵니다. 근거 없는 이전 답도 지우지 않아야 어떤 질문에서 문제가 생겼는지 다시 볼 수 있습니다.</p>
 </div>
@@ -122,7 +108,7 @@ print(updated_history[-<span class="tok-number">1</span>][<span class="tok-strin
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>현재 화면은 마지막 요청 한 건의 답·출처로 바꾸고, 과거 기록은 별도로 보관하세요. 98장에서 질문 표기를 바꿔 실험할 때도 이전 응답의 출처가 새 응답에 섞이지 않는지 봅니다.</p>
@@ -135,4 +121,4 @@ print(updated_history[-<span class="tok-number">1</span>][<span class="tok-strin
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

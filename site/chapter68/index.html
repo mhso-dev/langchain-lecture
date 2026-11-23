@@ -1,39 +1,39 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>서비스 함수를 HTTP로 제공하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>FastAPI 요청 모델과 POST 엔드포인트 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 68 / HTTP API</p>
-<span class="sidebar-title">서비스 함수를 HTTP로 제공하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-request"><span>02</span>경로에 도착하기 전에 요청 검사하기</a><a href="#nb-errors"><span>03</span>형식 오류와 근거 없음 구별하기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">FastAPI 요청 모델과 POST 엔드포인트</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>Pydantic 요청 모델과 입력 검증</a><a href="#nb-errors"><span>03</span>HTTP 검증 오류와 빈 근거 응답</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>FastAPI 요청 모델과 POST 엔드포인트 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 68 / HTTP API</span><span class="template-badge">학생용 교재</span></div>
-<h1>서비스 함수를 HTTP로 제공하기</h1>
+<h1>FastAPI 요청 모델과 POST 엔드포인트</h1>
 <p class="hero-description">과제 안내를 화면에서 요청하려면 요청 주소와 자료 형식이 필요합니다. FastAPI 앱에 POST /ask를 붙이고 TestClient가 실제 앱에 보낸 HTTP 요청을 관찰합니다. 서버 포트를 열지 않아도 경로와 검증을 확인할 수 있습니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 068 · 8H</span><span>6일 HTTP 호출, 12일 구조화 응답, 67일 S1 서비스 평가</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter68.ipynb" download="chapter68.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>68장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0, pydantic 2.14.1입니다.</p>
 </div>
 </section>
 <section id="nb-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>경로에 도착하기 전에 요청 검사하기</h2>
+<h2>Pydantic 요청 모델과 입력 검증</h2>
 </div>
 </header>
-<p>Pydantic 모델은 question과 k를 파싱합니다. 질문 앞뒤 공백은 정리하고 공백만 남은 질문은 거절합니다. k에는 1~10 범위의 정수만 받습니다. 아래의 수업용 서비스는 고정 문서 한 건에서 A1 결과를 만듭니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 앱과 입력 모델</h3>
+<p class="concept-intro">FastAPI는 HTTP 요청을 경로 함수에 전달합니다. 요청 모델에서 거부된 입력과 서비스까지 도착해 근거를 찾지 못한 입력의 결과를 비교합니다.</p><p>Pydantic 모델은 question과 k를 파싱합니다. 질문 앞뒤 공백은 정리하고 공백만 남은 질문은 거절합니다. k에는 1~10 범위의 정수만 받습니다. 아래의 수업용 서비스는 고정 문서 한 건에서 A1 결과를 만듭니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · FastAPI 앱과 요청 모델</h3>
 <div class="cell-before"><p>요청을 검사할 모델을 먼저 등록합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> fastapi <span class="tok-keyword">import</span> FastAPI
@@ -41,72 +41,66 @@
 <span class="tok-keyword">from</span> pydantic <span class="tok-keyword">import</span> BaseModel, ConfigDict, Field, StrictInt, field_validator
 app = FastAPI()
 <span class="tok-keyword">class</span> AskRequest(BaseModel):
-    model_config = ConfigDict(extra=<span class="tok-string">&quot;forbid&quot;</span>)
+    model_config = ConfigDict(extra=<span class="tok-string">"forbid"</span>)
     question: str = Field(min_length=<span class="tok-number">1</span>, max_length=<span class="tok-number">1000</span>)
     k: StrictInt = Field(default=<span class="tok-number">2</span>, ge=<span class="tok-number">1</span>, le=<span class="tok-number">10</span>)
-    @field_validator(<span class="tok-string">&quot;question&quot;</span>)
+    @field_validator(<span class="tok-string">"question"</span>)
     @classmethod
     <span class="tok-keyword">def</span> strip_question(cls, value):
         <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> value.strip():
-            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;blank_question&quot;</span>)
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"blank_question"</span>)
         <span class="tok-keyword">return</span> value.strip()</code></pre></figure>
 <div class="cell-after"><p>AskRequest가 정의됐습니다. 아직 질문은 전송하지 않았습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · POST 한 건을 서비스 함수에 연결하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · POST 경로와 서비스 함수</h3>
 <div class="cell-before"><p>question은 JSON 본문으로 보내세요. 함수에 건네는 문자열과 응답의 근거를 확인합니다.</p>
 <p>이 짧은 경로에서 question은 검색에 들어가고 k는 요청 형식을 검사하는 데 쓰입니다. k를 바꿨는데 문서 개수가 그대로라면, 검사 뒤 검색 함수까지 그 값이 전달되는지 살펴보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">def</span> answer(question):
-    source = {<span class="tok-string">&quot;id&quot;</span>: <span class="tok-string">&quot;course-guide-v1:p2&quot;</span>, <span class="tok-string">&quot;page&quot;</span>: <span class="tok-number">1</span>, <span class="tok-string">&quot;source&quot;</span>: <span class="tok-string">&quot;가상 과정 운영 안내&quot;</span>,
-              <span class="tok-string">&quot;text&quot;</span>: <span class="tok-string">&quot;과제는 학습 관리 페이지의 과제함에 제출합니다.&quot;</span>}
-    <span class="tok-keyword">if</span> <span class="tok-string">&quot;과제&quot;</span> <span class="tok-keyword">in</span> question:
-        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;answered&quot;</span>, <span class="tok-string">&quot;answer&quot;</span>: source[<span class="tok-string">&quot;text&quot;</span>] + <span class="tok-string">&quot; [course-guide-v1:p2]&quot;</span>,
-                <span class="tok-string">&quot;sources&quot;</span>: [source], <span class="tok-string">&quot;generation_calls&quot;</span>: <span class="tok-number">1</span>}
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;no_evidence&quot;</span>, <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;자료에서 확인할 수 없습니다.&quot;</span>, <span class="tok-string">&quot;sources&quot;</span>: [], <span class="tok-string">&quot;generation_calls&quot;</span>: <span class="tok-number">0</span>}
+    source = {<span class="tok-string">"id"</span>: <span class="tok-string">"course-guide-v1:p2"</span>, <span class="tok-string">"page"</span>: <span class="tok-number">1</span>, <span class="tok-string">"source"</span>: <span class="tok-string">"가상 과정 운영 안내"</span>,
+              <span class="tok-string">"text"</span>: <span class="tok-string">"과제는 학습 관리 페이지의 과제함에 제출합니다."</span>}
+    <span class="tok-keyword">if</span> <span class="tok-string">"과제"</span> <span class="tok-keyword">in</span> question:
+        <span class="tok-keyword">return</span> {<span class="tok-string">"status"</span>: <span class="tok-string">"answered"</span>, <span class="tok-string">"answer"</span>: source[<span class="tok-string">"text"</span>] + <span class="tok-string">" [course-guide-v1:p2]"</span>,
+                <span class="tok-string">"sources"</span>: [source], <span class="tok-string">"generation_calls"</span>: <span class="tok-number">1</span>}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"status"</span>: <span class="tok-string">"no_evidence"</span>, <span class="tok-string">"answer"</span>: <span class="tok-string">"자료에서 확인할 수 없습니다."</span>, <span class="tok-string">"sources"</span>: [], <span class="tok-string">"generation_calls"</span>: <span class="tok-number">0</span>}
 
-@app.post(<span class="tok-string">&quot;/ask&quot;</span>)
+@app.post(<span class="tok-string">"/ask"</span>)
 <span class="tok-keyword">def</span> ask(body: AskRequest):
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;run_status&quot;</span>: <span class="tok-string">&quot;completed&quot;</span>, <span class="tok-string">&quot;result&quot;</span>: answer(body.question)}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"run_status"</span>: <span class="tok-string">"completed"</span>, <span class="tok-string">"result"</span>: answer(body.question)}
 
 client = TestClient(app)
-response = client.post(<span class="tok-string">&quot;/ask&quot;</span>, json={<span class="tok-string">&quot;question&quot;</span>: <span class="tok-string">&quot;과제는 어디에 내나요?&quot;</span>, <span class="tok-string">&quot;k&quot;</span>: <span class="tok-number">2</span>})
-print(response.status_code, response.json()[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>])</code></pre></figure>
+response = client.post(<span class="tok-string">"/ask"</span>, json={<span class="tok-string">"question"</span>: <span class="tok-string">"과제는 어디에 내나요?"</span>, <span class="tok-string">"k"</span>: <span class="tok-number">2</span>})
+print(response.status_code, response.json()[<span class="tok-string">"result"</span>][<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 course-guide-v1:p2</pre></div>
 <div class="cell-after"><p>200 뒤의 course-guide-v1:p2는 서비스가 돌려준 근거입니다. HTTP 상태만으로 이 문서가 답을 뒷받침하는지 판단할 수는 없습니다. 여기서 사용한 응답 외피는 핵심 필드만 담았습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-errors" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>형식 오류와 근거 없음 구별하기</h2>
+<h2>HTTP 검증 오류와 빈 근거 응답</h2>
 </div>
 </header>
 <p>입력을 읽을 수 없는 경우와, 입력은 정상이지만 근거를 찾지 못한 경우에 화면이 해야 할 일이 다릅니다. 전자는 입력을 고치고 후자는 다른 자료나 질문이 필요한지 안내합니다.</p>
 <!-- MOTION two-verdicts -->
-<figure class="motion-study" id="motion-two-verdicts" data-sheet="motion/two-verdicts.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>422와 빈 근거는 어디에서 갈라질까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/two-verdicts-still.webp" width="800" height="272" alt="공백 질문은 입력 검사에서 422가 됩니다. 형식이 맞는 질문으로 검색을 마쳤지만 문서가 없었다면 입력 오류로 고칠 이유가 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>공백 질문은 입력 검사에서 422가 됩니다. 형식이 맞는 질문으로 검색을 마쳤지만 문서가 없었다면 입력 오류로 고칠 이유가 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 공백 질문 전송</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 공백 입력의 검증 오류</h3>
 <div class="cell-before"><p>Pydantic의 입력 검사를 통과하지 못한 요청의 상태 코드를 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">bad = client.post(<span class="tok-string">&quot;/ask&quot;</span>, json={<span class="tok-string">&quot;question&quot;</span>: <span class="tok-string">&quot;   &quot;</span>})
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">bad = client.post(<span class="tok-string">"/ask"</span>, json={<span class="tok-string">"question"</span>: <span class="tok-string">"   "</span>})
 print(bad.status_code)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">422</pre></div>
 <div class="cell-after"><p>422입니다. 질문을 검사하는 단계에서 멈춰 서비스 함수에는 도달하지 않았습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 형식은 맞지만 근거가 없는 질문</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 유효한 요청의 빈 검색 결과</h3>
 <div class="cell-before"><p>주차비를 묻는 POST를 보내 HTTP 코드와 답변의 상태를 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># client.post에 주차 질문을 넣으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">reply = client.post(<span class="tok-string">&#x27;/ask&#x27;</span>, json={<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;주차는 무료인가요?&#x27;</span>})
-print(reply.status_code, reply.json()[<span class="tok-string">&#x27;result&#x27;</span>][<span class="tok-string">&#x27;status&#x27;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">reply = client.post(<span class="tok-string">'/ask'</span>, json={<span class="tok-string">'question'</span>: <span class="tok-string">'주차는 무료인가요?'</span>})
+print(reply.status_code, reply.json()[<span class="tok-string">'result'</span>][<span class="tok-string">'status'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 no_evidence</pre></div>
 <div class="cell-after"><p>200 no_evidence입니다. 요청은 정상 처리됐고 제공 자료가 주차비를 다루지 않았습니다.</p>
 </div>
@@ -114,40 +108,40 @@ print(reply.status_code, reply.json()[<span class="tok-string">&#x27;result&#x27
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>요청 경로가 틀렸을 때와 JSON 내용이 틀렸을 때 서버가 같은 코드를 줄지 예측해 보세요. 실제 외부 주소·인증·DB 연결은 이 TestClient 검사의 범위 밖입니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>FastAPI 요청 모델과 POST 엔드포인트 심화 읽기</h2>
 </div>
 </header>
-<span id="http"></span><details class="reading-topic" id="reading-http"><summary>HTTP 요청을 네 요소로 읽기</summary><div class="prose"><p>HTTP 요청은 메서드, 경로, 헤더, 본문으로 읽으면 편합니다. GET /health는 프로그램이 어떤 예제인지 읽습니다. POST /ask는 JSON 질문을 전달합니다. POST라는 이유만으로 데이터베이스에 저장되는 것은 아닙니다. 이 장은 저장하지 않습니다.</p>
+<span id="http"></span><details class="reading-topic" id="reading-http"><summary>HTTP 요청의 구성</summary><div class="prose"><p>HTTP 요청은 메서드, 경로, 헤더, 본문으로 읽으면 편합니다. GET /health는 프로그램이 어떤 예제인지 읽습니다. POST /ask는 JSON 질문을 전달합니다. POST라는 이유만으로 데이터베이스에 저장되는 것은 아닙니다. 이 장은 저장하지 않습니다.</p>
 <p>응답의 HTTP 상태는 요청을 어떻게 처리했는지 알려 줍니다. JSON 안의 result.status는 근거와 생성 답을 어떻게 판단했는지 알려 줍니다. 둘을 하나의 success 변수로 줄이면 다음 장의 실패 기록에서 정보가 사라집니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>하나의 요청 읽기</caption><thead><tr><th scope="col">요소</th><th scope="col">제공 예</th><th scope="col">뜻</th></tr>
 </thead><tbody><tr><td>메서드·경로</td><td>POST /ask</td><td>질문 처리 요청</td></tr>
 <tr><td>Content-Type</td><td>application/json</td><td>본문의 표현 형식</td></tr>
-<tr><td>본문</td><td>{&quot;question&quot;:&quot;과제는 어디에 내나요?&quot;,&quot;k&quot;:2}</td><td>허용된 질문과 검색 개수</td></tr>
+<tr><td>본문</td><td>{"question":"과제는 어디에 내나요?","k":2}</td><td>허용된 질문과 검색 개수</td></tr>
 <tr><td>응답</td><td>200 + run_status=completed</td><td>완료 결과가 반환됨; 문장 의미의 정답 판정과 별개</td></tr>
 </tbody></table></div>
 </details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>전체 파일을 읽고 로컬 경계부터 실행하기</summary><div class="prose"><p>파일 하나만 복사하지 말고 application 폴더 전체를 사용하세요. s1 하위 경로에는 같은 원문·Skill·프레임워크 코드가 들어 있습니다. 코드와 원본 해시는 CONSUMER_MANIFEST.json에 기록되어 있습니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>로컬 함수와 API 진입점</summary><div class="prose"><p>파일 하나만 복사하지 말고 application 폴더 전체를 사용하세요. s1 하위 경로에는 같은 원문·Skill·프레임워크 코드가 들어 있습니다. 코드와 원본 해시는 CONSUMER_MANIFEST.json에 기록되어 있습니다.</p>
 </div>
 </details>
-<span id="request"></span><details class="reading-topic" id="reading-request"><summary>Pydantic으로 허용 입력을 좁히기</summary><div class="prose"><p>요청 모델은 question과 k만 받습니다. question은 문자열이며 양끝 공백을 제거한 뒤 빈 값을 거부합니다. k는 1~10의 정수이고 기본은 2입니다. Python에서 bool은 int와 가까운 타입이지만 StrictInt는 true를 검색 개수 1로 받지 않습니다.</p>
+<span id="request"></span><details class="reading-topic" id="reading-request"><summary>Pydantic 입력 조건</summary><div class="prose"><p>요청 모델은 question과 k만 받습니다. question은 문자열이며 양끝 공백을 제거한 뒤 빈 값을 거부합니다. k는 1~10의 정수이고 기본은 2입니다. Python에서 bool은 int와 가까운 타입이지만 StrictInt는 true를 검색 개수 1로 받지 않습니다.</p>
 <p>extra=forbid는 user_id나 model 같은 추가 키를 조용히 무시하지 않고 거부합니다. 클라이언트가 alice를 적었다고 신뢰한 사용자 문맥이 되지 않습니다. 현재 장의 alice는 서버 예제에 고정한 수업 대역입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>입력 예상 비교</caption><thead><tr><th scope="col">본문 변화</th><th scope="col">설계 결과</th><th scope="col">서비스 호출</th></tr>
 </thead><tbody><tr><td>공백 질문</td><td>422 invalid_request</td><td>0</td></tr>
-<tr><td>k=true 또는 &quot;2&quot;</td><td>422 invalid_request</td><td>0</td></tr>
+<tr><td>k=true 또는 "2"</td><td>422 invalid_request</td><td>0</td></tr>
 <tr><td>추가 user_id</td><td>422 invalid_request</td><td>0</td></tr>
 <tr><td>정상 question/k</td><td>서비스 경계로 이동</td><td>결과에 따라 관측</td></tr>
 </tbody></table></div>
 </details>
-<span id="response"></span><details class="reading-topic" id="reading-response"><summary>A1과 실행 외피를 나누어 보존하기</summary><div class="prose"><p>A1은 status, answer, sources, generation_calls 네 값입니다. sources 안의 각 객체는 id, text, source, page를 가집니다. source 이름 하나만 반환하면 같은 답의 여러 인용과 페이지를 잃습니다.</p>
+<span id="response"></span><details class="reading-topic" id="reading-response"><summary>실행 상태와 답변 필드</summary><div class="prose"><p>A1은 status, answer, sources, generation_calls 네 값입니다. sources 안의 각 객체는 id, text, source, page를 가집니다. source 이름 하나만 반환하면 같은 답의 여러 인용과 페이지를 잃습니다.</p>
 <p>S1 외피는 이 A1 바깥에 request_id, run_status, metadata와 실패 정보를 둡니다. completed라면 A1이 있고 error라면 result=null입니다. 읽기 경로는 승인 대기나 action_receipt를 답으로 내보내지 않습니다. metadata의 호출 수와 trace도 보존해야 앞 장과 비교할 수 있습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>비슷한 이름 구분</caption><thead><tr><th scope="col">필드</th><th scope="col">뜻</th></tr>
@@ -158,19 +152,19 @@ print(reply.status_code, reply.json()[<span class="tok-string">&#x27;result&#x27
 <tr><td>request_id</td><td>개별 실행 식별자; 질문 ID Q01과 다름</td></tr>
 </tbody></table></div>
 </details>
-<span id="route"></span><details class="reading-topic" id="reading-route"><summary>경로 함수에서 같은 S1을 호출하기</summary><div class="prose"><p>create_app은 앱을 만드는 함수입니다. 경로 함수 ask는 Pydantic이 확인한 요청을 handle_ask로 넘기고 반환의 상태와 JSON을 응답으로 내보냅니다. 실제 FastAPI가 없는 환경에서는 이 앱 생성 자체를 실행한 것으로 기록하지 않습니다.</p>
+<span id="route"></span><details class="reading-topic" id="reading-route"><summary>경로 함수와 서비스 호출</summary><div class="prose"><p>create_app은 앱을 만드는 함수입니다. 경로 함수 ask는 Pydantic이 확인한 요청을 handle_ask로 넘기고 반환의 상태와 JSON을 응답으로 내보냅니다. 실제 FastAPI가 없는 환경에서는 이 앱 생성 자체를 실행한 것으로 기록하지 않습니다.</p>
 <p>read_answer는 로컬 TrustedContext를 검수된 S1 AppContext로 바꿉니다. 동일 사용자와 대화 하나의 소유 관계로 서비스를 구성합니다. 69일에는 이 구성 전에 대화 소유 조회가 추가됩니다. owners 내부를 나중에 직접 바꾸는 방식은 사용하지 않습니다.</p>
 </div>
 </details>
-<span id="same-input"></span><details class="reading-topic" id="reading-same-input"><summary>동일 Q01 결과를 두 경계에서 비교하기</summary><div class="prose"><p>test_q01_same_s1 검사는 S1Service.answer를 직접 부른 결과와 handle_ask를 거친 결과를 비교합니다. question, k, 자료 버전이 같아야 의미 있는 비교입니다. 요청 ID는 매번 새로 생길 수 있으므로 A1·metadata와 구분합니다.</p>
+<span id="same-input"></span><details class="reading-topic" id="reading-same-input"><summary>Python·HTTP 호출의 결과 비교</summary><div class="prose"><p>test_q01_same_s1 검사는 S1Service.answer를 직접 부른 결과와 handle_ask를 거친 결과를 비교합니다. question, k, 자료 버전이 같아야 의미 있는 비교입니다. 요청 ID는 매번 새로 생길 수 있으므로 A1·metadata와 구분합니다.</p>
 <p>이 로컬 비교는 “HTTP에서도 같다”는 증거가 아닙니다. check_http_prepared.py는 같은 질문을 TestClient에 보내는 준비 코드입니다. 그 명령이 실제로 통과한 다음에 HTTP 앱 경계의 동등성을 말할 수 있습니다. 현재 기록의 http=not_run을 유지하세요.</p>
 </div>
 </details>
-<span id="business"></span><details class="reading-topic" id="reading-business"><summary>빈 근거와 잘못된 인용은 업무 결과로 읽기</summary><div class="prose"><p>주차 질문처럼 제공 자료에 근거가 없으면 no_evidence와 빈 sources, generation_calls=0을 반환합니다. 검색은 정상 수행됐지만 생성할 근거가 없었다는 뜻입니다. 검색이 시간 초과로 실패한 경우와 다릅니다.</p>
+<span id="business"></span><details class="reading-topic" id="reading-business"><summary>빈 근거와 인용 실패 응답</summary><div class="prose"><p>주차 질문처럼 제공 자료에 근거가 없으면 no_evidence와 빈 sources, generation_calls=0을 반환합니다. 검색은 정상 수행됐지만 생성할 근거가 없었다는 뜻입니다. 검색이 시간 초과로 실패한 경우와 다릅니다.</p>
 <p>invalid_citation은 생성한 문장의 인용이 허용 근거와 맞지 않아 안전한 검토 문구로 바꾼 결과입니다. 생성은 1회였지만 sources는 비어 있습니다. 이 상태를 answered로 바꾸거나 실패를 숨기는 일반 답을 만들지 않습니다.</p>
 </div>
 </details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>요청 오류와 상류 출력 오류를 구분하기</summary><div class="prose"><p>handle_ask는 요청 검증 실패를 422로 분류하고, 서비스가 반환한 불량 외피는 502 service_output으로 분류합니다. 서비스 내부 오류를 사용자가 잘못 입력한 것처럼 처리하지 않습니다. 유효한 S1 error 외피는 metadata까지 보존하며 HTTP 상태만 별도로 선택합니다.</p>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>요청 검증과 상류 출력 오류</summary><div class="prose"><p>handle_ask는 요청 검증 실패를 422로 분류하고, 서비스가 반환한 불량 외피는 502 service_output으로 분류합니다. 서비스 내부 오류를 사용자가 잘못 입력한 것처럼 처리하지 않습니다. 유효한 S1 error 외피는 metadata까지 보존하며 HTTP 상태만 별도로 선택합니다.</p>
 <p>metadata에 Any가 있어도 모든 Python 객체를 JSON으로 보낼 수 있는 것은 아닙니다. 숫자 키나 tuple은 JSON 왕복에서 타입이 바뀌고 NaN은 표준 JSON 숫자가 아닙니다. UTF-8로 인코딩할 수 없는 문자열도 전송 전에 거부합니다. 검사가 끝나기 전에 스트림을 시작하지 않는 이유가 다음 장에서 드러납니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>원시 예외 노출 없이 기록하기</caption><thead><tr><th scope="col">상황</th><th scope="col">기록</th></tr>
@@ -179,16 +173,16 @@ print(reply.status_code, reply.json()[<span class="tok-string">&#x27;result&#x27
 <tr><td>내부 실행 예외</td><td>500 안전한 코드; 원문 예외 문자열 제외</td></tr>
 </tbody></table></div>
 </details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>학생 과제: 실패를 잃지 않는 요약 함수</summary><div class="prose"><p>student_task.py의 summarize(response)를 구현합니다. 입력은 status_code와 body가 있는 순수 경계 결과입니다. 출력은 http_status, run_status, a1_status, source_ids, error_type, failure_stage입니다. result=null일 때 A1 필드를 억지로 만들어 채우지 않습니다.</p>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>실패 상태를 보존하는 요약 함수</summary><div class="prose"><p>student_task.py의 summarize(response)를 구현합니다. 입력은 status_code와 body가 있는 순수 경계 결과입니다. 출력은 http_status, run_status, a1_status, source_ids, error_type, failure_stage입니다. result=null일 때 A1 필드를 억지로 만들어 채우지 않습니다.</p>
 <p>입력 객체를 변경하지 않는 것도 과제 조건입니다. 요약 함수 때문에 원래 metadata나 sources를 지우면 원본 결과를 비교할 수 없습니다. 요약은 화면 기록용이고 전체 응답을 대신 저장하는 계약이 아닙니다.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>다음 장에 넘길 기록과 파일</summary><div class="prose"><p>69일은 이 요청·외피를 유지하면서 사용자별 대화를 추가합니다. 오늘의 고정 alice 문맥이 실제 로그인은 아니라는 설명, no_evidence와 실행 실패의 차이, HTTP 미실행 항목을 함께 넘기세요.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>HTTP 인터페이스와 인계 기록</summary><div class="prose"><p>69일은 이 요청·외피를 유지하면서 사용자별 대화를 추가합니다. 오늘의 고정 alice 문맥이 실제 로그인은 아니라는 설명, no_evidence와 실행 실패의 차이, HTTP 미실행 항목을 함께 넘기세요.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://fastapi.tiangolo.com/tutorial/body/" target="_blank" rel="noopener noreferrer">FastAPI 요청 본문 ↗</a><span></span></li>

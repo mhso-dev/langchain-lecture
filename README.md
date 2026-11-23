@@ -1,6 +1,6 @@
 # AI 엔지니어링 교재
 
-일반 수업 75장과 프로젝트 41장을 교육일 순서대로 읽는 학생용 사이트다. 목차는 `/`, 각 장은 `/chapter01/`부터 `/chapter116/`까지 독립된 주소를 쓴다. 12장의 움직이는 설명 그림은 `/chapter12/figures.html`에 있다.
+일반 수업 75장과 프로젝트 41장을 교육일 순서대로 읽는 학생용 사이트다. 목차는 `/`, 각 장은 `/chapter01/`부터 `/chapter116/`까지 독립된 주소를 쓴다. 각 장의 제목과 목차에는 실습에서 쓰는 개념·문법·API 이름을 표시한다.
 
 ## 한 장 수정하기
 
@@ -9,11 +9,11 @@
 | 목차의 제목·분류·검수 상태 | `site/index.html` |
 | 학생이 읽는 설명·예시·접이식 풀이 | `site/chapterNN/index.html` |
 | 예제 코드와 셀 출력 | 같은 폴더의 `chapterNN.ipynb` |
-| 본문에서 조작하는 SVG | 같은 폴더의 `figures/*.svg` |
+| 무음 개념 영상 | 해당 장의 `concept.mp4`와 본문의 영상 설명 |
 | 공통 디자인·조작·이미지·Three.js | `site/assets/` |
-| 이전·다음 장 탐색과 그림 삽입 | `scripts/build.mjs` |
+| 이전·다음 장 탐색과 사이트 빌드 | `scripts/build.mjs` |
 
-각 장의 원고에는 그림을 표시할 위치에 `<!-- FIGURE figures/index-01.svg -->`가 있다. 빌드할 때 그 자리에 SVG가 들어가 재생·정지 버튼과 연결된다. 시뮬레이션이 있는 장은 `simulation.html`에서 처음 열릴 실험을 고른다. 공통 조작 코드는 `site/assets/simulation.js`에서 수정한다.
+Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 각 장의 `#practice-space`에 조작부와 수치 해설을 두고, 동영상은 `#concept-clip`에서 학생이 직접 재생한다.
 
 ## 확인하기
 
@@ -37,8 +37,4 @@ Vercel에서 이 저장소를 연결하고 운영 브랜치를 `main`으로 사�
 
 2026년 11월 23일판 단일 HTML(102,132,697바이트)에서 장별 본문·학생 노트북·시각 자료를 분리했다. 원문에 있던 교육 검수 상태는 각 장에 표시한다. 개발용 기록과 강사 전용 자료는 상위 강의 프로젝트에서 관리한다.
 
-[1–116장 개념 애니메이션 전수 검수와 장별 변경 내역](reports/visual-audit.md)
-
-[개념 애니메이션 124개의 재생 주소와 장별 설명](reports/concept-motion.md)
-
-작화 원본은 `artwork/`에 있다. 예를 들어 21장 청크의 가위 위치는 `unit_closeups.py`의 `scissors`에서 정한다. 한 장을 고칠 때는 Pillow가 설치된 환경에서 `python artwork/render.py 21`을 실행하면 웹의 프레임·정지 이미지와 해당 노트북의 GIF가 같은 그림에서 생성된다. 기본 글꼴은 macOS Apple SD Gothic Neo이며 다른 환경에서는 `LESSON_FONT`와 `LESSON_BOLD_FONT`에 한글 글꼴 파일 경로를 지정한다. 이후 `node scripts/build.mjs`, `python scripts/check.py`를 실행한다. `python artwork/verify.py`는 작화에 사용한 글꼴로 모든 프레임을 다시 그려 배포 자산과 대조한다. Vercel 빌드는 커밋된 미디어를 사용한다.
+[제목·실습·영상의 116장 개정 기록](reports/concept-edition.md)

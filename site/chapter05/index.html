@@ -1,120 +1,111 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>파일·표·텍스트를 읽고
-정제 결과 저장하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>CSV 읽기와 데이터 정제 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 05 / PYTHON</p>
-<span class="sidebar-title">파일·표·텍스트를 읽고
-정제 결과 저장하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-read"><span>02</span>CSV에서 글자와 빈칸 읽기</a><a href="#nb-clean-order"><span>03</span>유효한 행을 남긴 뒤 중복 제거하기</a><a href="#nb-table"><span>04</span>판다스 표에서도 같은 순서로 읽기</a><a href="#nb-save-read"><span>05</span>저장한 기록을 다시 읽기</a><a href="#recap"><span>06</span>다시 풀어 보기</a><a href="#readings"><span>07</span>관련 개념 더 읽기</a><a href="#sources"><span>08</span>참고 자료</a></nav>
+<span class="sidebar-title">CSV 읽기와 데이터 정제</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-read"><span>02</span>csv.DictReader와 문자열 필드</a><a href="#nb-clean-order"><span>03</span>결측 행 필터링과 ID 중복 제거</a><a href="#nb-table"><span>04</span>pandas의 결측값 판별</a><a href="#nb-save-read"><span>05</span>UTF-8 JSON 파일 쓰기와 읽기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#readings"><span>07</span>CSV 읽기와 데이터 정제 심화 읽기</a><a href="#sources"><span>08</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 05 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
-<h1>파일·표·텍스트를 읽고
-정제 결과 저장하기</h1>
+<h1>CSV 읽기와 데이터 정제</h1>
 <p class="hero-description">기록표를 받았는데 id가 2인 첫 행은 시간이 비어 있고 그다음 행에는 20분이 적혀 있습니다. 중복부터 지우면 쓸 수 있는 20분이 사라집니다. 어느 행을 먼저 남길지 작은 표로 확인합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 005 · 8H</span><span>4장: 함수·모듈·객체 사용</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter05.ipynb" download="chapter05.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>5장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 pandas 2.2.3입니다.</p>
 </div>
 </section>
 <section id="nb-read" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>CSV에서 글자와 빈칸 읽기</h2>
+<h2>csv.DictReader와 문자열 필드</h2>
 </div>
 </header>
-<p>이 CSV에서는 쉼표가 한 줄 안의 칸을 나누고 줄바꿈이 행을 나눕니다. 노트북에 넣은 여섯 줄은 예제 records.csv와 같습니다. StringIO로 파일처럼 열어 보므로 경로를 설정할 필요가 없습니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 여섯 줄의 기록</h3>
+<p class="concept-intro">CSV의 열을 읽으면 숫자처럼 보이는 값도 문자열일 수 있습니다. 변환할 열과 누락으로 처리할 값을 먼저 정하면 정제 결과를 다시 확인할 수 있습니다.</p><p>이 CSV에서는 쉼표가 한 줄 안의 칸을 나누고 줄바꿈이 행을 나눕니다. 노트북에 넣은 여섯 줄은 예제 records.csv와 같습니다. StringIO로 파일처럼 열어 보므로 경로를 설정할 필요가 없습니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · csv.DictReader로 행 읽기</h3>
 <div class="cell-before"><p>둘째 데이터 행에서 minutes를 꺼내 보세요. 빈 문자열은 화면에 잘 안 보이므로 repr로 표시합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> csv
 <span class="tok-keyword">from</span> io <span class="tok-keyword">import</span> StringIO
-csv_text = <span class="tok-string">&quot;&quot;&quot;id,title,minutes
+csv_text = <span class="tok-string">"""id,title,minutes
 1,  Python   기초  ,30
 2,Git 연습,
 2,Git 연습,20
 3,,15
 4,CSV  읽기,40
 4,CSV  읽기,40
-&quot;&quot;&quot;</span>
+"""</span>
 rows = list(csv.DictReader(StringIO(csv_text)))
-print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">&quot;minutes&quot;</span>]))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">&#x27;&#x27;</pre></div>
+print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"minutes"</span>]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">''</pre></div>
 <div class="cell-after"><p>작은따옴표 두 개는 길이 0인 문자열입니다. 0분이라는 뜻으로 고치면 누락된 값과 실제 0분을 구분할 수 없습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 문장이 적힌 열 정리하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · split()과 join()으로 열 정제</h3>
 <div class="cell-before"><p>첫 행 제목 사이에 공백이 몇 칸 있는지 눈으로 세지 않고 단어를 다시 잇습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(<span class="tok-string">&quot; &quot;</span>.join(rows[<span class="tok-number">0</span>][<span class="tok-string">&quot;title&quot;</span>].split()))</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(<span class="tok-string">" "</span>.join(rows[<span class="tok-number">0</span>][<span class="tok-string">"title"</span>].split()))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Python 기초</pre></div>
 <div class="cell-after"><p>Python 기초가 됩니다. id는 행을 다시 찾을 때 쓸 이름이므로 제목 옆에 남겨 둡니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-clean-order" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>유효한 행을 남긴 뒤 중복 제거하기</h2>
+<h2>결측 행 필터링과 ID 중복 제거</h2>
 </div>
 </header>
 <p>시간이 비었거나 제목이 비면 그 행은 보류합니다. 이 표의 시간은 0~480 사이의 정수만 허용합니다. 남은 행 안에 같은 id가 다시 나타나면 먼저 본 유효 행을 씁니다.</p>
 <!-- MOTION id-overlay -->
-<figure class="motion-study" id="motion-id-overlay" data-sheet="motion/id-overlay.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>두 번째 4번 행은 합계에 또 들어갈까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/id-overlay-still.webp" width="800" height="272" alt="유효한 행의 ID는 1, 2, 4, 4입니다. 같은 ID를 포개면 세 건이 남아 총 90분이 됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>유효한 행의 ID는 1, 2, 4, 4입니다. 같은 ID를 포개면 세 건이 남아 총 90분이 됩니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 누락을 걸러낸 기록</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 유효한 행만 리스트에 추가</h3>
 <div class="cell-before"><p>아래 함수는 이 작은 CSV의 정수 표기만 읽습니다. 숫자 변환과 범위 검사까지 성공한 행을 모으세요.</p>
-<p>CSV의 minutes는 문자열입니다. clean_row는 &#x27;30&#x27;을 30으로 바꾸지만 &#x27;30.0&#x27;에서는 int 변환이 실패해 행을 제외합니다. 뒤의 판다스 예시는 먼저 숫자로 읽어 정수와 값이 같은 30.0을 허용합니다. 팀 자료에는 어느 표기까지 허용할지 한 가지 규칙을 정하세요.</p>
+<p>CSV의 minutes는 문자열입니다. clean_row는 '30'을 30으로 바꾸지만 '30.0'에서는 int 변환이 실패해 행을 제외합니다. 뒤의 판다스 예시는 먼저 숫자로 읽어 정수와 값이 같은 30.0을 허용합니다. 팀 자료에는 어느 표기까지 허용할지 한 가지 규칙을 정하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 16줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">def</span> clean_row(row):
-    title = <span class="tok-string">&quot; &quot;</span>.join(row[<span class="tok-string">&quot;title&quot;</span>].split())
+    title = <span class="tok-string">" "</span>.join(row[<span class="tok-string">"title"</span>].split())
     <span class="tok-keyword">try</span>:
-        minutes = int(row[<span class="tok-string">&quot;minutes&quot;</span>])
+        minutes = int(row[<span class="tok-string">"minutes"</span>])
     <span class="tok-keyword">except</span> ValueError:
         <span class="tok-keyword">return</span> <span class="tok-keyword">None</span>
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> row[<span class="tok-string">&quot;id&quot;</span>].strip() <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> title <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> <span class="tok-number">0</span> &lt;= minutes &lt;= <span class="tok-number">480</span>:
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> row[<span class="tok-string">"id"</span>].strip() <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> title <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> <span class="tok-number">0</span> &lt;= minutes &lt;= <span class="tok-number">480</span>:
         <span class="tok-keyword">return</span> <span class="tok-keyword">None</span>
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;id&quot;</span>: row[<span class="tok-string">&quot;id&quot;</span>].strip(), <span class="tok-string">&quot;title&quot;</span>: title, <span class="tok-string">&quot;minutes&quot;</span>: minutes}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"id"</span>: row[<span class="tok-string">"id"</span>].strip(), <span class="tok-string">"title"</span>: title, <span class="tok-string">"minutes"</span>: minutes}
 
 valid = []
 <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> rows:
     cleaned = clean_row(row)
     <span class="tok-keyword">if</span> cleaned <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
         valid.append(cleaned)
-print([row[<span class="tok-string">&quot;id&quot;</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> valid])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;4&#x27;, &#x27;4&#x27;]</pre></div>
+print([row[<span class="tok-string">"id"</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> valid])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['1', '2', '4', '4']</pre></div>
 <div class="cell-after"><p>1, 2, 4, 4가 남습니다. 먼저 나타난 2번 행은 시간이 없어서 빠졌고 3번은 제목이 비었습니다. 4번 두 건은 내용이 유효하므로 아직 둘 다 있습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 첫 유효 행만 남기기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · ID별 첫 행 보존</h3>
 <div class="cell-before"><p>사전 by_id에 아직 없는 id만 저장하고 남은 기록의 시간을 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">by_id = {}
 <span class="tok-comment"># valid에서 첫 유효 행을 id별로 모으세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">by_id = {}
 <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> valid:
-    <span class="tok-keyword">if</span> row[<span class="tok-string">&quot;id&quot;</span>] <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> by_id:
-        by_id[row[<span class="tok-string">&quot;id&quot;</span>]] = row
-print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> by_id.values()])</code></pre></figure>
+    <span class="tok-keyword">if</span> row[<span class="tok-string">"id"</span>] <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> by_id:
+        by_id[row[<span class="tok-string">"id"</span>]] = row
+print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> by_id.values()])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[30, 20, 40]</pre></div>
 <div class="cell-after"><p>30, 20, 40이 남습니다. 입력 여섯 행 가운데 무효 두 행과 중복 한 행을 빼면 세 행입니다.</p>
 </div>
@@ -122,32 +113,32 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 </article>
 </section>
 <section id="nb-table" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>판다스 표에서도 같은 순서로 읽기</h2>
+<h2>pandas의 결측값 판별</h2>
 </div>
 </header>
 <p>표 전체를 다룰 때는 Pandas의 DataFrame을 씁니다. 수업용 커널에 pandas가 있으면 아래 셀이 실제 열을 선택합니다. 설치되지 않은 환경에서도 앞의 CSV 실습은 그대로 동작합니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 시간 열에서 빈칸 찾기</h3>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · isna()로 결측값 검사</h3>
 <div class="cell-before"><p>문자열로 읽은 뒤 숫자로 바꿀 수 없는 값을 결측값으로 표시합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
-<span class="tok-keyword">if</span> find_spec(<span class="tok-string">&quot;pandas&quot;</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
+<span class="tok-keyword">if</span> find_spec(<span class="tok-string">"pandas"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
     <span class="tok-keyword">import</span> pandas <span class="tok-keyword">as</span> pd
     frame = pd.read_csv(StringIO(csv_text), dtype=str, keep_default_na=<span class="tok-keyword">False</span>)
-    minutes = pd.to_numeric(frame[<span class="tok-string">&quot;minutes&quot;</span>], errors=<span class="tok-string">&quot;coerce&quot;</span>)
+    minutes = pd.to_numeric(frame[<span class="tok-string">"minutes"</span>], errors=<span class="tok-string">"coerce"</span>)
     print(minutes.isna().tolist())
 <span class="tok-keyword">else</span>:
-    print(<span class="tok-string">&quot;이 커널에는 pandas가 없습니다. CSV의 두 번째 데이터 행에서 시간을 확인하세요.&quot;</span>)</code></pre></figure>
+    print(<span class="tok-string">"이 커널에는 pandas가 없습니다. CSV의 두 번째 데이터 행에서 시간을 확인하세요."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[False, True, False, False, False, False]</pre></div>
 <div class="cell-after"><p>Pandas가 있으면 여섯 값 중 둘째만 True입니다. 이는 시간 칸만 검사한 결과라서 제목이 빈 행은 아직 골라내지 않았습니다. 전체 예제의 clean_table은 제목·범위·정수 조건을 합친 뒤 중복을 제거합니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-save-read" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>저장한 기록을 다시 읽기</h2>
+<h2>UTF-8 JSON 파일 쓰기와 읽기</h2>
 </div>
 </header>
 <p>메모리 안의 사전은 커널을 닫으면 사라집니다. 임시 폴더에 실제 파일을 저장하고 같은 인코딩으로 다시 열어 첫 유효 행의 값이 남았는지 확인합니다.</p>
-<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · UTF-8 JSON 한 건 되읽기</h3>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · read_text()와 json.loads()로 복원</h3>
 <div class="cell-before"><p>파일을 여는 기준 폴더와 이름을 Path로 합칩니다. 이번 입력은 valid의 첫 행이므로 앞 과제를 풀기 전에도 실행할 수 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7"><span class="tok-keyword">import</span> json
@@ -155,42 +146,42 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <span class="tok-keyword">from</span> tempfile <span class="tok-keyword">import</span> TemporaryDirectory
 
 <span class="tok-keyword">with</span> TemporaryDirectory() <span class="tok-keyword">as</span> folder:
-    target = Path(folder) / <span class="tok-string">&quot;record.json&quot;</span>
-    target.write_text(json.dumps(valid[<span class="tok-number">0</span>], ensure_ascii=<span class="tok-keyword">False</span>), encoding=<span class="tok-string">&quot;utf-8&quot;</span>)
-    restored = json.loads(target.read_text(encoding=<span class="tok-string">&quot;utf-8&quot;</span>))
-    print(restored[<span class="tok-string">&quot;title&quot;</span>], restored[<span class="tok-string">&quot;minutes&quot;</span>])</code></pre></figure>
+    target = Path(folder) / <span class="tok-string">"record.json"</span>
+    target.write_text(json.dumps(valid[<span class="tok-number">0</span>], ensure_ascii=<span class="tok-keyword">False</span>), encoding=<span class="tok-string">"utf-8"</span>)
+    restored = json.loads(target.read_text(encoding=<span class="tok-string">"utf-8"</span>))
+    print(restored[<span class="tok-string">"title"</span>], restored[<span class="tok-string">"minutes"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Python 기초 30</pre></div>
 <div class="cell-after"><p>‘Python 기초 30’이 나옵니다. 글자를 쓸 때와 읽을 때 같은 UTF-8을 지정했고, loads를 거쳐 정수 시간도 되찾았습니다. 임시 폴더는 셀이 끝나면 정리됩니다.</p>
 </div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>처음 받은 CSV에서 특정 행을 지웠다면 이유를 말할 수 있어야 합니다. 2번 첫 행과 4번 마지막 행은 각각 다른 단계에서 빠집니다. 처리 결과를 JSON으로 저장할 때도 id와 정수 시간을 함께 남기면 원자료까지 돌아갈 수 있습니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>CSV 읽기와 데이터 정제 심화 읽기</h2>
 </div>
 </header>
-<span id="paths"></span><details class="reading-topic" id="reading-paths"><summary>현재 폴더와 파일 경로 구분하기</summary><div class="prose"><p>Path는 경로를 다루는 객체입니다. / 연산으로 폴더·파일 이름을 연결하고 resolve()는 절대 경로로 정리하며 parent는 부모 폴더를 뜻합니다. mkdir(exist_ok=True)는 폴더가 이미 있어도 오류를 내지 않습니다.</p>
+<span id="paths"></span><details class="reading-topic" id="reading-paths"><summary>작업 디렉터리와 파일 경로</summary><div class="prose"><p>Path는 경로를 다루는 객체입니다. / 연산으로 폴더·파일 이름을 연결하고 resolve()는 절대 경로로 정리하며 parent는 부모 폴더를 뜻합니다. mkdir(exist_ok=True)는 폴더가 이미 있어도 오류를 내지 않습니다.</p>
 <p>인코딩은 글자를 바이트로 저장하고 읽는 규칙입니다. 파일을 읽을 때와 쓸 때 UTF-8을 명시합니다. .read_text는 파일 전체를 문자열로 읽으므로 이번처럼 작은 파일에 사용합니다. 원본 data를 덮어쓰지 않고 output에 결과를 씁니다.</p>
 </div>
 </details>
-<span id="formats"></span><details class="reading-topic" id="reading-formats"><summary>CSV와 JSON 읽기·저장하기</summary><div class="prose"><p>CSV는 쉼표 같은 구분자로 열을 나누는 표 형식입니다. 값 안에도 쉼표가 있을 수 있어 문자열을 split(&quot;,&quot;)으로 자르지 않고 csv 모듈을 사용합니다. DictReader는 첫 행을 키로 삼아 각 행을 딕셔너리로 읽습니다. 여기서 분 값 &quot;30&quot;도 문자열입니다.</p>
-<p>with 블록은 파일을 사용한 뒤 닫는 처리를 맡습니다. newline=&quot;&quot;는 csv 모듈이 줄바꿈을 처리하도록 하는 옵션입니다. list(...)는 행을 읽어 작은 목록으로 모읍니다.</p>
+<span id="formats"></span><details class="reading-topic" id="reading-formats"><summary>CSV·JSON 직렬화와 역직렬화</summary><div class="prose"><p>CSV는 쉼표 같은 구분자로 열을 나누는 표 형식입니다. 값 안에도 쉼표가 있을 수 있어 문자열을 split(",")으로 자르지 않고 csv 모듈을 사용합니다. DictReader는 첫 행을 키로 삼아 각 행을 딕셔너리로 읽습니다. 여기서 분 값 "30"도 문자열입니다.</p>
+<p>with 블록은 파일을 사용한 뒤 닫는 처리를 맡습니다. newline=""는 csv 모듈이 줄바꿈을 처리하도록 하는 옵션입니다. list(...)는 행을 읽어 작은 목록으로 모읍니다.</p>
 <p>JSON은 표 외에도 중첩 목록·객체를 담을 수 있습니다. 이번에는 CSV 행 목록을 JSON으로 바꾸고 다시 읽어 값이 같은지 확인합니다. json.dumps와 loads는 문자열을 처리하고, 실제 파일 읽기·쓰기는 Path 메서드가 맡습니다.</p>
 </div>
 </details>
-<span id="table"></span><details class="reading-topic" id="reading-table"><summary>Pandas에서 열과 행 선택하기</summary><div class="prose"><p>DataFrame은 행과 열로 구성한 표입니다. frame[&quot;id&quot;]는 한 열인 Series를 선택하고, frame[[&quot;id&quot;, &quot;minutes&quot;]]는 여러 열을 가진 표를 선택합니다. frame.shape는 (행 수, 열 수)입니다.</p>
+<span id="table"></span><details class="reading-topic" id="reading-table"><summary>pandas 행·열 선택</summary><div class="prose"><p>DataFrame은 행과 열로 구성한 표입니다. frame["id"]는 한 열인 Series를 선택하고, frame[["id", "minutes"]]는 여러 열을 가진 표를 선택합니다. frame.shape는 (행 수, 열 수)입니다.</p>
 <p>read_csv에서 dtype=str로 읽어 id의 앞자리 0 같은 표시를 보존합니다. keep_default_na=False는 빈 칸과 NA 같은 글자를 처음에는 문자열 그대로 읽게 합니다. 누락을 어떻게 판정할지는 다음 단계에서 직접 정합니다.</p>
-<p>frame[&quot;id&quot;] == &quot;2&quot;는 각 행마다 참·거짓을 계산합니다. loc[행 조건, 열 목록]은 조건을 만족한 행과 지정한 열을 고릅니다. to_dict(orient=&quot;records&quot;)는 표를 행별 딕셔너리 목록으로 바꿉니다.</p>
+<p>frame["id"] == "2"는 각 행마다 참·거짓을 계산합니다. loc[행 조건, 열 목록]은 조건을 만족한 행과 지정한 열을 고릅니다. to_dict(orient="records")는 표를 행별 딕셔너리 목록으로 바꿉니다.</p>
 </div>
 </details>
-<span id="clean"></span><details class="reading-topic" id="reading-clean"><summary>누락·숫자·텍스트 처리 규칙 정하기</summary><div class="prose"><p>정제 전에 무엇을 남길지 정합니다. 이 과제는 id와 제목이 비어 있지 않고, 분 값이 0~480 사이의 정수인 행만 남깁니다. 30.0처럼 정수와 같은 값은 30으로 저장하지만 3.5는 제외합니다. 누락된 시간을 0으로 채우면 실제 0분과 구분되지 않아 제외합니다.</p>
-<p>to_numeric(errors=&quot;coerce&quot;)는 숫자로 바꿀 수 없는 값을 누락 값으로 바꿉니다. notna()로 누락이 아닌지 확인하고 between으로 범위를 검사합니다. % 1 == 0은 소수 부분이 없는지 확인합니다.</p>
+<span id="clean"></span><details class="reading-topic" id="reading-clean"><summary>결측값·숫자·문자열 정제</summary><div class="prose"><p>정제 전에 무엇을 남길지 정합니다. 이 과제는 id와 제목이 비어 있지 않고, 분 값이 0~480 사이의 정수인 행만 남깁니다. 30.0처럼 정수와 같은 값은 30으로 저장하지만 3.5는 제외합니다. 누락된 시간을 0으로 채우면 실제 0분과 구분되지 않아 제외합니다.</p>
+<p>to_numeric(errors="coerce")는 숫자로 바꿀 수 없는 값을 누락 값으로 바꿉니다. notna()로 누락이 아닌지 확인하고 between으로 범위를 검사합니다. % 1 == 0은 소수 부분이 없는지 확인합니다.</p>
 <p>Pandas의 여러 행 조건을 합칠 때는 and 대신 &amp;를 쓰고 각 비교식을 괄호로 묶습니다. work는 입력 표의 copy이므로 원본 frame을 바꾸지 않습니다. 문자열 열에 .str을 붙이면 각 값에 문자열 작업을 적용합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>정제 정책</caption><thead><tr><th scope="col">문제</th><th scope="col">정책</th><th scope="col">이유</th></tr>
@@ -200,24 +191,24 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <tr><td>같은 id가 여러 개</td><td>유효 행 중 첫 행 유지</td><td>수업에서 정한 중복 정책</td></tr>
 </tbody></table></div>
 </details>
-<span id="duplicates"></span><details class="reading-topic" id="reading-duplicates"><summary>유효 행을 고른 뒤 중복 제거하기</summary><div class="prose"><p>같은 id의 내용이 다르면 어느 것을 남길지 업무 규칙이 필요합니다. 여기서는 유효한 행 중 첫 행을 남긴다는 규칙을 명시했습니다. 모든 실제 데이터에 적용할 정답은 아닙니다.</p>
-<p>drop_duplicates는 subset에 적은 열을 비교합니다. keep=&quot;first&quot;는 현재 순서에서 첫 행을 남깁니다. 중복 제거를 먼저 하면 누락 시간의 id=2가 남고 유효한 20분 기록을 잃을 수 있습니다.</p>
+<span id="duplicates"></span><details class="reading-topic" id="reading-duplicates"><summary>유효성 검사와 중복 제거 순서</summary><div class="prose"><p>같은 id의 내용이 다르면 어느 것을 남길지 업무 규칙이 필요합니다. 여기서는 유효한 행 중 첫 행을 남긴다는 규칙을 명시했습니다. 모든 실제 데이터에 적용할 정답은 아닙니다.</p>
+<p>drop_duplicates는 subset에 적은 열을 비교합니다. keep="first"는 현재 순서에서 첫 행을 남깁니다. 중복 제거를 먼저 하면 누락 시간의 id=2가 남고 유효한 20분 기록을 잃을 수 있습니다.</p>
 <p>return cleaned, report는 두 값을 함께 반환합니다. 호출자는 cleaned, report = clean_table(frame)처럼 두 이름에 나누어 받습니다. 반환한 표와 보고서를 함께 확인하세요.</p>
 </div>
 <details class="case-reference" id="flow-8"><summary>6행이 3행으로 정리되는 과정</summary>
 <p>누락 제거와 중복 제거의 순서를 눈으로 추적합니다.</p>
-<article id="flow-8-step-0"><small>STEP 01 · CSV</small><h4>6행을 읽음</h4>
-<p>id=2와 id=4가 각각 두 번 있습니다.</p><pre>before = 6</pre></article><article id="flow-8-step-1"><small>STEP 02 · 조건 필터</small><h4>잘못된 2행 제외</h4>
-<p>분이 빈 id=2 한 행, 제목이 빈 id=3 한 행을 제외합니다.</p><pre>유효 ID: [1, 2, 4, 4]</pre></article><article id="flow-8-step-2"><small>STEP 03 · id 기준</small><h4>중복 1행 제외</h4>
+<article id="flow-8-step-0"><small>STEP 01 · CSV</small><h4>CSV 입력 행 수</h4>
+<p>id=2와 id=4가 각각 두 번 있습니다.</p><pre>before = 6</pre></article><article id="flow-8-step-1"><small>STEP 02 · 조건 필터</small><h4>유효성 검사에서 제외한 행</h4>
+<p>분이 빈 id=2 한 행, 제목이 빈 id=3 한 행을 제외합니다.</p><pre>유효 ID: [1, 2, 4, 4]</pre></article><article id="flow-8-step-2"><small>STEP 03 · id 기준</small><h4>ID 중복 제거</h4>
 <p>유효한 id=4 중 첫 행을 유지합니다.</p><pre>첫 4는 유지 · 두 번째 4 제외
-남은 ID: [1, 2, 4]</pre></article><article id="flow-8-step-3"><small>STEP 04 · 출력</small><h4>전체 표에서 남은 행</h4>
+남은 ID: [1, 2, 4]</pre></article><article id="flow-8-step-3"><small>STEP 04 · 출력</small><h4>정제 후 남은 행</h4>
 <p>앞의 JSON 저장 연습은 한 행을 사용합니다. 여기에 나온 세 행은 전체 표를 정리한 결과입니다.</p><pre>전체 표: 3행, 합계 90분</pre></article></details>
 </details>
-<span id="pipeline"></span><details class="reading-topic" id="reading-pipeline"><summary>저장 결과를 다시 읽고 검증하기</summary><div class="prose"><p>to_csv의 index=False는 DataFrame의 행 번호를 새 데이터 열로 저장하지 않도록 합니다. cleaned.json은 숫자를 정수로 저장합니다. CSV는 형식 자체에 자료형 정보를 보관하지 않으므로 다시 읽을 때 id는 문자열로 지정합니다.</p>
+<span id="pipeline"></span><details class="reading-topic" id="reading-pipeline"><summary>저장 파일의 재로딩 검증</summary><div class="prose"><p>to_csv의 index=False는 DataFrame의 행 번호를 새 데이터 열로 저장하지 않도록 합니다. cleaned.json은 숫자를 정수로 저장합니다. CSV는 형식 자체에 자료형 정보를 보관하지 않으므로 다시 읽을 때 id는 문자열로 지정합니다.</p>
 <p>검증은 출력 파일이 생겼다는 확인에서 끝나지 않습니다. 전후 행 수, 제외 이유별 수, 최종 id, 합계를 비교하고 저장 파일을 다시 읽어 확인합니다. 이 예제에서 6 = 2 + 1 + 3이 성립해야 합니다.</p>
 </div>
 </details>
-<span id="verification"></span><details class="reading-topic" id="reading-verification"><summary>재실행과 오류 복구</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 오류</caption><thead><tr><th scope="col">오류·증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
+<span id="verification"></span><details class="reading-topic" id="reading-verification"><summary>파일 처리 재실행과 복구</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 오류</caption><thead><tr><th scope="col">오류·증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
 </thead><tbody><tr><td>FileNotFoundError</td><td>경로·입력 파일 존재</td><td>data 폴더 구조 복구</td></tr>
 <tr><td>UnicodeDecodeError</td><td>실제 파일 인코딩</td><td>원본 인코딩 확인 후 지정</td></tr>
 <tr><td>KeyError: title</td><td>열 이름·공백·BOM</td><td>열 이름 목록 출력 후 원본 확인</td></tr>
@@ -225,15 +216,15 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <tr><td>누락 분이 0으로 바뀜</td><td>자동 채우기 규칙</td><td>제외·대체 정책을 먼저 정함</td></tr>
 </tbody></table></div>
 </details>
-<span id="challenge"></span><details class="reading-topic" id="reading-challenge"><summary>완성 과제: 중복 정책을 바꿔 비교하기</summary><div class="prose"><p>check_data.py는 제공된 원본 6행의 예상 수치를 검사합니다. 이 과제나 빈 입력을 검사할 때는 복사한 검사 파일에서 입력 경로와 예상 보고·합계를 새 조건에 맞게 바꾸세요. 원본용 검사가 새 데이터에서도 그대로 통과해야 하는 것은 아닙니다.</p>
+<span id="challenge"></span><details class="reading-topic" id="reading-challenge"><summary>실습 · 중복 판정 기준 비교</summary><div class="prose"><p>check_data.py는 제공된 원본 6행의 예상 수치를 검사합니다. 이 과제나 빈 입력을 검사할 때는 복사한 검사 파일에서 입력 경로와 예상 보고·합계를 새 조건에 맞게 바꾸세요. 원본용 검사가 새 데이터에서도 그대로 통과해야 하는 것은 아닙니다.</p>
 </div>
 </details>
-<details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">08</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.python.org/3.14/library/pathlib.html" target="_blank" rel="noopener noreferrer">pathlib ↗</a><span></span></li>

@@ -1,59 +1,59 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>데이터 처리 구현 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>텍스트 정규화와 원문 해시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<script defer src="../assets/concept-labs.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 094 / FINAL PROJECT</p>
-<span class="sidebar-title">데이터 처리 구현 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-record"><span>02</span>원문 레코드를 검색용 레코드로 옮기기</a><a href="#nb-rebuild"><span>03</span>들여쓰기만 달라진 문서도 확인하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">텍스트 정규화와 원문 해시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-record"><span>02</span>검색용 문자열과 원문 메타데이터</a><a href="#nb-rebuild"><span>03</span>hashlib로 원문 변경 판별</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 094 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>데이터 처리 구현 · 방향과 예시</h1>
+<h1>텍스트 정규화와 원문 해시</h1>
 <p class="hero-description">규정 본문에서 줄바꿈을 없앤 뒤 출처 위치가 사라졌다면 검색기가 답은 찾아도 원문을 알려 줄 수 없습니다. A 규정 한 건을 사본으로 처리해 어떤 값이 바뀌고 어느 값이 유지되는지 봅니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter94.ipynb" download="chapter94.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>94장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-record" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>원문 레코드를 검색용 레코드로 옮기기</h2>
+<h2>검색용 문자열과 원문 메타데이터</h2>
 </div>
 </header>
-<p>변환 예시　원문 RULE-A에는 “점검 전 전원 표시등을 확인합니다.”와 출처 1쪽 2.1절이 있습니다. 검색용 레코드는 공백을 정리한 본문, 원본에서 계산한 SHA-256, 원래의 식별자와 허용 그룹을 보관합니다. SHA-256은 내용이 그대로인지 대조할 문자열입니다. 출처가 믿을 만한지나 문장이 사실인지는 알려 주지 않습니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원문 지문과 위치 보존하기</h3>
+<p class="concept-intro">검색하기 좋게 정리한 문자열과 수집 당시의 원문은 용도가 다릅니다. 원문에 해시를 붙이면 정리된 문자열이 같아도 원본의 변경을 찾을 수 있습니다.</p><p>변환 예시　원문 RULE-A에는 “점검 전 전원 표시등을 확인합니다.”와 출처 1쪽 2.1절이 있습니다. 검색용 레코드는 공백을 정리한 본문, 원본에서 계산한 SHA-256, 원래의 식별자와 허용 그룹을 보관합니다. SHA-256은 내용이 그대로인지 대조할 문자열입니다. 출처가 믿을 만한지나 문장이 사실인지는 알려 주지 않습니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원문 해시와 위치 메타데이터</h3>
 <div class="cell-before"><p>원문에 손대지 않고 새 레코드를 만든 뒤 94장 제공 processed.json의 RULE-A와 같은 지문이 나오는지 읽습니다.</p>
 <p>이 셀에서 새로 계산하는 지문은 raw의 UTF-8 본문에서 나옵니다. 제공된 processed.json의 지문은 비교 대상입니다. 파일을 직접 읽어 대조하지 않았다면 새로 계산한 값과 파일 내용을 확인한 일을 따로 적으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> hashlib <span class="tok-keyword">import</span> sha256
-raw = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
- <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
- <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
- <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
- <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
- <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
- <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
- <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
- <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+raw = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
+ <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 A'</span>,
+ <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+ <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
+ <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
+ <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+ <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
+ <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
 prepared = dict(raw)
-prepared[<span class="tok-string">&quot;text&quot;</span>] = <span class="tok-string">&quot; &quot;</span>.join(raw[<span class="tok-string">&quot;text&quot;</span>].split())
-prepared[<span class="tok-string">&quot;source_sha256&quot;</span>] = sha256(raw[<span class="tok-string">&quot;text&quot;</span>].encode(<span class="tok-string">&quot;utf-8&quot;</span>)).hexdigest()
-print(prepared[<span class="tok-string">&quot;source_sha256&quot;</span>])
-print(prepared[<span class="tok-string">&quot;id&quot;</span>], prepared[<span class="tok-string">&quot;section&quot;</span>], prepared[<span class="tok-string">&quot;version&quot;</span>])</code></pre></figure>
+prepared[<span class="tok-string">"text"</span>] = <span class="tok-string">" "</span>.join(raw[<span class="tok-string">"text"</span>].split())
+prepared[<span class="tok-string">"source_sha256"</span>] = sha256(raw[<span class="tok-string">"text"</span>].encode(<span class="tok-string">"utf-8"</span>)).hexdigest()
+print(prepared[<span class="tok-string">"source_sha256"</span>])
+print(prepared[<span class="tok-string">"id"</span>], prepared[<span class="tok-string">"section"</span>], prepared[<span class="tok-string">"version"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">8336aeeaa41f3a89559a2364950ef88f7d6128639fb3dad46974a7be38ac2f42
 RULE-A 2.1 rules-v1</pre></div>
 <div class="cell-after"><p>지문은 8336aeea로 시작합니다. RULE-A, 2.1, rules-v1은 원본 그대로입니다. 본문을 먼저 정리한 뒤 지문을 계산하면 원본에 있던 추가 공백이나 줄바꿈을 놓칠 수 있습니다.</p>
@@ -61,29 +61,23 @@ RULE-A 2.1 rules-v1</pre></div>
 </article>
 </section>
 <section id="nb-rebuild" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>들여쓰기만 달라진 문서도 확인하기</h2>
+<h2>hashlib로 원문 변경 판별</h2>
 </div>
 </header>
 <p>재처리 메모 예시　교정 사본에는 점검 전 뒤에 줄바꿈이 들어갔습니다. 검색용 본문을 만들면 두 내용이 같지만 원문 지문은 달라집니다. 팀은 정리 전 원본의 차이를 보관하고 출처의 절 번호가 달라졌는지 확인한 뒤 새 판본을 발행합니다.</p>
-<!-- MOTION byte-fingerprint -->
-<figure class="motion-study" id="motion-byte-fingerprint" data-sheet="motion/byte-fingerprint.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>같은 검색 문장에 왜 서로 다른 원문 지문이 붙을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/byte-fingerprint-still.webp" width="800" height="272" alt="UTF-8에서 공백 한 바이트 0x20과 줄바꿈 한 바이트 0x0A는 다릅니다. 원문을 해시하면 지문이 달라지고, 공백을 정리한 검색 문장은 같습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<figure class="lesson-clip" id="concept-clip"><h3>검색용 문자열과 원문 해시</h3><video controls muted playsinline preload="metadata" aria-label="검색용 문자열과 원문 해시" src="concept.mp4"></video><figcaption>빈칸 간격이 다른 두 원본의 지문이 다르게 표시됩니다. 정규화한 텍스트가 같더라도 원본을 그대로 비교한 결과는 다를 수 있습니다.</figcaption></figure><!-- MOTION byte-fingerprint -->
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>UTF-8에서 공백 한 바이트 0x20과 줄바꿈 한 바이트 0x0A는 다릅니다. 원문을 해시하면 지문이 달라지고, 공백을 정리한 검색 문장은 같습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<section class="concept-lab" id="concept-lab" data-lab="digest"><h3>줄 하나를 바꾸면 같은 문서일까요?</h3><p>‘전’ 뒤의 공백을 줄바꿈으로 바꿔 보세요. 검색용 문장을 정리하기 전 원문의 UTF-8 바이트로 지문을 계산합니다.</p><div class="lab-actions"><button type="button" data-action="space">한 칸 띄우기</button><button type="button" data-action="newline">줄바꿈 넣기</button></div><div class="lab-landscape"><div class="lab-tile"><small>원문</small><output data-out="raw">점검 전 전원 표시등을 확인합니다.</output></div><div class="lab-tile"><small>공백을 정리한 검색용 문장</small><output data-out="clean">점검 전 전원 표시등을 확인합니다.</output></div></div><div class="lab-tile"><small>원문 SHA-256</small><output data-out="digest">8336aeeaa41f3a89559a2364950ef88f7d6128639fb3dad46974a7be38ac2f42</output></div></section>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 줄바꿈이 있는 사본</h3>
+
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 줄바꿈과 원문 지문</h3>
 <div class="cell-before"><p>예시 원문에 줄바꿈을 넣어 지문이 달라지는지, 정리한 문장이 같은지 각각 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">edited = raw[<span class="tok-string">&quot;text&quot;</span>].replace(<span class="tok-string">&quot;전 &quot;</span>, <span class="tok-string">&quot;전\n&quot;</span>)
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">edited = raw[<span class="tok-string">"text"</span>].replace(<span class="tok-string">"전 "</span>, <span class="tok-string">"전\n"</span>)
 <span class="tok-comment"># 원본 지문, 정리한 본문과 대조하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">edited = raw[<span class="tok-string">&quot;text&quot;</span>].replace(<span class="tok-string">&quot;전 &quot;</span>, <span class="tok-string">&quot;전\n&quot;</span>)
-print(sha256(edited.encode(<span class="tok-string">&quot;utf-8&quot;</span>)).hexdigest() == prepared[<span class="tok-string">&quot;source_sha256&quot;</span>])
-print(<span class="tok-string">&quot; &quot;</span>.join(edited.split()) == prepared[<span class="tok-string">&quot;text&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">edited = raw[<span class="tok-string">"text"</span>].replace(<span class="tok-string">"전 "</span>, <span class="tok-string">"전\n"</span>)
+print(sha256(edited.encode(<span class="tok-string">"utf-8"</span>)).hexdigest() == prepared[<span class="tok-string">"source_sha256"</span>])
+print(<span class="tok-string">" "</span>.join(edited.split()) == prepared[<span class="tok-string">"text"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False
 True</pre></div>
 <div class="cell-after"><p>False 다음에 True가 나옵니다. 검색 결과가 같아 보여도 자료 담당자가 원본 변경을 확인할 수 있습니다.</p>
@@ -92,7 +86,7 @@ True</pre></div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>95장에는 정리한 본문과 함께 ID·버전·출처 위치·허용 그룹을 넘기세요. 같은 ID와 판본의 내용을 다시 받을 때는 원본의 지문을 비교한 후 사용합니다.</p>

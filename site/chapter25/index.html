@@ -1,112 +1,112 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 자료로 RAG를 다시 만들고 오류 설명하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>RAG 입력 계약과 오류 진단 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 25 / RAG REVIEW</p>
-<span class="sidebar-title">같은 자료로 RAG를 다시 만들고 오류 설명하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-baseline"><span>02</span>바뀌지 않은 질문과 근거로 시작하기</a><a href="#nb-repair"><span>03</span>질문과 문맥을 조립하는 함수 직접 쓰기</a><a href="#nb-handoff"><span>04</span>수정 뒤 같은 입력으로 재확인하기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<span class="sidebar-title">RAG 입력 계약과 오류 진단</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-baseline"><span>02</span>질문·문서·출처 필드 검증</a><a href="#nb-repair"><span>03</span>prepare_inputs()로 질문과 문맥 조립</a><a href="#nb-handoff"><span>04</span>고정 입력을 사용한 회귀 검사</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>RAG 입력 계약과 오류 진단 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 25 / RAG REVIEW</span><span class="template-badge">학생용 교재</span></div>
-<h1>같은 자료로 RAG를 다시 만들고 오류 설명하기</h1>
+<h1>RAG 입력 계약과 오류 진단</h1>
 <p class="hero-description">휴관 요일을 물었는데 검색 결과로 대출 기간 문서가 나왔습니다. 질문, 검색 결과, 프롬프트에 들어간 본문, 답변의 출처를 순서대로 확인해 실패가 시작된 위치를 찾습니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 025 · 8H</span><span>20~24장 문서·검색·LCEL RAG</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter25.ipynb" download="chapter25.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>25장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-baseline" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>바뀌지 않은 질문과 근거로 시작하기</h2>
+<h2>질문·문서·출처 필드 검증</h2>
 </div>
 </header>
-<p>입력까지 바꾸고 검색 코드를 고치면 무엇 때문에 결과가 달라졌는지 알 수 없습니다. 공통 개발 문항 dev-02와 그 기대 원문을 고정한 뒤 한 가지 조건씩 확인합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기대 원문과 실제 결과 대조하기</h3>
+<p class="concept-intro">입력 계약은 함수가 받기로 한 필드와 자료형에 대한 약속입니다. 질문, 검색 결과, 프롬프트를 차례로 대조하면 RAG 오류의 시작점을 좁힐 수 있습니다.</p><p>입력까지 바꾸고 검색 코드를 고치면 무엇 때문에 결과가 달라졌는지 알 수 없습니다. 공통 개발 문항 dev-02와 그 기대 원문을 고정한 뒤 한 가지 조건씩 확인합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기대 근거와 검색 결과 비교</h3>
 <div class="cell-before"><p>일부러 1쪽만 가져온 검색 결과를 준비했습니다. 개발 문항의 기대 ID와 비교합니다.</p>
 <p>지금 살펴볼 실패는 검색이 비어 있는 경우와 다릅니다. 휴관을 물었는데 대출 문서가 돌아왔습니다. 먼저 실제 ID와 기대 ID를 비교한 뒤 답변 단계로 가세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [
-  {<span class="tok-string">&quot;id&quot;</span>:<span class="tok-string">&quot;library-1&quot;</span>,<span class="tok-string">&quot;text&quot;</span>:<span class="tok-string">&quot;도서 대출 기간은 14일입니다.&quot;</span>,<span class="tok-string">&quot;source&quot;</span>:<span class="tok-string">&quot;가상 도서관 이용 안내&quot;</span>,<span class="tok-string">&quot;page&quot;</span>:<span class="tok-number">1</span>},
-  {<span class="tok-string">&quot;id&quot;</span>:<span class="tok-string">&quot;library-2&quot;</span>,<span class="tok-string">&quot;text&quot;</span>:<span class="tok-string">&quot;도서관은 월요일에 휴관합니다.&quot;</span>,<span class="tok-string">&quot;source&quot;</span>:<span class="tok-string">&quot;가상 도서관 이용 안내&quot;</span>,<span class="tok-string">&quot;page&quot;</span>:<span class="tok-number">2</span>},
-  {<span class="tok-string">&quot;id&quot;</span>:<span class="tok-string">&quot;library-3&quot;</span>,<span class="tok-string">&quot;text&quot;</span>:<span class="tok-string">&quot;무인 반납함은 24시간 이용할 수 있습니다.&quot;</span>,<span class="tok-string">&quot;source&quot;</span>:<span class="tok-string">&quot;가상 도서관 이용 안내&quot;</span>,<span class="tok-string">&quot;page&quot;</span>:<span class="tok-number">3</span>}
+  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-1"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서 대출 기간은 14일입니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">1</span>},
+  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-2"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서관은 월요일에 휴관합니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">2</span>},
+  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-3"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"무인 반납함은 24시간 이용할 수 있습니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">3</span>}
 ]
-case = {<span class="tok-string">&quot;question_id&quot;</span>: <span class="tok-string">&quot;dev-02&quot;</span>, <span class="tok-string">&quot;question&quot;</span>: <span class="tok-string">&quot;휴관 요일은 언제인가요?&quot;</span>, <span class="tok-string">&quot;expected_document_ids&quot;</span>: [<span class="tok-string">&quot;library-2&quot;</span>]}
+case = {<span class="tok-string">"question_id"</span>: <span class="tok-string">"dev-02"</span>, <span class="tok-string">"question"</span>: <span class="tok-string">"휴관 요일은 언제인가요?"</span>, <span class="tok-string">"expected_document_ids"</span>: [<span class="tok-string">"library-2"</span>]}
 retrieved = [documents[<span class="tok-number">0</span>]]
-ids = [doc[<span class="tok-string">&quot;id&quot;</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> retrieved]
-print(case[<span class="tok-string">&quot;expected_document_ids&quot;</span>][<span class="tok-number">0</span>] <span class="tok-keyword">in</span> ids)</code></pre></figure>
+ids = [doc[<span class="tok-string">"id"</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> retrieved]
+print(case[<span class="tok-string">"expected_document_ids"</span>][<span class="tok-number">0</span>] <span class="tok-keyword">in</span> ids)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False입니다. 대출 기간 문서만 가져왔으므로 생성 프롬프트를 고치기 전에 검색 범위와 전달한 질문부터 확인합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 올바른 검색 결과로 좁혀 보기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 문서 ID로 검색 오류 진단</h3>
 <div class="cell-before"><p>검색 뒤 단계만 볼 수 있도록 기대 원문을 포함한 자료를 한 건 넣습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">hits = [documents[<span class="tok-number">1</span>]]
-print(hits[<span class="tok-number">0</span>][<span class="tok-string">&quot;text&quot;</span>])</code></pre></figure>
+print(hits[<span class="tok-number">0</span>][<span class="tok-string">"text"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서관은 월요일에 휴관합니다.</pre></div>
 <div class="cell-after"><p>월요일에 휴관한다는 문장이 있습니다. 이 자료로도 생성 입력에서 문장이 사라지면 원인은 검색보다 뒤에 있습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-repair" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>질문과 문맥을 조립하는 함수 직접 쓰기</h2>
+<h2>prepare_inputs()로 질문과 문맥 조립</h2>
 </div>
 </header>
 <p>이 장의 준비 함수는 질문과 자료를 validate 함수로 검사한 뒤 question, context 두 칸을 만들어야 합니다. 빈 목록은 정상적인 ‘근거 없음’으로 None을 반환합니다. 출처가 망가진 자료까지 None으로 처리하지 않습니다.</p>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 제공된 출처 검사로 손상된 페이지 찾기</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 메타데이터의 쪽 번호 검증</h3>
 <div class="cell-before"><p>23장의 자료 계약을 검사하는 함수들을 그대로 사용합니다. 페이지 번호만 0으로 바뀌었습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 43줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">import</span> re
 
 <span class="tok-keyword">class</span> DataContractError(ValueError):
-    <span class="tok-string">&quot;&quot;&quot;저장된 근거 또는 검색 결과의 형태가 잘못되었습니다.&quot;&quot;&quot;</span>
+    <span class="tok-string">"""저장된 근거 또는 검색 결과의 형태가 잘못되었습니다."""</span>
 
 <span class="tok-keyword">def</span> validate_request(question, k=<span class="tok-number">2</span>):
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(question, str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> question.strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;질문은 비어 있지 않은 문자열이어야 합니다.&quot;</span>)
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"질문은 비어 있지 않은 문자열이어야 합니다."</span>)
     <span class="tok-keyword">if</span> isinstance(k, bool) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> isinstance(k, int) <span class="tok-keyword">or</span> k &lt; <span class="tok-number">1</span>:
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;k는 양의 정수여야 합니다.&quot;</span>)
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"k는 양의 정수여야 합니다."</span>)
     <span class="tok-keyword">return</span> question.strip()
 
 <span class="tok-keyword">def</span> validate_documents(documents):
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(documents, list):
-        <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;검색 결과는 문서 목록이어야 합니다.&quot;</span>)
+        <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"검색 결과는 문서 목록이어야 합니다."</span>)
     rows, seen = [], set()
     <span class="tok-keyword">for</span> item <span class="tok-keyword">in</span> documents:
         <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(item, dict):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;출처 객체가 필요합니다. 문자열 상태는 먼저 변환하세요.&quot;</span>)
+            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"출처 객체가 필요합니다. 문자열 상태는 먼저 변환하세요."</span>)
         <span class="tok-keyword">if</span> any(<span class="tok-keyword">not</span> isinstance(item.get(key), str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> item[key].strip()
-               <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">&quot;id&quot;</span>, <span class="tok-string">&quot;text&quot;</span>, <span class="tok-string">&quot;source&quot;</span>)):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;id·본문·출처가 필요합니다.&quot;</span>)
-        page = item.get(<span class="tok-string">&quot;page&quot;</span>)
+               <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">"id"</span>, <span class="tok-string">"text"</span>, <span class="tok-string">"source"</span>)):
+            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"id·본문·출처가 필요합니다."</span>)
+        page = item.get(<span class="tok-string">"page"</span>)
         <span class="tok-keyword">if</span> isinstance(page, bool) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> isinstance(page, int) <span class="tok-keyword">or</span> page &lt; <span class="tok-number">1</span>:
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;페이지는 1 이상의 정수여야 합니다.&quot;</span>)
-        <span class="tok-keyword">if</span> item[<span class="tok-string">&quot;id&quot;</span>] <span class="tok-keyword">in</span> seen:
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;문서 ID가 중복되었습니다.&quot;</span>)
+            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"페이지는 1 이상의 정수여야 합니다."</span>)
+        <span class="tok-keyword">if</span> item[<span class="tok-string">"id"</span>] <span class="tok-keyword">in</span> seen:
+            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"문서 ID가 중복되었습니다."</span>)
         <span class="tok-comment"># 인용 문법 [id]와 충돌하는 ID는 입력 단계에서 막습니다.</span>
-        <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> re.fullmatch(<span class="tok-string">r&quot;[A-Za-z0-9_.:-]+&quot;</span>, item[<span class="tok-string">&quot;id&quot;</span>]):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">&quot;문서 ID는 영문·숫자·_ . : -만 사용합니다.&quot;</span>)
-        seen.add(item[<span class="tok-string">&quot;id&quot;</span>])
-        rows.append({key: item[key] <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">&quot;id&quot;</span>, <span class="tok-string">&quot;text&quot;</span>, <span class="tok-string">&quot;source&quot;</span>, <span class="tok-string">&quot;page&quot;</span>)})
+        <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> re.fullmatch(<span class="tok-string">r"[A-Za-z0-9_.:-]+"</span>, item[<span class="tok-string">"id"</span>]):
+            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"문서 ID는 영문·숫자·_ . : -만 사용합니다."</span>)
+        seen.add(item[<span class="tok-string">"id"</span>])
+        rows.append({key: item[key] <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">"id"</span>, <span class="tok-string">"text"</span>, <span class="tok-string">"source"</span>, <span class="tok-string">"page"</span>)})
     <span class="tok-keyword">return</span> rows
 
 <span class="tok-keyword">def</span> format_context(documents):
-    <span class="tok-keyword">return</span> <span class="tok-string">&quot;\n\n&quot;</span>.join(f&quot;[{d[<span class="tok-string">&#x27;id&#x27;</span>]}] {d[<span class="tok-string">&#x27;source&#x27;</span>]} / p.{d[<span class="tok-string">&#x27;page&#x27;</span>]}\n{d[<span class="tok-string">&#x27;text&#x27;</span>]}&quot;
+    <span class="tok-keyword">return</span> <span class="tok-string">"\n\n"</span>.join(f"[{d[<span class="tok-string">'id'</span>]}] {d[<span class="tok-string">'source'</span>]} / p.{d[<span class="tok-string">'page'</span>]}\n{d[<span class="tok-string">'text'</span>]}"
                        <span class="tok-keyword">for</span> d <span class="tok-keyword">in</span> validate_documents(documents))
 
-bad_page = {**hits[<span class="tok-number">0</span>], <span class="tok-string">&quot;page&quot;</span>: <span class="tok-number">0</span>}
+bad_page = {**hits[<span class="tok-number">0</span>], <span class="tok-string">"page"</span>: <span class="tok-number">0</span>}
 <span class="tok-keyword">try</span>:
     validate_documents([bad_page])
 <span class="tok-keyword">except</span> ValueError <span class="tok-keyword">as</span> error:
@@ -115,7 +115,7 @@ bad_page = {**hits[<span class="tok-number">0</span>], <span class="tok-string">
 <div class="cell-after"><p>‘페이지는 1 이상의 정수여야 합니다.’라는 문구가 나옵니다. 잘못된 원자료가 빈 검색 결과로 숨지 않았습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · prepare_inputs 완성하기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · prepare_inputs()의 입력 계약</h3>
 <div class="cell-before"><p>질문 바깥 공백을 정리하고 문서 목록을 검사하세요. 유효한 빈 목록은 None으로, 근거가 있으면 question과 context가 있는 사전으로 돌려줍니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-keyword">def</span> prepare_inputs(question, documents):
@@ -125,10 +125,10 @@ bad_page = {**hits[<span class="tok-number">0</span>], <span class="tok-string">
     checked = validate_documents(documents)
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> checked:
         <span class="tok-keyword">return</span> <span class="tok-keyword">None</span>
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;question&quot;</span>: question, <span class="tok-string">&quot;context&quot;</span>: format_context(checked)}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"question"</span>: question, <span class="tok-string">"context"</span>: format_context(checked)}
 
-prepared = prepare_inputs(<span class="tok-string">&quot;  휴관 요일은 언제인가요?  &quot;</span>, hits)
-print(prepared[<span class="tok-string">&quot;context&quot;</span>])</code></pre></figure>
+prepared = prepare_inputs(<span class="tok-string">"  휴관 요일은 언제인가요?  "</span>, hits)
+print(prepared[<span class="tok-string">"context"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[library-2] 가상 도서관 이용 안내 / p.2
 도서관은 월요일에 휴관합니다.</pre></div>
 <div class="cell-after"><p>첫 줄에 [library-2], 자료 이름, p.2가 남고 다음 줄에 원문이 옵니다. 입력 검사는 빈 목록 처리보다 먼저 하므로 질문까지 비어 있을 때는 오류를 놓치지 않습니다.</p>
@@ -137,27 +137,21 @@ print(prepared[<span class="tok-string">&quot;context&quot;</span>])</code></pre
 </article>
 </section>
 <section id="nb-handoff" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>수정 뒤 같은 입력으로 재확인하기</h2>
+<h2>고정 입력을 사용한 회귀 검사</h2>
 </div>
 </header>
 <p>동료가 다시 확인하려면 질문과 원문 ID를 기록한 뒤 어떤 단계에서 비교했는지 밝혀야 합니다. 생성 모델을 전혀 부르지 않고도 문맥까지 재현한 사실을 보고할 수 있습니다.</p>
 <!-- MOTION regression-tracing -->
-<figure class="motion-study" id="motion-regression-tracing" data-sheet="motion/regression-tracing.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>틀린 검색 결과는 어느 원문과 대조할까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/regression-tracing-still.webp" width="800" height="272" alt="휴관 요일 질문에서 잘못 찾은 library-1과 직접 확인한 library-2의 2쪽을 대조합니다. 원문을 찾은 뒤에는 검색기도 같은 문서를 찾는지 따로 확인해야 합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>휴관 요일 질문에서 잘못 찾은 library-1과 직접 확인한 library-2의 2쪽을 대조합니다. 원문을 찾은 뒤에는 검색기도 같은 문서를 찾는지 따로 확인해야 합니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 수정 후의 근거 기록 만들기</h3>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 고정 입력의 회귀 결과 기록</h3>
 <div class="cell-before"><p>hits에 실제로 들었던 ID와 쪽을 읽어 교정 전 자료의 ID와 함께 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># retrieved와 hits에서 ID와 쪽 번호를 읽으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">print(<span class="tok-string">&quot;처음 검색한 ID:&quot;</span>, retrieved[<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>])
-print(<span class="tok-string">&quot;기대 원문과 대조한 ID:&quot;</span>, hits[<span class="tok-number">0</span>][<span class="tok-string">&quot;id&quot;</span>], <span class="tok-string">&quot;/ 쪽:&quot;</span>, hits[<span class="tok-number">0</span>][<span class="tok-string">&quot;page&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">print(<span class="tok-string">"처음 검색한 ID:"</span>, retrieved[<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])
+print(<span class="tok-string">"기대 원문과 대조한 ID:"</span>, hits[<span class="tok-number">0</span>][<span class="tok-string">"id"</span>], <span class="tok-string">"/ 쪽:"</span>, hits[<span class="tok-number">0</span>][<span class="tok-string">"page"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">처음 검색한 ID: library-1
 기대 원문과 대조한 ID: library-2 / 쪽: 2</pre></div>
 <div class="cell-after"><p>처음의 library-1과 확인용 library-2, 2쪽을 구별했습니다. 이 셀은 올바른 자료를 직접 넣은 경로만 확인합니다. 실제 저장소 설정을 고쳐 검색이 복구됐다는 주장에는 같은 질문으로 저장소를 다시 조회한 결과가 필요합니다.</p>
@@ -166,17 +160,17 @@ print(<span class="tok-string">&quot;기대 원문과 대조한 ID:&quot;</span>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>질문이 비었을 때, 출처가 없을 때, 검색 결과가 비었을 때 중 하나를 골라 진단해 보세요. 다음 장에서 상태에 결과를 담더라도 오류와 빈 목록을 구분하는 원칙은 그대로입니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>RAG 입력 계약과 오류 진단 심화 읽기</h2>
 </div>
 </header>
-<span id="diagnose"></span><details class="reading-topic" id="reading-diagnose"><summary>어느 단계가 막혔는지 구분하기</summary><div class="prose"><p>RAG가 틀린 답을 만들면 모델만 바꾸기 전에 문서·청크·검색·문맥·생성·출처를 나누어 확인합니다. 원문 숫자가 잘못 추출되었다면 검색과 모델을 바꿔도 같은 잘못된 근거가 들어갈 수 있습니다.</p>
+<span id="diagnose"></span><details class="reading-topic" id="reading-diagnose"><summary>RAG 단계별 오류 위치</summary><div class="prose"><p>RAG가 틀린 답을 만들면 모델만 바꾸기 전에 문서·청크·검색·문맥·생성·출처를 나누어 확인합니다. 원문 숫자가 잘못 추출되었다면 검색과 모델을 바꿔도 같은 잘못된 근거가 들어갈 수 있습니다.</p>
 <p>review-record.md에 혼자 설명 가능한 단계와 도움이 필요한 단계를 표시합니다. 오늘은 새 기술을 추가하지 않고 같은 가상 도서관 문서를 사용합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>보충 경로</caption><thead><tr><th scope="col">경로</th><th scope="col">활동</th><th scope="col">완료 증거</th></tr>
@@ -189,12 +183,12 @@ print(<span class="tok-string">&quot;기대 원문과 대조한 ID:&quot;</span>
 <div class="prose"><p>진단 0.5H 중 15분은 24장의 answer-cases.json을 읽습니다. 대출 질문에서 documents는 두 후보인데 sources는 한 객체인 이유와, 주차 질문에서 generation_calls가 0인 이유를 설명하세요. 실제 학생 진단 전에는 특정 보충 경로가 필요하다고 미리 단정하지 않습니다.</p>
 </div>
 </details>
-<span id="data"></span><details class="reading-topic" id="reading-data"><summary>공통 자료와 질문을 고정하기</summary><div class="prose"><p>data/documents.json에는 도서 대출 14일, 월요일 휴관, 무인 반납함 24시간이라는 세 가상 규칙이 있습니다. data/questions.json은 공개 개발 질문 3개와 공개 확인 질문 2개로 나뉩니다. 주차 요금과 카페 메뉴는 이 자료에 근거가 없습니다. 원문이나 기대 근거를 과제 답안에 맞춰 바꾸지 않습니다.</p>
+<span id="data"></span><details class="reading-topic" id="reading-data"><summary>고정 문서와 평가 질문</summary><div class="prose"><p>data/documents.json에는 도서 대출 14일, 월요일 휴관, 무인 반납함 24시간이라는 세 가상 규칙이 있습니다. data/questions.json은 공개 개발 질문 3개와 공개 확인 질문 2개로 나뉩니다. 주차 요금과 카페 메뉴는 이 자료에 근거가 없습니다. 원문이나 기대 근거를 과제 답안에 맞춰 바꾸지 않습니다.</p>
 <p>공통 버전은 course-v1-rag-1.0.0입니다. Q1의 expected_document_ids는 원문 ID이며 검색 청크의 ID와는 역할이 다릅니다. data/source-map.json의 document_id로 연결합니다. 현재는 한 페이지가 한 청크여서 ID가 같고, 더 잘게 나누면 달라질 수 있습니다.</p>
 <p>조건을 비교할 때 자료와 질문을 동시에 바꾸지 않습니다. 검색 설정이나 문맥 함수 가운데 하나만 바꾸고 전후 결과를 같은 질문으로 기록하세요. 이미 공개된 확인 질문과 고정 모델을 사용한 결과를 일반 성능 점수로 표현하지 않습니다.</p>
 </div>
 </details>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>문맥 생성 함수 직접 구현하기</summary><div class="prose"><p>prepare_inputs는 질문과 문서 목록을 받아 LCEL 입력을 만듭니다. 질문 양끝 공백을 제거하고, 비어 있거나 문자열이 아니면 ValueError로 멈춥니다. 문서 목록도 검사한 뒤 빈 목록이면 None을 반환합니다. 정상 결과에는 question과 context 두 키만 둡니다.</p>
+<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>문맥 생성 함수 구현</summary><div class="prose"><p>prepare_inputs는 질문과 문서 목록을 받아 LCEL 입력을 만듭니다. 질문 양끝 공백을 제거하고, 비어 있거나 문자열이 아니면 ValueError로 멈춥니다. 문서 목록도 검사한 뒤 빈 목록이면 None을 반환합니다. 정상 결과에는 question과 context 두 키만 둡니다.</p>
 <p>문서의 id·text·source는 비어 있지 않은 문자열, page는 1 이상의 정수여야 합니다. bool 페이지·중복 ID·대괄호가 섞인 ID는 거부합니다. team-01:p-01처럼 콜론이 들어간 ID는 허용합니다. 이런 세부 검사는 23장의 제공 validate_request/validate_documents를 재사용할 수 있습니다.</p>
 <p>문맥은 format_context와 같은 순서와 줄바꿈을 사용합니다. 임의로 출처를 채우거나 문서 본문을 줄여 다른 근거를 만들지 않습니다. 오늘의 구현 과제는 검증·빈 근거·정상 입력의 흐름을 연결하는 것입니다.</p>
 </div>
@@ -206,14 +200,14 @@ print(<span class="tok-string">&quot;기대 원문과 대조한 ID:&quot;</span>
 <tr><td>team-01:p-01 ID</td><td>그대로 보존</td></tr>
 </tbody></table></div>
 </details>
-<span id="implement"></span><details class="reading-topic" id="reading-implement"><summary>기존 RAG와 연결할 위치 찾기</summary><div class="prose"><p>review_runner.py의 run_review는 R1 검색을 한 번 실행한 뒤 학생의 prepare_inputs를 호출합니다. 빈 문서라면 None인지, 정상 문서라면 question/context가 원문을 보존하는지 확인합니다. 다음으로 같은 문서와 생성 함수를 공통 A1에 넘깁니다.</p>
+<span id="implement"></span><details class="reading-topic" id="reading-implement"><summary>검색·생성 사이의 연결 위치</summary><div class="prose"><p>review_runner.py의 run_review는 R1 검색을 한 번 실행한 뒤 학생의 prepare_inputs를 호출합니다. 빈 문서라면 None인지, 정상 문서라면 question/context가 원문을 보존하는지 확인합니다. 다음으로 같은 문서와 생성 함수를 공통 A1에 넘깁니다.</p>
 <p>generate는 학생 함수가 만든 inputs를 LCEL 체인에 전달합니다. 공통 A1은 빈 근거일 때 generate를 호출하지 않고, 생성했다면 인용 검사를 수행합니다. 이렇게 학생 함수의 출력이 실제 호출 지점에 들어가는지 확인하며 24장의 인용·오류 정책을 유지합니다.</p>
 </div>
 </details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>모의 연결과 실제 연결을 구분하기</summary><div class="prose"><p>함께 제공한 review-cases.json은 강사 참조 함수로 실행한 예시이며 implementation_kind가 instructor_reference_not_student_submission입니다. 학생은 자신의 함수를 실행한 새 기록과 비교합니다. 이 예시 기록이나 자동검사를 동료가 재현한 증거로 옮겨 쓰지 않습니다.</p>
+<span id="run"></span><details class="reading-topic" id="reading-run"><summary>모의 연결과 외부 의존성</summary><div class="prose"><p>함께 제공한 review-cases.json은 강사 참조 함수로 실행한 예시이며 implementation_kind가 instructor_reference_not_student_submission입니다. 학생은 자신의 함수를 실행한 새 기록과 비교합니다. 이 예시 기록이나 자동검사를 동료가 재현한 증거로 옮겨 쓰지 않습니다.</p>
 </div>
 </details>
-<span id="debug"></span><details class="reading-topic" id="reading-debug"><summary>증상에서 원인 후보 좁히기</summary><div class="table-scroll" tabindex="0"><table><caption>오류를 나누어 찾기</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th></tr>
+<span id="debug"></span><details class="reading-topic" id="reading-debug"><summary>증상별 원인 추적</summary><div class="table-scroll" tabindex="0"><table><caption>오류를 나누어 찾기</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th></tr>
 </thead><tbody><tr><td>문서에 잘못된 숫자</td><td>원본과 추출 텍스트</td></tr>
 <tr><td>원문은 맞는데 필요한 청크 없음</td><td>청킹 경계·메타데이터</td></tr>
 <tr><td>검색 결과가 비어 있음</td><td>적재·컬렉션·질문 표현·필터</td></tr>
@@ -224,18 +218,18 @@ print(<span class="tok-string">&quot;기대 원문과 대조한 ID:&quot;</span>
 <tr><td>DataContractError</td><td>문서 출처·E1·학생 context와 원문 일치</td></tr>
 </tbody></table></div>
 </details>
-<span id="peer"></span><details class="reading-topic" id="reading-peer"><summary>동료가 실행하는 안내 작성</summary><div class="prose"><p>동료가 실제로 실행하지 않았다면 문서 검토만 했다고 기록합니다. 자신의 컴퓨터에서 실행된 결과를 다른 운영체제 검증으로 바꾸어 쓰지 않습니다.</p>
+<span id="peer"></span><details class="reading-topic" id="reading-peer"><summary>재현 입력과 실행 안내</summary><div class="prose"><p>동료가 실제로 실행하지 않았다면 문서 검토만 했다고 기록합니다. 자신의 컴퓨터에서 실행된 결과를 다른 운영체제 검증으로 바꾸어 쓰지 않습니다.</p>
 </div>
 </details>
-<span id="finish"></span><details class="reading-topic" id="reading-finish"><summary>개인 설명과 다음 학습 준비</summary><div class="prose"><p>다음 26장에서는 함수가 값을 읽고 바꾸는 과정을 question·documents·answer 상태로 나타냅니다. 입문 예제는 documents를 문자열 목록으로 줄여 상태 갱신에 집중하고, 30장에서 출처 객체 목록으로 돌아오는 이유를 설명합니다. 지금의 원문과 출처를 지우거나 모든 계약이 곧바로 같다고 가정하는 과제가 아닙니다.</p>
+<span id="finish"></span><details class="reading-topic" id="reading-finish"><summary>오류 진단과 보충 기준</summary><div class="prose"><p>다음 26장에서는 함수가 값을 읽고 바꾸는 과정을 question·documents·answer 상태로 나타냅니다. 입문 예제는 documents를 문자열 목록으로 줄여 상태 갱신에 집중하고, 30장에서 출처 객체 목록으로 돌아오는 이유를 설명합니다. 지금의 원문과 출처를 지우거나 모든 계약이 곧바로 같다고 가정하는 과제가 아닙니다.</p>
 </div>
 </details>
-<details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://reference.langchain.com/python/langchain-core/runnables/base/RunnableSequence" target="_blank" rel="noopener noreferrer">LangChain RunnableSequence ↗</a><span></span></li>
