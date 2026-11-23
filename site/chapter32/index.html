@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 검색 함수로 LCEL과 Graph 비교하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -113,6 +115,16 @@ Graph [&#x27;library-1&#x27;]</pre></div>
 </div>
 </header>
 <p>마지막 문장만 비교하면 검색부터 달랐는지 알기 어렵습니다. 각 노드의 변경분을 살펴보고, 검색 ID가 같을 때만 답 작성과 인용 처리를 다음 후보로 봅니다.</p>
+<!-- MOTION aligned-traces -->
+<figure class="motion-study" id="motion-aligned-traces" data-sheet="motion/aligned-traces.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>두 구현은 어느 값에서 처음 달라질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/aligned-traces-still.webp" width="800" height="272" alt="같은 대출 질문에서 LCEL과 그래프 모두 library-1과 14일을 반환합니다. 입력을 맞추고 위아래의 같은 항목을 짝지어 대조합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>같은 대출 질문에서 LCEL과 그래프 모두 library-1과 14일을 반환합니다. 입력을 맞추고 위아래의 같은 항목을 짝지어 대조합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 검색 노드의 첫 갱신 읽기</h3>
 <div class="cell-before"><p>updates 모드에서 첫 갱신을 받아 검색된 첫 문서의 ID를 표시하세요. 셀 02에서 graph_k를 2로 바꾸었을 때도 첫 ID가 같은지 확인하세요. 두 번째 ID가 추가됐는지는 셀 02의 문서 목록에서 볼 수 있습니다.</p>
 </div>

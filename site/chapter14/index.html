@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>분류 결과에 따라 다른 워크플로우 실행하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -64,6 +66,17 @@ print(mock_classify(<span class="tok-string">&quot;영수증이 필요합니다&
 </div>
 </header>
 <p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. 아래의 write는 문구 생성 과정을 대신하는 모의 함수입니다.</p>
+<!-- MOTION route-rail -->
+<figure class="motion-study" id="motion-route-rail" data-sheet="motion/route-rail.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>분류가 불분명하면 어떤 호출이 남을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/route-rail-still.webp" width="800" height="272" alt="technical은 기술 문의 단계로 갑니다. 분류 오류 사례에서는 후속 호출 수가 0이므로 임의의 담당자에게 보내지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>technical은 기술 문의 단계로 갑니다. 분류 오류 사례에서는 후속 호출 수가 0이므로 임의의 담당자에게 보내지 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 경로 선택 함수 준비하기</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>

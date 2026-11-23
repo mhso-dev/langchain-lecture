@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>품질 개선 실험 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -54,6 +56,17 @@ print(normalized)</code></pre></figure>
 </div>
 </header>
 <p>제공 실험 결과에서는 기본 7문항이 전후 모두 통과했고, 추가한 공개 개발 3문항 중 통과한 문항은 1개에서 3개로 늘었습니다. 팀은 이 범위에서만 수정을 채택했습니다. 두 장비 중 무엇인지 모호한 장비AB까지 잘라내는 수정은 장비를 잘못 고르는 새 오류를 만듭니다.</p>
+<!-- MOTION word-boundary -->
+<figure class="motion-study" id="motion-word-boundary" data-sheet="motion/word-boundary.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>A 뒤에 B가 더 있으면 틈을 내도 될까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/word-boundary-still.webp" width="800" height="272" alt="A·B 뒤가 문자열 끝이거나 다음 글자가 영문·숫자가 아닐 때만 공백을 넣습니다. “장비A의”는 바뀌지만 “장비AB”에는 A 뒤에 B가 이어져 원문이 유지됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>A·B 뒤가 문자열 끝이거나 다음 글자가 영문·숫자가 아닐 때만 공백을 넣습니다. “장비A의”는 바뀌지만 “장비AB”에는 A 뒤에 B가 이어져 원문이 유지됩니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <div class="learn-detail"><h4>공개 개발 문항 세 개의 판정</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">문항 · 입력의 특징</th><th scope="col">수정 전 → 후</th><th scope="col">판정할 때 볼 점</th></tr>
 </thead><tbody><tr><td>Q98-N01 · 장비A</td><td>실패 → 통과</td><td>장비 A로 읽어야 함</td></tr>

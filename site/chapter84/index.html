@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>요구사항 변경·코드 검토 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,16 @@
 </div>
 </header>
 <p>새로 만들 때와 예전 행을 읽을 때 모두 due_date는 비어 있을 수 있고 priority의 기본값은 normal입니다. PostgreSQL에서는 날짜 타입을 사용합니다. 여기서는 SQLite의 ISO 날짜 문자열과 CHECK 조건으로 같은 동작을 좁혀 봅니다.</p>
+<!-- MOTION schema-extension -->
+<figure class="motion-study" id="motion-schema-extension" data-sheet="motion/schema-extension.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>기존 행에 새 열을 붙이면 어떤 값이 생길까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/schema-extension-still.webp" width="800" height="272" alt="기존 제목 복습은 남습니다. 마감일은 None, 우선순위는 기본값 normal로 시작해 새 스키마에서도 행을 읽을 수 있습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>기존 제목 복습은 남습니다. 마감일은 None, 우선순위는 기본값 normal로 시작해 새 스키마에서도 행을 읽을 수 있습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기존 행이 있는 테이블에 열 추가하기</h3>
 <div class="cell-before"><p>변경 전의 복습 한 건을 넣고 ADD COLUMN을 적용합니다.</p>
 </div>

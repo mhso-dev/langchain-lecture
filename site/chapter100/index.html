@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>상태·기억·저장 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -47,6 +49,16 @@ print(sessions[(trusted_owner, <span class="tok-string">&quot;main&quot;</span>)
 </div>
 </header>
 <p>보존 정책 예시　생성 후 300초, 한 세션 안에서 최근 5턴(질문·응답 쌍)만 유지하고, 새 답이 생겨도 만료 시각은 연장하지 않습니다. 1000초에 만든 대화라면 1300초에 만료합니다. 삭제 대상은 현재 로컬 파일입니다. 로그와 백업 사본까지 지웠다고 기록하려면 그 사본도 별도로 확인해야 합니다.</p>
+<!-- MOTION five-turn-window -->
+<figure class="motion-study" id="motion-five-turn-window" data-sheet="motion/five-turn-window.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>여섯 번째 턴을 쓰면 어느 기록이 밀릴까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/five-turn-window-still.webp" width="800" height="272" alt="이 설계는 세션 안에서 최근 다섯 턴만 유지합니다. 새 턴이 들어오면 가장 오래된 턴이 빠집니다. 세션 전체의 300초 만료 조건은 별도로 적용됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>이 설계는 세션 안에서 최근 다섯 턴만 유지합니다. 새 턴이 들어오면 가장 오래된 턴이 빠집니다. 세션 전체의 300초 만료 조건은 별도로 적용됩니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 한 사람의 대화만 비우기</h3>
 <div class="cell-before"><p>가상 alice가 main 삭제를 요청했습니다. 사본에서 그 키만 덜어내고 bob의 마지막 근거를 다시 읽어 보세요.</p>
 <p>최근 5턴을 남기는 세션에서 여섯 번째 턴을 저장하면 첫 번째 턴이 빠지고 2~6번째 턴이 남습니다. 생성 후 300초가 되면 세션 자체가 만료됩니다. 아래 과제에서 실제로 관찰하는 것은 소유자를 골라 삭제한 결과입니다.</p>

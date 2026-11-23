@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색·프롬프트·모델을 연결해 첫 RAG 완성하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -138,6 +140,16 @@ print(context)</code></pre></figure>
 </div>
 </header>
 <p>제공된 answer_question은 검색과 생성을 함수로 받습니다. 예제에서는 두 함수가 한 질문의 자료와 대본만 돌려주므로 근거의 유무와 인용 검사를 따로 재현할 수 있습니다.</p>
+<!-- MOTION citation-ring -->
+<figure class="motion-study" id="motion-citation-ring" data-sheet="motion/citation-ring.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>검색 울타리 안에 인용 ID가 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/citation-ring-still.webp" width="800" height="272" alt="휴관일 질문으로 찾은 집합에는 library-2가 있습니다. library-1도 존재하는 문서지만 이번 집합 밖의 인용이라 검사를 통과하지 못합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>휴관일 질문으로 찾은 집합에는 library-2가 있습니다. library-1도 존재하는 문서지만 이번 집합 밖의 인용이라 검사를 통과하지 못합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 검색하지 않은 ID 인용하기</h3>
 <div class="cell-before"><p>여기부터는 휴관 질문과 2쪽 문서를 고정합니다. 문장은 그대로 두고 답의 인용만 1쪽으로 바꿔 검사 결과를 보세요.</p>
 </div>

@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>화면 상태와 Graph 대화를 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -102,6 +104,16 @@ print(second[<span class="tok-string">&#x27;sources&#x27;</span>])</code></pre><
 </div>
 </header>
 <p>화면의 새 대화 버튼은 새 ID와 빈 현재 화면을 준비합니다. 다른 사용자의 thread_id를 재사용하면 이전 상태를 이어 읽으므로 이 노트북의 A와 B 같은 예시 ID를 운영 인증에 쓰면 안 됩니다.</p>
+<!-- MOTION new-chat-window -->
+<figure class="motion-study" id="motion-new-chat-window" data-sheet="motion/new-chat-window.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>새 대화를 열면 이전 기록도 지워질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/new-chat-window-still.webp" width="800" height="272" alt="새 ID의 화면은 비어 있습니다. 기존 ID로 저장된 질문들은 그 대화에 남습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>새 ID의 화면은 비어 있습니다. 기존 ID로 저장된 질문들은 그 대화에 남습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 두 번째 대화를 열고 기록 확인하기</h3>
 <div class="cell-before"><p>B라는 새 대화에 휴관일을 묻고 B의 질문 목록과 현재 쪽수를 표시하세요.</p>
 </div>

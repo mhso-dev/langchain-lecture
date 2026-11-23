@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph와 세 필드 State로 실행 흐름 읽기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,6 +34,17 @@
 </div>
 </header>
 <p>State는 한 질문을 처리하면서 여러 단계가 함께 읽는 값입니다. 여기서는 question에 질문, documents에 찾은 문장 목록, answer에 최종 안내를 담습니다. 노드가 값을 읽어 바꿀 부분만 돌려주면 그래프가 앞 상태에 합칩니다.</p>
+<!-- MOTION state-patch -->
+<figure class="motion-study" id="motion-state-patch" data-sheet="motion/state-patch.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>한 필드만 돌려주면 나머지 필드는 지워질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/state-patch-still.webp" width="800" height="272" alt="질문의 공백을 정리하는 노드는 question만 갱신합니다. documents의 빈 목록과 answer의 빈 문자열은 원래 칸에 남습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>질문의 공백을 정리하는 노드는 question만 갱신합니다. documents의 빈 목록과 answer의 빈 문자열은 원래 칸에 남습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문 앞뒤 공백 지우기</h3>
 <div class="cell-before"><p>normalize가 돌려줄 딕셔너리의 키를 예측해 보세요.</p>
 </div>

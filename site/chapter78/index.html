@@ -4,6 +4,8 @@
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
 <script defer src="../assets/concept-labs.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -33,6 +35,16 @@
 </div>
 </header>
 <p>label의 for 값은 입력 요소의 id를 가리킵니다. placeholder는 입력하면 사라지므로 항상 읽을 수 있는 이름을 대신하지 못합니다. 아래 예제는 78장 wireframe에서 제목, 입력, 버튼만 뽑았습니다.</p>
+<!-- MOTION label-focus -->
+<figure class="motion-study" id="motion-label-focus" data-sheet="motion/label-focus.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>레이블을 눌렀을 때 커서는 어디에 생길까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/label-focus-still.webp" width="800" height="272" alt="for와 id가 같으면 레이블을 눌러도 연결된 입력칸에 초점이 갑니다. 두 값이 다르면 그 관계가 끊깁니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>for와 id가 같으면 레이블을 눌러도 연결된 입력칸에 초점이 갑니다. 두 값이 다르면 그 관계가 끊깁니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 입력칸과 준비 중인 버튼 표시</h3>
 <div class="cell-before"><p>노트북에서 레이블을 눌러 커서가 옮겨지는지 보세요. 정적 시안이라 버튼은 비활성입니다.</p>
 </div>

@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>요약·분류·문장 작성을 순서대로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,6 +34,16 @@
 </div>
 </header>
 <p>각 단계는 받은 자료와 지시를 이용해 새 문자열을 반환합니다. 이번 실습의 mock_call은 정해 둔 답을 주는 대역입니다. 최종 글의 품질보다 단계 사이에 실제로 건넨 값을 확인합니다.</p>
+<!-- MOTION summary-strip -->
+<figure class="motion-study" id="motion-summary-strip" data-sheet="motion/summary-strip.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>다음 호출에 들어가는 문장은 어디서 왔을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/summary-strip-still.webp" width="800" height="272" alt="첫 호출이 만든 영수증 문의 요약을 다음 호출의 입력에 끼웁니다. 요약이 비어 있으면 분류할 문장도 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>첫 호출이 만든 영수증 문의 요약을 다음 호출의 입력에 끼웁니다. 요약이 비어 있으면 분류할 문장도 없습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문의에서 요약 한 줄 받기</h3>
 <div class="cell-before"><p>첫 번째 요청의 질문은 그대로 두고, 반환된 요약을 변수에 보관하세요.</p>
 </div>

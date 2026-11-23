@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 서비스를 EC2 배포로 이어가기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,17 @@
 </div>
 </header>
 <p>배포 예제에서는 HTTPS를 받는 프록시만 호스트의 443번에 연결합니다. 프록시는 Compose 네트워크 안의 api:8000으로 전달하고, API는 내부 db:5432를 사용합니다. DB 접속 정보를 브라우저에 건네지 않습니다.</p>
+<!-- MOTION published-port -->
+<figure class="motion-study" id="motion-published-port" data-sheet="motion/published-port.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>외부에서 보이는 포트와 안쪽 포트는 같을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/published-port-still.webp" width="800" height="272" alt="프록시의 443만 호스트에 공개합니다. 안쪽의 api:8000은 공통 네트워크에서 프록시가 찾는 목적지입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>프록시의 443만 호스트에 공개합니다. 안쪽의 api:8000은 공통 네트워크에서 프록시가 찾는 목적지입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 배포 선언에서 공개 포트 확인</h3>
 <div class="cell-before"><p>기존 배포 설정에서 포트 관련 부분만 가져왔습니다. 어떤 서비스가 외부 요청의 첫 번째 목적지인가요?</p>
 <p>EC2는 클라우드에서 빌려 쓰는 가상 컴퓨터입니다. 학생 브라우저에서 접속하는 주소와 그 컴퓨터 안에서 프록시가 API로 연결하는 주소는 서로 다른 접속점입니다. 연결표에서 브라우저가 출발점인 줄을 먼저 보세요.</p>

@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 문서와 벡터로 검색 저장소 비교하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,6 +32,16 @@
 <h2>세 칸짜리 벡터 읽기</h2>
 </div>
 </header>
+<!-- MOTION distance-triangle -->
+<figure class="motion-study" id="motion-distance-triangle" data-sheet="motion/distance-triangle.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>좌표 두 칸이 다르면 거리는 왜 1.414일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/distance-triangle-still.webp" width="800" height="272" alt="p1은 질문과 같은 점이라 거리가 0입니다. p2는 두 축에서 각각 1만큼 달라 직각삼각형의 빗변 길이 √2만큼 떨어져 있습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>p1은 질문과 같은 점이라 거리가 0입니다. p2는 두 축에서 각각 1만큼 달라 직각삼각형의 빗변 길이 √2만큼 떨어져 있습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <figure style="margin:1em 0"><video controls playsinline muted loop preload="none" aria-label="질문과 두 문서의 벡터 거리" style="display:block;width:100%;height:auto" poster="../assets/media/png-70369386660953.png"><source type="video/mp4" src="../assets/media/mp4-de11f79ae03a0e.mp4"></video><div class="motion-note"><div><b>볼 곳</b><p>민트색 고리는 질문 Q, 그 안의 점은 문서 P1입니다. 주황색 두 선분이 그려진 뒤 흰 대각선이 나타납니다.</p>
 </div>
 <div><b>애니메이션의 의미</b><p>질문과 P1은 세 좌표가 모두 같아 거리가 0입니다. P2는 두 좌표에서 한 칸씩 달라 직선거리가 √2입니다. 거리가 작은 P1이 먼저 검색됩니다.</p>

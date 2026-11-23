@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 API를 Docker 이미지로 옮기기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,6 +34,16 @@
 </div>
 </header>
 <p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
+<!-- MOTION image-imprint -->
+<figure class="motion-study" id="motion-image-imprint" data-sheet="motion/image-imprint.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>이미지에 적힌 CMD는 언제 실행될까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/image-imprint-still.webp" width="800" height="272" alt="이미지는 시작 명령을 보관합니다. 컨테이너를 시작하면 그 명령으로 프로세스가 생깁니다. 이 그림은 원리 설명이며 실제 Docker 실행 여부는 셀 출력에서 확인합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>이미지는 시작 명령을 보관합니다. 컨테이너를 시작하면 그 명령으로 프로세스가 생깁니다. 이 그림은 원리 설명이며 실제 Docker 실행 여부는 셀 출력에서 확인합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원본 Dockerfile에서 CMD 읽기</h3>
 <div class="cell-before"><p>71장 입문 이미지의 Dockerfile에서 마지막 CMD 줄을 가져왔습니다. JSON 배열을 읽어 프로그램과 포트를 나눠 보세요.</p>
 </div>

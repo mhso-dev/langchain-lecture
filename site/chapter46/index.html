@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색 개선 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -52,6 +54,16 @@ print([d[<span class="tok-string">&#x27;id&#x27;</span>] <span class="tok-keywor
 </div>
 </header>
 <p>고정 생성기는 Q01에서 썼던 p2를 인용합니다. 검색은 p3을 돌려주는데 p2 인용을 사용자에게 보여 주면 출처가 어긋납니다. 그래서 이번에는 기준선을 유지하고 생성 수정을 별도의 실험으로 넘깁니다.</p>
+<!-- MOTION wrong-citation-pin -->
+<figure class="motion-study" id="motion-wrong-citation-pin" data-sheet="motion/wrong-citation-pin.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>p3을 찾았는데 왜 답을 보류할까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/wrong-citation-pin-still.webp" width="800" height="272" alt="검색으로 가져온 문단은 p3입니다. 고정 생성기가 인용한 p2를 그 위에 맞춰 봐도 문단 번호가 일치하지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>검색으로 가져온 문단은 p3입니다. 고정 생성기가 인용한 p2를 그 위에 맞춰 봐도 문단 번호가 일치하지 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 변경 전후 기록의 마지막 상태 대조하기</h3>
 <div class="cell-before"><p>두 행은 같은 Q03의 제공 로컬 실행 기록입니다. 검색 정책 외에 무엇을 고정했는지 기억하며 살펴보세요.</p>
 <p>Q03에서 검색이 허용한 문단은 p3인데 고정 답변의 대괄호 안에는 p2가 있습니다. ‘검색 성공’에는 p3을, ‘인용 검사 실패’에는 p2를 적으세요. 검색 문서를 찾았다는 이유로 이 답을 사용자에게 내보내지 않습니다.</p>

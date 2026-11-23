@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>기준선 측정·1차 점검 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -52,6 +54,17 @@ print(sum(row[<span class="tok-string">&quot;passed&quot;</span>] <span class="t
 </div>
 </header>
 <p>실패 기록 예시　Q03 / 기대 no_evidence, 인용 없음 / 실제 answered, RULE-A 인용 / 원인 장비명만 일치하면 점검 문장을 반환 / 수정 후보 일정 문의를 답변 불가로 처리. 반면 Q01은 답의 의미가 맞아도 출처에 절과 개정일이 빠졌습니다. 서로 다른 두 문제를 ‘답변 품질 개선’ 한 줄에 뭉치면 수정 순서를 정하기 어렵습니다.</p>
+<!-- MOTION baseline-error -->
+<figure class="motion-study" id="motion-baseline-error" data-sheet="motion/baseline-error.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>7문항 중 두 개를 맞힌 기록에서 어디를 고칠까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/baseline-error-still.webp" width="800" height="272" alt="Q03의 기대는 no_evidence와 빈 출처입니다. 첫 구현은 장비명만 보고 answered와 RULE-A를 반환했습니다. 전체 점수에서 이 한 행을 꺼내야 오류가 보입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<div class="motion-choices" hidden><button type="button" data-frame="0">기준선 보기</button><button type="button" data-frame="39">Q03 대조</button></div>
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>Q03의 기대는 no_evidence와 빈 출처입니다. 첫 구현은 장비명만 보고 answered와 RULE-A를 반환했습니다. 전체 점수에서 이 한 행을 꺼내야 오류가 보입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · Q01의 실패 항목 찾기</h3>
 <div class="cell-before"><p>기록된 검사 결과에서 실패한 항목의 이름을 뽑아 설계 담당자에게 전하세요.</p>
 <p>Q01에서 답과 문서 ID가 맞아도 절 정보가 빠지면 source_metadata는 False입니다. 모든 필수 조건을 만족해야 하는 전체 passed도 False가 됩니다. 셀 01의 2/7은 이렇게 판정해 둔 일곱 행을 집계한 값입니다.</p>

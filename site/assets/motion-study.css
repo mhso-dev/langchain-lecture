@@ -1,0 +1,20 @@
+.motion-study { margin:1.6rem 0; overflow:hidden; border:1px solid #b8c4ca; border-radius:12px; background:#fff; color:#152d41; break-inside:avoid; }
+.motion-study h3 { padding:1rem 1.2rem .85rem; margin:0; font-size:clamp(1.06rem,2vw,1.35rem); line-height:1.4; }
+.motion-stage { position:relative; line-height:0; }
+.motion-stage img,.motion-stage canvas { display:block; width:100%; height:auto; }
+.motion-stage canvas { position:absolute; inset:0; }
+.motion-study [hidden] { display:none; }
+.motion-study figcaption { margin:0; padding:.7rem 1.2rem 1.1rem; color:#324b57; font-size:1rem; line-height:1.6; }
+.motion-tools { display:flex; align-items:center; gap:1rem; padding:.65rem 1.2rem .15rem; }
+.motion-tools button { min-width:6em; background:#14384a; border:1px solid #14384a; border-radius:5px; padding:.3rem .6rem; font:inherit; font-size:.88rem; color:white; cursor:pointer; }
+.motion-tools label { display:flex; flex:1; gap:.6rem; align-items:center; font-size:.8rem; }
+.motion-tools input { flex:1; min-width:30px; accent-color:#126852; }
+.motion-tools :focus-visible { outline:3px solid #b46800; outline-offset:3px; }
+@media print { .motion-study .motion-tools,.motion-study canvas { display:none; } }
+.motion-viewport { overflow-x:auto; }
+.motion-viewport.enlarged .motion-stage { width:max(650px,135%); }
+.motion-choices { display:flex; gap:.4rem; flex-wrap:wrap; padding:.65rem 1.2rem 0; }
+.motion-choices button,.motion-tools .motion-zoom { border:1px solid #668481; border-radius:4px; padding:.25rem .55rem; background:white; color:#214641; cursor:pointer; font:500 .84rem/1.5 system-ui,sans-serif; }
+.motion-choices button[aria-pressed=true] { background:#d1eee2; border-color:#20765a; }
+@media(max-width:520px){ .motion-tools { flex-wrap:wrap; gap:.5rem; padding:.55rem .65rem; } .motion-tools button { min-width:auto; } .motion-tools label { min-width:7.2rem; } .motion-study h3,.motion-study figcaption { padding-inline:.7rem; } .motion-choices { padding-inline:.65rem; } }
+.motion-study { scroll-margin-top:6.5rem; }

@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>화면 핵심 흐름 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -61,6 +63,16 @@ print(f&#x27;개정일 {source[<span class="tok-string">&quot;revised_on&quot;</
 <h2>새 질문을 보낸 직후의 화면</h2>
 </div>
 </header>
+<!-- MOTION clear-on-send -->
+<figure class="motion-study" id="motion-clear-on-send" data-sheet="motion/clear-on-send.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>새 요청이 대기하는 동안 무엇을 지워야 할까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/clear-on-send-still.webp" width="800" height="272" alt="직전 질문의 답과 출처를 함께 비웁니다. 새 요청의 결과가 도착한 뒤에야 그 요청의 답과 근거를 표시합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>직전 질문의 답과 출처를 함께 비웁니다. 새 요청의 결과가 도착한 뒤에야 그 요청의 답과 근거를 표시합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
 <div class="motion-note"><div><b>볼 곳</b><p>응답 대기 중인 화면에 이전 답의 출처가 남아 있는지 보세요.</p>
 </div>

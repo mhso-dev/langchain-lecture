@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 자료로 RAG를 다시 만들고 오류 설명하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -139,6 +141,17 @@ print(prepared[<span class="tok-string">&quot;context&quot;</span>])</code></pre
 </div>
 </header>
 <p>동료가 다시 확인하려면 질문과 원문 ID를 기록한 뒤 어떤 단계에서 비교했는지 밝혀야 합니다. 생성 모델을 전혀 부르지 않고도 문맥까지 재현한 사실을 보고할 수 있습니다.</p>
+<!-- MOTION regression-tracing -->
+<figure class="motion-study" id="motion-regression-tracing" data-sheet="motion/regression-tracing.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>틀린 검색 결과는 어느 원문과 대조할까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/regression-tracing-still.webp" width="800" height="272" alt="휴관 요일 질문에서 잘못 찾은 library-1과 직접 확인한 library-2의 2쪽을 대조합니다. 원문을 찾은 뒤에는 검색기도 같은 문서를 찾는지 따로 확인해야 합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>휴관 요일 질문에서 잘못 찾은 library-1과 직접 확인한 library-2의 2쪽을 대조합니다. 원문을 찾은 뒤에는 검색기도 같은 문서를 찾는지 따로 확인해야 합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 수정 후의 근거 기록 만들기</h3>
 <div class="cell-before"><p>hits에 실제로 들었던 ID와 쪽을 읽어 교정 전 자료의 ID와 함께 출력하세요.</p>
 </div>

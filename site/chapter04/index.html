@@ -4,6 +4,8 @@
 코드 역할 나누기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -35,6 +37,16 @@
 </div>
 </header>
 <p>클래스는 새 기록에 어떤 값을 담고 어떤 일을 시킬지 정합니다. StudyRecord를 두 번 부르면 같은 규칙을 따르는 별개의 객체가 생깁니다.</p>
+<!-- MOTION independent-switches -->
+<figure class="motion-study" id="motion-independent-switches" data-sheet="motion/independent-switches.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>같은 설계도로 만든 두 기록의 스위치</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/independent-switches-still.webp" width="800" height="272" alt="두 객체는 같은 클래스에서 만들어져도 각자의 done 값을 기억합니다. 한쪽 스위치를 눌러도 옆 기록은 그대로입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>두 객체는 같은 클래스에서 만들어져도 각자의 done 값을 기억합니다. 한쪽 스위치를 눌러도 옆 기록은 그대로입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기록 한 건 만들기</h3>
 <div class="cell-before"><p>생성 시 받은 값과 기본 완료 표시가 어떻게 저장되는지 보세요.</p>
 </div>

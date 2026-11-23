@@ -4,6 +4,8 @@
 실패를 구분하는 클라이언트 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -74,6 +76,16 @@ print(received[<span class="tok-string">&quot;id&quot;</span>] == todo_id)</code
 </div>
 </header>
 <p>404는 요청에 응답했지만 해당 자원을 찾지 못했다는 상태입니다. 타임아웃이면 읽을 응답 본문조차 없을 수 있습니다. 상태 확인을 먼저 하고 성공했을 때만 JSON을 읽습니다.</p>
+<!-- MOTION http-envelope -->
+<figure class="motion-study" id="motion-http-envelope" data-sheet="motion/http-envelope.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>200 응답 안에 JSON이 없을 수도 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/http-envelope-still.webp" width="800" height="272" alt="상태 코드는 봉투 겉면의 정보입니다. HTTP 응답을 받은 뒤에도 본문을 JSON으로 읽을 수 없으면 별도의 파싱 오류가 납니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>상태 코드는 봉투 겉면의 정보입니다. HTTP 응답을 받은 뒤에도 본문을 JSON으로 읽을 수 없으면 별도의 파싱 오류가 납니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · JSON 문서가 아닌 응답</h3>
 <div class="cell-before"><p>상태 코드는 200인데 본문에는 HTML이 담겼다고 가정합니다. 어떤 변환에서 실패하는지 확인하세요.</p>
 </div>
@@ -112,6 +124,17 @@ print(received[<span class="tok-string">&quot;id&quot;</span>] == todo_id)</code
 </div>
 </header>
 <p>JSON의 false는 파이썬의 False가 되지만 따옴표가 있는 &quot;false&quot;는 비어 있지 않은 문자열입니다. 자료형을 먼저 검사하면 잘못된 완료 표시를 막을 수 있습니다.</p>
+<!-- MOTION string-false -->
+<figure class="motion-study" id="motion-string-false" data-sheet="motion/string-false.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>따옴표 속 false가 왜 참으로 읽힐까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/string-false-still.webp" width="800" height="272" alt="문자열 &quot;false&quot;에는 글자가 다섯 개 있습니다. bool은 비어 있는지를 검사하므로 True이고, JSON의 논리값 false를 읽으면 False입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>문자열 &quot;false&quot;에는 글자가 다섯 개 있습니다. bool은 비어 있는지를 검사하므로 True이고, JSON의 논리값 false를 읽으면 False입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 완료 값 검증하기</h3>
 <div class="cell-before"><p>잘못 들어온 문자열을 bool()로 바꾸지 말고 완료 값이 실제 bool인지 확인하세요.</p>
 </div>

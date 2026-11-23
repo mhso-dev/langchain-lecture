@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>서비스 구조·상태 설계 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -53,6 +55,16 @@ print(next_step(<span class="tok-string">&quot;장비 A를 다음 달에 교체�
 </div>
 </header>
 <p>응답 설계 예시　입력 Q01 / 검색어 장비 A / 후보 RULE-A / 본문 점검 전 전원 표시등을 확인합니다. / 표시할 위치 가상 장비실 규정 A, 1쪽 2.1절, 2026-11-01 / 문서판 rules-v1. 저장을 붙이는 팀은 답을 받는 단계와 저장 성공 여부를 분리하세요. 저장 실패 때문에 근거 없는 질문으로 보이면 사용자 행동이 달라집니다.</p>
+<!-- MOTION paired-status -->
+<figure class="motion-study" id="motion-paired-status" data-sheet="motion/paired-status.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>출처 칸은 답변 상태와 어떻게 맞물릴까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/paired-status-still.webp" width="800" height="272" alt="답을 근거로 확인한 Q01에는 RULE-A가 붙습니다. 근거가 없는 질문을 표시할 때는 상태를 바꾸면서 현재 출처 목록도 비워야 합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>답을 근거로 확인한 Q01에는 RULE-A가 붙습니다. 근거가 없는 질문을 표시할 때는 상태를 바꾸면서 현재 출처 목록도 비워야 합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 빈 입력이 들어오는 자리</h3>
 <div class="cell-before"><p>공백만 넣었을 때 짧은 분기의 종료 위치를 표시하세요. 질문을 더 받으면 되는 상태와 구분해 봅니다.</p>
 </div>

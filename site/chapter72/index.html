@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 B1 데이터와 API를 Compose로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,6 +34,16 @@
 </div>
 </header>
 <p>호스트 컴퓨터에서 보는 127.0.0.1과 API 컨테이너 안에서 보는 127.0.0.1은 각자의 네트워크 공간입니다. Compose의 공통 네트워크에서는 API가 db라는 서비스 이름과 DB의 컨테이너 포트 5432로 접속합니다.</p>
+<!-- MOTION localhost-mirrors -->
+<figure class="motion-study" id="motion-localhost-mirrors" data-sheet="motion/localhost-mirrors.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>두 컨테이너에서 localhost는 같은 곳일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/localhost-mirrors-still.webp" width="800" height="272" alt="각 컨테이너의 localhost는 자기 자신을 가리킵니다. 같은 Compose 네트워크에서 API가 DB를 찾을 때 쓰는 주소는 db:5432입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>각 컨테이너의 localhost는 자기 자신을 가리킵니다. 같은 Compose 네트워크에서 API가 DB를 찾을 때 쓰는 주소는 db:5432입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 두 서비스의 접속 주소 읽기</h3>
 <div class="cell-before"><p>아래는 72장 구성에서 연결·저장에 필요한 항목을 뽑은 선언입니다. PyYAML로 실제 YAML을 읽습니다.</p>
 </div>
@@ -74,6 +86,17 @@ print(port_map.split(<span class="tok-string">&#x27;:&#x27;</span>)[<span class=
 </div>
 </header>
 <p>선언된 볼륨은 DB의 데이터 디렉터리에 연결됩니다. 같은 컴퓨터·프로젝트의 같은 볼륨을 다시 연결해야 기존 자료를 읽을 수 있습니다. 다른 호스트에 같은 이름만 만들어도 이전 데이터가 생기는 것은 아닙니다.</p>
+<!-- MOTION persistent-volume -->
+<figure class="motion-study" id="motion-persistent-volume" data-sheet="motion/persistent-volume.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>컨테이너를 바꿀 때 데이터는 어디에 남을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/persistent-volume-still.webp" width="800" height="272" alt="기존 볼륨에 있던 데이터를 새 DB 컨테이너가 같은 위치에 다시 연결해 읽습니다. 같은 이름의 새 컨테이너만 만들어서는 이 연결이 보장되지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>기존 볼륨에 있던 데이터를 새 DB 컨테이너가 같은 위치에 다시 연결해 읽습니다. 같은 이름의 새 컨테이너만 만들어서는 이 연결이 보장되지 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · Compose CLI로 선언 검증하기</h3>
 <div class="cell-before"><p>Docker Compose가 설치된 커널에서는 실제 config 명령이 선언을 해석합니다. 이미지를 받거나 컨테이너를 띄우지 않습니다.</p>
 </div>
