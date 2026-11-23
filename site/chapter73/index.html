@@ -72,15 +72,7 @@ print(min(texts, key=<span class="tok-keyword">lambda</span> key: dist(new_query
 <h2>동일 벡터를 pgvector에서 조회하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘같은 벡터’에서 출발해 ‘pgvector 조회’를 거친 뒤 ‘근접 문서’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>같은 벡터와 거리 기준으로 pgvector 결과를 대조합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>PostgreSQL에서 vector(3) 열은 세 값을 받습니다. &lt;-&gt; 연산자는 L2 거리를 반환하므로 작은 순서대로 정렬합니다. 실제 서비스는 여기에 소유자·허용 문서 범위를 걸고 청크 ID로 원문 표를 연결합니다.</p>
-</figcaption>
-</figure>
+<p>PostgreSQL에서 vector(3) 열은 세 값을 받습니다. &lt;-&gt; 연산자는 L2 거리를 반환하므로 작은 순서대로 정렬합니다. 실제 서비스는 여기에 소유자·허용 문서 범위를 걸고 청크 ID로 원문 표를 연결합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 선택 실습 · 준비된 PostgreSQL에서 검색</h3>
 <div class="cell-before"><p>강사가 읽기 가능한 pgvector 수업 DB를 준비했으면 run_postgres를 켭니다. 연결 설정은 수업 커널의 표준 PG 환경변수를 사용합니다. 아래 SELECT는 제공한 두 벡터만 계산하며 테이블을 변경하지 않습니다.</p>
 </div>
@@ -192,4 +184,4 @@ FROM docs ORDER BY raw_l2, id&quot;&quot;&quot;</span>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

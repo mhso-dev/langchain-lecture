@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph와 세 필드 State로 실행 흐름 읽기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>질문을 다듬으면 어떤 값이 돌아올까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘그래프 상태’ 안에서 ‘질문 정리’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>질문을 다듬은 노드는 question의 변경분만 반환합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>State는 한 질문을 처리하면서 여러 단계가 함께 읽는 값입니다. 여기서는 question에 질문, documents에 찾은 문장 목록, answer에 최종 안내를 담습니다. 노드가 값을 읽어 바꿀 부분만 돌려주면 그래프가 앞 상태에 합칩니다.</p>
-</figcaption>
-</figure>
+<p>State는 한 질문을 처리하면서 여러 단계가 함께 읽는 값입니다. 여기서는 question에 질문, documents에 찾은 문장 목록, answer에 최종 안내를 담습니다. 노드가 값을 읽어 바꿀 부분만 돌려주면 그래프가 앞 상태에 합칩니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문 앞뒤 공백 지우기</h3>
 <div class="cell-before"><p>normalize가 돌려줄 딕셔너리의 키를 예측해 보세요.</p>
 </div>
@@ -76,15 +69,7 @@ print(normalized)</code></pre></figure>
 <h2>검색 노드 뒤에서 답변 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘질문 상태’에서 출발해 ‘검색 결과’를 거친 뒤 ‘답변 상태’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색으로 채운 문서를 다음 노드가 읽어 답합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>엣지는 어떤 함수를 다음에 부를지 정하는 연결입니다. START에서 normalize, lookup, compose 순으로 연결한 뒤 END에서 멈춥니다. 검색 결과를 미리 써 넣지 않고 질문에 들어 있는 낱말을 자료와 대조합니다.</p>
-</figcaption>
-</figure>
+<p>엣지는 어떤 함수를 다음에 부를지 정하는 연결입니다. START에서 normalize, lookup, compose 순으로 연결한 뒤 END에서 멈춥니다. 검색 결과를 미리 써 넣지 않고 질문에 들어 있는 낱말을 자료와 대조합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 세 노드 연결하기</h3>
 <div class="cell-before"><p>이번 셀의 lookup은 노트북 안에 넣어 둔 두 가상 문장에서 찾습니다. 등록된 노드 이름과 엣지의 이름을 맞춰 보세요.</p>
 <p>초기값부터 normalize, lookup, compose 순서로 따라가세요. 한 노드가 돌려주는 사전은 이번에 바꿀 칸만 담습니다. 나머지 두 칸은 앞 상태의 값을 유지합니다.</p>
@@ -129,38 +114,21 @@ print(graph.invoke(request)[<span class="tok-string">&#x27;documents&#x27;</span
 </div>
 </details>
 </article>
-<figure class="flow" data-flow id="flow-6"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>초기 상태와 세 노드의 변경값</h3>
-<p>각 단계에서 이전 값 중 무엇이 남는지 말해 보세요. 이 그림은 설명용이며 Python을 실행하지 않습니다.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>각 노드가 바꾼 필드와 이전 값을 유지한 필드를 나란히 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>노드는 상태의 변경분을 반환하고 그래프가 이를 반영하므로 나머지 필드가 이어집니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>입력</span></li>
-<li><span class="flow-index">02</span><span>정리</span></li>
-<li><span class="flow-index">03</span><span>문서</span></li>
-<li><span class="flow-index">04</span><span>답변</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-6-step-0"><img class="flow-proof" loading="lazy" alt="초기 상태 만들기" src="../assets/media/svg-e1c03fb70a47bb.svg"><span class="eyebrow">STEP 01 · 호출자</span><h4>초기 상태 만들기</h4>
+<details class="case-reference" id="flow-6"><summary>초기 상태와 세 노드의 변경값</summary>
+<p>질문의 공백을 지운 뒤 documents와 answer에 어떤 값이 남는지 예시에서 찾아보세요.</p>
+<article id="flow-6-step-0"><small>STEP 01 · 호출자</small><h4>초기 상태 만들기</h4>
 <p>질문을 넣고 결과 칸은 비웁니다.</p><pre>question  = &#x27;  대출 기간은?  &#x27;
 documents = []
-answer    = &quot;&quot;</pre></article>
-<article class="flow-panel" id="flow-6-step-1"><img class="flow-proof" loading="lazy" alt="질문의 공백 제거" src="../assets/media/svg-7bc585d34ec69b.svg"><span class="eyebrow">STEP 02 · normalize</span><h4>질문의 공백 제거</h4>
+answer    = &quot;&quot;</pre></article><article id="flow-6-step-1"><small>STEP 02 · normalize</small><h4>질문의 공백 제거</h4>
 <p>question만 갱신하고 다른 키는 유지합니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
 documents = []
-answer    = &quot;&quot;</pre></article>
-<article class="flow-panel" id="flow-6-step-2"><img class="flow-proof" loading="lazy" alt="질문에 맞는 문장 조회" src="../assets/media/svg-89ae034ec99158.svg"><span class="eyebrow">STEP 03 · lookup</span><h4>질문에 맞는 문장 조회</h4>
+answer    = &quot;&quot;</pre></article><article id="flow-6-step-2"><small>STEP 03 · lookup</small><h4>질문에 맞는 문장 조회</h4>
 <p>가상 문서 중 대출 키워드가 맞는 문장을 고릅니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
 documents = [&quot;도서 대출 기간은 14일입니다.&quot;]
-answer    = &quot;&quot;</pre></article>
-<article class="flow-panel" id="flow-6-step-3"><img class="flow-proof" loading="lazy" alt="문서를 답변으로 연결" src="../assets/media/svg-9db7df7a2fb120.svg"><span class="eyebrow">STEP 04 · compose</span><h4>문서를 답변으로 연결</h4>
+answer    = &quot;&quot;</pre></article><article id="flow-6-step-3"><small>STEP 04 · compose</small><h4>문서를 답변으로 연결</h4>
 <p>documents를 읽고 answer를 갱신합니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
 documents = [&quot;도서 대출 기간은 14일입니다.&quot;]
-answer    = &quot;도서 대출 기간은 14일입니다.&quot;</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+answer    = &quot;도서 대출 기간은 14일입니다.&quot;</pre></article></details>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>다시 풀어 보기</h2>
@@ -223,4 +191,4 @@ answer    = &quot;도서 대출 기간은 14일입니다.&quot;</pre></article>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

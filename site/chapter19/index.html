@@ -30,15 +30,7 @@
 <h2>빈칸 이름과 입력 이름 맞추기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘키 이름’를 기준으로 양쪽의 ‘템플릿 빈칸’와 ‘입력 값’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>입력의 키와 템플릿의 빈칸 이름을 맞춥니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>템플릿은 비어 있는 칸에 이번 자료를 넣어 요청을 만드는 틀입니다. context에는 근거를, question에는 묻는 문장을 넣습니다. 먼저 표준 파이썬으로 그 두 값을 확인합니다.</p>
-</figcaption>
-</figure>
+<p>템플릿은 비어 있는 칸에 이번 자료를 넣어 요청을 만드는 틀입니다. context에는 근거를, question에는 묻는 문장을 넣습니다. 먼저 표준 파이썬으로 그 두 값을 확인합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문 한 건의 입력</h3>
 <div class="cell-before"><p>context와 question이 다른 역할을 한다는 점을 보세요.</p>
 </div>
@@ -65,15 +57,7 @@ print(template.format(**inputs))</code></pre></figure>
 <h2>파이프를 연결하고 한 번 실행하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘질문 입력’에서 출발해 ‘프롬프트’를 거친 뒤 ‘다음 Runnable’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>앞 단계의 출력이 다음 Runnable의 입력이 됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>LangChain Expression Language(LCEL)의 |는 앞 구성 요소가 돌려준 값을 다음 요소에 건넵니다. 수업 환경에 langchain-core가 설치되어 있으면 아래 셀로 실제 체인을 만듭니다. FakeListChatModel은 고정 답변을 내는 수업용 모델입니다.</p>
-</figcaption>
-</figure>
+<p>LangChain Expression Language(LCEL)의 |는 앞 구성 요소가 돌려준 값을 다음 요소에 건넵니다. 수업 환경에 langchain-core가 설치되어 있으면 아래 셀로 실제 체인을 만듭니다. FakeListChatModel은 고정 답변을 내는 수업용 모델입니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 완성된 프롬프트의 마지막 메시지</h3>
 <div class="cell-before"><p>모델을 부르기 전에 ChatPromptTemplate이 만든 값에서 질문을 먼저 꺼내 봅니다.</p>
 </div>
@@ -111,15 +95,7 @@ has_lcel = find_spec(<span class="tok-string">&quot;langchain_core&quot;</span>)
 <h2>흘러오는 글을 마지막에 합치기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘앞쪽 조각’와 ‘뒤쪽 조각’가 오른쪽의 ‘완성 문장’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>흘러온 조각을 순서대로 모아 전체 문장을 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>invoke는 한 번에 결과를 받고 stream은 차례로 오는 조각을 읽습니다. 조각 하나의 경계는 문장이나 단어의 경계와 같지 않을 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>invoke는 한 번에 결과를 받고 stream은 차례로 오는 조각을 읽습니다. 조각 하나의 경계는 문장이나 단어의 경계와 같지 않을 수 있습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 스트림을 한 문장으로 복원하기</h3>
 <div class="cell-before"><p>LCEL 환경에서는 chain.stream의 조각을 이어 전체 답을 출력하세요. 라이브러리가 없는 경우 제공 조각으로 결합 연산만 연습합니다.</p>
 </div>
@@ -205,4 +181,4 @@ print(<span class="tok-string">&quot;&quot;</span>.join(pieces))</code></pre></f
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

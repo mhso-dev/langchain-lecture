@@ -30,15 +30,7 @@
 <h2>원본을 보존한 채 다른 위치에서 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘원본 보존’를 ‘별도 위치 복구’에 남기는 시점과 ‘r6 확인’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>원본을 그대로 두고 별도 위치에서 복구한 값을 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>복구 기록 예시　① 가상 세션 파일을 준비 ② 별도 디렉터리에 복구 ③ 복구 직후 원본과 바이트 대조 ④ 새 위치에서 마지막 요청 ID 읽기. 운영 상황에서는 복구 시점과 새 쓰기를 멈췄는지 먼저 확인해야 합니다. 아래 셀은 자신이 만든 임시 폴더 안에서만 파일을 만듭니다.</p>
-</figcaption>
-</figure>
+<p>복구 기록 예시　① 가상 세션 파일을 준비 ② 별도 디렉터리에 복구 ③ 복구 직후 원본과 바이트 대조 ④ 새 위치에서 마지막 요청 ID 읽기. 운영 상황에서는 복구 시점과 새 쓰기를 멈췄는지 먼저 확인해야 합니다. 아래 셀은 자신이 만든 임시 폴더 안에서만 파일을 만듭니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 가상 세션을 복사해 다시 열기</h3>
 <div class="cell-before"><p>읽기 확인은 복구 대상에서 수행합니다. 원본 내용으로 답을 출력하면 잘못된 복구 경로도 성공으로 보입니다.</p>
 </div>
@@ -66,15 +58,7 @@
 <h2>복사 성공 뒤에도 남는 확인</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘복구한 사본’가 가운데 ‘질문 재실행’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>복구 사본에 질문을 다시 보내 기능까지 확인합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제공 가상 복구 기록에서는 alice가 유지한 요청이 r2~r6였고 다른 사용자의 같은 이름 세션은 0턴이었습니다. 복구 뒤에도 만료 시각은 그대로 두었습니다. 최근 r6을 다시 쓰려는 요청은 거부했고, 보존 범위를 벗어난 r0까지 영구 차단하지는 않았습니다. “파일이 돌아왔다”와 “오래된 중복 요청이 모두 차단된다”는 각각 다른 주장입니다.</p>
-</figcaption>
-</figure>
+<p>제공 가상 복구 기록에서는 alice가 유지한 요청이 r2~r6였고 다른 사용자의 같은 이름 세션은 0턴이었습니다. 복구 뒤에도 만료 시각은 그대로 두었습니다. 최근 r6을 다시 쓰려는 요청은 거부했고, 보존 범위를 벗어난 r0까지 영구 차단하지는 않았습니다. “파일이 돌아왔다”와 “오래된 중복 요청이 모두 차단된다”는 각각 다른 주장입니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 복구 후 인계 문장 쓰기</h3>
 <div class="cell-before"><p>제공 기록에서 원본이 그대로였는지와 운영 자료를 복구한 적이 있는지를 읽어 두 범위를 한 문장씩 구분하세요.</p>
 <p>셀에서 읽은 마지막 값 r6와 임시 사본의 요청 r5·r6를 재현 기록에 적습니다. 보존 기간을 지켰는지와 같은 요청이 두 번 저장되지 않았는지는 별도 검사의 기록을 보고 채우세요.</p>
@@ -107,4 +91,4 @@ print(<span class="tok-string">&quot;운영 자료 실제 복구&quot;</span>, r
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

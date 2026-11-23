@@ -33,15 +33,7 @@
 <h2>합계가 마지막 값이 되는 줄 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘첫 기록’에서 시작해 ‘누적 합계’를 거친 뒤 ‘다음 기록’에서 다시 판단하는 흐름을 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>합계를 반복문 안에서 초기화하면 앞선 기록이 사라집니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>디버깅은 막연히 코드를 바꾸기 전에 틀린 결과를 같은 입력으로 다시 만드는 일부터 시작합니다. 반복을 한 바퀴 돌 때마다 total에 직전 바퀴까지 더한 값이 남아 있어야 합니다.</p>
-</figcaption>
-</figure>
+<p>디버깅은 막연히 코드를 바꾸기 전에 틀린 결과를 같은 입력으로 다시 만드는 일부터 시작합니다. 반복을 한 바퀴 돌 때마다 total에 직전 바퀴까지 더한 값이 남아 있어야 합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 40분만 남은 이유</h3>
 <div class="cell-before"><p>첫 번째 반복이 끝났을 때의 total을 떠올리고 둘째 반복의 첫 줄을 읽으세요.</p>
 </div>
@@ -78,15 +70,7 @@ print(total_minutes(records))</code></pre></figure>
 <h2>동료가 보게 될 변경 한 줄</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘변경 한 줄’를 기준으로 양쪽의 ‘이전 코드’와 ‘수정 코드’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>초기화 줄을 어디로 옮겼는지 비교하세요.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>Git의 diff에서 -로 시작하는 본문 줄은 이전 내용, +는 새 내용입니다. 아래에서는 같은 형식의 차이를 표준 라이브러리로 만들어 읽습니다. 앞뒤 문맥이 없으면 초기화한 위치를 오해하기 쉽습니다.</p>
-</figcaption>
-</figure>
+<p>Git의 diff에서 -로 시작하는 본문 줄은 이전 내용, +는 새 내용입니다. 아래에서는 같은 형식의 차이를 표준 라이브러리로 만들어 읽습니다. 앞뒤 문맥이 없으면 초기화한 위치를 오해하기 쉽습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 코드 차이에서 삭제한 줄 찾기</h3>
 <div class="cell-before"><p>잘못된 계산에서 반복문 안쪽 초기화 한 줄을 뺐습니다.</p>
 </div>
@@ -109,15 +93,7 @@ print(<span class="tok-string">&quot;\n&quot;</span>.join(unified_diff(before, a
 <h2>같은 줄을 고친 두 사람의 내용 합치기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘내 실행 안내’와 ‘동료 안내’가 오른쪽의 ‘합친 안내’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>두 사람의 안내 중 함께 남겨야 할 내용을 합칩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>서로 다른 브랜치에서 같은 줄을 다르게 고치면 Git이 자동으로 한쪽을 선택할 수 없습니다. 충돌 표시 위쪽과 아래쪽을 읽고 두 사람이 고친 의도를 살려 최종 문장을 씁니다.</p>
-</figcaption>
-</figure>
+<p>서로 다른 브랜치에서 같은 줄을 다르게 고치면 Git이 자동으로 한쪽을 선택할 수 없습니다. 충돌 표시 위쪽과 아래쪽을 읽고 두 사람이 고친 의도를 살려 최종 문장을 씁니다.</p>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 충돌 표시 읽기</h3>
 <div class="cell-before"><p>수업용 안내문의 같은 줄에 서로 다른 실행 방법을 적었습니다.</p>
 <p>아래 문자열에는 이미 충돌 표시가 들어 있습니다. 이번 셀에서는 양쪽이 바꾼 줄을 찾아보세요. 실제 저장소에서 병합을 마칠 때에는 별도로 파일의 충돌 표시를 정리하고 선택한 내용을 기록합니다.</p>
@@ -224,4 +200,4 @@ print(conflict)</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

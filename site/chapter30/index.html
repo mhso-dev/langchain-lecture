@@ -30,15 +30,7 @@
 <h2>문장 하나를 출처가 있는 검색 결과로 받기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘검색 문장’와 ‘출처와 쪽’가 오른쪽의 ‘검색 레코드’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색 문장에 문서 ID와 원문 위치를 함께 붙입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>노트북의 자료는 앞서 사용한 가상 도서관 안내 세 쪽입니다. 읽는 법에 집중하려고 로컬 검색 함수는 세 낱말의 유무를 거리로 바꾸며 k개를 고릅니다. Chroma 서버나 외부 임베딩을 호출하는 셀은 없습니다.</p>
-</figcaption>
-</figure>
+<p>노트북의 자료는 앞서 사용한 가상 도서관 안내 세 쪽입니다. 읽는 법에 집중하려고 로컬 검색 함수는 세 낱말의 유무를 거리로 바꾸며 k개를 고릅니다. Chroma 서버나 외부 임베딩을 호출하는 셀은 없습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 검색된 한 쪽 펼치기</h3>
 <div class="cell-before"><p>대출 질문을 넣고 목록의 첫 번째 레코드를 읽으세요.</p>
 </div>
@@ -75,15 +67,7 @@ print(retrieve(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>, <s
 <h2>답변 전에 검색을 한 번 거치기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘질문’에서 출발해 ‘필수 검색 노드’를 거친 뒤 ‘근거로 답변’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>답변 노드 앞에 검색 노드를 두어 매번 근거를 찾습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>검색 결과를 상태에 넣을 때는 documents 키에 목록을 그대로 반환합니다. 다음 노드는 같은 목록에서 답을 꺼냅니다. 별도로 다시 검색하면 처음 확인한 근거와 다른 문서를 답에 쓰게 될 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>검색 결과를 상태에 넣을 때는 documents 키에 목록을 그대로 반환합니다. 다음 노드는 같은 목록에서 답을 꺼냅니다. 별도로 다시 검색하면 처음 확인한 근거와 다른 문서를 답에 쓰게 될 수 있습니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색과 답변 노드 연결하기</h3>
 <div class="cell-before"><p>아래 그래프에서 START 다음에 연결한 노드를 찾고 휴관 질문을 실행하세요.</p>
 <p>이 노트북의 retrieve는 공백 질문에서 []를 반환하고 답변은 상태의 answer에서 읽습니다. 뒤의 R1/A1 참고 구현은 공백을 ValueError로 처리하며 result 안에 답을 넣습니다. 두 구현의 키를 섞으면 값을 찾을 수 없습니다.</p>
@@ -194,4 +178,4 @@ print(empty[<span class="tok-string">&#x27;documents&#x27;</span>], empty[<span 
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

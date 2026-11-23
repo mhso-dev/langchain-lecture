@@ -3,6 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>파일·표·텍스트를 읽고
 정제 결과 저장하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -33,15 +34,7 @@
 <h2>CSV에서 글자와 빈칸 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘CSV 행’ 안에서 ‘빈 칸’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>CSV의 빈 칸은 먼저 빈 문자열로 읽힙니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>이 CSV에서는 쉼표가 한 줄 안의 칸을 나누고 줄바꿈이 행을 나눕니다. 노트북에 넣은 여섯 줄은 예제 records.csv와 같습니다. StringIO로 파일처럼 열어 보므로 경로를 설정할 필요가 없습니다.</p>
-</figcaption>
-</figure>
+<p>이 CSV에서는 쉼표가 한 줄 안의 칸을 나누고 줄바꿈이 행을 나눕니다. 노트북에 넣은 여섯 줄은 예제 records.csv와 같습니다. StringIO로 파일처럼 열어 보므로 경로를 설정할 필요가 없습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 여섯 줄의 기록</h3>
 <div class="cell-before"><p>둘째 데이터 행에서 minutes를 꺼내 보세요. 빈 문자열은 화면에 잘 안 보이므로 repr로 표시합니다.</p>
 </div>
@@ -74,15 +67,7 @@ print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">&quo
 <h2>유효한 행을 남긴 뒤 중복 제거하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘원본 행’가 가운데 ‘유효성 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>유효하지 않은 행을 뺀 뒤 중복을 찾습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>시간이 비었거나 제목이 비면 그 행은 보류합니다. 이 표의 시간은 0~480 사이의 정수만 허용합니다. 남은 행 안에 같은 id가 다시 나타나면 먼저 본 유효 행을 씁니다.</p>
-</figcaption>
-</figure>
+<p>시간이 비었거나 제목이 비면 그 행은 보류합니다. 이 표의 시간은 0~480 사이의 정수만 허용합니다. 남은 행 안에 같은 id가 다시 나타나면 먼저 본 유효 행을 씁니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 누락을 걸러낸 기록</h3>
 <div class="cell-before"><p>아래 함수는 이 작은 CSV의 정수 표기만 읽습니다. 숫자 변환과 범위 검사까지 성공한 행을 모으세요.</p>
 <p>CSV의 minutes는 문자열입니다. clean_row는 &#x27;30&#x27;을 30으로 바꾸지만 &#x27;30.0&#x27;에서는 int 변환이 실패해 행을 제외합니다. 뒤의 판다스 예시는 먼저 숫자로 읽어 정수와 값이 같은 30.0을 허용합니다. 팀 자료에는 어느 표기까지 허용할지 한 가지 규칙을 정하세요.</p>
@@ -127,15 +112,7 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <h2>판다스 표에서도 같은 순서로 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘표의 각 행’ 안에서 ‘조건 마스크’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>행마다 참·거짓 하나가 대응합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>표 전체를 다룰 때는 Pandas의 DataFrame을 씁니다. 수업용 커널에 pandas가 있으면 아래 셀이 실제 열을 선택합니다. 설치되지 않은 환경에서도 앞의 CSV 실습은 그대로 동작합니다.</p>
-</figcaption>
-</figure>
+<p>표 전체를 다룰 때는 Pandas의 DataFrame을 씁니다. 수업용 커널에 pandas가 있으면 아래 셀이 실제 열을 선택합니다. 설치되지 않은 환경에서도 앞의 CSV 실습은 그대로 동작합니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 시간 열에서 빈칸 찾기</h3>
 <div class="cell-before"><p>문자열로 읽은 뒤 숫자로 바꿀 수 없는 값을 결측값으로 표시합니다.</p>
 </div>
@@ -156,15 +133,7 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <h2>저장한 기록을 다시 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-04.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘정제한 기록’를 ‘파일 저장’에 남기는 시점과 ‘다시 읽은 기록’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>다시 읽은 제목과 시간이 저장 전 값과 맞아야 합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>메모리 안의 사전은 커널을 닫으면 사라집니다. 임시 폴더에 실제 파일을 저장하고 같은 인코딩으로 다시 열어 첫 유효 행의 값이 남았는지 확인합니다.</p>
-</figcaption>
-</figure>
+<p>메모리 안의 사전은 커널을 닫으면 사라집니다. 임시 폴더에 실제 파일을 저장하고 같은 인코딩으로 다시 열어 첫 유효 행의 값이 남았는지 확인합니다.</p>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · UTF-8 JSON 한 건 되읽기</h3>
 <div class="cell-before"><p>파일을 여는 기준 폴더와 이름을 Path로 합칩니다. 이번 입력은 valid의 첫 행이므로 앞 과제를 풀기 전에도 실행할 수 있습니다.</p>
 </div>
@@ -222,31 +191,14 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <p>drop_duplicates는 subset에 적은 열을 비교합니다. keep=&quot;first&quot;는 현재 순서에서 첫 행을 남깁니다. 중복 제거를 먼저 하면 누락 시간의 id=2가 남고 유효한 20분 기록을 잃을 수 있습니다.</p>
 <p>return cleaned, report는 두 값을 함께 반환합니다. 호출자는 cleaned, report = clean_table(frame)처럼 두 이름에 나누어 받습니다. 반환한 표와 보고서를 함께 확인하세요.</p>
 </div>
-<figure class="flow" data-flow id="flow-8"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>6행이 3행으로 정리되는 과정</h3>
+<details class="case-reference" id="flow-8"><summary>6행이 3행으로 정리되는 과정</summary>
 <p>누락 제거와 중복 제거의 순서를 눈으로 추적합니다.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>유효성 검사와 중복 제거를 지날 때 남은 행 수와 ID를 읽으세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>잘못된 두 행을 먼저 빼고 유효한 중복 한 행을 제거하면 처음 여섯 행 중 세 행이 남습니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>원본</span></li>
-<li><span class="flow-index">02</span><span>검증</span></li>
-<li><span class="flow-index">03</span><span>중복</span></li>
-<li><span class="flow-index">04</span><span>전체 표에서 남은 행</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-8-step-0"><img class="flow-proof" loading="lazy" alt="6행을 읽음" src="../assets/media/svg-091b1065e7ebd1.svg"><span class="eyebrow">STEP 01 · CSV</span><h4>6행을 읽음</h4>
-<p>id=2와 id=4가 각각 두 번 있습니다.</p><pre>before = 6</pre></article>
-<article class="flow-panel" id="flow-8-step-1"><img class="flow-proof" loading="lazy" alt="잘못된 2행 제외" src="../assets/media/svg-168f9c8a9465e7.svg"><span class="eyebrow">STEP 02 · 조건 필터</span><h4>잘못된 2행 제외</h4>
-<p>분이 빈 id=2 한 행, 제목이 빈 id=3 한 행을 제외합니다.</p><pre>유효 ID: [1, 2, 4, 4]</pre></article>
-<article class="flow-panel" id="flow-8-step-2"><img class="flow-proof" loading="lazy" alt="중복 1행 제외" src="../assets/media/svg-18696489d68b12.svg"><span class="eyebrow">STEP 03 · id 기준</span><h4>중복 1행 제외</h4>
+<article id="flow-8-step-0"><small>STEP 01 · CSV</small><h4>6행을 읽음</h4>
+<p>id=2와 id=4가 각각 두 번 있습니다.</p><pre>before = 6</pre></article><article id="flow-8-step-1"><small>STEP 02 · 조건 필터</small><h4>잘못된 2행 제외</h4>
+<p>분이 빈 id=2 한 행, 제목이 빈 id=3 한 행을 제외합니다.</p><pre>유효 ID: [1, 2, 4, 4]</pre></article><article id="flow-8-step-2"><small>STEP 03 · id 기준</small><h4>중복 1행 제외</h4>
 <p>유효한 id=4 중 첫 행을 유지합니다.</p><pre>첫 4는 유지 · 두 번째 4 제외
-남은 ID: [1, 2, 4]</pre></article>
-<article class="flow-panel" id="flow-8-step-3"><img class="flow-proof" loading="lazy" alt="전체 표에서 남은 행" src="../assets/media/svg-c168110761c599.svg"><span class="eyebrow">STEP 04 · 출력</span><h4>전체 표에서 남은 행</h4>
-<p>앞의 JSON 저장 연습은 한 행을 사용합니다. 여기에 나온 세 행은 전체 표를 정리한 결과입니다.</p><pre>전체 표: 3행, 합계 90분</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+남은 ID: [1, 2, 4]</pre></article><article id="flow-8-step-3"><small>STEP 04 · 출력</small><h4>전체 표에서 남은 행</h4>
+<p>앞의 JSON 저장 연습은 한 행을 사용합니다. 여기에 나온 세 행은 전체 표를 정리한 결과입니다.</p><pre>전체 표: 3행, 합계 90분</pre></article></details>
 </details>
 <span id="pipeline"></span><details class="reading-topic" id="reading-pipeline"><summary>저장 결과를 다시 읽고 검증하기</summary><div class="prose"><p>to_csv의 index=False는 DataFrame의 행 번호를 새 데이터 열로 저장하지 않도록 합니다. cleaned.json은 숫자를 정수로 저장합니다. CSV는 형식 자체에 자료형 정보를 보관하지 않으므로 다시 읽을 때 id는 문자열로 지정합니다.</p>
 <p>검증은 출력 파일이 생겼다는 확인에서 끝나지 않습니다. 전후 행 수, 제외 이유별 수, 최종 id, 합계를 비교하고 저장 파일을 다시 읽어 확인합니다. 이 예제에서 6 = 2 + 1 + 3이 성립해야 합니다.</p>
@@ -283,4 +235,4 @@ print([row[<span class="tok-string">&quot;minutes&quot;</span>] <span class="tok
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

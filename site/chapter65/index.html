@@ -30,15 +30,7 @@
 <h2>결제·기술·추가 확인으로 나누기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘문의 분류’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘결제 경로’, 아래쪽은 ‘기술 경로’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>분류 결과가 기술 문의에 허용된 경로를 가리킵니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>기존 분류기와 같은 단어를 씁니다. 결제와 기술 표현이 함께 있거나 둘 다 없으면 어느 한쪽을 추측하지 않고 되묻습니다. 정답이 정해진 네트워크 없는 기준선을 먼저 만듭니다.</p>
-</figcaption>
-</figure>
+<p>기존 분류기와 같은 단어를 씁니다. 결제와 기술 표현이 함께 있거나 둘 다 없으면 어느 한쪽을 추측하지 않고 되묻습니다. 정답이 정해진 네트워크 없는 기준선을 먼저 만듭니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 한 가지 의도만 있는 질문</h3>
 <div class="cell-before"><p>두 조건 중 어떤 조건이 참인지 확인하며 마지막 반환값을 읽으세요.</p>
 </div>
@@ -72,15 +64,7 @@ print(rule_route(<span class="tok-string">&quot;API 호출에 401 오류가 납�
 <h2>분류가 허용하는 도구만 실행하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘기술 문의’가 가운데 ‘허용 도구’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>기술 문의에서는 허용된 기술 안내 도구만 실행합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>LangChain 도구는 모델에 제시할 수 있는 설명과 실제 호출 함수를 함께 갖습니다. 여기서는 분류의 영향을 보기 위해 모델의 자유 선택을 생략하고, 허용 목록에서 얻은 도구를 직접 invoke합니다.</p>
-</figcaption>
-</figure>
+<p>LangChain 도구는 모델에 제시할 수 있는 설명과 실제 호출 함수를 함께 갖습니다. 여기서는 분류의 영향을 보기 위해 모델의 자유 선택을 생략하고, 허용 목록에서 얻은 도구를 직접 invoke합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 기술 문의에 붙인 도구</h3>
 <div class="cell-before"><p>도구 이름과 실제 안내를 확인합니다.</p>
 <p>복합 문의의 분류값 clarify에는 바로 실행할 도구가 없습니다. 이 값이면 도구 목록을 찾기 전에 질문을 돌려주세요. 아래의 기술 문의만 technical 목록에서 함수를 골라 실행합니다.</p>
@@ -113,15 +97,7 @@ route = rule_route(question)
 <h2>선택 실습 · Jev 판단을 받아들일 조건</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘Jev 판단’가 가운데 ‘허용 값 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>외부 분류 응답도 허용된 값인지 확인하고 채택합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>Jev 선택 2H에서는 같은 문의와 세 분류 기준을 TypeSafeClassifier.invoke에 전달합니다. 반환된 choice와 해당 선택의 probability, confidence를 본 뒤 예제의 두 기준을 적용합니다. 아래 경계값 과제의 숫자는 수업용 입력입니다. 기본 실행은 실제 모델의 확률이나 정확도를 측정하지 않습니다. Jev 계정 없이도 같은 경계값 실습을 할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>Jev 선택 2H에서는 같은 문의와 세 분류 기준을 TypeSafeClassifier.invoke에 전달합니다. 반환된 choice와 해당 선택의 probability, confidence를 본 뒤 예제의 두 기준을 적용합니다. 아래 경계값 과제의 숫자는 수업용 입력입니다. 기본 실행은 실제 모델의 확률이나 정확도를 측정하지 않습니다. Jev 계정 없이도 같은 경계값 실습을 할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 선택 실습 · Jev에 문의 분류 요청하기</h3>
 <div class="cell-before"><p>기본값에서는 네트워크를 호출하지 않습니다. 강사가 수업 커널에 langchain-typesafe와 키를 준비한 경우에만 한 건을 요청하세요. 키 값은 출력하지 않습니다.</p>
 </div>
@@ -274,4 +250,4 @@ print(choice <span class="tok-keyword">if</span> accepted <span class="tok-keywo
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

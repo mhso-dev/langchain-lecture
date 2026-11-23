@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>데이터 저장·검색 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>다시 연결해 동일한 행 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘할 일 한 행’를 ‘DB 파일’에 남기는 시점과 ‘새 연결 조회’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>DB 연결을 새로 열어도 같은 행이 남아 있어야 합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>수업 서버의 PostgreSQL 저장소는 트랜잭션을 커밋한 뒤 저장한 레코드를 돌려줍니다. 여기서는 임시 디렉터리의 SQLite 파일을 사용해 커밋과 새 연결의 차이를 직접 확인합니다. 실제 PostgreSQL 컨테이너는 시작하지 않습니다.</p>
-</figcaption>
-</figure>
+<p>수업 서버의 PostgreSQL 저장소는 트랜잭션을 커밋한 뒤 저장한 레코드를 돌려줍니다. 여기서는 임시 디렉터리의 SQLite 파일을 사용해 커밋과 새 연결의 차이를 직접 확인합니다. 실제 PostgreSQL 컨테이너는 시작하지 않습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 파일 DB에 할 일 저장하기</h3>
 <div class="cell-before"><p>저장한 행의 ID를 기록합니다. 커널이 살아 있는 동안만 임시 폴더를 유지합니다.</p>
 <p>저장 결과가 사라진 것 같으면 파일 경로 → 테이블 존재 → 필터 없는 행 순서로 확인하세요. 새 파일에는 테이블이 없어 조회 오류가 나고, 빈 테이블에는 0행이 있습니다. 원래 파일에서 필터만 풀었을 때 ID 1이 보인다면 행은 남아 있습니다.</p>
@@ -73,15 +67,7 @@ print(db.execute(<span class="tok-string">&quot;SELECT id,title,completed FROM t
 <h2>%를 제목에 들어 있는 문자로 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘제목 검색’가 가운데 ‘문자 % 대조’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>제목의 %를 와일드카드와 구분해 찾습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>검색창에 %를 입력한 사용자는 그 기호가 제목에 들어간 할 일을 찾으려 합니다. PostgreSQL 제공 구현은 strpos로 부분 문자열을 검사합니다. SQLite의 비슷한 함수 instr는 찾은 위치를 1부터 세며, 없으면 0을 돌려줍니다.</p>
-</figcaption>
-</figure>
+<p>검색창에 %를 입력한 사용자는 그 기호가 제목에 들어간 할 일을 찾으려 합니다. PostgreSQL 제공 구현은 strpos로 부분 문자열을 검사합니다. SQLite의 비슷한 함수 instr는 찾은 위치를 1부터 세며, 없으면 0을 돌려줍니다.</p><section class="concept-lab" id="concept-lab" data-lab="percent"><h3>제목 속 %는 몇 건에서 찾을 수 있을까요?</h3><p>같은 두 제목에 검색식을 바꿔 보세요. LIKE의 %는 길이가 0인 문자열에도 맞습니다.</p><div class="lab-actions"><button type="button" data-action="instr">instr(title, '%') > 0</button><button type="button" data-action="like">title LIKE '%'</button></div><ul class="search-hits"><li>복습 50% <output data-out="first">일치</output></li><li>복습 마무리 <output data-out="last">제외</output></li></ul><output data-out="count">1건</output></section>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 일치하는 제목만 선택하기</h3>
 <div class="cell-before"><p>비교할 일반 제목 한 건을 더 넣은 뒤 검색합니다.</p>
 </div>
@@ -212,4 +198,4 @@ print(db.execute(sql, (<span class="tok-keyword">True</span>, <span class="tok-s
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

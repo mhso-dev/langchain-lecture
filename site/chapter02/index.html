@@ -3,6 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>파이썬 핵심 문법과
 중첩 데이터 읽기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -33,15 +34,7 @@
 <h2>한 건의 칸을 이름으로 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘기록 한 건’ 안에서 ‘minutes’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>minutes라는 이름으로 한 기록의 30을 꺼냅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>리스트에서는 순서로, 딕셔너리에서는 키로 값을 찾습니다. 자료의 바깥쪽에서 안쪽으로 한 단계씩 내려가 보세요.</p>
-</figcaption>
-</figure>
+<p>리스트에서는 순서로, 딕셔너리에서는 키로 값을 찾습니다. 자료의 바깥쪽에서 안쪽으로 한 단계씩 내려가 보세요.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 번째 기록 꺼내기</h3>
 <div class="cell-before"><p>records에는 제목이 있는 기록 세 건이 차례로 들어 있습니다.</p>
 <p>data[&quot;records&quot;]는 기록 전체입니다. 여기에 [0]을 붙이면 첫 번째 기록 한 건이 남고, 그 기록에서 [&quot;minutes&quot;]를 읽으면 숫자 30이 나옵니다. 두 번째 기록을 읽으려면 어느 대괄호의 숫자를 바꿔야 할까요?</p>
@@ -80,15 +73,7 @@ print(first[<span class="tok-string">&quot;minutes&quot;</span>])</code></pre></
 <h2>조건을 만족한 제목 모으기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘학습 기록’가 가운데 ‘조건 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>조건이 참인 기록에서만 제목을 가져옵니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>두 조건이 동시에 맞아야 합니다. 한 건에서 True 또는 False를 얻은 뒤, 그 조건이 참인 기록의 제목만 새 리스트에 담아 봅시다.</p>
-</figcaption>
-</figure>
+<p>두 조건이 동시에 맞아야 합니다. 한 건에서 True 또는 False를 얻은 뒤, 그 조건이 참인 기록의 제목만 새 리스트에 담아 봅시다.</p>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 30분도 포함할까요?</h3>
 <div class="cell-before"><p>첫 기록은 정확히 30분입니다. 경계에 걸친 이 기록이 선택되는지 보세요.</p>
 </div>
@@ -129,15 +114,7 @@ print(total)</code></pre></figure>
 <h2>문자로 받은 기록 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘JSON 문자’에서 출발해 ‘해석’를 거친 뒤 ‘파이썬 값’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>JSON의 null을 읽으면 Python의 None이 됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>다른 프로그램이 보낸 JSON은 파이썬 사전처럼 보이지만 처음에는 문자열입니다. 자료를 해석한 다음에 키를 꺼냅니다.</p>
-</figcaption>
-</figure>
+<p>다른 프로그램이 보낸 JSON은 파이썬 사전처럼 보이지만 처음에는 문자열입니다. 자료를 해석한 다음에 키를 꺼냅니다.</p>
 <article class="notebook-cell" data-cell="7" data-task="0"><h3>셀 07 · JSON의 true 읽기</h3>
 <div class="cell-before"><p>작은따옴표 안의 전체 내용이 받은 문자열입니다.</p>
 </div>
@@ -189,34 +166,17 @@ print(record[<span class="tok-string">&quot;memo&quot;</span>])</code></pre></fi
 <span id="nested"></span><details class="reading-topic" id="reading-nested"><summary>중첩 구조를 한 단계씩 읽기</summary><div class="prose"><p>data는 딕셔너리이고 records 키의 값은 리스트입니다. 리스트 안의 원소는 각각 딕셔너리입니다. 먼저 data[&quot;records&quot;]로 목록을 얻고, for로 기록 하나를 꺼낸 뒤 record[&quot;title&quot;]을 읽습니다. 구조를 건너뛰어 data[&quot;title&quot;]이라고 쓰면 해당 키가 없습니다.</p>
 <p>예제의 입력은 minutes가 정수이고 done이 bool인 정상 데이터로 제한합니다. 외부 입력의 검증과 실패 처리는 3장 이후에 추가합니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-10"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>필터와 누적값 추적</h3>
+<details class="case-reference" id="flow-10"><summary>필터와 누적값 추적</summary>
 <p>셀 05의 selected와 과제 06의 total을 같은 기록 순서로 나란히 읽으세요. 다음을 누르기 전에 어떤 값이 바뀔지 예상해 보세요.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>Git 연습을 읽는 단계에서 합계 30과 선택 목록이 그대로인지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>반복문이 모든 기록을 지나도 조건을 통과한 기록만 목록과 합계를 바꿉니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>시작</span></li>
-<li><span class="flow-index">02</span><span>첫 기록</span></li>
-<li><span class="flow-index">03</span><span>둘째 기록</span></li>
-<li><span class="flow-index">04</span><span>셋째 기록</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-10-step-0"><img class="flow-proof" loading="lazy" alt="빈 결과 준비" src="../assets/media/svg-8954b12638594f.svg"><span class="eyebrow">STEP 01 · 프로그램</span><h4>빈 결과 준비</h4>
+<article id="flow-10-step-0"><small>STEP 01 · 프로그램</small><h4>빈 결과 준비</h4>
 <p>반복 전에 한 번만 초기화합니다.</p><pre>selected = []
-total = 0</pre></article>
-<article class="flow-panel" id="flow-10-step-1"><img class="flow-proof" loading="lazy" alt="Python 기초 포함" src="../assets/media/svg-022541d87c46d4.svg"><span class="eyebrow">STEP 02 · for + if</span><h4>Python 기초 포함</h4>
+total = 0</pre></article><article id="flow-10-step-1"><small>STEP 02 · for + if</small><h4>Python 기초 포함</h4>
 <p>done이 True이고 30 &gt;= 30입니다.</p><pre>selected = [&#x27;Python 기초&#x27;]
-total = 30</pre></article>
-<article class="flow-panel" id="flow-10-step-2"><img class="flow-proof" loading="lazy" alt="Git 연습 제외" src="../assets/media/svg-e5d3c88c520552.svg"><span class="eyebrow">STEP 03 · if</span><h4>Git 연습 제외</h4>
+total = 30</pre></article><article id="flow-10-step-2"><small>STEP 03 · if</small><h4>Git 연습 제외</h4>
 <p>done이 False여서 결과를 바꾸지 않습니다.</p><pre>selected = [&#x27;Python 기초&#x27;]
-total = 30</pre></article>
-<article class="flow-panel" id="flow-10-step-3"><img class="flow-proof" loading="lazy" alt="리스트 복습 포함" src="../assets/media/svg-18c62d8942b30c.svg"><span class="eyebrow">STEP 04 · for + if</span><h4>리스트 복습 포함</h4>
+total = 30</pre></article><article id="flow-10-step-3"><small>STEP 04 · for + if</small><h4>리스트 복습 포함</h4>
 <p>40분을 기존 합계에 더합니다.</p><pre>selected = [&#x27;Python 기초&#x27;, &#x27;리스트 복습&#x27;]
-total = 70</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+total = 70</pre></article></details>
 </details>
 <span id="json"></span><details class="reading-topic" id="reading-json"><summary>JSON 문자열과 Python 값을 변환하기</summary><div class="prose"><p>JSON은 프로그램 사이에서 데이터를 주고받을 때 사용하는 텍스트 형식입니다. 딕셔너리와 비슷하게 보이지만 JSON 텍스트와 Python 딕셔너리는 서로 다른 값입니다. json.loads는 JSON 문자열을 Python 값으로 읽고, json.dumps는 Python 값을 JSON 문자열로 만듭니다.</p>
 <p>JSON의 문자열과 키는 큰따옴표를 사용합니다. true·false·null은 Python의 True·False·None에 대응합니다. 작은따옴표로 쓴 Python 딕셔너리 표시를 그대로 JSON이라고 보내면 오류가 날 수 있습니다.</p>
@@ -249,4 +209,4 @@ total = 70</pre></article>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

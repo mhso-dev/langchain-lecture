@@ -30,15 +30,7 @@
 <h2>검색을 시작하기 전에 막을 입력</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘검색 개수 k’가 가운데 ‘양의 정수’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색 개수가 잘못된 입력은 검색 전에 멈춥니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>수업의 search_documents는 k에 양의 정수를 받습니다. 기존 SearchArgs는 StrictInt로 이 약속을 검사합니다. 아래에서는 같은 조건을 Python에서 풀어 써서 어떤 값 때문에 멈추는지 봅니다.</p>
-</figcaption>
-</figure>
+<p>수업의 search_documents는 k에 양의 정수를 받습니다. 기존 SearchArgs는 StrictInt로 이 약속을 검사합니다. 아래에서는 같은 조건을 Python에서 풀어 써서 어떤 값 때문에 멈추는지 봅니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문자열로 온 검색 개수</h3>
 <div class="cell-before"><p>문자열을 검사 함수에 보내고 어떤 오류 메시지가 나오는지 보세요.</p>
 </div>
@@ -70,15 +62,7 @@
 <h2>문서 이름이 실제 검색 결과에 있을까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘후보 목록’를 기준으로 양쪽의 ‘응답 문서 ID’와 ‘인용 검사’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>답변에 붙인 문서 이름을 검색 결과와 대조합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>형식에 맞는 답변도 존재하지 않는 문서 번호를 인용할 수 있습니다. 검색이 끝나면 실제 반환한 자료 범위 안에서만 cited_ids를 허용합니다. 원문이 문장을 뒷받침하는지는 별도로 읽어야 합니다.</p>
-</figcaption>
-</figure>
+<p>형식에 맞는 답변도 존재하지 않는 문서 번호를 인용할 수 있습니다. 검색이 끝나면 실제 반환한 자료 범위 안에서만 cited_ids를 허용합니다. 원문이 문장을 뒷받침하는지는 별도로 읽어야 합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 없는 문서 번호 확인</h3>
 <div class="cell-before"><p>검색된 ID 하나와 초안이 인용한 ID 하나를 대조하세요.</p>
 </div>
@@ -107,15 +91,7 @@ print(cited &lt;= returned_ids)</code></pre></figure>
 <h2>한도를 쓴 다음 요청에서 멈추기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘새 도구 요청’가 가운데 ‘호출 한도’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>한도를 다 쓰면 새 도구 요청을 실행하지 않습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>실행 중에 쌓이는 메시지와 횟수가 상태입니다. 도구를 몇 번까지 허용할지는 호출자가 미리 정하는 설정입니다. 실제 LangChain 미들웨어에 한도를 주고, 호출 흔적을 남기는 함수를 등록해 두 번째 요청이 함수까지 도착하는지 봅니다.</p>
-</figcaption>
-</figure>
+<p>실행 중에 쌓이는 메시지와 횟수가 상태입니다. 도구를 몇 번까지 허용할지는 호출자가 미리 정하는 설정입니다. 실제 LangChain 미들웨어에 한도를 주고, 호출 흔적을 남기는 함수를 등록해 두 번째 요청이 함수까지 도착하는지 봅니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 제공 셀 · 반복 요청 대본 준비</h3>
 <div class="cell-before"><p>모델 대신 같은 요청을 두 번 내보낼 대본을 준비합니다.</p>
 </div>
@@ -263,4 +239,4 @@ print(executed)</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

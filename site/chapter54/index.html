@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>SQL 변경을 확정하고 Python 함수로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-4.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>문서와 소유자를 함께 지정하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘변경 요청’가 가운데 ‘문서와 소유자’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>제목을 바꿀 문서는 소유자와 ID를 함께 지정합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>강의 원자료와 같은 문서 ID로 작은 SQLite 메모리 표를 준비합니다. 쿼리 문자열의 ?는 SQLite용 값 자리입니다. 입력값을 SQL 문장에 직접 이어 붙이지 않고 별도 튜플로 넘깁니다. PostgreSQL의 psycopg에서는 이 자리를 %s로 씁니다.</p>
-</figcaption>
-</figure>
+<p>강의 원자료와 같은 문서 ID로 작은 SQLite 메모리 표를 준비합니다. 쿼리 문자열의 ?는 SQLite용 값 자리입니다. 입력값을 SQL 문장에 직접 이어 붙이지 않고 별도 튜플로 넘깁니다. PostgreSQL의 psycopg에서는 이 자리를 %s로 씁니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 초안 한 행 저장하기</h3>
 <div class="cell-before"><p>초기 자료는 커밋합니다. 이 셀을 다시 실행하면 모든 실습 값이 처음으로 돌아갑니다.</p>
 </div>
@@ -74,15 +68,7 @@ print(get_title(<span class="tok-string">&#x27;alice&#x27;</span>, doc_id))</cod
 <h2>변경한 제목을 되돌릴 수 있을까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘임시 변경’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘커밋’, 아래쪽은 ‘롤백’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>임시 변경은 롤백하면 이전 값으로 돌아갑니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>트랜잭션은 함께 확정하거나 되돌리는 변경의 단위입니다. UPDATE 직후 같은 연결에서는 바뀐 제목을 읽을 수 있습니다. 커밋 전에 롤백하면 앞서 커밋한 초안으로 돌아갑니다.</p>
-</figcaption>
-</figure>
+<p>트랜잭션은 함께 확정하거나 되돌리는 변경의 단위입니다. UPDATE 직후 같은 연결에서는 바뀐 제목을 읽을 수 있습니다. 커밋 전에 롤백하면 앞서 커밋한 초안으로 돌아갑니다.</p><section class="concept-lab" id="concept-lab" data-lab="transaction"><h3>되돌리면 어느 제목이 남을까요?</h3><p>이 연결에서 제목을 고치고 rollback을 눌러 보세요. 이번에는 수정 뒤 commit을 먼저 누르고 같은 실험을 해 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>이 연결에서 읽은 제목</small><output data-out="working">초안</output></div><div class="lab-tile"><small>마지막으로 확정한 제목</small><output data-out="committed">초안</output></div></div><div class="lab-actions"><button type="button" data-action="edit">제목 수정</button><button type="button" data-action="commit">commit · 확정</button><button type="button" data-action="rollback">rollback · 취소</button><button type="button" data-action="reset">처음 값 복원</button></div></section>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 제목을 고친 뒤 같은 연결에서 읽기</h3>
 <div class="cell-before"><p>아직 commit을 호출하지 않습니다.</p>
 </div>
@@ -121,15 +107,7 @@ print(get_title(owner, doc_id))</code></pre></figure>
 <h2>수업용 PostgreSQL에서 값 바인딩 확인하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘SQL 문장’와 ‘바인딩 값’가 오른쪽의 ‘실행 요청’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>입력 값은 SQL 문장과 분리해 전달합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>준비한 커널에서는 psycopg로 PostgreSQL의 임시 연습 표를 만듭니다. 실행 중 만든 표와 행은 트랜잭션 끝에 롤백합니다. 기본 연결은 53장에서 강사가 설정한 수업용 DB를 사용합니다.</p>
-</figcaption>
-</figure>
+<p>준비한 커널에서는 psycopg로 PostgreSQL의 임시 연습 표를 만듭니다. 실행 중 만든 표와 행은 트랜잭션 끝에 롤백합니다. 기본 연결은 53장에서 강사가 설정한 수업용 DB를 사용합니다.</p>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · PostgreSQL 값 두 개를 별도 인자로 넘기기</h3>
 <div class="cell-before"><p>HK_COURSE_USE_POSTGRES=1과 수업용 연결이 준비되면 아래 블록이 실행됩니다. 저장소의 영구 테이블에는 쓰지 않습니다.</p>
 </div>
@@ -272,4 +250,4 @@ pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span 
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

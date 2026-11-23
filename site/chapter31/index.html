@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>근거·출처·실패 상태를 구분하는 RAG 만들기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>문서가 없는 경우와 찾지 못한 경우</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘빈 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘자료가 없음’, 아래쪽은 ‘검색이 빗나감’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>빈 목록을 받았다면 자료 유무와 검색 실패를 따로 봅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>검색을 마쳤는데 빈 목록이 돌아오면 답변 생성을 건너뛸 수 있습니다. 반면 통신이 끊기면 문서가 있는지조차 확인하지 못했습니다.</p>
-</figcaption>
-</figure>
+<p>검색을 마쳤는데 빈 목록이 돌아오면 답변 생성을 건너뛸 수 있습니다. 반면 통신이 끊기면 문서가 있는지조차 확인하지 못했습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 빈 검색 결과에서 멈추기</h3>
 <div class="cell-before"><p>가상 도서관의 주차 질문을 로컬 자료에서 찾습니다.</p>
 </div>
@@ -91,15 +85,7 @@ print(found)</code></pre></figure>
 <h2>검색 목록 안에 있는 인용인지 확인하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘답변 인용’가 가운데 ‘후보 ID 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>인용한 ID가 실제로 찾은 문서에 있는지 대조합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>검색은 성공해도 답변 끝의 ID가 엉뚱할 수 있습니다. 근거 목록과 인용을 먼저 맞추고, 다음으로 그 문장에 적힌 내용까지 원문과 읽어 봅니다.</p>
-</figcaption>
-</figure>
+<p>검색은 성공해도 답변 끝의 ID가 엉뚱할 수 있습니다. 근거 목록과 인용을 먼저 맞추고, 다음으로 그 문장에 적힌 내용까지 원문과 읽어 봅니다.</p><section class="concept-lab" id="concept-lab" data-lab="citation"><h3>이 답에 붙일 수 있는 출처는 몇 쪽일까요?</h3><p>“대출 기간은?”으로 검색해 받은 문서는 한 건입니다. 답변 아래에 붙이는 인용표를 바꿔 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>검색된 원문 · library-1 · 1쪽</small>도서 대출 기간은 14일입니다.</div><div class="lab-tile"><small>답변에 붙인 인용표</small><output data-out="citation">library-2 · 2쪽</output></div></div><div class="lab-actions"><button type="button" data-action="wrong">휴관일 · 2쪽</button><button type="button" data-action="right">대출 기간 · 1쪽</button></div><output data-out="verdict">불일치 · library-2는 이번 검색 결과에 없습니다.</output></section>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 실제로 찾은 문서와 인용 대조하기</h3>
 <div class="cell-before"><p>대출 질문에서 가져온 문서 목록에 답안의 인용 library-2가 있는지 확인하세요. 참 또는 거짓으로 출력합니다.</p>
 </div>
@@ -178,4 +164,4 @@ print(cited <span class="tok-keyword">in</span> retrieved_ids)</code></pre></fig
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

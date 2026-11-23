@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>분류 결과에 따라 다른 워크플로우 실행하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>분류 결과 한 단어 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘문의 내용’ 안에서 ‘분류 결과’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>billing이라는 결과가 다음 경로의 이름이 됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>재현을 위해 단어가 있는지 검사하는 작은 대역을 씁니다. 실제 분류 모델이 질문을 이해하는 과정을 흉내 내는 함수는 아닙니다.</p>
-</figcaption>
-</figure>
+<p>재현을 위해 단어가 있는지 검사하는 작은 대역을 씁니다. 실제 분류 모델이 질문을 이해하는 과정을 흉내 내는 함수는 아닙니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 영수증 질문 분류하기</h3>
 <div class="cell-before"><p>키워드 영수증이 있고 오류는 없는 입력입니다.</p>
 </div>
@@ -70,15 +63,7 @@ print(mock_classify(<span class="tok-string">&quot;영수증이 필요합니다&
 <h2>실제로 어느 단계가 호출됐나요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘문의 분류’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘결제 처리’, 아래쪽은 ‘기술 처리’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>들어온 문의에 맞는 한 경로만 실행합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. 아래의 write는 문구 생성 과정을 대신하는 모의 함수입니다.</p>
-</figcaption>
-</figure>
+<p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. 아래의 write는 문구 생성 과정을 대신하는 모의 함수입니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 경로 선택 함수 준비하기</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>
@@ -131,15 +116,7 @@ print(failed[<span class="tok-string">&quot;reason&quot;</span>], failed[<span c
 <h2>사용자에게 무엇을 다시 물을까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘모호한 문의’가 가운데 ‘분류 보류’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>분류가 모호하면 사용자에게 문의 종류를 다시 묻습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>복합 문의와 시스템 오류의 화면 문구가 같으면 사용자가 올바른 다음 행동을 고르기 어렵습니다. 한 건의 분류 기록에서 이유와 안내를 함께 읽습니다.</p>
-</figcaption>
-</figure>
+<p>복합 문의와 시스템 오류의 화면 문구가 같으면 사용자가 올바른 다음 행동을 고르기 어렵습니다. 한 건의 분류 기록에서 이유와 안내를 함께 읽습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 모호한 요청의 다음 안내</h3>
 <div class="cell-before"><p>‘도와주세요’를 route_request에 넣고 기록에서 사용자에게 보여 줄 답변을 꺼내세요.</p>
 </div>
@@ -177,34 +154,17 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 </details>
 <span id="routes"></span><details class="reading-topic" id="reading-routes"><summary>허용한 경로만 선택하기</summary><div class="prose"><p>WRITING_RULES의 키가 허용 목록입니다. 분류 결과가 딕셔너리에 없으면 코드가 추가 질문 경로를 선택합니다. 모델이 반환한 문자열을 eval로 실행하거나 같은 이름의 임의 함수를 찾지 않습니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-8"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>분류 뒤의 실행 결정</h3>
+<details class="case-reference" id="flow-8"><summary>분류 뒤의 실행 결정</summary>
 <p>정확한 흐름을 설명하는 시각화이며 실제 모델 호출이 아닙니다.</p>
 <div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">분류 결과</th><th scope="col">바로 다음 행동</th></tr>
 </thead><tbody><tr><td>clarify</td><td>추가 질문을 반환하고 종료 · 작성 호출 0회</td></tr>
 <tr><td>등록된 작성 경로</td><td>해당 규칙을 꺼내 안내문 작성</td></tr>
 </tbody></table></div>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>분류값이 정해진 뒤 어느 실행 기록에만 호출이 추가되는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>분류 결과가 다음 경로를 결정합니다. 한 문의에서 선택한 처리 단계만 실행됩니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>입력</span></li>
-<li><span class="flow-index">02</span><span>분류</span></li>
-<li><span class="flow-index">03</span><span>허용 목록</span></li>
-<li><span class="flow-index">04</span><span>작성</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-8-step-0"><img class="flow-proof" loading="lazy" alt="질문 검사" src="../assets/media/svg-80e5bec3190a1c.svg"><span class="eyebrow">STEP 01 · Python</span><h4>질문 검사</h4>
-<p>빈 질문을 먼저 거부합니다.</p><pre>question</pre></article>
-<article class="flow-panel" id="flow-8-step-1"><img class="flow-proof" loading="lazy" alt="후보 경로 반환" src="../assets/media/svg-4734847eae9c56.svg"><span class="eyebrow">STEP 02 · 모델 또는 모의 함수</span><h4>후보 경로 반환</h4>
-<p>billing / technical / clarify를 제안합니다.</p><pre>route</pre></article>
-<article class="flow-panel" id="flow-8-step-2"><img class="flow-proof" loading="lazy" alt="등록된 규칙 확인" src="../assets/media/svg-69c176fe714659.svg"><span class="eyebrow">STEP 03 · Python</span><h4>등록된 규칙 확인</h4>
-<p>목록에 없으면 추가 질문을 반환합니다.</p><pre>route in WRITING_RULES</pre></article>
-<article class="flow-panel" id="flow-8-step-3"><img class="flow-proof" loading="lazy" alt="해당 규칙으로 안내" src="../assets/media/svg-e832f7a4b83eb7.svg"><span class="eyebrow">STEP 04 · Python → 모델</span><h4>해당 규칙으로 안내</h4>
-<p>결제 또는 기술 규칙 하나만 사용합니다.</p><pre>작성 경로에서만 answer 생성</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+<article id="flow-8-step-0"><small>STEP 01 · Python</small><h4>질문 검사</h4>
+<p>빈 질문을 먼저 거부합니다.</p><pre>question</pre></article><article id="flow-8-step-1"><small>STEP 02 · 모델 또는 모의 함수</small><h4>후보 경로 반환</h4>
+<p>billing / technical / clarify를 제안합니다.</p><pre>route</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>등록된 규칙 확인</h4>
+<p>목록에 없으면 추가 질문을 반환합니다.</p><pre>route in WRITING_RULES</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python → 모델</small><h4>해당 규칙으로 안내</h4>
+<p>결제 또는 기술 규칙 하나만 사용합니다.</p><pre>작성 경로에서만 answer 생성</pre></article></details>
 </details>
 <span id="code"></span><details class="reading-topic" id="reading-code"><summary>분기 함수의 정상·실패 경로</summary><div class="prose"><p>분류 함수의 예외, 명시적 거절, 정상적인 모호 입력은 서로 다른 원인입니다. 빈 분류 텍스트와 미완료·통신 오류는 classification_error, 명시적 거절은 classification_refusal, 의도적인 clarify나 공백이 아닌 허용 목록 밖 문자열은 needs_clarification으로 남깁니다. 세 경우 모두 작성 함수는 호출하지 않습니다.</p>
 <p>이 함수는 분류 실패를 결과에 담지만 작성 단계의 예외는 호출자에게 전달합니다. 모든 오류를 잡아 정상 답변처럼 반환하지 않습니다. 서비스 화면과 연결할 때는 작성 실패도 별도 표시하도록 확장해야 합니다.</p>
@@ -262,4 +222,4 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

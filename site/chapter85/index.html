@@ -30,15 +30,7 @@
 <h2>배포 전에 DB와 앱 버전 맞추기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘앱 시작’가 가운데 ‘스키마 버전’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>데이터 구조 버전을 확인한 뒤 서비스를 시작합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제공 구성의 서비스 이름은 db, migrate, api입니다. migrate는 설정할 때만 쓰며 API 시작 검사는 필요한 두 마이그레이션이 적용됐는지 읽습니다. 아래는 082·084 스키마 적용 여부를 확인하는 작은 기록 예제입니다. 파일 내용이 맞는지도 확인하려면 원본처럼 버전별 해시를 대조합니다.</p>
-</figcaption>
-</figure>
+<p>제공 구성의 서비스 이름은 db, migrate, api입니다. migrate는 설정할 때만 쓰며 API 시작 검사는 필요한 두 마이그레이션이 적용됐는지 읽습니다. 아래는 082·084 스키마 적용 여부를 확인하는 작은 기록 예제입니다. 파일 내용이 맞는지도 확인하려면 원본처럼 버전별 해시를 대조합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 예전 스키마만 있는 대상 확인</h3>
 <div class="cell-before"><p>실제 배포에서는 DB의 schema_migrations에서 적용 이력을 읽습니다. 여기서는 준비 기록을 받아 누락된 버전을 찾습니다.</p>
 </div>
@@ -54,15 +46,7 @@ print(sorted(required - applied))</code></pre></figure>
 <h2>저장한 항목을 새 앱 인스턴스에서 다시 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘저장한 할 일’를 ‘인스턴스 교체’에 남기는 시점과 ‘다시 조회’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>새 인스턴스에서 저장했던 항목을 다시 조회합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>수업용 FastAPI 앱 두 개가 같은 임시 SQLite 파일을 엽니다. 첫 앱에서 v2 필드를 가진 항목을 저장한 뒤, 새 앱의 HTTP 경로에서 같은 ID로 조회합니다. 실제 Compose 재배포와 PostgreSQL 대신 프로세스 안의 서비스·파일 경계를 확인합니다.</p>
-</figcaption>
-</figure>
+<p>수업용 FastAPI 앱 두 개가 같은 임시 SQLite 파일을 엽니다. 첫 앱에서 v2 필드를 가진 항목을 저장한 뒤, 새 앱의 HTTP 경로에서 같은 ID로 조회합니다. 실제 Compose 재배포와 PostgreSQL 대신 프로세스 안의 서비스·파일 경계를 확인합니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 제공 셀 · 저장 경로와 조회 경로 준비</h3>
 <div class="cell-before"><p>이 축약본의 POST는 수업에서 정한 제목·마감일·우선순위 입력을 받습니다. 상태가 어디에 저장되는지 보세요.</p>
 <p>앞의 배포 기록에서는 084가 빠졌으므로 migrate 단계로 돌아가야 합니다. 다음 셀은 필요한 열을 갖춘 새 SQLite 파일을 사용합니다. 여기에서 확인하는 일은 배포 환경의 이관이 아니라 저장한 값을 새 앱에서 다시 읽는 일입니다.</p>
@@ -217,4 +201,4 @@ print(observed[<span class="tok-string">&quot;title&quot;</span>], observed[<spa
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

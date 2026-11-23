@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>요약·분류·문장 작성을 순서대로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>첫 호출의 출력을 다음 단계에 건네기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘원래 문의’에서 출발해 ‘요약 단계’를 거친 뒤 ‘짧은 요약’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>요약 단계가 만든 문장이 다음 호출의 입력이 됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>각 단계는 받은 자료와 지시를 이용해 새 문자열을 반환합니다. 이번 실습의 mock_call은 정해 둔 답을 주는 대역입니다. 최종 글의 품질보다 단계 사이에 실제로 건넨 값을 확인합니다.</p>
-</figcaption>
-</figure>
+<p>각 단계는 받은 자료와 지시를 이용해 새 문자열을 반환합니다. 이번 실습의 mock_call은 정해 둔 답을 주는 대역입니다. 최종 글의 품질보다 단계 사이에 실제로 건넨 값을 확인합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문의에서 요약 한 줄 받기</h3>
 <div class="cell-before"><p>첫 번째 요청의 질문은 그대로 두고, 반환된 요약을 변수에 보관하세요.</p>
 </div>
@@ -68,15 +61,7 @@ print(category)</code></pre></figure>
 <h2>작성 단계에 두 값 함께 보내기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘요약’와 ‘분류값’가 오른쪽의 ‘작성 입력’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>분류값과 요약을 함께 받아 안내 문장을 작성합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>요약은 무엇을 물었는지, 분류는 어느 분야인지 알려 줍니다. 하나의 문자열로 넘겨야 해도 칸 이름을 남겨 두면 모델과 사람이 같은 구조를 읽을 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>요약은 무엇을 물었는지, 분류는 어느 분야인지 알려 줍니다. 하나의 문자열로 넘겨야 해도 칸 이름을 남겨 두면 모델과 사람이 같은 구조를 읽을 수 있습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 작성 입력 조립하기</h3>
 <div class="cell-before"><p>summary와 category를 같은 이름의 두 칸에 넣고 JSON으로 표시하세요. 한글은 읽을 수 있게 남깁니다.</p>
 </div>
@@ -111,15 +96,7 @@ print(writing_input)</code></pre></figure>
 <h2>한 건의 전체 호출 기록 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘호출 입력’에서 출발해 ‘중간 응답’를 거친 뒤 ‘다음 호출’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>중간 결과를 보면 어느 호출부터 달라졌는지 보입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>다음 제공 함수는 각 단계의 입력, 출력, 시간을 log에 남깁니다. 앞 단계가 성공해야 다음 요청을 보냅니다. 실제 SDK를 쓸 때는 같은 자리에 responses.create로 본문을 읽는 함수를 연결할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>다음 제공 함수는 각 단계의 입력, 출력, 시간을 log에 남깁니다. 앞 단계가 성공해야 다음 요청을 보냅니다. 실제 SDK를 쓸 때는 같은 자리에 responses.create로 본문을 읽는 함수를 연결할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 분류 단계가 받은 값 되짚기</h3>
 <div class="cell-before"><p>처음에 입력한 질문과 두 번째 호출에 실제로 건넨 문자열을 구분하세요.</p>
 <p>두 번째 호출이 받은 것은 첫 단계의 요약 ‘사용자가 결제 영수증 확인 방법을 문의했다.’입니다. 분류 결과 billing은 그다음 작성 단계에서 요약과 함께 쓰입니다. result[&quot;log&quot;][1][&quot;input&quot;]에서 분류 전의 요약을 확인하세요.</p>
@@ -175,28 +152,13 @@ print(result[<span class="tok-string">&quot;log&quot;</span>][<span class="tok-n
 <tr><td>write</td><td>요약과 분야를 담은 JSON 문자열</td><td>접수 안내</td></tr>
 </tbody></table></div>
 </details>
-<span id="flow"></span><details class="reading-topic" id="reading-flow"><summary>전달되는 값을 따라가기</summary><figure class="flow" data-flow id="flow-7"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>세 단계의 연결</h3>
+<span id="flow"></span><details class="reading-topic" id="reading-flow"><summary>전달되는 값을 따라가기</summary><details class="case-reference" id="flow-7"><summary>세 단계의 연결</summary>
 <p>설명용 시각화입니다. 기본 실행은 고정 응답을 사용합니다.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>요약에서 나온 문장이 분류와 작성의 어느 입력으로 들어가는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>앞 호출의 출력이 다음 호출의 입력입니다. 마지막 작성 단계는 요약과 분류를 함께 사용합니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>요약</span></li>
-<li><span class="flow-index">02</span><span>분류</span></li>
-<li><span class="flow-index">03</span><span>작성</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-7-step-0"><img class="flow-proof" loading="lazy" alt="문의 요약" src="../assets/media/svg-c84b01ef19e89e.svg"><span class="eyebrow">STEP 01 · Python → 모델</span><h4>문의 요약</h4>
-<p>원본의 문제와 요청을 남깁니다.</p><pre>summary = &quot;사용자가 결제 영수증 확인 방법을 문의했다.&quot;</pre></article>
-<article class="flow-panel" id="flow-7-step-1"><img class="flow-proof" loading="lazy" alt="분야 분류" src="../assets/media/svg-3393011562a56d.svg"><span class="eyebrow">STEP 02 · Python → 모델</span><h4>분야 분류</h4>
-<p>요약을 허용된 분야 하나로 분류합니다.</p><pre>category = &quot;billing&quot;</pre></article>
-<article class="flow-panel" id="flow-7-step-2"><img class="flow-proof" loading="lazy" alt="접수 안내" src="../assets/media/svg-3d6b1735513739.svg"><span class="eyebrow">STEP 03 · Python → 모델</span><h4>접수 안내</h4>
+<article id="flow-7-step-0"><small>STEP 01 · Python → 모델</small><h4>문의 요약</h4>
+<p>원본의 문제와 요청을 남깁니다.</p><pre>summary = &quot;사용자가 결제 영수증 확인 방법을 문의했다.&quot;</pre></article><article id="flow-7-step-1"><small>STEP 02 · Python → 모델</small><h4>분야 분류</h4>
+<p>요약을 허용된 분야 하나로 분류합니다.</p><pre>category = &quot;billing&quot;</pre></article><article id="flow-7-step-2"><small>STEP 03 · Python → 모델</small><h4>접수 안내</h4>
 <p>요약과 분야를 함께 전달합니다.</p><pre>summary: 결제 영수증 확인 문의
-category: billing</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 3</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+category: billing</pre></article></details>
 <div class="prose"><p>분류가 billing이라는 단어만 반환하면 그 안에는 사용자의 구체적인 문의가 없습니다. 작성 단계에는 분야뿐 아니라 요약도 전달해야 합니다. 중간 단계 하나의 출력만 계속 덮어쓰면 앞에서 필요한 정보를 잃을 수 있습니다.</p>
 </div>
 </details>
@@ -241,4 +203,4 @@ category: billing</pre></article>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

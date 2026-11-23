@@ -30,15 +30,7 @@
 <h2>외부 요청이 도착할 목적지 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘외부 HTTPS’에서 출발해 ‘프록시 443’를 거친 뒤 ‘서비스’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>외부 HTTPS 요청은 프록시를 거쳐 서비스에 도달합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>배포 예제에서는 HTTPS를 받는 프록시만 호스트의 443번에 연결합니다. 프록시는 Compose 네트워크 안의 api:8000으로 전달하고, API는 내부 db:5432를 사용합니다. DB 접속 정보를 브라우저에 건네지 않습니다.</p>
-</figcaption>
-</figure>
+<p>배포 예제에서는 HTTPS를 받는 프록시만 호스트의 443번에 연결합니다. 프록시는 Compose 네트워크 안의 api:8000으로 전달하고, API는 내부 db:5432를 사용합니다. DB 접속 정보를 브라우저에 건네지 않습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 배포 선언에서 공개 포트 확인</h3>
 <div class="cell-before"><p>기존 배포 설정에서 포트 관련 부분만 가져왔습니다. 어떤 서비스가 외부 요청의 첫 번째 목적지인가요?</p>
 <p>EC2는 클라우드에서 빌려 쓰는 가상 컴퓨터입니다. 학생 브라우저에서 접속하는 주소와 그 컴퓨터 안에서 프록시가 API로 연결하는 주소는 서로 다른 접속점입니다. 연결표에서 브라우저가 출발점인 줄을 먼저 보세요.</p>
@@ -67,15 +59,7 @@ print(directive.split()[<span class="tok-number">1</span>].rstrip(<span class="t
 <h2>로컬 이미지와 EC2 배포 결과 구분하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘배포 근거’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘로컬 이미지’, 아래쪽은 ‘EC2 응답’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>로컬 이미지가 있다는 것과 배포 응답이 온 것은 별개입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>이미지 태그가 같아도 내용이 바뀔 수 있습니다. 배포 준비 단계에서는 검토한 이미지 digest, 호스트 플랫폼, 데이터 이관 여부를 기록합니다. 실제 수업 계정에서는 EC2 인스턴스·볼륨의 소유자와 비용 정리 책임도 같이 적습니다.</p>
-</figcaption>
-</figure>
+<p>이미지 태그가 같아도 내용이 바뀔 수 있습니다. 배포 준비 단계에서는 검토한 이미지 digest, 호스트 플랫폼, 데이터 이관 여부를 기록합니다. 실제 수업 계정에서는 EC2 인스턴스·볼륨의 소유자와 비용 정리 책임도 같이 적습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 선택 실습 · 배포된 서비스의 health 읽기</h3>
 <div class="cell-before"><p>수업에 배정된 HTTPS 주소가 있을 때만 base_url에 입력하세요. 로컬 실습 기본값으로는 요청을 보내지 않습니다. 서버 본문 전체 대신 HTTP 코드와 health의 application만 확인합니다.</p>
 </div>
@@ -208,4 +192,4 @@ base_url = <span class="tok-string">&quot;&quot;</span>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>
