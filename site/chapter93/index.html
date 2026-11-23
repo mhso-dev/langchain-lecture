@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>서비스 구조·상태 설계 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 093 / FINAL PROJECT</p>
+<span class="sidebar-title">서비스 구조·상태 설계 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-roles"><span>02</span>상태표에 종료 위치 표시하기</a><a href="#nb-response"><span>03</span>답과 출처가 화면으로 들어가는 자리</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 093 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>서비스 구조·상태 설계 · 방향과 예시</h1>
+<p class="hero-description">Q03의 오답은 자료를 더 모으기 전에 막을 수 있습니다. 어느 단계가 질문을 읽고, 어느 단계가 출처를 붙이며, 언제 흐름을 끝낼지 응답 한 건을 놓고 설계해 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter93.ipynb" download="chapter93.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>93장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-roles" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>상태표에 종료 위치 표시하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘근거 확인’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘답변 가능’, 아래쪽은 ‘근거 없음’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>근거가 없는 질문이 어디서 종료되는지 표시합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>설계안　질문 수신 → 빈 입력 검사 → 장비나 질문 목적 확인 → 허용 문서 검색 → 답과 출처 표시. 공백 질문이면 invalid_input에서, 장비를 특정하기 어려우면 need_clarification에서 끝냅니다. 문서에 없는 교체 일정은 no_evidence로 마칩니다. 검색 결과가 있을 때만 answered로 원문 위치를 보냅니다. 인증·모델·외부 도구는 이 로컬 규칙을 구현하는 데 필요하지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 일정 문의의 종료 위치</h3>
+<div class="cell-before"><p>정해 둔 일정 질문을 넣었을 때 자료를 읽는 단계까지 가는지 예측하세요.</p>
+<p>no_evidence는 여기서 사용자에게 근거 부족을 안내하고 끝낼 수 있는 상태입니다. check_equipment는 다음 함수로 보낼 내부 단계 이름입니다. 화면에 check_equipment라는 문자열을 최종 답으로 표시하지 않습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> next_step(question):
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question.strip():
+        <span class="tok-keyword">return</span> <span class="tok-string">&quot;invalid_input&quot;</span>
+    <span class="tok-keyword">if</span> <span class="tok-string">&quot;교체&quot;</span> <span class="tok-keyword">in</span> question <span class="tok-keyword">or</span> <span class="tok-string">&quot;일정&quot;</span> <span class="tok-keyword">in</span> question:
+        <span class="tok-keyword">return</span> <span class="tok-string">&quot;no_evidence&quot;</span>
+    <span class="tok-keyword">return</span> <span class="tok-string">&quot;check_equipment&quot;</span>
+
+print(next_step(<span class="tok-string">&quot;장비 A를 다음 달에 교체하기로 확정했나요?&quot;</span>))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence</pre></div>
+<div class="cell-after"><p>no_evidence에서 멈춥니다. 이 분기는 가상 규정에 일정이 없다는 현재 전제를 코드에 옮긴 것입니다. 일정표가 생기면 분기 자체를 다시 검토해야 합니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-response" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>답과 출처가 화면으로 들어가는 자리</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘상태 필드’와 ‘출처 필드’가 오른쪽의 ‘화면 응답’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>응답의 상태와 출처를 화면에서 읽을 자리를 정합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>응답 설계 예시　입력 Q01 / 검색어 장비 A / 후보 RULE-A / 본문 점검 전 전원 표시등을 확인합니다. / 표시할 위치 가상 장비실 규정 A, 1쪽 2.1절, 2026-11-01 / 문서판 rules-v1. 저장을 붙이는 팀은 답을 받는 단계와 저장 성공 여부를 분리하세요. 저장 실패 때문에 근거 없는 질문으로 보이면 사용자 행동이 달라집니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 빈 입력이 들어오는 자리</h3>
+<div class="cell-before"><p>공백만 넣었을 때 짧은 분기의 종료 위치를 표시하세요. 질문을 더 받으면 되는 상태와 구분해 봅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># next_step을 호출하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(next_step(<span class="tok-string">&quot;   &quot;</span>))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">invalid_input</pre></div>
+<div class="cell-after"><p>invalid_input을 돌려줍니다. 여기서 멈추면 자료를 읽는 비용도 생기지 않습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>94장에는 검색기가 받아야 할 필드와 응답에 남길 필드를 적어 넘깁니다. 화면·저장 방식이 달라도 문서 ID와 버전으로 같은 근거를 가리킬 수 있어야 합니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

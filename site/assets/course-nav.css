@@ -1,0 +1,4 @@
+.course-nav{display:flex;align-items:center;gap:1rem;padding:.55rem clamp(1rem,4vw,3rem);background:#143d34;color:#fff;font:600 .9rem/1.5 system-ui,sans-serif}
+.course-nav a{color:inherit;text-decoration:underline;text-underline-offset:.18em}
+.course-nav span{margin-right:auto;color:#cfe3d9}
+@media print{.course-nav{display:none}}

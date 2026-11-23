@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>화면·사용자 흐름 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 48 / MIDTERM PROJECT</p>
+<span class="sidebar-title">화면·사용자 흐름 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-answer-panel"><span>02</span>답이 있을 때 안내 문단 보여 주기</a><a href="#nb-empty-panel"><span>03</span>다음 질문에서 출처를 지우는 시점</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 48 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>화면·사용자 흐름 · 방향과 예시</h1>
+<p class="hero-description">운영 안내 화면에는 질문을 보낸 뒤 답과 출처가 함께 나타납니다. 바로 다음 질문에서 답을 찾지 못하면 무엇을 지울까요? 팀 화면의 완성 문안과 제공된 처리 기록을 같은 순서로 읽습니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter48.ipynb" download="chapter48.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>48장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-answer-panel" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>답이 있을 때 안내 문단 보여 주기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘제출 안내’와 ‘근거 문단’가 오른쪽의 ‘답변 화면’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>사용자는 답 아래에서 근거가 된 문단을 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>화면 예시｜질문 “과제는 어디에 내나요?” 아래에 “과제함에 제출하고 파일 이름과 등록 시간을 확인합니다.”라고 표시합니다. 그 밑의 “가상 과정 운영 안내 · 1쪽 · p2”를 누르면 제출 절차가 적힌 문단을 읽습니다. 문단 ID와 쪽수가 다른 이유를 찾을 수 있도록 두 값 모두 표시합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Q01의 출처 문구 만들기</h3>
+<div class="cell-before"><p>제공 핸들러가 반환한 현재 답변에서 실제 인용한 자료만 사용합니다. 브라우저 조작을 대신한 기록 읽기입니다.</p>
+<p>관찰은 답변 카드가 열린 화면에서 시작합니다. 참가자에게 ‘이 안내의 원문을 다시 찾아보세요’라고 말한 뒤 기다리세요. 1쪽 p2에 도착했으면 도착한 위치와 힌트 유무를 적고, 다른 곳을 열었다면 실제로 연 위치를 기록합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">result = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
+ <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;모의 응답: 과제함에 제출하고 파일 이름과 등록 시간을 확인합니다. [course-guide-v1:p2]&#x27;</span>,
+ <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;course-guide-v1:p2&#x27;</span>,
+              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.&#x27;</span>,
+              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 과정 운영 안내 · 45일 수업용 페이지판 (source-pages.html)&#x27;</span>,
+              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>}],
+ <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">1</span>}
+source = result[<span class="tok-string">&#x27;sources&#x27;</span>][<span class="tok-number">0</span>]
+print(result[<span class="tok-string">&#x27;answer&#x27;</span>])
+print(f&quot;{source[<span class="tok-string">&#x27;source&#x27;</span>]} / {source[<span class="tok-string">&#x27;page&#x27;</span>]}쪽 / {source[<span class="tok-string">&#x27;id&#x27;</span>]}&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">모의 응답: 과제함에 제출하고 파일 이름과 등록 시간을 확인합니다. [course-guide-v1:p2]
+가상 과정 운영 안내 · 45일 수업용 페이지판 (source-pages.html) / 1쪽 / course-guide-v1:p2</pre></div>
+<div class="cell-after"><p>질문과 답은 p2에 연결되고 화면 위치는 1쪽입니다. 다른 검색 후보까지 모두 “인용”으로 표시하면 답의 실제 근거를 구분하기 어렵습니다. 원문 파일을 열고 1쪽에서 답의 출처에 적힌 문단 번호(p1·p2·p3)를 찾으세요. 그 문단에서 답을 뒷받침하는 문장 한 줄을 표시하면 확인이 끝납니다.</p>
+</div>
+</article>
+<p><a class="lesson-file" href="downloads/course-guide-page-1.html" download="course-guide-page-1.html">가상 과정 운영 안내 원문 1쪽 받기 (p1~p3)</a></p>
+</section>
+<section id="nb-empty-panel" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>다음 질문에서 출처를 지우는 시점</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>질문 상태가 바뀔 때 오른쪽 출처 목록도 비워지는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>새 질문에 이전 답의 출처를 남기지 않습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>완성 문안｜Q03 “과제 업로드가 실패했어요. 어떻게 해야 하나요?” → 현재 기준선의 안내 “제공된 자료에서 확인할 수 없습니다.” → 출처 없음. p3 원문에는 답이 있으므로 이것은 현재 검색의 알려진 실패입니다. 연결이 끊긴 경우에는 “검색 연결을 확인한 뒤 다시 시도해 주세요.”로 구분합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 현재 질문의 근거만 화면에 남기기</h3>
+<div class="cell-before"><p>Q01 뒤에 Q03을 보낸 제공 기록에서 현재 상태와 출처 목록을 꺼냅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">current = {<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;</span>,
+ <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>,
+            <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;제공된 자료에서 확인할 수 없습니다.&#x27;</span>,
+            <span class="tok-string">&#x27;sources&#x27;</span>: [],
+            <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">0</span>},
+ <span class="tok-string">&#x27;error_type&#x27;</span>: <span class="tok-string">&#x27;&#x27;</span>,
+ <span class="tok-string">&#x27;execution_status&#x27;</span>: <span class="tok-string">&#x27;completed&#x27;</span>}
+print(current[<span class="tok-string">&#x27;result&#x27;</span>][<span class="tok-string">&#x27;status&#x27;</span>], current[<span class="tok-string">&#x27;result&#x27;</span>][<span class="tok-string">&#x27;sources&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence []</pre></div>
+<div class="cell-after"><p>no_evidence와 빈 목록입니다. 이번 질문의 출처가 없으므로 p2는 이전 대화에서만 찾아야 합니다. 팀 화면을 동료에게 보여줄 때는 답을 알려 주지 말고 “근거를 다시 찾아보세요”라고 요청해 어느 위치에서 막히는지 기록하세요.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>팀 문서로 바꿀 곳은 화면 제목, 원문 열기 위치, 빈 결과 안내입니다. 제공 사례는 핸들러의 기록이며 학생이 실제로 원문을 찾는지 확인한 사용자 시험은 따로 남깁니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

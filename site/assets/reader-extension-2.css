@@ -1,0 +1,3 @@
+
+/* Keep section numbers readable in the local navigation. */
+.sidebar nav a > span:first-child { flex: 0 0 1.8em; white-space: nowrap; }

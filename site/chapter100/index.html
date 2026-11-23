@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>상태·기억·저장 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 100 / FINAL PROJECT</p>
+<span class="sidebar-title">상태·기억·저장 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-ownership"><span>02</span>같은 대화 이름을 쓰는 두 사람</a><a href="#nb-expiry"><span>03</span>대화를 언제 비울지 결정하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 100 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>상태·기억·저장 · 방향과 예시</h1>
+<p class="hero-description">두 담당자가 각자의 화면에서 같은 이름의 대화를 만들었습니다. 키를 대화 이름 하나로 잡으면 한 사람의 RULE-A 근거가 다른 사람의 화면에 나올 수 있습니다. 지금 누가 어떤 대화를 읽는지를 키에 담아 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter100.ipynb" download="chapter100.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>100장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-ownership" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>같은 대화 이름을 쓰는 두 사람</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘같은 대화명’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘사용자 A 기록’, 아래쪽은 ‘사용자 B 기록’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>대화 이름이 같아도 소유자가 다르면 별도 기록입니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>완성 상태표　가상 사용자 alice / 대화 main / 현재 근거 RULE-A. 가상 사용자 bob / 대화 main / 현재 근거 RULE-B. 예시에서는 신뢰한 수업용 주체와 세션 ID를 함께 키로 씁니다. 화면이 보내는 이름만 보고 소유자를 바꾸어서는 안 됩니다. 아래 메모리 사본으로 먼저 두 키를 읽어 보세요.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 소유자와 세션으로 한 건 읽기</h3>
+<div class="cell-before"><p>두 사용자가 모두 main을 선택했을 때 bob의 현재 근거를 꺼냅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">sessions = {(<span class="tok-string">&quot;alice&quot;</span>, <span class="tok-string">&quot;main&quot;</span>): [<span class="tok-string">&quot;RULE-A&quot;</span>], (<span class="tok-string">&quot;bob&quot;</span>, <span class="tok-string">&quot;main&quot;</span>): [<span class="tok-string">&quot;RULE-B&quot;</span>]}
+trusted_owner = <span class="tok-string">&quot;bob&quot;</span>
+print(sessions[(trusted_owner, <span class="tok-string">&quot;main&quot;</span>)])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;RULE-B&#x27;]</pre></div>
+<div class="cell-after"><p>RULE-B만 나옵니다. 100장 제공 기록에서도 서로 다른 저장 파일에서 각각 RULE-A와 RULE-B를 읽었습니다. 이 셀은 같은 구분을 메모리 안에서만 보여 줍니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-expiry" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>대화를 언제 비울지 결정하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘저장된 대화’가 가운데 ‘만료 조건’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>만료된 대화와 아직 유효한 대화를 구분합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>보존 정책 예시　생성 후 300초, 한 세션 안에서 최근 5턴(질문·응답 쌍)만 유지하고, 새 답이 생겨도 만료 시각은 연장하지 않습니다. 1000초에 만든 대화라면 1300초에 만료합니다. 삭제 대상은 현재 로컬 파일입니다. 로그와 백업 사본까지 지웠다고 기록하려면 그 사본도 별도로 확인해야 합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 한 사람의 대화만 비우기</h3>
+<div class="cell-before"><p>가상 alice가 main 삭제를 요청했습니다. 사본에서 그 키만 덜어내고 bob의 마지막 근거를 다시 읽어 보세요.</p>
+<p>최근 5턴을 남기는 세션에서 여섯 번째 턴을 저장하면 첫 번째 턴이 빠지고 2~6번째 턴이 남습니다. 생성 후 300초가 되면 세션 자체가 만료됩니다. 아래 과제에서 실제로 관찰하는 것은 소유자를 골라 삭제한 결과입니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">remaining = dict(sessions)
+<span class="tok-comment"># alice/main을 지우고 bob/main을 확인하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">remaining = dict(sessions)
+remaining.pop((<span class="tok-string">&quot;alice&quot;</span>, <span class="tok-string">&quot;main&quot;</span>), <span class="tok-keyword">None</span>)
+print(remaining.get((<span class="tok-string">&quot;alice&quot;</span>, <span class="tok-string">&quot;main&quot;</span>)), remaining[(<span class="tok-string">&quot;bob&quot;</span>, <span class="tok-string">&quot;main&quot;</span>)])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None [&#x27;RULE-B&#x27;]</pre></div>
+<div class="cell-after"><p>None과 RULE-B가 보입니다. 한 사람의 삭제 요청을 대화 이름만으로 처리했다면 다른 사람의 기록까지 사라질 수 있습니다. 이번 과제의 완료 조건은 alice의 대화만 지운 뒤 bob의 대화가 남는지 확인하는 것입니다. 최대 5턴과 300초 만료는 설계 예시로 읽습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>101장에 전달할 상태 정책은 소유자와 세션, 생성 때부터의 유효 시간, 삭제 범위입니다. 교재의 로컬 JSON 기록에서는 파일 읽기·쓰기를 확인했고 실제 로그인·DB·동시 쓰기·백업 삭제는 별도 확인이 필요합니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

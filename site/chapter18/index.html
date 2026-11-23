@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>SDK와 도구 실행을 복습하고 작은 과제 완성하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 18 / REVIEW</p>
+<span class="sidebar-title">SDK와 도구 실행을 복습하고 작은 과제 완성하기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-inspect"><span>02</span>실행 직전의 요청 한 건 읽기</a><a href="#nb-repair"><span>03</span>검사 함수를 고쳐 한 건 통과시키기</a><a href="#nb-explain"><span>04</span>조회 결과가 없는 기록 설명하기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 18 / REVIEW</span><span class="template-badge">학생용 교재</span></div>
+<h1>SDK와 도구 실행을 복습하고 작은 과제 완성하기</h1>
+<p class="hero-description">도구 루프 결과에 대출 기간이 없습니다. 새 기술을 더하기 전에 입력 검사가 잘못된 요청까지 통과시킨 것은 아닌지 살펴봅니다. 17장에서 쓰던 대출 규칙 도구 한 건을 골라 원래 요청을 바꾸지 않는 검사 함수를 완성합니다.</p>
+<div class="hero-meta"><span>입문</span><span>교육일 018 · 8H</span><span>11~17장 학습 자료·기본 Python</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter18.ipynb" download="chapter18.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>18장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-inspect" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>실행 직전의 요청 한 건 읽기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘도구 요청’가 가운데 ‘인자 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>실행 전에 도구 이름과 인자가 약속에 맞는지 봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>get_loan_rule은 입력 칸이 없는 도구입니다. 요청에는 이름과 비어 있지 않은 호출 ID가 있어야 하고 arguments에는 빈 JSON 객체를 적은 문자열이 와야 합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 빈 객체와 빈 문자열 구분하기</h3>
+<div class="cell-before"><p>겉보기에는 내용이 없어도 문자열을 풀었을 때 어떤 값이 남는지가 중요합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
+item = {<span class="tok-string">&quot;name&quot;</span>: <span class="tok-string">&quot;get_loan_rule&quot;</span>, <span class="tok-string">&quot;call_id&quot;</span>: <span class="tok-string">&quot;c1&quot;</span>, <span class="tok-string">&quot;arguments&quot;</span>: <span class="tok-string">&quot;{}&quot;</span>}
+print(json.loads(item[<span class="tok-string">&quot;arguments&quot;</span>]) == {})</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="cell-after"><p>True가 나옵니다. 빈 문자열은 JSON 문서가 아니어서 같은 변환을 통과할 수 없습니다. []는 읽을 수 있는 JSON이지만 이 도구가 정한 객체 모양과 다릅니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 띄어쓰기만 있는 ID 확인하기</h3>
+<div class="cell-before"><p>ID에 공백 세 칸만 들어온 경우를 따로 확인합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">call_id = <span class="tok-string">&quot;   &quot;</span>
+print(bool(call_id.strip()))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="cell-after"><p>False이므로 결과를 연결할 이름이 없습니다. strip을 빼면 원래 세 칸의 길이 때문에 유효하다고 잘못 판단할 수 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-repair" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>검사 함수를 고쳐 한 건 통과시키기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘검사 수정’를 기준으로 양쪽의 ‘실패한 입력’와 ‘같은 입력’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>검사 함수를 고친 뒤 같은 입력을 다시 넣습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>요청의 바깥 자료형부터 확인하고 안쪽 칸을 읽습니다. 유효하지 않은 입력이면 함수 안에서 False를 돌려주면 됩니다. 사전의 값을 덮어쓰지 않으면 실패 원인을 나중에도 다시 읽을 수 있습니다.</p>
+</figcaption>
+</figure>
+<div class="learn-detail"><h4>같은 c1 요청에서 어느 층을 바꿨나요?</h4>
+<table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">원본에서 바꾼 부분</th><th scope="col">풀이 함수의 반환</th><th scope="col">이유</th></tr>
+</thead><tbody><tr><td>원본 arguments는 문자열 &quot;{}&quot;</td><td>True</td><td>도구에 전달할 인자가 없음</td></tr>
+<tr><td>arguments를 문자열 {&quot;day&quot;:&quot;weekend&quot;}로 변경</td><td>False</td><td>JSON을 푼 안쪽 객체에 인자가 생김</td></tr>
+<tr><td>바깥 item에만 day를 추가하고 arguments는 &quot;{}&quot; 유지</td><td>True</td><td>풀이 함수는 바깥의 부가 필드를 읽지 않음</td></tr>
+</tbody></table></div>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 요청 검사 함수 완성하기</h3>
+<div class="cell-before"><p>사전, 도구 이름, 공백이 아닌 문자열 ID, 문자열로 온 빈 JSON 객체 순서로 검사하세요. 변환에 실패해도 예외 대신 False를 돌려줍니다.</p>
+<p>get_loan_rule은 인자를 받지 않습니다. 요청 바깥에서 name과 call_id를 읽고, arguments 문자열을 풀어 빈 객체인지 확인하세요. day를 어느 쪽에 넣었는지에 따라 검사 결과가 달라집니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-keyword">def</span> validate_request(item):
+    <span class="tok-keyword">pass</span>  <span class="tok-comment"># 위 조건을 차례로 검사하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4"><span class="tok-keyword">def</span> validate_request(item):
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(item, dict) <span class="tok-keyword">or</span> item.get(<span class="tok-string">&quot;name&quot;</span>) != <span class="tok-string">&quot;get_loan_rule&quot;</span>:
+        <span class="tok-keyword">return</span> <span class="tok-keyword">False</span>
+    cid = item.get(<span class="tok-string">&quot;call_id&quot;</span>)
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(cid, str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> cid.strip():
+        <span class="tok-keyword">return</span> <span class="tok-keyword">False</span>
+    raw = item.get(<span class="tok-string">&quot;arguments&quot;</span>)
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(raw, str):
+        <span class="tok-keyword">return</span> <span class="tok-keyword">False</span>
+    <span class="tok-keyword">try</span>:
+        <span class="tok-keyword">return</span> json.loads(raw) == {}
+    <span class="tok-keyword">except</span> ValueError:
+        <span class="tok-keyword">return</span> <span class="tok-keyword">False</span>
+
+print(validate_request(item))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="cell-after"><p>원래 c1 요청은 True입니다. 먼저 자료형을 검사해 None이나 목록이 들어와도 .get을 잘못 호출하는 오류를 피할 수 있습니다. 문자열로 온 {}만 허용하므로 파이썬 사전 자체를 넣은 요청도 거부합니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="nb-explain" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>조회 결과가 없는 기록 설명하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘조회 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘기록 있음’, 아래쪽은 ‘기록 없음’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>결과가 비었다면 기록을 찾지 못한 이유를 확인합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>이제 증상을 보고 필요한 부분으로 돌아갑니다. 인자를 풀지 못한 경우라면 15장의 arguments를, 요청 ID와 결과 ID가 다르면 16장 왕복을, 상한이 보이면 17장 마지막 반복을 다시 살펴보세요.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 실행 전 차단한 요청 남기기</h3>
+<div class="cell-before"><p>도구 이름이 허용 목록과 다른 요청을 받았습니다. 프로그램이 기록할 값 한 개를 계산합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">bad = {**item, <span class="tok-string">&quot;name&quot;</span>: <span class="tok-string">&quot;other_lookup&quot;</span>}
+allowed = bad[<span class="tok-string">&quot;name&quot;</span>] == <span class="tok-string">&quot;get_loan_rule&quot;</span>
+print(allowed)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="cell-after"><p>False는 도구 선택 검사 결과입니다. 대출 기간이 0일이거나 데이터가 비어 있다는 뜻으로 바꿔 적으면 안 됩니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 동료에게 실패 원인 설명하기</h3>
+<div class="cell-before"><p>요청 ID c1과 실패한 필드 이름을 한 문장으로 연결하세요. 실제 실행 결과를 만들지 마세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># bad의 call_id와 name을 읽어 진단 문구를 작성하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">print(f&quot;{bad[<span class="tok-string">&#x27;call_id&#x27;</span>]} 요청은 도구 이름 {bad[<span class="tok-string">&#x27;name&#x27;</span>]}이 허용 목록에 없어 실행 전에 멈췄습니다.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">c1 요청은 도구 이름 other_lookup이 허용 목록에 없어 실행 전에 멈췄습니다.</pre></div>
+<div class="cell-after"><p>다른 사람이 c1의 원본 요청으로 돌아가 name을 고칠 수 있습니다. 이름을 고친 뒤에는 arguments와 call_id도 다시 확인하세요.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>기본 과제에서 잘못된 요청이 도구 실행 전에 멈췄는지 확인하세요. 더 연습하려면 보충 자료의 검사 중 한 건만 골라 입력, 멈춘 단계, 도구 호출 여부를 적으세요. 보충 자료에 나온 14건은 서로 다른 사례를 찾아볼 때 씁니다.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="diagnose"></span><details class="reading-topic" id="reading-diagnose"><summary>외우는 대신 설명할 수 있는지 진단하기</summary><div class="prose"><p>오늘은 새 프레임워크를 추가하지 않습니다. 함수·JSON·SDK·도구 요청·실행·루프에서 막힌 부분을 찾고, 자신이 수정한 코드를 동료에게 설명하는 날입니다. 진단은 점수 경쟁이 아니라 보충 경로 선택에 사용합니다.</p>
+<p>learning-record.md에 각 항목을 혼자 설명 가능, 예제를 보면 가능, 도움 필요로 표시합니다. 확신이 없으면 코드의 실제 값이나 실행 결과를 보여 주며 설명할 수 있는지 확인하세요.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>진단 항목</caption><thead><tr><th scope="col">영역</th><th scope="col">질문</th><th scope="col">확인할 행동</th></tr>
+</thead><tbody><tr><td>함수</td><td>입력과 반환값이 무엇인가요?</td><td>호출 결과를 변수에 받아 출력</td></tr>
+<tr><td>JSON</td><td>문자열과 딕셔너리는 어떻게 다른가요?</td><td>json.loads 전후 타입 설명</td></tr>
+<tr><td>요청</td><td>함수 이름이 나오면 실행된 건가요?</td><td>function_call과 실행 코드 구분</td></tr>
+<tr><td>결과</td><td>어느 요청의 결과인지 어떻게 알죠?</td><td>call_id 연결</td></tr>
+<tr><td>반복</td><td>언제 끝나나요?</td><td>완료·한도 상태 확인</td></tr>
+<tr><td>실패</td><td>형식 통과면 정답인가요?</td><td>의미 오류 사례 설명</td></tr>
+</tbody></table></div>
+<div class="prose"><p>17일 agent-loop/trace.json의 정상·상한·공백 답변 기록을 가져오세요. 파일이 없으면 제공 예제 재현으로 진입하고 그 차이를 남깁니다. 이 장의 agent_loop.py와 test_loop.py는 고정된 17일 파일과 같습니다. learning-record.md는 학생이 채우는 빈 양식이며 그 파일의 존재가 학습 완료를 뜻하지 않습니다.</p>
+</div>
+</details>
+<span id="paths"></span><details class="reading-topic" id="reading-paths"><summary>필요한 보충 경로 선택하기</summary><div class="table-scroll" tabindex="0"><table><caption>같은 2H 안의 보충 경로</caption><thead><tr><th scope="col">경로</th><th scope="col">대상</th><th scope="col">활동과 완료 확인</th></tr>
+</thead><tbody><tr><td>A 입력과 함수</td><td>Python·JSON이 막힘</td><td>3장 함수와 15장 인자 파싱을 다시 실행하고 타입을 설명</td></tr>
+<tr><td>B 요청과 결과</td><td>SDK·도구 실행이 혼동됨</td><td>11장 모의 응답과 16장 왕복에서 실행 주체 표시</td></tr>
+<tr><td>C 반복과 실패</td><td>종료·로그가 어려움</td><td>17장 상한·중복 ID 사례를 실행하고 종료 원인 설명</td></tr>
+</tbody></table></div>
+<div class="prose"><p>모든 경로를 한꺼번에 수행하지 않습니다. 가장 필요한 하나를 골라 2시간 안에서 설명·재실행·수정을 반복합니다. 일찍 마쳤다면 다른 경로의 설명을 동료에게 듣되 기본 과제 시간을 줄이지 않습니다.</p>
+</div>
+</details>
+<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>직접 구현할 작은 함수의 약속</summary><div class="prose"><p>validate_request는 호출 요청을 검사해 bool을 반환합니다. 딕셔너리가 아닌 값이나 잘못된 요청에는 False를 반환합니다. 실제 도구나 모델을 실행하지 않고 입력도 수정하지 않습니다.</p>
+<p>허용 이름은 get_loan_rule 하나입니다. call_id는 공백이 아닌 문자열, arguments는 JSON 문자열이며 파싱 결과가 빈 객체 {}여야 합니다. bytes나 이미 만들어진 딕셔너리는 JSON 문자열이 아니므로 거부합니다. 잘못된 JSON·추가 인자·누락된 필드에도 False를 반환합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>입출력 예</caption><thead><tr><th scope="col">입력의 차이</th><th scope="col">반환</th></tr>
+</thead><tbody><tr><td>허용 이름·c1·{}</td><td>True</td></tr>
+<tr><td>다른 함수 이름</td><td>False</td></tr>
+<tr><td>빈 call_id</td><td>False</td></tr>
+<tr><td>arguments=[]</td><td>False</td></tr>
+<tr><td>깨진 JSON</td><td>False</td></tr>
+<tr><td>arguments를 풀었을 때 필드가 있는 객체</td><td>False</td></tr>
+<tr><td>공백·비문자열 ID 또는 누락된 필드</td><td>False</td></tr>
+<tr><td>None·리스트 입력</td><td>False</td></tr>
+<tr><td>문자열이 아닌 arguments 또는 JSON null</td><td>False</td></tr>
+</tbody></table></div>
+</details>
+<span id="implement"></span><details class="reading-topic" id="reading-implement"><summary>구현 전에 검사 순서 정하기</summary><div class="prose"><p>처음부터 한 줄로 모든 조건을 쓰지 말고 이름, ID, JSON 파싱, 객체 내용의 순서로 나누세요. JSON 읽기가 실패하는 경우는 try/except로 처리합니다. 파싱이 성공해도 리스트나 숫자이면 객체 조건을 통과하지 못해야 합니다.</p>
+<p>각 조건을 추가할 때 하나의 정상 사례와 하나의 실패 사례를 직접 호출해 봅니다. True와 &quot;True&quot;는 다릅니다. 이 함수는 문자열이 아닌 bool을 반환해야 합니다.</p>
+</div>
+</details>
+<span id="integrate"></span><details class="reading-topic" id="reading-integrate"><summary>도구 실행 흐름과 연결해서 설명하기</summary><div class="prose"><p>함수 검사를 마쳤다면 제공한 agent_loop.py를 실행하고 validate_request가 들어갈 위치를 설명합니다. 실제로 연결하려면 get_hours 요청까지 허용하는 기존 루프의 계약과 지금의 단일 도구 계약을 조정해야 합니다. 서로 다른 범위를 그대로 섞지 않습니다.</p>
+<p>이번 통합 과제의 핵심은 코드 위치와 책임을 설명하는 것입니다. 사용자 질문 → 모델 응답 → 함수 이름·인자 검사 → 도구 실행 → 결과 반환 → 다음 모델 응답의 순서를 기록하세요.</p>
+</div>
+<div class="prose"><p>20개 루프 검사는 bool 상한·질문형·공백 답변·잘못된 ID도 확인합니다. 공백 답변은 empty_answer, 잘못된 질문이나 상한은 호출 전 예외입니다. 도구 상한 0은 유효하며 요청 실행을 금지합니다. 검사 통과와 자신의 구현·설명은 다른 증거입니다.</p>
+</div>
+</details>
+<span id="peer"></span><details class="reading-topic" id="reading-peer"><summary>동료가 실행할 수 있게 기록하기</summary><div class="prose"><p>동료에게 비밀키나 가상환경 폴더를 주지 않습니다. 이번 기본 실행은 표준 라이브러리만 사용하므로 파일을 복사하고 같은 명령으로 실행할 수 있습니다. 동료의 운영체제에서 실행하지 않았다면 확인하지 않았다고 기록합니다.</p>
+</div>
+</details>
+<span id="assessment"></span><details class="reading-topic" id="reading-assessment"><summary>완료 기준과 보충 계획 정리</summary><div class="table-scroll" tabindex="0"><table><caption>개인 완료 기준</caption><thead><tr><th scope="col">영역</th><th scope="col">관찰 가능한 증거</th></tr>
+</thead><tbody><tr><td>구현</td><td>입력 계약과 14개 검사 통과</td></tr>
+<tr><td>이해</td><td>요청과 실행·call_id·종료를 설명</td></tr>
+<tr><td>실패</td><td>정상과 다른 결과 한 개의 원인 분석</td></tr>
+<tr><td>재현</td><td>환경·명령·출력이 있는 기록</td></tr>
+<tr><td>정직한 범위</td><td>모의·실제·미실행을 구분</td></tr>
+</tbody></table></div>
+<div class="prose"><p>검사만 통과하고 설명이 어려우면 이해 항목을 보충합니다. 설명은 되지만 실행이 막히면 환경과 입력 처리부터 다시 봅니다. 모든 사람에게 같은 추가 분량을 주기보다 막힌 지점을 기록하고 다음 학습 전에 필요한 최소 과제를 정합니다.</p>
+</div>
+<div class="prose"><p>다음 장은 LangChain의 LCEL로 입력과 출력을 연결합니다. 라이브러리 문법이 바뀌어도 함수의 입출력과 검증 경계는 계속 적용됩니다.</p>
+</div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>19일에 가져갈 설명을 파일로 남기기</summary><div class="prose"><p>examples/loop-review/explanation.md를 채워 사용자 입력, 모델 요청, 도구 요청, 코드 검사, 실행 결과, 종료를 자기 말로 연결합니다. learning-record.md에는 자신에게 필요한 보충과 미확인 환경을 남깁니다. 두 파일 모두 처음에는 빈 양식입니다.</p>
+</div>
+</details>
+<span id="sources"></span><details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+</div>
+</details>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

@@ -1,0 +1,3 @@
+
+/* Keep the two-digit chapter TOC number together. */
+.sidebar nav a > span:first-child { flex: 0 0 1.8em; white-space: nowrap; }

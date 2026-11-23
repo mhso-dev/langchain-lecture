@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>필요한 Skill·외부 연동 완성 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 101 / FINAL PROJECT</p>
+<span class="sidebar-title">필요한 Skill·외부 연동 완성 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-decision"><span>02</span>연동을 보류하는 결정도 기록하기</a><a href="#nb-fallback"><span>03</span>나중에 연동할 조건 남기기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 101 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>필요한 Skill·외부 연동 완성 · 방향과 예시</h1>
+<p class="hero-description">장비 A를 점검하려는 학생에게 예약 API가 필요할까요? 이 장의 목표는 팀이 외부 연동을 도입할지 보류할지 결정하고 이유를 남기는 것입니다. 현재 규정만으로 답할 수 있는지 먼저 확인하세요.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter101.ipynb" download="chapter101.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>101장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-decision" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>연동을 보류하는 결정도 기록하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘연동 제안’가 가운데 ‘필요 자료 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>현재 자료로 답할 수 있는 범위를 보고 연동 여부를 정합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>선택 기록 예시　후보 외부 장비 예약 API / 대상 SC-01 점검 전 확인 / 필요한 데이터 규정 본문과 위치 / 예약 변경 권한 불필요 / 결정 보류 / 이유 규정은 이미 rules-v1에 있고, 현재 묻는 작업에는 예약 읽기나 쓰기가 필요하지 않음. Skill이나 MCP도 누가 어떤 입력을 보내 어떤 결과를 받을지 설명할 수 있을 때 비교 대상에 올립니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 현재 조회 함수가 쓰는 근거</h3>
+<div class="cell-before"><p>저장된 회귀 결과에서 Q01 한 건이 어떤 출처로 끝났는지 읽습니다.</p>
+<p>이 팀의 결과물은 ‘장비 예약 API 연동 보류 메모’입니다. 다시 검토할 질문은 ‘이 장비를 실제로 예약할 수 있나요?’입니다. 현재 범위인 점검 안내에서 예약까지 맡기로 결정했을 때 권한과 운영 책임을 검토합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">record = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;Q01&#x27;</span>, <span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>, <span class="tok-string">&#x27;source_ids&#x27;</span>: [<span class="tok-string">&#x27;RULE-A&#x27;</span>]}
+print(record[<span class="tok-string">&quot;question_id&quot;</span>], record[<span class="tok-string">&quot;status&quot;</span>], record[<span class="tok-string">&quot;source_ids&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Q01 answered [&#x27;RULE-A&#x27;]</pre></div>
+<div class="cell-after"><p>Q01에서 answered와 RULE-A가 나옵니다. 교육용 로컬 경로로 이 한 건을 처리했다는 근거입니다. 실제 예약이나 현장 장비 정보에 접근한 기록은 없습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-fallback" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>나중에 연동할 조건 남기기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘일정 자료’와 ‘읽기 권한’가 오른쪽의 ‘재검토 조건’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>새 일정 자료와 읽기 권한이 생길 때 연동을 검토합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>연결을 다시 검토할 조건 예시　사용자가 “오늘 점검 가능한 시간”을 묻고 팀이 공개 가능한 일정 읽기 권한과 기준 시각을 확보했을 때. 그때는 규정 ID와 날짜를 보내고, 일정 목록 및 조회 시각을 받는 읽기 전용 연결을 고려할 수 있습니다. 연결 실패 시에는 캐시의 오래된 시간을 확정 일정으로 보여 주지 않고 담당자 확인을 안내합니다. 아래는 아직 채택하지 않은 문서 시안입니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 팀의 도입 조건 쓰기</h3>
+<div class="cell-before"><p>우리 팀이 다음에 외부 자료를 검토할 조건과 연결 실패 시 보여 줄 문장을 한 건의 결정 메모로 작성하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 사용자 질문, 도입 조건, 대체 안내가 담긴 메모를 작성하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">decision_note = {<span class="tok-string">&quot;질문&quot;</span>: <span class="tok-string">&quot;이번 달 점검 일정은?&quot;</span>, <span class="tok-string">&quot;도입 조건&quot;</span>: <span class="tok-string">&quot;날짜별 공개 일정과 읽기 권한 확보&quot;</span>,
+                 <span class="tok-string">&quot;대체 안내&quot;</span>: <span class="tok-string">&quot;현재 일정은 담당자에게 확인해 주세요.&quot;</span>}
+print(decision_note[<span class="tok-string">&quot;도입 조건&quot;</span>], decision_note[<span class="tok-string">&quot;대체 안내&quot;</span>], sep=<span class="tok-string">&quot;\n&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">날짜별 공개 일정과 읽기 권한 확보
+현재 일정은 담당자에게 확인해 주세요.</pre></div>
+<div class="cell-after"><p>이 메모로는 연동 채택 여부를 판단할 수 있습니다. 실제로 연결이 되었다고 쓰려면 호출한 환경, 입력, 받은 응답을 따로 남겨야 합니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>102장에는 채택한 호출과 제외한 연동을 이유와 함께 넘깁니다. 여기에 나온 구현은 로컬 규칙과 저장소를 그대로 쓰며 실제 외부 호출은 0회입니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

@@ -1,0 +1,33 @@
+/* Beginner visual revision: opt-in movement, visible alternatives, large controls. */
+.sidebar nav a>span{flex:0 0 2ch;white-space:nowrap}
+.motion-lab{margin:30px 0;border:1px solid #b8cccb;border-radius:18px;overflow:hidden;background:#fff}
+.motion-lab figcaption{padding:24px 26px 12px}.motion-lab h3{margin:8px 0;font-size:24px;line-height:1.4}
+.motion-screen img,.motion-transcript img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#f5f7f8}
+.motion-controls,.motion-step-buttons{display:flex;gap:10px;flex-wrap:wrap;padding:14px 24px 0}
+.motion-controls button,.motion-step-buttons button{font:inherit;min-height:44px;border:1px solid #7b9c99;background:#f0f7f5;color:#143c3b;border-radius:8px;padding:8px 13px;cursor:pointer}
+.motion-controls button[aria-pressed=true],.motion-step-buttons button[aria-pressed=true]{background:#08645f;color:#fff}
+.motion-lab button:focus-visible,.checkpoint summary:focus-visible,.motion-transcript summary:focus-visible{outline:3px solid #a16a00;outline-offset:3px}
+.motion-status{font-weight:700;margin:20px 26px 4px;color:#154d49}.motion-note{margin:4px 26px 22px}
+.motion-transcript{border-top:1px solid #d2dfdf;padding:18px 26px}.motion-transcript summary,.checkpoint summary{cursor:pointer;font-weight:700;line-height:1.6;min-height:44px}
+.motion-transcript article{padding:16px 0 24px;border-bottom:1px solid #d2dfdf}.motion-transcript dl{font-size:16px;overflow-wrap:anywhere}.motion-transcript dt{font-weight:700}.motion-transcript dd{margin:4px 0 12px}
+.motion-question{border-left:4px solid #568f85;padding-left:14px}.checkpoint{margin:22px 0;padding:20px 24px;border:1px solid #ccd9c0;border-radius:12px;background:#f7faef}.checkpoint p{margin-bottom:0}
+.lesson-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#152d42}.lesson-video{margin:28px 0}.lesson-video figcaption{padding:18px 0}
+@media(max-width:600px){.motion-lab figcaption{padding:18px 16px 8px}.motion-controls,.motion-step-buttons{padding:10px 14px 0}.motion-controls button,.motion-step-buttons button{font-size:15px}.motion-status,.motion-note{margin-left:16px;margin-right:16px}.motion-transcript{padding:16px}.checkpoint{padding:16px}}
+@media print{.motion-controls,.motion-step-buttons{display:none!important}.motion-lab,.checkpoint{break-inside:avoid}}
+
+/* Films keep the full code/value frame; transcripts remain readable on small screens. */
+.teaching-video{background:white;border:1px solid #b8cccb;border-radius:18px;overflow:hidden;margin:28px 0}
+.teaching-video>figcaption{padding:24px 26px}.teaching-video h3{margin:8px 0;font-size:23px}.teaching-video figcaption p{color:#52687c}
+.teaching-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#14283d}
+.teaching-controls{padding:18px 24px 0;align-items:center;gap:20px;flex-wrap:wrap}.teaching-controls p{font-size:14px}.teaching-controls label{white-space:nowrap;font-size:15px}.teaching-controls select{font:inherit;min-height:44px;padding:7px;border-radius:7px;border:1px solid #7b9c99}
+.teaching-steps{display:flex;flex-wrap:wrap;gap:9px;padding:18px 24px 24px}.teaching-steps button{min-height:44px;font-size:14px}.teaching-steps button[aria-pressed=true]{background:#007c78;color:white}
+.teaching-code{border-top:1px solid #d2dfdf;padding:18px 26px}.teaching-code .code-block{margin:16px 0}.teaching-code p,.teaching-file{font-size:14px}.teaching-file{padding:16px 26px 24px}
+@media(max-width:600px){.teaching-video>figcaption,.teaching-controls,.teaching-steps,.teaching-code,.teaching-file{padding-left:16px;padding-right:16px}.teaching-steps button{font-size:14px}.teaching-video h3{font-size:21px}}
+@media print{.teaching-video video,.teaching-controls,.teaching-steps{display:none!important}.teaching-video{overflow:visible;break-inside:auto}}
+
+.svg-learning{border:1px solid #b8cccb;border-radius:18px;background:white;overflow:hidden;margin:28px 0}.svg-learning>figcaption{padding:22px 26px}.svg-learning h3{font-size:23px;margin:8px 0}.svg-viewport{overflow:auto;background:#f2f5f8}.svg-viewport svg{display:block;width:100%;height:auto;max-width:none}.svg-viewport .animated-frames{display:none!important}.svg-viewport .static-fallback{display:inline!important}.svg-viewport.svg-ready .animated-frames{display:inline!important}.svg-viewport.svg-ready .static-fallback{display:none!important}.svg-controls,.svg-step-buttons{padding:16px 24px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}.svg-controls button,.svg-step-buttons button{min-height:44px;font-size:14px}.svg-controls select{min-height:44px;font:inherit;border:1px solid #7b9c99;border-radius:6px;background:white;padding:7px}.svg-controls label{font-size:14px}.svg-step-buttons button[aria-pressed=true]{background:#007c78;color:white}.svg-scrub{padding:0 24px}.svg-scrub label{display:flex;gap:14px;align-items:center;width:100%;font-size:14px;white-space:nowrap}.svg-scrub input{width:100%;accent-color:#007c78;min-height:44px}.svg-status{margin:12px 24px 4px;font-weight:700;color:#154d49}.svg-caption,.svg-help{margin:8px 24px 18px}.svg-help{font-size:14px;color:#52687c}.gif-alternative{border-top:1px solid #d2dfdf;padding:18px 26px}.gif-alternative p{font-size:14px;margin:12px 0}.gif-alternative img{width:100%;height:auto}.svg-learning .teaching-file{line-height:2}
+@media(max-width:600px){.svg-learning>figcaption{padding:18px 16px}.svg-controls,.svg-step-buttons,.svg-scrub{padding-left:16px;padding-right:16px}.svg-status,.svg-caption,.svg-help{margin-left:16px;margin-right:16px}.svg-learning h3{font-size:21px}}
+@media print{.svg-controls,.svg-step-buttons,.svg-scrub,.gif-alternative{display:none!important}.svg-learning{overflow:visible;break-inside:auto}.svg-viewport{display:none}}
+
+.decision-note mark{color:#233124;background:linear-gradient(transparent 32%,#fff09c 32%);padding:0 .12em;font-weight:700;box-decoration-break:clone}
+.practice-question{margin:1.5rem 0}.practice-question h3{font-size:1.12rem;line-height:1.6}.illustration summary{padding:1rem;cursor:pointer;font-weight:700}

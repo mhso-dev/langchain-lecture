@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>품질·비용 점검 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 049</p>
+<span class="sidebar-title">품질·비용 점검 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-failure-location"><span>02</span>검색 실패와 인용 실패 나누기</a><a href="#nb-model-cost"><span>03</span>모델 호출 0과 미측정 비용 구분하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 049</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>품질·비용 점검 · 방향과 예시</h1>
+<p class="hero-description">Q03에 답하지 못하는 오류를 고칠 때 검색기와 생성기 중 어디부터 손볼까요? 46장의 보류 후보와 기준선을 같은 질문으로 비교해 첫 수정 항목과 측정하지 않은 비용을 기록합니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter49.ipynb" download="chapter49.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>49장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-failure-location" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>검색 실패와 인용 실패 나누기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘실행 기록’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘검색 실패’, 아래쪽은 ‘인용 실패’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>검색 결과가 비었는지, 인용 단계가 틀렸는지 나눠 봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>완성 품질 기록｜기준선에서는 p3을 찾지 못해 답을 만들지 않았습니다. 보류 후보에서는 p3을 찾아 생성 규칙까지 갔지만 엉뚱한 p2를 인용해 응답을 막았습니다. 팀의 우선 수정 항목 I49-Q03은 후보의 생성 규칙입니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 두 방식에서 실패한 위치 찾기</h3>
+<div class="cell-before"><p>각 행은 실제 외부 모델 없이 제공 예제를 돌렸던 로컬 기록입니다.</p>
+<p>이번 실험에서 고정할 것은 p3을 찾는 error_keyword 후보의 검색입니다. 현재 서비스는 여전히 baseline을 씁니다. 생성 방식을 바꿔 비교할 때는 두 실험 모두 같은 p3을 받았는지 먼저 확인하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">original = {<span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [], <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">0</span>, <span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>}
+candidate = {<span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [<span class="tok-string">&#x27;course-guide-v1:p3&#x27;</span>],
+ <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;invalid_citation&#x27;</span>}
+print(original)
+print(candidate)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;retrieved_ids&#x27;: [], &#x27;generation_calls&#x27;: 0, &#x27;status&#x27;: &#x27;no_evidence&#x27;}
+{&#x27;retrieved_ids&#x27;: [&#x27;course-guide-v1:p3&#x27;], &#x27;generation_calls&#x27;: 1, &#x27;status&#x27;: &#x27;invalid_citation&#x27;}</pre></div>
+<div class="cell-after"><p>기준선의 생성 호출 0은 근거를 찾지 못해 건너뛰었다는 뜻입니다. 후보의 1은 고정 생성 함수를 한 번 실행했다는 뜻입니다. Q03은 이미 공개된 문항이므로 진단 증거로만 사용합니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-model-cost" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>모델 호출 0과 미측정 비용 구분하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘로컬 실행’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘외부 호출 0’, 아래쪽은 ‘비용 미측정’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>외부 호출 0과 측정하지 않은 비용은 다른 값입니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>실험 기록 예시｜실행 모드는 로컬 규칙, 외부 모델 호출은 0회, 모델 비용과 모델 지연은 미측정입니다. 로컬 코드의 실행 시간에는 화면 대기와 실제 모델 응답시간이 포함되지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 원 단위 수치를 비워 둔 까닭 읽기</h3>
+<div class="cell-before"><p>후보의 비용 관측 필드만 꺼내 봅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">usage = {<span class="tok-string">&#x27;external_model_calls&#x27;</span>: <span class="tok-number">0</span>, <span class="tok-string">&#x27;model_cost&#x27;</span>: <span class="tok-keyword">None</span>, <span class="tok-string">&#x27;model_latency&#x27;</span>: <span class="tok-keyword">None</span>}
+print(usage)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;external_model_calls&#x27;: 0, &#x27;model_cost&#x27;: None, &#x27;model_latency&#x27;: None}</pre></div>
+<div class="cell-after"><p>외부 호출 수는 0이고 비용과 지연은 None입니다. 측정하지 않은 값을 0원이나 0초로 덮어쓰면 실제 모델과 비교할 수 없습니다. 팀이 실제 연동을 사용한다면 요청별 입력량·출력량·적용 요금·측정 구간을 남겨 계산하세요.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>다음 단계에 넘길 한 줄은 ‘검색 고정, Q03에서 생성 인용만 수정, 나머지 세 질문으로 회귀 확인’입니다. 팀에서 실패가 가장 많은 원인이 다르면 근거 행과 함께 우선순위를 바꾸세요.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

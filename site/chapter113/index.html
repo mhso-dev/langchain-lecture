@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>운영·복구 확인 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 113 / FINAL PROJECT</p>
+<span class="sidebar-title">운영·복구 확인 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-restore"><span>02</span>원본을 보존한 채 다른 위치에서 읽기</a><a href="#nb-replay"><span>03</span>복사 성공 뒤에도 남는 확인</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 113 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>운영·복구 확인 · 방향과 예시</h1>
+<p class="hero-description">프로그램을 다시 켰다는 보고를 받았습니다. 점검 담당자가 보던 규정과 대화까지 살아났는지는 별도 질문입니다. 운영 원본 대신 임시 가상 세션을 새 위치에 복원하고, 내용을 다시 읽는 순서를 따라갑니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter113.ipynb" download="chapter113.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>113장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-restore" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>원본을 보존한 채 다른 위치에서 읽기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘원본 보존’를 ‘별도 위치 복구’에 남기는 시점과 ‘r6 확인’를 확인하는 시점을 구분하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>원본을 그대로 두고 별도 위치에서 복구한 값을 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>복구 기록 예시　① 가상 세션 파일을 준비 ② 별도 디렉터리에 복구 ③ 복구 직후 원본과 바이트 대조 ④ 새 위치에서 마지막 요청 ID 읽기. 운영 상황에서는 복구 시점과 새 쓰기를 멈췄는지 먼저 확인해야 합니다. 아래 셀은 자신이 만든 임시 폴더 안에서만 파일을 만듭니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 가상 세션을 복사해 다시 열기</h3>
+<div class="cell-before"><p>읽기 확인은 복구 대상에서 수행합니다. 원본 내용으로 답을 출력하면 잘못된 복구 경로도 성공으로 보입니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> pathlib <span class="tok-keyword">import</span> Path
+<span class="tok-keyword">from</span> tempfile <span class="tok-keyword">import</span> TemporaryDirectory
+<span class="tok-keyword">import</span> json
+<span class="tok-keyword">from</span> shutil <span class="tok-keyword">import</span> copyfile
+
+<span class="tok-keyword">with</span> TemporaryDirectory() <span class="tok-keyword">as</span> temp:
+    root = Path(temp)
+    source = root / <span class="tok-string">&quot;source.json&quot;</span>
+    source.write_text(json.dumps({<span class="tok-string">&quot;owner&quot;</span>: <span class="tok-string">&quot;alice&quot;</span>, <span class="tok-string">&quot;requests&quot;</span>: [<span class="tok-string">&quot;r5&quot;</span>, <span class="tok-string">&quot;r6&quot;</span>]}), encoding=<span class="tok-string">&quot;utf-8&quot;</span>)
+    target_dir = root / <span class="tok-string">&quot;restored&quot;</span>
+    target_dir.mkdir()
+    target = target_dir / <span class="tok-string">&quot;session.json&quot;</span>
+    copyfile(source, target)
+    restored = json.loads(target.read_text(encoding=<span class="tok-string">&quot;utf-8&quot;</span>))
+    print(target.read_bytes() == source.read_bytes(), restored[<span class="tok-string">&quot;requests&quot;</span>][-<span class="tok-number">1</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True r6</pre></div>
+<div class="cell-after"><p>True와 r6가 나옵니다. 첫 값은 현재 두 사본의 바이트 일치이고 둘째 값은 복구한 사본을 읽은 결과입니다. 셀이 끝나면 이 셀의 임시 디렉터리는 정리됩니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-replay" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>복사 성공 뒤에도 남는 확인</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘복구한 사본’가 가운데 ‘질문 재실행’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>복구 사본에 질문을 다시 보내 기능까지 확인합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>제공 가상 복구 기록에서는 alice가 유지한 요청이 r2~r6였고 다른 사용자의 같은 이름 세션은 0턴이었습니다. 복구 뒤에도 만료 시각은 그대로 두었습니다. 최근 r6을 다시 쓰려는 요청은 거부했고, 보존 범위를 벗어난 r0까지 영구 차단하지는 않았습니다. “파일이 돌아왔다”와 “오래된 중복 요청이 모두 차단된다”는 각각 다른 주장입니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 복구 후 인계 문장 쓰기</h3>
+<div class="cell-before"><p>제공 기록에서 원본이 그대로였는지와 운영 자료를 복구한 적이 있는지를 읽어 두 범위를 한 문장씩 구분하세요.</p>
+<p>셀에서 읽은 마지막 값 r6와 임시 사본의 요청 r5·r6를 재현 기록에 적습니다. 보존 기간을 지켰는지와 같은 요청이 두 번 저장되지 않았는지는 별도 검사의 기록을 보고 채우세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">record = {<span class="tok-string">&#x27;original_unchanged_after_replay&#x27;</span>: <span class="tok-keyword">True</span>,
+ <span class="tok-string">&#x27;actual_restore_of_operational_data&#x27;</span>: <span class="tok-keyword">False</span>}
+<span class="tok-comment"># 두 필드를 읽어 복구 대상과 결과를 표시하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">record = {<span class="tok-string">&#x27;original_unchanged_after_replay&#x27;</span>: <span class="tok-keyword">True</span>,
+ <span class="tok-string">&#x27;actual_restore_of_operational_data&#x27;</span>: <span class="tok-keyword">False</span>}
+print(<span class="tok-string">&quot;가상 원본 보존&quot;</span>, record[<span class="tok-string">&quot;original_unchanged_after_replay&quot;</span>])
+print(<span class="tok-string">&quot;운영 자료 실제 복구&quot;</span>, record[<span class="tok-string">&quot;actual_restore_of_operational_data&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">가상 원본 보존 True
+운영 자료 실제 복구 False</pre></div>
+<div class="cell-after"><p>가상 원본 보존은 True, 운영 자료 복구는 False입니다. 팀의 실환경 기록에는 복구 대상과 확인 시간을 다시 적습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>114장에 인계할 기록은 복구 대상·복구한 위치·읽어 확인한 값·아직 모르는 범위입니다. 운영 장비의 재시작 시각과 실제 사용자 영향은 이 로컬 연습만으로 채우지 않습니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

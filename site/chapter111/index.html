@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>결함 수정·회귀 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 111 / PROJECT QUALITY</p>
+<span class="sidebar-title">결함 수정·회귀 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-change"><span>02</span>최소 입력으로 수정 위치 좁히기</a><a href="#nb-freeze"><span>03</span>회귀 결과와 출시 결정을 분리하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 111 / PROJECT QUALITY</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>결함 수정·회귀 · 방향과 예시</h1>
+<p class="hero-description">98장에서 “장비A” 표기를 고친 뒤, 장비AB를 잘못 바꾸거나 기존 정상 질문이 깨지지는 않았을까요? 새 기능을 더 붙이기 전에 수정 이유와 재현 조건을 후보 기록에 남겨 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter111.ipynb" download="chapter111.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>111장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-change" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>최소 입력으로 수정 위치 좁히기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘최소 입력’에서 출발해 ‘수정 위치’를 거친 뒤 ‘회귀 확인’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>작은 입력으로 처음 어긋난 위치를 좁혀 갑니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>변경 기록 예시　결함 Q98-N01은 “장비A”를 장비 이름으로 읽지 못했습니다. 변경은 A·B 뒤에 더 이어지는 영문·숫자가 없을 때만 장비와 글자 사이에 공백을 넣은 한 규칙입니다. Q98-G01의 “장비AB”는 그대로 두고 기존 Q01도 유지합니다. 111장에서 새로 발견한 사용자 결함이 아니라 98장의 수정 사례를 후보판으로 다시 확인하는 예시입니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기존 정상 문장 재검사</h3>
+<div class="cell-before"><p>후보판의 규칙을 이미 띄어쓰기가 있는 Q01에 다시 적용합니다.</p>
+<p>후보 카드에는 검사한 대상을 적으세요. 장비명 공백을 바로잡았다는 출력은 입력 정규화의 근거입니다. 최종 응답의 RULE-A까지 맞는지는 같은 질문을 끝까지 실행한 회귀 기록에서 따로 확인합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> re
+
+<span class="tok-keyword">def</span> normalize(question):
+    <span class="tok-keyword">return</span> re.sub(<span class="tok-string">r&quot;장비([AB])(?=$|[^A-Za-z0-9])&quot;</span>, <span class="tok-string">r&quot;장비 \1&quot;</span>, question)
+
+original = <span class="tok-string">&quot;장비 A의 점검 전 확인 사항은?&quot;</span>
+print(normalize(original) == original)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="cell-after"><p>True입니다. 새 표기를 처리하도록 바꾸면서 기존 입력의 형태까지 바뀌지 않았습니다. 이 한 건과 모호한 이름, 처음 실패한 이름을 따로 기록해야 수정의 범위를 설명할 수 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-freeze" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>회귀 결과와 출시 결정을 분리하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘회귀 통과’가 가운데 ‘출시 조건’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>회귀 통과 뒤에도 별도 조건을 확인해 출시를 판단합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>후보 기록　공개 기본 문항 7개는 변경 전후 모두 7개 통과. 공개 확장 3개는 1개에서 3개 통과. 같은 원문과 질문을 사용한 로컬 비교입니다. 실제 사용자 관찰과 HTTP·운영 성능 확인은 남아 있습니다. 다음 팀이 이 결과를 읽을 때 ‘공개 사례에 맞춘 후보’와 ‘배포 승인’을 구분할 수 있어야 합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 원래 실패를 다시 열기</h3>
+<div class="cell-before"><p>처음 실패한 Q98-N01에서 어떤 문자열이 실제 검색 단계에 들어갈지 표시하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 장비A를 붙여 쓴 질문에 후보 규칙을 적용하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(normalize(<span class="tok-string">&quot;장비A의 점검 전 확인 사항은?&quot;</span>))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?</pre></div>
+<div class="cell-after"><p>장비 A가 분리되어 나옵니다. 이 문자열을 넘긴 뒤 올바른 RULE-A가 돌아오는지까지 봐야 해당 사용자 경로를 닫을 수 있습니다. 평가 파일의 replay → records에서 question_id가 Q98-N01인 행을 찾으세요. candidate의 outcome → result → sources에서 첫 id가 RULE-A인지 확인하고 answer와 원문을 대조하세요.</p>
+</div>
+</details>
+</article>
+<p><a class="lesson-file" href="downloads/historical-regression.json" download="historical-regression.json">Q98-N01 응답과 출처가 담긴 평가 기록 받기</a></p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>112장에 넘길 후보에는 코드·문서·질문 판본, 수정 내용, 회귀 결과와 보류한 배포 조건이 함께 있어야 합니다. 이 로컬 후보의 배포 결정은 hold_pending_evidence입니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

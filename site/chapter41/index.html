@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>화면 상태와 Graph 대화를 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 041</p>
+<span class="sidebar-title">화면 상태와 Graph 대화를 연결하기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-thread-ui"><span>02</span>화면의 대화와 Graph 저장 위치 연결하기</a><a href="#nb-new-session"><span>03</span>사용자와 대화 사이의 경계 확인하기</a><a href="#nb-wire-form"><span>04</span>Streamlit의 입력을 Graph에 넘기기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 041</span><span class="template-badge">학생용 교재</span></div>
+<h1>화면 상태와 Graph 대화를 연결하기</h1>
+<p class="hero-description">한 학생이 대출 기간을 묻고 이어서 자료에 없는 주차 요금을 묻습니다. 기록 화면에는 이전 대화가 남아도 지금 답의 출처에는 대출 문서가 남으면 안 됩니다. 화면에 둘 값과 Graph에 넘길 값을 나누어 살펴봅니다.</p>
+<div class="hero-meta"><span>Python·RAG·Graph 이후</span><span>8H · 전반 4H / 후반 4H</span><span>29 thread·체크포인트 ·34 Graph 도구 흐름 ·40 화면 상태</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter41.ipynb" download="chapter41.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>41장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16, langgraph-checkpoint 4.3.0입니다.</p>
+</div>
+</section>
+<section id="nb-thread-ui" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>화면의 대화와 Graph 저장 위치 연결하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘thread_id’를 기준으로 양쪽의 ‘화면 대화’와 ‘그래프 상태’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>화면 대화를 그래프의 대화 ID와 연결합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>실제 Graph에 InMemorySaver를 붙여 대화별로 고정 질문을 기록합니다. 화면 담당 코드는 현재 대화의 thread_id를 전달합니다. 여기서는 자료 등록 과정이 끝난 뒤의 가상 도서관 고정 자료를 쓰며 새 문서 업로드나 재색인은 실행하지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 검색 결과와 기록을 저장하는 그래프</h3>
+<div class="cell-before"><p>history에는 누적 규칙을 붙이고 sources에는 현재 결과만 덮어쓰도록 합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 47줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-3&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>}]
+terms = (<span class="tok-string">&quot;대출&quot;</span>, <span class="tok-string">&quot;휴관&quot;</span>, <span class="tok-string">&quot;반납&quot;</span>)
+
+<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
+    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
+        <span class="tok-keyword">return</span> []
+    <span class="tok-keyword">def</span> distance(row):
+        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">&quot;text&quot;</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">&quot;id&quot;</span>]
+    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
+
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Annotated, TypedDict
+<span class="tok-keyword">from</span> operator <span class="tok-keyword">import</span> add
+<span class="tok-keyword">from</span> langgraph.graph <span class="tok-keyword">import</span> StateGraph, START, END
+<span class="tok-keyword">from</span> langgraph.checkpoint.memory <span class="tok-keyword">import</span> InMemorySaver
+
+<span class="tok-keyword">class</span> Session(TypedDict):
+    question: str
+    sources: list[dict]
+    history: Annotated[list[str], add]
+
+<span class="tok-keyword">def</span> process(state):
+    <span class="tok-keyword">return</span> {<span class="tok-string">&#x27;sources&#x27;</span>: retrieve(state[<span class="tok-string">&#x27;question&#x27;</span>], <span class="tok-number">1</span>), <span class="tok-string">&#x27;history&#x27;</span>: [state[<span class="tok-string">&#x27;question&#x27;</span>]]}
+
+builder = StateGraph(Session)
+builder.add_node(<span class="tok-string">&#x27;process&#x27;</span>, process)
+builder.add_edge(START, <span class="tok-string">&#x27;process&#x27;</span>)
+builder.add_edge(<span class="tok-string">&#x27;process&#x27;</span>, END)
+engine = builder.compile(checkpointer=InMemorySaver())
+
+<span class="tok-keyword">def</span> send(thread, question):
+    <span class="tok-keyword">return</span> engine.invoke({<span class="tok-string">&#x27;question&#x27;</span>: question}, {<span class="tok-string">&#x27;configurable&#x27;</span>: {<span class="tok-string">&#x27;thread_id&#x27;</span>: thread}})
+
+first = send(<span class="tok-string">&#x27;A&#x27;</span>, <span class="tok-string">&#x27;대출 기간은?&#x27;</span>)
+print(first[<span class="tok-string">&#x27;sources&#x27;</span>][<span class="tok-number">0</span>][<span class="tok-string">&#x27;id&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1</pre></div>
+<div class="cell-after"><p>A의 현재 결과는 library-1입니다. 반복 실행으로 새 엔진을 만들면 메모리 저장소도 다시 만들어집니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 같은 대화에서 현재 출처 비우기</h3>
+<div class="cell-before"><p>A가 주차 질문을 보낸 직후의 기록과 출처를 읽으세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">second = send(<span class="tok-string">&#x27;A&#x27;</span>, <span class="tok-string">&#x27;주차 요금은?&#x27;</span>)
+print(second[<span class="tok-string">&#x27;history&#x27;</span>])
+print(second[<span class="tok-string">&#x27;sources&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;대출 기간은?&#x27;, &#x27;주차 요금은?&#x27;]
+[]</pre></div>
+<div class="cell-after"><p>질문 두 개가 기록에 있고 현재 출처는 비었습니다. 프런트엔드가 첫 답의 출처를 계속 들고 있다면 화면만 잘못된 상태일 수 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-new-session" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>사용자와 대화 사이의 경계 확인하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘저장 공간’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘기존 대화’, 아래쪽은 ‘새 대화’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>다른 세션에서 앞 사용자의 기록을 읽지 않도록 합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>화면의 새 대화 버튼은 새 ID와 빈 현재 화면을 준비합니다. 다른 사용자의 thread_id를 재사용하면 이전 상태를 이어 읽으므로 이 노트북의 A와 B 같은 예시 ID를 운영 인증에 쓰면 안 됩니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 두 번째 대화를 열고 기록 확인하기</h3>
+<div class="cell-before"><p>B라는 새 대화에 휴관일을 묻고 B의 질문 목록과 현재 쪽수를 표시하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 다른 ID로 send를 호출하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">other = send(<span class="tok-string">&#x27;B&#x27;</span>, <span class="tok-string">&#x27;휴관일은?&#x27;</span>)
+print(other[<span class="tok-string">&#x27;history&#x27;</span>], other[<span class="tok-string">&#x27;sources&#x27;</span>][<span class="tok-number">0</span>][<span class="tok-string">&#x27;page&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;휴관일은?&#x27;] 2</pre></div>
+<div class="cell-after"><p>B에는 휴관 질문 한 개와 2쪽만 보입니다. A의 두 질문이 나타났다면 호출한 ID와 화면에 남긴 기록을 각각 살펴보세요.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="nb-wire-form" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>Streamlit의 입력을 Graph에 넘기기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘사용자 입력’에서 출발해 ‘그래프 실행’를 거친 뒤 ‘답변 화면’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>화면 입력을 그래프에 보내고 응답을 다시 표시합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>제공 앱은 같은 검색 함수와 체크포인터를 씁니다. 앞서 본 처리 중 UI에서 결정하는 것은 대화 ID와 현재 표시할 결과입니다. 새 대화 버튼은 새 ID를 만듭니다. 수업용 예제에는 로그인·운영 저장소가 없습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 제공 셀 · 대화 ID와 현재 화면 연결하기</h3>
+<div class="cell-before"><p>st.session_state.thread를 설정하는 줄과 engine.invoke에 같은 ID를 건네는 줄을 찾아보세요.</p>
+<p>노트북의 앱은 cache_resource로 엔진을 재사용합니다. A에서 B로 전환하면 엔진이 쓰는 저장소는 남지만 현재 화면은 B의 대화 ID와 출처를 기준으로 다시 그립니다. 뒤의 참고 앱은 session_state에 엔진을 두는 별도 구현입니다. 먼저 cache_resource로 그래프를 준비하는 줄과, 제출 뒤 현재 출처를 갱신하는 줄을 찾으세요.</p>
+</div>
+<details class="provided-code"><summary>제공 코드 전체 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 71줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">ui_source = <span class="tok-string">&quot;&quot;&quot;records = [{&#x27;id&#x27;: &#x27;library-1&#x27;,
+  &#x27;text&#x27;: &#x27;도서 대출 기간은 14일입니다.&#x27;,
+  &#x27;source&#x27;: &#x27;가상 도서관 이용 안내&#x27;,
+  &#x27;page&#x27;: 1},
+ {&#x27;id&#x27;: &#x27;library-2&#x27;,
+  &#x27;text&#x27;: &#x27;도서관은 월요일에 휴관합니다.&#x27;,
+  &#x27;source&#x27;: &#x27;가상 도서관 이용 안내&#x27;,
+  &#x27;page&#x27;: 2},
+ {&#x27;id&#x27;: &#x27;library-3&#x27;,
+  &#x27;text&#x27;: &#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;,
+  &#x27;source&#x27;: &#x27;가상 도서관 이용 안내&#x27;,
+  &#x27;page&#x27;: 3}]
+terms = (&quot;대출&quot;, &quot;휴관&quot;, &quot;반납&quot;)
+
+def retrieve(question, k=1):
+    query = [int(term in question) for term in terms]
+    if not any(query):
+        return []
+    def distance(row):
+        vector = [int(term in row[&quot;text&quot;]) for term in terms]
+        return sum((a-b)**2 for a, b in zip(query, vector)), row[&quot;id&quot;]
+    return sorted(records, key=distance)[:k]
+
+from typing import TypedDict
+from uuid import uuid4
+import streamlit as st
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+from typing import Annotated
+from operator import add
+
+class Chat(TypedDict):
+    question: str
+    sources: list[dict]
+    history: Annotated[list[str], add]
+
+def process(state):
+    return {&quot;sources&quot;: retrieve(state[&quot;question&quot;], 1), &quot;history&quot;: [state[&quot;question&quot;]]}
+
+@st.cache_resource
+def prepare_engine():
+    builder = StateGraph(Chat)
+    builder.add_node(&quot;process&quot;, process)
+    builder.add_edge(START, &quot;process&quot;)
+    builder.add_edge(&quot;process&quot;, END)
+    return builder.compile(checkpointer=InMemorySaver())
+
+new_chat = st.button(&quot;새 대화&quot;)
+if &quot;thread&quot; not in st.session_state or new_chat:
+    st.session_state.thread = str(uuid4())
+    st.session_state.current = None
+engine = prepare_engine()
+with st.form(&quot;ask&quot;):
+    question = st.text_input(&quot;질문&quot;)
+    submit = st.form_submit_button(&quot;질문 보내기&quot;)
+if submit and question.strip():
+    config = {&quot;configurable&quot;: {&quot;thread_id&quot;: st.session_state.thread}}
+    st.session_state.current = engine.invoke({&quot;question&quot;: question}, config)
+if st.session_state.current:
+    state = st.session_state.current
+    st.text(&quot;지난 질문: &quot; + &quot; / &quot;.join(state[&quot;history&quot;]))
+    if state[&quot;sources&quot;]:
+        current = state[&quot;sources&quot;][0]
+        st.write(current[&quot;text&quot;])
+        st.caption(f&quot;근거 [{current[&#x27;id&#x27;]}] {current[&#x27;page&#x27;]}쪽&quot;)
+    else:
+        st.info(&quot;제공된 자료에서 확인할 수 없습니다.&quot;)
+&quot;&quot;&quot;</span>
+<span class="tok-keyword">import</span> ast
+ast.parse(ui_source)
+print(<span class="tok-string">&quot;앱 구문 확인&quot;</span>)</code></pre></figure>
+</details>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">앱 구문 확인</pre></div>
+<div class="cell-after"><p>구문 확인 뒤 다음 셀에서 제출 이벤트를 보냅니다. prepare_engine은 위젯을 조작할 때마다 저장소를 새로 만들지 않도록 엔진을 캐시합니다. 수업용 화면 주소가 있으면 그 주소를 여세요. 직접 열 때는 이 셀 아래의 파일을 받은 뒤 수업 환경에서 python -m streamlit run chapter41_form.py 명령을 실행하세요. 같은 대화에서 대출 질문 다음에 주차 질문을 제출하고 이전 출처가 사라지는지 확인하세요.</p>
+</div>
+</article>
+<p><a class="lesson-file" href="downloads/chapter41_form.py" download="chapter41_form.py">셀에 나온 Streamlit 화면 파일 받기</a></p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 같은 폼에서 두 질문 제출하기</h3>
+<div class="cell-before"><p>Streamlit 커널이면 AppTest로 대출 질문 다음 주차 질문을 보냅니다. 최신 출처가 사라지고 이전 질문 기록이 남는지 읽으세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
+<span class="tok-keyword">if</span> find_spec(<span class="tok-string">&quot;streamlit&quot;</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+    print(<span class="tok-string">&quot;Streamlit이 설치된 수업 커널에서 화면 연결을 확인하세요.&quot;</span>)
+<span class="tok-keyword">else</span>:
+    <span class="tok-keyword">from</span> streamlit.testing.v1 <span class="tok-keyword">import</span> AppTest
+    ui = AppTest.from_string(ui_source).run()
+    ui.text_input[<span class="tok-number">0</span>].set_value(<span class="tok-string">&quot;대출 기간은?&quot;</span>)
+    ui.button[<span class="tok-number">1</span>].click().run()
+    <span class="tok-keyword">assert</span> <span class="tok-keyword">not</span> ui.exception <span class="tok-keyword">and</span> ui.caption[<span class="tok-number">0</span>].value.endswith(<span class="tok-string">&quot;1쪽&quot;</span>)
+    ui.text_input[<span class="tok-number">0</span>].set_value(<span class="tok-string">&quot;주차 요금은?&quot;</span>)
+    ui.button[<span class="tok-number">1</span>].click().run()
+    <span class="tok-keyword">assert</span> <span class="tok-keyword">not</span> ui.exception <span class="tok-keyword">and</span> <span class="tok-keyword">not</span> ui.caption
+    print(ui.text[<span class="tok-number">0</span>].value, ui.info[<span class="tok-number">0</span>].value)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Streamlit이 설치된 수업 커널에서 화면 연결을 확인하세요.</pre></div>
+<div class="cell-after"><p>설치된 환경에서는 지난 질문 두 개와 자료 없음 안내가 보여야 합니다. 설치 안내만 출력되면 위젯 실습은 아직 실행하지 않은 상태입니다. 앞 절의 Graph 실습은 별도로 확인할 수 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>문서 연결이 실패하거나 검색 오류가 발생한 경우에는 현재 답과 출처를 먼저 지우세요. 사용자가 지난 질문을 다시 읽을 수 있도록 과거 기록은 분리해 둡니다.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>현재 질문을 대화 기록과 연결하기</summary><div class="prose"><p>제공 검색은 39일의 유지 기준선입니다. 34일의 Graph 도구 흐름에 이 검색 함수를 연결하고, 바깥쪽에는 29일의 메모리 체크포인터를 둡니다. 실제 LLM이 대화를 이해하는 예제가 아니며, 현재 질문을 교육용 규칙으로 처리합니다.</p>
+</div>
+</details>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>29·34·40일에서 가져올 것을 구분하기</summary><div class="prose"><p>29일에는 같은 저장소의 A/B 대화를 thread_id로 나누고, 새 저장소에는 이전 상태가 없음을 확인했습니다. 34일에는 모델 판단→검색 도구→최종 A1로 가는 흐름과 오류·도구 반복 한도를 확인했습니다. 40일에는 한 질문의 화면 상태를 view로 묶었습니다.</p>
+<p>제공 파일은 두 동작을 층으로 나눕니다. 바깥 GraphSession은 대화 messages를 메모리에 남깁니다. 그 안에서 한 질문을 처리할 때 34일의 흐름을 현재 질문으로 새로 시작합니다. 내부 ScriptedRouter가 처음 HumanMessage를 읽는 규칙이므로, 과거 질문들을 그 내부 입력에 다시 섞지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>재사용과 새 연결</caption><thead><tr><th scope="col">가져올 것</th><th scope="col">이번 장에서의 역할</th><th scope="col">확인 자료</th></tr>
+</thead><tbody><tr><td>29 config_for·InMemorySaver</td><td>같은 thread의 메시지 보관과 다른 thread 분리</td><td>upstream/memory_demo.py와 선수 관찰</td></tr>
+<tr><td>34 tool_graph·tool_runtime</td><td>질문별 판단·검색·답변·오류 흐름</td><td>upstream/의 변경 없는 사본</td></tr>
+<tr><td>39 유지 baseline</td><td>candidate2/final1 검색과 고정 답변</td><td>backend39 소비 계약</td></tr>
+<tr><td>40 response_logic</td><td>A1 검사와 현재 출처 표시</td><td>examples의 로컬 사본</td></tr>
+</tbody></table></div>
+</details>
+<span id="ownership"></span><details class="reading-topic" id="reading-ownership"><summary>화면 상태와 Graph 상태는 같은 저장소가 아니다</summary><div class="prose"><p>session_state는 화면이 현재 선택한 대화와 결과를 보관하는 데 사용합니다. Graph의 체크포인터는 Graph 실행 상태를 thread_id별로 보관합니다. 화면의 history에 질문이 남아 있다는 사실만으로 Graph가 그 내용을 추론 입력으로 사용한다고 말할 수는 없습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>다섯 이름의 역할</caption><thead><tr><th scope="col">이름</th><th scope="col">무엇을 구분/보관하나</th><th scope="col">잘못된 해석</th></tr>
+</thead><tbody><tr><td>위젯 key</td><td>입력 칸 등 화면 요소의 상태</td><td>대화 thread의 ID와 같음</td></tr>
+<tr><td>session_state</td><td>현재 사용자 세션의 화면 값과 engine 참조</td><td>파일에 영구 저장</td></tr>
+<tr><td>thread_id</td><td>Graph에서 선택할 대화</td><td>메시지 하나의 고유 ID</td></tr>
+<tr><td>message id</td><td>메시지 reducer의 추가·수정 기준</td><td>브라우저 사용자 인증</td></tr>
+<tr><td>InMemorySaver</td><td>현재 객체의 메모리 체크포인트</td><td>재시작 뒤에도 유지되는 DB</td></tr>
+</tbody></table></div>
+<div class="prose"><p>같은 session_state에 engine을 한 번 만들어 보관하도록 앱을 작성했습니다. 일반 재실행마다 새 GraphSession을 만들면 이전 대화의 메모리 저장소를 잃게 됩니다. 실제 브라우저에서의 재실행·세션 분리는 별도 UI 검사 대상이며, 로컬 dict 검사를 그 증거로 바꾸지 않습니다.</p>
+</div>
+</details>
+<span id="documents"></span><details class="reading-topic" id="reading-documents"><summary>문서를 확인한 뒤 질문을 연결하기</summary><div class="prose"><p>화면 원형은 R1 문서 JSON을 입력받아 먼저 확인합니다. id/text/source/page가 있어야 하며,39일에 유지하기로 한 고정 문서와 같아야 연결합니다. 이 단계는 파일에서 새 임베딩을 만들거나 임의 문서를 검색하는 범용 업로드 기능이 아닙니다.</p>
+<p>JSON의 줄바꿈이나 들여쓰기가 달라도 객체로 읽은 내용이 같으면 괜찮습니다. 하지만 본문·순서·출처·page를 바꾸면 기존 인덱스와 평가 조건을 유지했다고 볼 수 없습니다. 준비 단계에서 자료가 달라졌다는 사실을 드러내고 별도 자료 준비로 돌아갑니다.</p>
+</div>
+<div class="prose"><p>자료를 다시 연결할 때는 이전 current/history를 비우고 새 engine을 만듭니다. 이 동작은 “새 대화” 버튼과 다릅니다. 새 대화는 같은 engine에서 새 thread를 선택하지만, 자료 재연결은 이 원형의 메모리 저장소 자체도 새로 시작합니다.</p>
+</div>
+</details>
+<span id="graph"></span><details class="reading-topic" id="reading-graph"><summary>한 질문의 Graph 흐름을 대화 안에서 실행하기</summary><div class="prose"><p>GraphSession은 메모리 체크포인터가 있는 바깥 Graph를 만듭니다. respond 노드는 현재 question을 34일 run_tool_graph에 넘깁니다. 검색은 39일 기준선으로 주입하고, 결과의 result/error_type/search_status/trace를 latest에 담습니다.</p>
+<p>이 바깥 노드는 질문마다 documents와 latest를 새 결과로 교체합니다. messages에는 새 사용자 메시지와 새 응답 메시지를 추가합니다. 이전 검색 문서를 자동으로 다음 질문의 근거로 넘기지 않는 것이 현재 예제의 정책입니다.</p>
+</div>
+<div class="prose"><p>invoke의 입력에 documents=[]와 latest=None을 명시한 이유를 보세요. 새 질문이 시작될 때 현재 근거와 현재 결과를 비웁니다. 검색이 실패하더라도 과거 정상 답변을 새 질문의 결과로 가져오지 않게 하는 경계입니다. inspect는 저장 상태를 읽기만 하며 질문 처리를 다시 실행하지 않습니다.</p>
+</div>
+</details>
+<span id="submit"></span><details class="reading-topic" id="reading-submit"><summary>화면 handler가 Graph에 넘기는 값</summary><div class="prose"><p>submit_turn은 화면의 session, 새 question, 그리고 invoke 함수를 받습니다. invoke(thread_id, question)가 result와 error_type을 돌려주는 경계입니다. 화면 로직은 Graph 내부 구현을 알 필요 없이 이 결과를 검사해 표시할 수 있습니다.</p>
+<p>함수는 입력 session을 deepcopy해 다음 상태를 만듭니다. 기존 관찰을 제자리에서 덮지 않으므로 이전 결과와 새 결과를 나란히 비교할 수 있습니다. 현재 view는 실행 전에 빈 상태로 바뀌며, 실행 결과가 오류이면 result=None을 유지합니다.</p>
+</div>
+</details>
+<span id="threads"></span><details class="reading-topic" id="reading-threads"><summary>같은 대화·다른 대화·새 대화를 비교하기</summary><div class="prose"><p>같은 engine에서 A로 두 번 질문하면 A의 사용자 발화가 두 개가 됩니다. B로 한 번 질문하면 B에는 한 번의 기록이 쌓입니다. 아직 시작하지 않은 C는 비어 있습니다. 서로 다른 thread의 기록이 섞이지 않았는지는 같은 engine의 저장 상태를 읽어 확인합니다.</p>
+<p>새 대화 함수는 새 UUID와 빈 current/history를 만듭니다. UUID의 구체적인 문자열을 외울 필요는 없습니다. 이미 쓰던 ID를 다시 넘기면 같은 Graph 대화를 선택하므로, 사용자가 새 대화를 누를 때는 기본 생성 경로를 사용합니다.</p>
+</div>
+</details>
+<details class="reading-topic" id="reading-sources"><summary>과거 대화의 출처와 현재 답변의 출처를 구분하기</summary><div class="prose"><p>history의 첫 정상 답변에 출처가 남아 있어도 현재 질문이 자료 없음이면 현재 영역에는 출처가 없어야 합니다. 과거 기록 자체를 지울 필요는 없지만, 현재 질문의 근거처럼 표시하지 않아야 합니다. 현재 영역은 current.result의 sources만 읽습니다.</p>
+<p>39일 기준선의 반납 문장 잘림은 여기에서도 남아 있습니다. 실제 인용과 페이지가 표시되더라도 답변이 완결됐다고 단정할 수 없습니다. 출처 확인은 ID/필드 검사와 문장 의미 검토를 함께 요구합니다.</p>
+</div>
+</details>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>정상 다음 오류가 나도 이전 답변을 되살리지 않기</summary><div class="prose"><p>검색 TimeoutError 진단은 실제 외부 네트워크 장애를 일으킨 것이 아니라, 제공 검색 함수가 예외를 내도록 주입한 로컬 검사입니다. Graph는 그 실패를 error_type으로 남기고 result=None으로 종료합니다. 화면 handler도 별도 실행 오류로 표시합니다.</p>
+<p>일부 통신 예외는 Graph가 결과 객체로 반환할 수 있고, 입력·계약 오류는 invoke에서 직접 예외가 될 수도 있습니다. submit_turn은 두 경로를 모두 error 상태로 정리합니다. 자료 없음으로 바꾸거나 이전 정상 result를 대체값으로 쓰지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>실패 경로의 현재 상태</caption><thead><tr><th scope="col">상황</th><th scope="col">Graph/handler 관찰</th><th scope="col">현재 출처</th></tr>
+</thead><tbody><tr><td>정상 검색 없음</td><td>A1 no_evidence</td><td>[]</td></tr>
+<tr><td>Graph가 TimeoutError 반환</td><td>error_type, result=None</td><td>없음</td></tr>
+<tr><td>invoke 자체가 예외</td><td>handler가 예외 종류 기록</td><td>없음</td></tr>
+<tr><td>invoke 반환 객체 형태 오류</td><td>ValueError로 표시 가능한 오류</td><td>없음</td></tr>
+<tr><td>새 대화</td><td>idle, result=None</td><td>없음</td></tr>
+</tbody></table></div>
+</details>
+<span id="flow"></span><details class="reading-topic" id="reading-flow"><summary>문서 연결부터 새 대화까지 점검하기</summary><div class="prose"><p>화면 시나리오는 자료 입력→자료 확인→질문→답변/오류→새 대화 순서입니다. 먼저 각 단계의 예상 상태를 적고 실제로 확인한 범위를 표시합니다. 지금 제공하는 것은 UI 코드의 구문과 로컬 상태·Graph 실행 증거입니다. 브라우저의 버튼·위젯·재실행은 준비된 환경에서 따로 검사합니다.</p>
+</div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>42·48일에 넘길 handler 경계와 자료 정책</summary><div class="prose"><p>42일에는 상태 구분과 정상/실패 관찰을 복습 근거로 넘깁니다. 48일에는 submit_turn의 invoke 경계에 프로젝트 엔진 adapter를 연결할 수 있습니다. 이때 팀 자료를 39일의 가상 도서관 JSON과 같다고 처리하면 안 됩니다. 새 프로젝트의 고정 스냅샷 검증과 자료 준비를 별도로 명시해야 합니다.</p>
+<p>화면 history/thread 표시는 어떤 엔진에서도 같은 의미의 체크포인트 기억을 자동으로 만들지 않습니다. 연결한 엔진이 매번 독립 질문을 실행한다면 그 범위만 설명합니다. 실제 기억·영속화·인증·화면 검증은 제공한 기능과 증거가 있을 때만 주장합니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state" target="_blank" rel="noopener noreferrer">Session State 공식 문서 ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

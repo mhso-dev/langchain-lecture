@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색·도구 모듈 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">2027 한국경제신문 강의 · 검토용</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 95 / 120</p>
+<span class="sidebar-title">검색·도구 모듈 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-retrieve"><span>02</span>허용 문서 안에서 한 건 찾기</a><a href="#nb-missing"><span>03</span>찾지 못한 질문을 화면에 넘기기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 95 / 120</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>검색·도구 모듈 · 방향과 예시</h1>
+<p class="hero-description">검색 함수 하나를 따로 호출할 수 있으면 답변 오류가 검색에서 생겼는지, 검색 뒤의 문장 작성에서 생겼는지 구분할 수 있습니다. 공개 사용자에게 장비 A 근거가 돌아오는 경로부터 확인합니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter95.ipynb" download="chapter95.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>95장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-retrieve" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>허용 문서 안에서 한 건 찾기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘검색 요청’가 가운데 ‘허용 문서’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>문서 범위를 제한한 뒤 허용된 원문만 찾습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>입력 계약　검색어와 신뢰한 테스트 그룹을 받습니다. 지원하지 않는 그룹과 빈 검색어는 오류로 돌려주고, 허용된 문서에서 찾지 못하면 빈 목록을 반환합니다. 노트북에는 가상 데이터가 들어 있으므로 직접 실행해도 외부 서비스로 전송하지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 장비 A로 조회하기</h3>
+<div class="cell-before"><p>제공 모듈의 부분 문자열 검색과 출처 반환을 작은 입력으로 실행합니다.</p>
+<p>제공 기록의 7/7은 검색 모듈을 포함한 전체 응답 함수의 점수입니다. 지금 셀에서는 검색 결과에 RULE-A와 2.1절이 있는지 확인합니다. 이 조회 한 번으로 일곱 답의 정확성을 측정한 것은 아닙니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 40줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
+  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 B&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
+  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
+  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-ADMIN&#x27;</span>,
+  <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-keyword">None</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 내부 규정&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>,
+  <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;3.1&#x27;</span>,
+  <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+  <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+  <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;admin&#x27;</span>]}]
+<span class="tok-keyword">def</span> retrieve(query, group):
+    <span class="tok-keyword">if</span> group <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> (<span class="tok-string">&quot;public&quot;</span>, <span class="tok-string">&quot;admin&quot;</span>):
+        <span class="tok-keyword">raise</span> PermissionError(<span class="tok-string">&quot;확인되지 않은 그룹입니다.&quot;</span>)
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(query, str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> query.strip():
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;검색어를 입력하세요.&quot;</span>)
+    query = query.strip()
+    allowed = [doc <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> documents <span class="tok-keyword">if</span> group <span class="tok-keyword">in</span> doc[<span class="tok-string">&quot;groups&quot;</span>]]
+    fields = (<span class="tok-string">&quot;id&quot;</span>, <span class="tok-string">&quot;text&quot;</span>, <span class="tok-string">&quot;source&quot;</span>, <span class="tok-string">&quot;page&quot;</span>, <span class="tok-string">&quot;section&quot;</span>, <span class="tok-string">&quot;revised_on&quot;</span>, <span class="tok-string">&quot;version&quot;</span>)
+    <span class="tok-keyword">return</span> [{k: doc[k] <span class="tok-keyword">for</span> k <span class="tok-keyword">in</span> fields} <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> allowed
+            <span class="tok-keyword">if</span> query <span class="tok-keyword">in</span> doc[<span class="tok-string">&quot;text&quot;</span>] <span class="tok-keyword">or</span> query == doc[<span class="tok-string">&quot;equipment&quot;</span>]]
+
+hit = retrieve(<span class="tok-string">&quot;장비 A&quot;</span>, <span class="tok-string">&quot;public&quot;</span>)[<span class="tok-number">0</span>]
+print(hit[<span class="tok-string">&quot;text&quot;</span>], hit[<span class="tok-string">&quot;id&quot;</span>], hit[<span class="tok-string">&quot;section&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 전원 표시등을 확인합니다. RULE-A 2.1</pre></div>
+<div class="cell-after"><p>점검 문장과 RULE-A, 2.1이 이어집니다. 91장과 달리 반환한 값만으로 원문 위치를 표시할 수 있습니다. 팀이 벡터 검색을 택하더라도 권한에 맞는 후보와 반환 필드는 그대로 지킬 수 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-missing" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>찾지 못한 질문을 화면에 넘기기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘검색 입력’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘빈 검색어’, 아래쪽은 ‘일치 문서 없음’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>빈 검색어와 일치하는 문서가 없는 결과를 구분합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>모듈은 근거를 찾으면 문서 목록을 반환합니다. 95장 전체 응답 함수에서는 교체·일정 문의를 받으면 no_evidence로 마치고 담당자 확인을 안내합니다. 검색 후보가 없을 때도 같은 안내를 쓸 수 있지만 함수 입력이 잘못됐을 때는 호출 코드를 고쳐야 합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 빈 검색어의 오류</h3>
+<div class="cell-before"><p>사용자가 누른 공백과 자료가 없는 상태를 구분해 보세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">try</span>:
+    retrieve(<span class="tok-string">&quot; &quot;</span>, <span class="tok-string">&quot;public&quot;</span>)
+<span class="tok-keyword">except</span> ValueError <span class="tok-keyword">as</span> error:
+    print(error)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">검색어를 입력하세요.</pre></div>
+<div class="cell-after"><p>“검색어를 입력하세요.”가 나옵니다. 호출 전 입력을 고치면 재시도할 수 있고, 문서 내용을 바꿀 필요가 없습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 허용 후보 바꾸기</h3>
+<div class="cell-before"><p>공개 그룹으로 관리자 절차를 검색한 결과를 확인하고 사용자에게 보여 줄 다음 문장을 써 보세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># retrieve에 검색어와 public을 전달하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">matches = retrieve(<span class="tok-string">&quot;관리자 전용 절차&quot;</span>, <span class="tok-string">&quot;public&quot;</span>)
+print(matches)
+<span class="tok-keyword">if</span> <span class="tok-keyword">not</span> matches:
+    print(<span class="tok-string">&quot;주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]
+주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.</pre></div>
+<div class="cell-after"><p>빈 목록이면 내부 문서의 이름이나 절을 노출하지 않고 다음 행동을 안내할 수 있습니다. 권한은 실제 서비스에서 서버가 정합니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>장비 A 검색, 빈 입력 오류, 공개 그룹에서 후보 없음까지가 이 노트북에서 직접 관찰한 세 결과입니다. 96장에는 그중 한 건의 입력과 반환값을 넘기세요. 제공된 전체 응답 평가(eval-v1)의 별도 기록은 thin 2/7, module 7/7입니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

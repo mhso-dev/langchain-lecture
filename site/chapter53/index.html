@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>사용자·문서·대화를 SQL로 조회하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-4.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 53 / SQL</p>
+<span class="sidebar-title">사용자·문서·대화를 SQL로 조회하기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-select-where"><span>02</span>한 사용자의 마지막 질문 찾기</a><a href="#nb-join-count"><span>03</span>표를 이어 이름을 붙이고 질문 수 세기</a><a href="#nb-postgres"><span>04</span>수업용 PostgreSQL에서 같은 조회 실행하기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 53 / SQL</span><span class="template-badge">학생용 교재</span></div>
+<h1>사용자·문서·대화를 SQL로 조회하기</h1>
+<p class="hero-description">도서관 질문을 남긴 사람이 누구인지 보려는데 질문 표에는 alice라는 ID만 있습니다. 사용자 표에서 같은 ID를 찾아 이름을 붙이는 작업부터 시작합니다. 수업용 가상 데이터만 사용합니다.</p>
+<div class="hero-meta"><span>입문</span><span>교육일 053 · 8H</span><span>5~7일 파일·데이터·터미널 실행 / 프로젝트의 문서·질문 기록 또는 제공 가상 자료</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter53.ipynb" download="chapter53.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>53장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-select-where" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>한 사용자의 마지막 질문 찾기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘대화 기록’ 안에서 ‘사용자 조건’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>사용자 조건을 먼저 적용해 해당 사람의 질문을 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>관계형 데이터베이스는 같은 종류의 기록을 표에 저장합니다. course_users에는 사용자 한 명당 한 행, course_turns에는 질문 한 건당 한 행이 있습니다. 작은 예제는 같은 이름의 두 표를 SQLite 메모리에 만들고 SQL의 결과부터 관찰합니다. 강사가 준비한 PostgreSQL의 실제 테이블을 읽는 셀은 마지막에 있습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 두 사용자의 질문 만들기</h3>
+<div class="cell-before"><p>수업용 원자료에서 가져온 질문 세 건을 넣고 alice의 질문만 읽습니다. 이 셀을 다시 실행하면 새 메모리 DB로 시작합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> sqlite3
+db = sqlite3.connect(<span class="tok-string">&quot;:memory:&quot;</span>)
+db.executescript(<span class="tok-string">&quot;&quot;&quot;
+CREATE TABLE course_users (id TEXT PRIMARY KEY, display_name TEXT NOT NULL);
+CREATE TABLE course_turns (id INTEGER PRIMARY KEY, owner TEXT NOT NULL, question TEXT NOT NULL, answer TEXT NOT NULL);
+INSERT INTO course_users VALUES (&#x27;alice&#x27;, &#x27;학습자 A&#x27;), (&#x27;bob&#x27;, &#x27;학습자 B&#x27;);
+INSERT INTO course_turns VALUES
+  (1, &#x27;alice&#x27;, &#x27;언제 여나요?&#x27;, &#x27;평일 오전 9시입니다.&#x27;),
+  (2, &#x27;alice&#x27;, &#x27;주말 운영은요?&#x27;, &#x27;제공한 안내에 주말 운영 정보가 없습니다.&#x27;),
+  (3, &#x27;bob&#x27;, &#x27;이용 절차는요?&#x27;, &#x27;먼저 예약합니다.&#x27;);
+&quot;&quot;&quot;</span>)
+
+print(db.execute(<span class="tok-string">&quot;SELECT question FROM course_turns WHERE owner = &#x27;alice&#x27; ORDER BY id&quot;</span>).fetchall())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;언제 여나요?&#x27;,), (&#x27;주말 운영은요?&#x27;,)]</pre></div>
+<div class="cell-after"><p>첫 두 행만 보입니다. WHERE가 bob의 행을 빼고 ORDER BY가 질문 ID의 오름차순으로 돌려줬습니다. SELECT 뒤의 question은 반환할 열입니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 마지막 질문 한 건 꺼내기</h3>
+<div class="cell-before"><p>alice의 질문을 최근 ID부터 정렬하고 첫 행만 가져오세요. 질문 문장을 출력합니다.</p>
+<p>fetchone()은 결과 한 행을 가져옵니다. 한 열만 골라도 행은 (&#x27;주말 운영은요?&#x27;,)처럼 묶여 있습니다. 뒤에 붙인 [0]이 그 행의 첫 열에서 질문 문자열을 꺼냅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># SELECT 결과를 id 내림차순으로 정렬하고 LIMIT를 넣으세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">sql = <span class="tok-string">&quot;SELECT question FROM course_turns WHERE owner = &#x27;alice&#x27; ORDER BY id DESC LIMIT 1&quot;</span>
+print(db.execute(sql).fetchone()[<span class="tok-number">0</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">주말 운영은요?</pre></div>
+<div class="cell-after"><p>“주말 운영은요?”가 나옵니다. 한 건만 고르는 LIMIT 1 앞에 정렬 방향을 정해야 원하는 질문을 재현할 수 있습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="nb-join-count" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>표를 이어 이름을 붙이고 질문 수 세기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘사용자 표’와 ‘대화 표’가 오른쪽의 ‘사용자별 건수’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>사용자 키로 두 표를 연결한 뒤 질문 수를 셉니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>질문 표의 owner와 사용자 표의 id가 같은 행끼리 연결합니다. 두 사용자의 모든 행을 그대로 짝지으면 alice의 질문에 bob 이름이 붙을 수도 있습니다. JOIN의 ON 조건을 먼저 확인하세요.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 이름을 기준으로 질문 수 묶기</h3>
+<div class="cell-before"><p>JOIN으로 이름을 붙인 뒤 사용자별 행 수를 집계합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">sql = <span class="tok-string">&quot;&quot;&quot;SELECT u.display_name, COUNT(*) AS turn_count
+FROM course_users AS u
+JOIN course_turns AS t ON t.owner = u.id
+GROUP BY u.id, u.display_name
+ORDER BY u.id&quot;&quot;&quot;</span>
+print(db.execute(sql).fetchall())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;학습자 A&#x27;, 2), (&#x27;학습자 B&#x27;, 1)]</pre></div>
+<div class="cell-after"><p>학습자 A는 두 건, 학습자 B는 한 건입니다. 이 INNER JOIN은 질문이 하나도 없는 사용자는 세지 않습니다. 그 사용자까지 표시하려면 LEFT JOIN과 COUNT할 열을 함께 검토하세요.</p>
+</div>
+</article>
+</section>
+<section id="nb-postgres" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>수업용 PostgreSQL에서 같은 조회 실행하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘같은 질의’에서 출발해 ‘PostgreSQL’를 거친 뒤 ‘조회 행’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>같은 질의를 다른 데이터베이스에서도 실행해 대조합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>강사가 PostgreSQL의 53장 B1 테이블을 준비하고 psycopg가 있는 커널에 수업용 접속 정보(PGHOST·PGPORT·PGDATABASE·PGUSER·PGPASSWORD)와 HK_COURSE_USE_POSTGRES=1을 설정하면 아래 셀이 같은 SQL을 읽기 전용 트랜잭션에서 실행합니다. 접속 정보는 노트북에 입력할 필요가 없습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 실제 서버에서 집계 읽기</h3>
+<div class="cell-before"><p>교실의 PostgreSQL 테이블을 연결했다면 방금 작성한 집계 쿼리를 그대로 보냅니다. 준비되지 않은 커널에서는 안내만 표시합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
+<span class="tok-keyword">import</span> os
+pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> os.getenv(<span class="tok-string">&quot;HK_COURSE_USE_POSTGRES&quot;</span>) == <span class="tok-string">&quot;1&quot;</span>
+<span class="tok-keyword">if</span> pg_ready:
+    <span class="tok-keyword">import</span> psycopg
+    <span class="tok-keyword">with</span> psycopg.connect(connect_timeout=<span class="tok-number">3</span>) <span class="tok-keyword">as</span> connection:
+        connection.execute(<span class="tok-string">&quot;SET TRANSACTION READ ONLY&quot;</span>)
+        print(connection.execute(sql).fetchall())
+<span class="tok-keyword">else</span>:
+    print(<span class="tok-string">&quot;PostgreSQL 연결은 준비된 수업 커널에서 확인하세요.&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">PostgreSQL 연결은 준비된 수업 커널에서 확인하세요.</pre></div>
+<div class="cell-after"><p>실제 DB에 초기 자료만 있다면 같은 두 행을 볼 수 있습니다. 후속 실습으로 행이 늘어난 DB에서는 집계도 바뀝니다. 안내만 출력됐다면 SQLite에서의 SQL 실행과 PostgreSQL의 실제 접속을 구분해 기록하세요. 서버 실습 전에는 수업용 PostgreSQL에 예제 표와 행이 있는지, 커널에 psycopg와 연결 설정이 있는지 확인하세요. 준비한 환경에서 HK_COURSE_USE_POSTGRES=1을 설정한 뒤 출력된 이름별 개수를 SQLite 결과와 대조하세요.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>필요한 행은 WHERE, 반환할 열은 SELECT, 표 간 연결 조건은 JOIN의 ON에 놓입니다. 동료에게 읽힐 결과에는 ID와 표시 이름 중 무엇이 필요한지 먼저 정해 보세요.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>프로젝트 기록에서 조회할 질문을 고르기</summary><div class="prose"><p>문서가 늘고 질문 기록이 쌓이면 ‘alice가 어떤 문서에 질문했는가?’처럼 여러 기록을 함께 보는 일이 생깁니다. 오늘은 Python 목록에 있던 데이터를 표의 행으로 생각하고, 필요한 행을 SQL로 골라 냅니다. SQL은 관계형 데이터베이스에 데이터 작업을 요청하는 언어입니다. PostgreSQL은 그 요청을 처리하는 데이터베이스 프로그램입니다.</p>
+<p>이전 팀 프로젝트에서 문서 하나와 질문 두 개를 골라 보세요. 실행 기록이 없다면 이 장의 가상 도서관·실습실 자료를 사용합니다. 앞선 52일 교재나 자기 코드의 실행 성공을 이번 실습의 조건으로 삼지 않습니다. 가상 자료를 실제 서비스 이용 기록으로 보고하지도 않습니다.</p>
+</div>
+</details>
+<span id="relation"></span><details class="reading-topic" id="reading-relation"><summary>행·열·키로 같은 기록을 연결하기</summary><div class="prose"><p>테이블은 같은 종류의 기록을 모은 표입니다. 행은 기록 한 건, 열은 그 기록의 속성입니다. course_users의 행 하나는 사용자 한 명이며 id와 display_name이 열입니다. 표시 이름은 바뀔 수 있으므로 다른 표가 사용자를 가리킬 때는 id를 사용합니다.</p>
+<p>기본키(PK)는 행을 구별하는 값입니다. 같은 테이블에 중복되거나 NULL인 기본키를 둘 수 없습니다. 외래키(FK)는 다른 테이블의 키를 참조해 존재하는 기록끼리 연결하게 하는 규칙입니다. course_documents.owner의 alice는 course_users.id의 alice를 가리킵니다. owner가 사람 이름을 자동으로 인증하는 기능은 아닙니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>오늘의 네 테이블</caption><thead><tr><th scope="col">테이블</th><th scope="col">한 행의 의미</th><th scope="col">주요 연결</th></tr>
+</thead><tbody><tr><td>course_users</td><td>사용자 한 명</td><td>id=alice 또는 bob</td></tr>
+<tr><td>course_documents</td><td>문서 한 개</td><td>owner → users.id</td></tr>
+<tr><td>course_conversations</td><td>대화 한 개</td><td>owner → users.id</td></tr>
+<tr><td>course_turns</td><td>질문과 답변 한 쌍</td><td>conversation_id → 대화, document_id → 문서</td></tr>
+</tbody></table></div>
+<div class="prose"><p>문서·대화 ID는 UUID라는 긴 식별자 형식을 씁니다. 값을 외울 필요 없이 같은 ID가 어디에 나타나는지 확인하세요. 질문 행의 id는 DB가 만든 번호입니다. 이 번호와 사용자 id는 이름이 같아도 역할이 다릅니다. 한 대화 안에 질문 행이 여러 개 있으므로 질문 수와 대화 수 역시 다릅니다.</p>
+<p>제공 스키마는 문서 ID와 owner를 함께 확인합니다. alice의 대화에 bob의 문서가 잘못 연결되는 일을 줄이기 위해서입니다. 복합 제약을 지금 직접 설계할 필요는 없습니다. 오늘은 같은 소유자의 기록끼리 이어지는 것을 먼저 읽습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>가상 샘플의 연결</caption><thead><tr><th scope="col">사용자</th><th scope="col">문서 제목</th><th scope="col">대화 제목</th><th scope="col">질문 수</th></tr>
+</thead><tbody><tr><td>alice / 학습자 A</td><td>도서관 이용 안내</td><td>도서관 질문</td><td>2</td></tr>
+<tr><td>bob / 학습자 B</td><td>실습실 안내</td><td>실습실 질문</td><td>1</td></tr>
+</tbody></table></div>
+</details>
+<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>제공된 DB를 켜고 접속하기</summary><div class="prose"><p>Docker 설정 파일은 준비된 DB를 실행하기 위해 제공합니다. 오늘은 켜기·상태 확인·접속·멈추기를 사용합니다. 이미지와 볼륨의 원리는 71~72일에 배웁니다. 파일 이름과 명령을 직접 바꾸는 작업은 필요하지 않습니다.</p>
+</div>
+<div class="prose"><p>ps 결과에서 db가 healthy가 되면 다음 초기화 명령을 실행합니다. 제공 스크립트는 네 테이블과 가상 데이터를 한 번 준비합니다. 다시 실행해도 같은 초기 데이터를 중복 추가하지 않도록 만든 도구입니다. 내부 psql 제어문은 학생 필수 문법이 아닙니다.</p>
+</div>
+<div class="prose"><p>첫 결과는 course가 예상됩니다. 두 번째는 실제 설치 버전 문자열이므로 그대로 관찰표에 적습니다. 이 교재는 PostgreSQL 16 계열을 사용하도록 설계했지만 실제 이미지 실행 버전은 실행한 결과로 확인합니다. psql 창을 나갈 때는 역슬래시와 q를 붙인 \q를 입력합니다.</p>
+</div>
+</details>
+<span id="select"></span><details class="reading-topic" id="reading-select"><summary>SELECT로 필요한 열을 고르기</summary><div class="prose"><p>SELECT 다음에는 보고 싶은 열을, FROM 다음에는 읽을 테이블을 적습니다. 문장의 끝에는 세미콜론을 붙입니다. 줄을 나눠도 한 문장이며 psql은 세미콜론이 나올 때 실행합니다. SQL 키워드를 대문자로 쓰는 것은 읽기 위한 습관이고, 이 예제의 테이블·열 이름은 소문자입니다.</p>
+<p>문자열 값은 작은따옴표로 감쌉니다. SELECT id, display_name의 두 이름은 열을 가리키므로 문자열 따옴표를 붙이지 않습니다. 열 이름을 &#x27;id&#x27;라고 쓰면 id 열의 값을 읽는 대신 같은 글자 id를 출력하게 됩니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>사용자 조회의 예상 결과</caption><thead><tr><th scope="col">id</th><th scope="col">display_name</th></tr>
+</thead><tbody><tr><td>alice</td><td>학습자 A</td></tr>
+<tr><td>bob</td><td>학습자 B</td></tr>
+</tbody></table></div>
+<div class="prose"><p>queries.sql 전체 실행은 이 장 후반의 GROUP BY와 JOIN까지 읽은 뒤 진행합니다. 지금은 위의 SELECT 두 문장만 SQL 창에 입력하세요.</p>
+</div>
+</details>
+<span id="filter"></span><details class="reading-topic" id="reading-filter"><summary>WHERE로 alice의 질문만 고르기</summary><div class="prose"><p>WHERE는 각 행에 조건을 적용해 남길 행을 정합니다. 다음 문장은 course_turns에서 owner가 alice인 행만 고릅니다. 등호 하나는 SQL에서 비교를 뜻합니다. Python의 비교 연산자 ==를 그대로 옮기지 않습니다.</p>
+<p>SELECT에 question과 answer만 적었어도 WHERE에서 owner를 사용할 수 있습니다. 결과에 보여 주는 열과 행을 고르는 조건은 서로 다른 역할입니다. 누가 질문했는지 조건을 빠뜨리면 다른 사용자의 행도 함께 보게 됩니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>alice 질문의 예상 결과</caption><thead><tr><th scope="col">question</th><th scope="col">answer</th></tr>
+</thead><tbody><tr><td>언제 여나요?</td><td>평일 오전 9시입니다.</td></tr>
+<tr><td>주말 운영은요?</td><td>제공한 안내에 주말 운영 정보가 없습니다.</td></tr>
+</tbody></table></div>
+<div class="prose"><p>AND는 두 조건이 모두 맞는 행을 남깁니다. 조건을 바꿔 owner=&#x27;nobody&#x27;로 실행하면 정상 결과가 0행입니다. 이 결과는 DB에 접속하지 못한 오류와 다릅니다. 0행이 나오면 조건과 데이터가 맞는지 먼저 확인합니다.</p>
+</div>
+</details>
+<span id="order"></span><details class="reading-topic" id="reading-order"><summary>정렬한 뒤 필요한 행 수만 남기기</summary><div class="prose"><p>테이블은 출력 순서를 보장하는 목록이 아닙니다. 특정 순서가 필요하면 ORDER BY를 적습니다. ASC는 작은 값부터, DESC는 큰 값부터이며 ASC를 생략할 수 있습니다. 이 작은 샘플에서 질문 id가 큰 행을 마지막에 저장한 질문으로 다룹니다.</p>
+<p>LIMIT 1은 결과를 최대 한 행으로 줄입니다. 정렬 없이 LIMIT만 쓰면 어떤 한 행인지 의도대로 정할 수 없습니다. ‘가장 최근’이라는 요구를 실제 서비스에 적용할 때는 시간 열과 동점 처리도 설계해야 합니다. 오늘 예제에서는 고정된 id 기준을 사용합니다.</p>
+</div>
+<figure class="flow" data-flow id="flow-6"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>같은 세 행에서 결과를 좁히기</h3>
+<p>같은 표에 WHERE, ORDER BY, LIMIT를 차례로 적용한 결과입니다. 각 칸에서 사라진 행과 자리가 바뀐 행을 구별하세요.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>조건을 적용할 때마다 남은 행과 읽는 열을 비교하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>사용자 조건과 정렬 기준을 적용해야 여러 대화 중 원하는 사용자의 기록을 읽을 수 있습니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>원본</span></li>
+<li><span class="flow-index">02</span><span>조건</span></li>
+<li><span class="flow-index">03</span><span>정렬</span></li>
+<li><span class="flow-index">04</span><span>제한</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-6-step-0"><img class="flow-proof" loading="lazy" alt="질문 세 개" src="../assets/media/svg-272eef0d1ff449.svg"><span class="eyebrow">STEP 01 · course_turns</span><h4>질문 세 개</h4>
+<p>alice의 두 질문과 bob의 한 질문이 있습니다.</p><pre>id1 alice 언제 여나요?
+id2 alice 주말 운영은요?
+id3 bob 이용 절차는요?</pre></article>
+<article class="flow-panel" id="flow-6-step-1"><img class="flow-proof" loading="lazy" alt="alice 행만 남기기" src="../assets/media/svg-2a1f494d28e36f.svg"><span class="eyebrow">STEP 02 · WHERE</span><h4>alice 행만 남기기</h4>
+<p>owner 값이 같은 두 행을 남깁니다.</p><pre>id1 alice 언제 여나요?
+id2 alice 주말 운영은요?</pre></article>
+<article class="flow-panel" id="flow-6-step-2"><img class="flow-proof" loading="lazy" alt="큰 id부터 놓기" src="../assets/media/svg-8d067cc2d60d5f.svg"><span class="eyebrow">STEP 03 · ORDER BY</span><h4>큰 id부터 놓기</h4>
+<p>같은 두 행의 순서를 바꿉니다.</p><pre>id2 alice 주말 운영은요?
+id1 alice 언제 여나요?</pre></article>
+<article class="flow-panel" id="flow-6-step-3"><img class="flow-proof" loading="lazy" alt="첫 한 행만 읽기" src="../assets/media/svg-1eafbe6b842574.svg"><span class="eyebrow">STEP 04 · LIMIT</span><h4>첫 한 행만 읽기</h4>
+<p>정렬된 결과의 맨 앞 한 행을 반환합니다.</p><pre>id2 alice 주말 운영은요?</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</details>
+<span id="group"></span><details class="reading-topic" id="reading-group"><summary>GROUP BY로 사용자별 질문 횟수 세기</summary><div class="prose"><p>행 하나씩 읽던 결과를 사용자별 합계로 바꾸겠습니다. COUNT(*)는 입력 행의 개수를 셉니다. GROUP BY owner는 owner가 같은 행을 한 묶음으로 만들고, 각 묶음에서 COUNT를 계산하게 합니다. AS turn_count는 출력 열에 붙이는 별칭입니다.</p>
+<p>여기서 세는 대상은 course_turns의 질문/답변 행입니다. alice가 대화 하나에서 질문 두 개를 했으므로 횟수는 2입니다. 대화 개수를 세고 싶다면 읽을 테이블과 셀 단위를 다시 정해야 합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>샘플의 예상 집계</caption><thead><tr><th scope="col">owner</th><th scope="col">묶음에 들어간 질문</th><th scope="col">turn_count</th></tr>
+</thead><tbody><tr><td>alice</td><td>언제 여나요? / 주말 운영은요?</td><td>2</td></tr>
+<tr><td>bob</td><td>이용 절차는요?</td><td>1</td></tr>
+</tbody></table></div>
+<div class="prose"><p>그룹 결과에 question을 함께 표시하면 alice 묶음의 어느 질문을 써야 할지 정해져 있지 않습니다. 오늘은 그룹 기준 owner와 집계 결과 count(*)만 선택합니다. GROUP BY 없이 전체를 세면 세 행을 한 번에 세어 3이 됩니다.</p>
+</div>
+</details>
+<span id="join"></span><details class="reading-topic" id="reading-join"><summary>JOIN으로 사용자 이름을 질문에 붙이기</summary><div class="prose"><p>질문 행에는 owner 값이 있지만 표시 이름은 사용자 테이블에 있습니다. JOIN은 두 테이블에서 조건에 맞는 행을 짝지어 한 결과로 보여 줍니다. ON t.owner = u.id는 질문의 owner와 사용자의 id가 같은 쌍을 고릅니다.</p>
+<p>AS u와 AS t는 테이블 별칭입니다. u.display_name은 사용자 표의 열, t.question은 질문 표의 열이라는 뜻입니다. 두 테이블에 id처럼 같은 이름이 있어도 별칭을 붙이면 어느 값을 뜻하는지 분명해집니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>이름이 붙은 예상 결과</caption><thead><tr><th scope="col">display_name</th><th scope="col">question</th></tr>
+</thead><tbody><tr><td>학습자 A</td><td>언제 여나요?</td></tr>
+<tr><td>학습자 A</td><td>주말 운영은요?</td></tr>
+<tr><td>학습자 B</td><td>이용 절차는요?</td></tr>
+</tbody></table></div>
+<div class="prose"><p>사용자 행이 두 개라고 JOIN 결과도 두 행인 것은 아닙니다. alice 한 행이 질문 두 행과 각각 연결되어 두 번 나타납니다. JOIN은 화면에서 같은 이름을 자동으로 하나로 합치지 않습니다. 조건 없이 모든 쌍을 만들면 이 샘플은 사용자 2행 × 질문 3행으로 여섯 쌍이 생깁니다.</p>
+</div>
+</details>
+<span id="history"></span><details class="reading-topic" id="reading-history"><summary>대화와 문서 제목이 있는 이력 읽기</summary><div class="prose"><p>질문만 보면 어떤 대화와 문서에서 나온 질문인지 알기 어렵습니다. 이번에는 질문 행에서 conversation_id와 document_id를 따라가 제목을 붙입니다. 제공 데이터에서는 두 질문이 같은 도서관 대화·문서에 연결됩니다.</p>
+<p>JOIN은 연결되는 행이 있는 경우를 남깁니다. LEFT JOIN은 왼쪽 질문 행을 남겨 두고, 오른쪽 문서가 연결되지 않으면 문서 열을 NULL로 둡니다. 이 서비스는 문서 없이 나눈 대화도 기록할 수 있으므로 문서 부분을 LEFT JOIN으로 작성합니다. NULL은 데이터가 없는 상태이며 글자 &#x27;NULL&#x27;이나 숫자 0과 같지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>alice 이력의 예상 결과</caption><thead><tr><th scope="col">conversation</th><th scope="col">document</th><th scope="col">question</th></tr>
+</thead><tbody><tr><td>도서관 질문</td><td>도서관 이용 안내</td><td>언제 여나요?</td></tr>
+<tr><td>도서관 질문</td><td>도서관 이용 안내</td><td>주말 운영은요?</td></tr>
+</tbody></table></div>
+<div class="prose"><p>ON 안의 owner 비교는 같은 소유자의 대화·문서를 연결한다는 의도를 보여 줍니다. 이 조회문만으로 서비스 로그인이나 모든 권한 검사가 완성되는 것은 아닙니다. 지금은 가상 사용자를 조건으로 삼아 관계를 읽는 활동입니다.</p>
+</div>
+</details>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>결과가 다를 때 확인할 순서</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 관찰과 다음 확인</caption><thead><tr><th scope="col">관찰</th><th scope="col">확인할 것</th><th scope="col">학습 기록</th></tr>
+</thead><tbody><tr><td>psql 입력이 계속 다음 줄로 넘어감</td><td>문장 끝 세미콜론과 따옴표가 닫혔는지</td><td>문장 완성 후 실행 여부</td></tr>
+<tr><td>column does not exist</td><td>열 이름·별칭·작은따옴표 사용</td><td>틀린 이름과 수정한 이름</td></tr>
+<tr><td>0 rows</td><td>조건 값과 실제 행의 값</td><td>정상 빈 결과인지</td></tr>
+<tr><td>예상보다 많은 행</td><td>JOIN 조건과 이미 추가한 데이터</td><td>원본 행과 결과 행의 대응</td></tr>
+<tr><td>Docker/DB 연결 오류</td><td>엔진 상태·포트·접속 설정</td><td>SQL 실행 전 환경 문제인지</td></tr>
+</tbody></table></div>
+<div class="prose"><p>오류 메시지는 원인을 찾는 단서입니다. SQL 문법 오류가 나기 전에 연결 자체가 실패했다면 WHERE를 바꾸어도 해결되지 않습니다. 반대로 0행은 문장이 실행됐을 가능성이 있으므로 연결 오류와 분리해 봅니다. 기존 자료를 지우는 방법부터 시도하지 않습니다.</p>
+</div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>54일에 넘길 파일과 접속 기록</summary><div class="prose"><p>query-results.sql과 observation.md를 저장합니다. 실행 폴더와 PGHOST·PGPORT·PGDATABASE·PGUSER는 재현 기록에 남길 수 있지만 비밀번호는 제외합니다. SQL 창은 \q로 닫고 DB는 필요한 경우 docker compose stop db로 멈춥니다. 같은 DB의 데이터를 다음 날 이어 씁니다.</p>
+<p>54일에는 오늘 읽은 표에 행을 추가·수정·삭제하고, 여러 변경을 함께 확정하거나 되돌리는 방법을 배웁니다. 그다음 Python 함수에서 값을 SQL과 분리해 전달합니다. 오늘 조회가 막힌 경우에도 같은 가상 자료와 제공 초기화 파일에서 다시 시작할 수 있습니다.</p>
+</div>
+</details>
+<details class="reading-topic" id="reading-sources"><summary>공식 자료와 다음 학습</summary><div class="prose"><p>이 원고는 실제 PostgreSQL 실행 검증을 기다리는 검토용 교재입니다. 본문의 SQL 출력은 제공 데이터로 계산한 예상 결과이며 제작 환경에서 관찰한 DB 실행 결과가 아닙니다. 검증 범위는 VALIDATION.md에서 확인합니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://www.postgresql.org/docs/16/tutorial-select.html" target="_blank" rel="noopener noreferrer">PostgreSQL 16 SELECT ↗</a><span></span></li>
+<li><a href="https://www.postgresql.org/docs/16/tutorial-join.html" target="_blank" rel="noopener noreferrer">PostgreSQL 16 JOIN ↗</a><span></span></li>
+<li><a href="https://www.postgresql.org/docs/16/tutorial-agg.html" target="_blank" rel="noopener noreferrer">PostgreSQL 16 집계 ↗</a><span></span></li>
+<li><a href="https://www.postgresql.org/docs/16/ddl-constraints.html" target="_blank" rel="noopener noreferrer">PostgreSQL 16 제약 ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

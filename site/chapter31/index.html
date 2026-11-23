@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>근거·출처·실패 상태를 구분하는 RAG 만들기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 31 / EVIDENCE</p>
+<span class="sidebar-title">근거·출처·실패 상태를 구분하는 RAG 만들기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-evidence"><span>02</span>문서가 없는 경우와 찾지 못한 경우</a><a href="#nb-citation"><span>03</span>검색 목록 안에 있는 인용인지 확인하기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 31 / EVIDENCE</span><span class="template-badge">학생용 교재</span></div>
+<h1>근거·출처·실패 상태를 구분하는 RAG 만들기</h1>
+<p class="hero-description">주차 요금이 적힌 문서가 없을 때와 검색 서버가 제때 응답하지 않을 때, 사용자에게 같은 문구를 보여 주면 다음 행동을 고르기 어렵습니다. 근거가 없을 때, 연결이 끊겼을 때, 답에 잘못된 인용이 붙었을 때 어떤 값이 남는지 살펴봅니다.</p>
+<div class="hero-meta"><span>입문 이후</span><span>교육일 031 · 8H</span><span>30장 Retriever Node·문서 계약, 조건 분기와 예외 처리</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter31.ipynb" download="chapter31.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>31장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-evidence" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>문서가 없는 경우와 찾지 못한 경우</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘빈 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘자료가 없음’, 아래쪽은 ‘검색이 빗나감’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>빈 목록을 받았다면 자료 유무와 검색 실패를 따로 봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>검색을 마쳤는데 빈 목록이 돌아오면 답변 생성을 건너뛸 수 있습니다. 반면 통신이 끊기면 문서가 있는지조차 확인하지 못했습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 빈 검색 결과에서 멈추기</h3>
+<div class="cell-before"><p>가상 도서관의 주차 질문을 로컬 자료에서 찾습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-3&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>}]
+terms = (<span class="tok-string">&quot;대출&quot;</span>, <span class="tok-string">&quot;휴관&quot;</span>, <span class="tok-string">&quot;반납&quot;</span>)
+
+<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
+    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
+        <span class="tok-keyword">return</span> []
+    <span class="tok-keyword">def</span> distance(row):
+        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">&quot;text&quot;</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">&quot;id&quot;</span>]
+    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
+
+found = retrieve(<span class="tok-string">&#x27;주차 요금은?&#x27;</span>)
+print(found)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]</pre></div>
+<div class="cell-after"><p>빈 목록이 돌아왔으므로 화면에는 자료에서 확인할 수 없다고 씁니다. 원문에 없는 가격을 모델에게 추측시키지 않습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색기가 응답하지 않는 상황</h3>
+<div class="cell-before"><p>시간 초과만 일으키는 함수로 장애 경로 한 곳을 재현합니다.</p>
+<p>이 셀에서 직접 관찰할 것은 TimeoutError입니다. 검색기가 응답하지 않았으므로 문서가 없었다고 판단할 수 없습니다. 서비스로 제공할 때에는 오류를 기록하고 결과를 result=None으로 남길 수 있습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">def</span> slow_search(question):
+    <span class="tok-keyword">raise</span> TimeoutError(<span class="tok-string">&#x27;검색 시간이 초과되었습니다.&#x27;</span>)
+
+<span class="tok-keyword">try</span>:
+    slow_search(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>)
+<span class="tok-keyword">except</span> TimeoutError <span class="tok-keyword">as</span> error:
+    print(type(error).__name__, str(error))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">TimeoutError 검색 시간이 초과되었습니다.</pre></div>
+<div class="cell-after"><p>TimeoutError가 출력됩니다. 이때는 검색 성공·빈 결과로 집계하지 않습니다. 재시도를 안내하고 결과 필드는 None으로 남깁니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-citation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>검색 목록 안에 있는 인용인지 확인하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘답변 인용’가 가운데 ‘후보 ID 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>인용한 ID가 실제로 찾은 문서에 있는지 대조합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>검색은 성공해도 답변 끝의 ID가 엉뚱할 수 있습니다. 근거 목록과 인용을 먼저 맞추고, 다음으로 그 문장에 적힌 내용까지 원문과 읽어 봅니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 실제로 찾은 문서와 인용 대조하기</h3>
+<div class="cell-before"><p>대출 질문에서 가져온 문서 목록에 답안의 인용 library-2가 있는지 확인하세요. 참 또는 거짓으로 출력합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">found = retrieve(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>)
+cited = <span class="tok-string">&#x27;library-2&#x27;</span>
+<span class="tok-comment"># retrieved_ids를 만들고 cited가 포함되는지 확인하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">found = retrieve(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>)
+cited = <span class="tok-string">&#x27;library-2&#x27;</span>
+retrieved_ids = {doc[<span class="tok-string">&#x27;id&#x27;</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> found}
+print(cited <span class="tok-keyword">in</span> retrieved_ids)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="cell-after"><p>False입니다. 찾은 문서는 library-1이므로 이 응답은 invalid_citation으로 분리합니다. 올바른 ID를 달아도 ‘999일’처럼 원문과 다른 답이 가능해 문장 대조가 남습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>사용자가 ‘자료를 더 주어야 할 때’와 ‘잠시 뒤 다시 물어야 할 때’를 구분하는 안내를 한 문장씩 써 보세요.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="states"></span><details class="reading-topic" id="reading-states"><summary>자료 없음과 서비스 실패는 안내가 다릅니다</summary><div class="table-scroll" tabindex="0"><table><caption>검색 상태와 답변 결과를 분리</caption><thead><tr><th scope="col">위치/값</th><th scope="col">뜻</th><th scope="col">안내와 대응</th></tr>
+</thead><tbody><tr><td>search_status=pending</td><td>검색 전</td><td>대기</td></tr>
+<tr><td>search_status=retrieved</td><td>검증된 문서 목록 존재</td><td>A1 결과 확인</td></tr>
+<tr><td>search_status=empty</td><td>정상 빈 목록</td><td>result.status=no_evidence</td></tr>
+<tr><td>search_status=error</td><td>예상 연결 실패</td><td>result=None, error_type 기록</td></tr>
+<tr><td>result.status=answered</td><td>인용 ID 검사 통과</td><td>원문과 내용 대조</td></tr>
+<tr><td>result.status=invalid_citation</td><td>인용 없음·미검색 ID</td><td>원문·생성 조건 확인</td></tr>
+</tbody></table></div>
+<div class="prose"><p>검색 서버가 응답하지 않았을 때 no_evidence를 반환하면 사용자는 없는 자료를 보완하려고 할 수 있습니다. 운영 오류는 search_status=error와 result=None으로 남깁니다. A1의 answered/no_evidence/invalid_citation 세 결과와 섞지 않습니다.</p>
+<p>answered는 인용 형식 검사 통과를 뜻합니다. “대출은 999일입니다. [library-1]”처럼 올바른 ID에 틀린 문장을 붙여도 이 검사만으로는 거절하지 못합니다. 내용의 사실성은 원문 대조나 별도 평가가 필요합니다.</p>
+</div>
+</details>
+<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>실행과 예상 출력</summary><div class="prose"><p>Python 3.12.x와 30장과 같은 langgraph·langchain-core 버전을 사용합니다. course_contracts.py와 data/는 같은 공통 스냅샷입니다. API 키가 없는 로컬 기본 실행이며, 30장에서 만든 R1 함수를 search_function 인수로 교체할 수 있습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>기본 실행에서 확인한 결과</caption><thead><tr><th scope="col">입력/조건</th><th scope="col">검색 상태</th><th scope="col">A1 결과</th></tr>
+</thead><tbody><tr><td>대출 기간은?</td><td>retrieved</td><td>answered, sources=[library-1]</td></tr>
+<tr><td>주차 요금은?</td><td>empty</td><td>no_evidence, 생성 호출 0</td></tr>
+<tr><td>대출 + 모의 TimeoutError</td><td>error</td><td>None, error_type=TimeoutError</td></tr>
+<tr><td>대출 + [not-in-results]</td><td>retrieved</td><td>invalid_citation, sources=[]</td></tr>
+</tbody></table></div>
+</details>
+<span id="search"></span><details class="reading-topic" id="reading-search"><summary>예상 오류만 상태로 바꾸기</summary><div class="prose"><p>입력 검사는 연결 오류 처리보다 앞에 있습니다. 공백 질문과 bool k는 잘못된 요청이므로 ValueError를 그대로 보여 줍니다. 검색 데이터에 text나 source가 없으면 DataContractError로 중단합니다. 이 오류까지 검색 장애로 삼으면 원본 문제를 고치지 못합니다.</p>
+<p>이 예제는 TimeoutError와 ConnectionError만 예상 연결 오류로 처리합니다. 실제 라이브러리는 다른 예외 타입을 사용할 수 있으므로 해당 어댑터에서 명시적으로 매핑해야 합니다. 예외 원문에는 주소나 내부 정보가 들어 있을 수 있어 상태에는 종류만 남깁니다. 실제 서비스에서 비공개 운영 로그를 어떻게 남길지는 별도 설계입니다.</p>
+</div>
+</details>
+<details class="reading-topic" id="reading-sources"><summary>답변과 원문을 연결하는 필드 유지하기</summary><div class="prose"><p>A1은 answer의 대괄호 인용을 모으고 이번 documents의 ID 집합과 비교합니다. 인용이 없거나 목록 밖 ID가 하나라도 섞이면 invalid_citation입니다. 전체 문서 저장소에 존재하는 ID여도 이번 검색에서 받지 않았다면 허용하지 않습니다.</p>
+<p>sources의 각 항목은 id·text·source·page가 모두 있는 원문 객체입니다. 같은 ID를 여러 번 인용해도 출처 목록에는 한 번만 남습니다. 답변을 만드는 데 실제 쓰지 않은 검색 결과는 sources에 넣지 않습니다. 고정 생성기는 첫 문서 문장만 반환하므로 기본 k=2에서 검색 두 개와 인용 한 개가 정상입니다.</p>
+</div>
+</details>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>실패 경로를 고정해 비교하기</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 착오</caption><thead><tr><th scope="col">증상</th><th scope="col">확인할 곳</th></tr>
+</thead><tbody><tr><td>연결 실패인데 자료가 없다고 안내</td><td>result=None과 search_status=error의 구분</td></tr>
+<tr><td>검색 두 개를 전부 출처로 표시</td><td>A1 sources의 인용 ID 필터</td></tr>
+<tr><td>이전 실패의 error_type이 남음</td><td>정상 search_node가 빈 문자열로 갱신하는지</td></tr>
+<tr><td>999일도 answered</td><td>ID 검사 한계, 원문 내용 대조 필요</td></tr>
+<tr><td>실제 Chroma 예외가 전파됨</td><td>실제 오류 타입의 명시적 어댑터 매핑</td></tr>
+</tbody></table></div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://docs.langchain.com/oss/python/langgraph/graph-api" target="_blank" rel="noopener noreferrer">LangGraph StateGraph ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색 개선 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 46 / MIDTERM PROJECT</p>
+<span class="sidebar-title">검색 개선 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-repair-search"><span>02</span>p3이 다시 검색되는지 확인하기</a><a href="#nb-adopt-hold"><span>03</span>검색이 고쳐져도 후보를 보류한 이유</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 46 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>검색 개선 · 방향과 예시</h1>
+<p class="hero-description">45장의 Q03은 답할 문단이 있는데도 빈 결과를 냈습니다. 팀은 “실패”나 “오류”가 들어간 질문에서 p3을 찾는 검색 후보를 시험했습니다. 생성 함수와 입력 문서, k=2를 고정해 어떤 변화가 검색 정책 때문인지 읽습니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter46.ipynb" download="chapter46.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>46장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-repair-search" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>p3이 다시 검색되는지 확인하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘수정한 검색’를 기준으로 양쪽의 ‘검색 질문’와 ‘p3 문단’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>수정한 검색에서 p3 문단이 다시 나오는지 봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>완성 실험 기록｜변경 전 Q03은 검색 1회, 빈 목록, 생성 0회입니다. 후보에서는 같은 문장에 오류 낱말을 인식해 p3을 가져옵니다. 여기서는 제공 기록에 맞춰 검색 조건 한 가지를 재현합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 후보 규칙으로 업로드 오류 검색하기</h3>
+<div class="cell-before"><p>Q03에 어떤 낱말이 들어 있으며 그 조건에서 어느 문단을 돌려주는지 확인하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">error_doc = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;course-guide-v1:p3&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 &#x27;</span>
+         <span class="tok-string">&#x27;않습니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 과정 운영 안내 · 45일 수업용 페이지판 (source-pages.html)&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>}
+question = <span class="tok-string">&#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;</span>
+found = [error_doc] <span class="tok-keyword">if</span> any(word <span class="tok-keyword">in</span> question <span class="tok-keyword">for</span> word <span class="tok-keyword">in</span> (<span class="tok-string">&#x27;오류&#x27;</span>,<span class="tok-string">&#x27;실패&#x27;</span>)) <span class="tok-keyword">else</span> []
+print([d[<span class="tok-string">&#x27;id&#x27;</span>] <span class="tok-keyword">for</span> d <span class="tok-keyword">in</span> found])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;course-guide-v1:p3&#x27;]</pre></div>
+<div class="cell-after"><p>course-guide-v1:p3을 찾았습니다. 원문에는 오류 화면과 발생 시간 기록, 강사 문의, 비밀키 공유 금지가 담겨 있습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-adopt-hold" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>검색이 고쳐져도 후보를 보류한 이유</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘p3 검색 성공’가 가운데 ‘인용 불일치’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>p3을 찾아도 p2를 인용했다면 채택을 보류합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>고정 생성기는 Q01에서 썼던 p2를 인용합니다. 검색은 p3을 돌려주는데 p2 인용을 사용자에게 보여 주면 출처가 어긋납니다. 그래서 이번에는 기준선을 유지하고 생성 수정을 별도의 실험으로 넘깁니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 변경 전후 기록의 마지막 상태 대조하기</h3>
+<div class="cell-before"><p>두 행은 같은 Q03의 제공 로컬 실행 기록입니다. 검색 정책 외에 무엇을 고정했는지 기억하며 살펴보세요.</p>
+<p>Q03에서 검색이 허용한 문단은 p3인데 고정 답변의 대괄호 안에는 p2가 있습니다. ‘검색 성공’에는 p3을, ‘인용 검사 실패’에는 p2를 적으세요. 검색 문서를 찾았다는 이유로 이 답을 사용자에게 내보내지 않습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 16줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">before = {<span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [],
+ <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>,
+            <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;제공된 자료에서 확인할 수 없습니다.&#x27;</span>,
+            <span class="tok-string">&#x27;sources&#x27;</span>: [],
+            <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">0</span>,
+            <span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [],
+            <span class="tok-string">&#x27;seconds&#x27;</span>: <span class="tok-number">1e-06</span>}}
+after = {<span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [<span class="tok-string">&#x27;course-guide-v1:p3&#x27;</span>],
+ <span class="tok-string">&#x27;result&#x27;</span>: {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;invalid_citation&#x27;</span>,
+            <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;출처 표시를 확인해야 합니다.&#x27;</span>,
+            <span class="tok-string">&#x27;sources&#x27;</span>: [],
+            <span class="tok-string">&#x27;generation_calls&#x27;</span>: <span class="tok-number">1</span>,
+            <span class="tok-string">&#x27;retrieved_ids&#x27;</span>: [<span class="tok-string">&#x27;course-guide-v1:p3&#x27;</span>],
+            <span class="tok-string">&#x27;seconds&#x27;</span>: <span class="tok-number">4e-06</span>}}
+print(before[<span class="tok-string">&#x27;retrieved_ids&#x27;</span>], before[<span class="tok-string">&#x27;result&#x27;</span>][<span class="tok-string">&#x27;status&#x27;</span>])
+print(after[<span class="tok-string">&#x27;retrieved_ids&#x27;</span>], after[<span class="tok-string">&#x27;result&#x27;</span>][<span class="tok-string">&#x27;status&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[] no_evidence
+[&#x27;course-guide-v1:p3&#x27;] invalid_citation</pre></div>
+<div class="cell-after"><p>빈 목록의 no_evidence가 p3과 invalid_citation으로 바뀌었습니다. 검색 성공과 사용자가 읽을 수 있는 답변 성공은 따로 기록해야 합니다. 자기 팀도 가장 자주 틀리는 단계 하나부터 비교하세요.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>이 실험의 선택 후보는 error_keyword, 실제 유지한 방식은 baseline입니다. 다음 장을 맡은 팀원이 같은 조건에서 시작할 수 있도록 유지한 방식과 그 이유를 함께 건네세요.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-svg-learning]').forEach(f=>{const a=f.querySelector('a[download$=".gif"]');if(a)a.href=f.querySelector('.gif-alternative img').dataset.gif})

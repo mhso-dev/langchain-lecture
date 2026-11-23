@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>핵심 기능 A · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">2027 한국경제신문 강의 · 검토용</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 96 / 120</p>
+<span class="sidebar-title">핵심 기능 A · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-display"><span>02</span>답과 원문 위치를 두 줄로 읽기</a><a href="#nb-empty"><span>03</span>장비명이 없는 첫 화면</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 96 / 120</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>핵심 기능 A · 방향과 예시</h1>
+<p class="hero-description">검색 함수가 규정을 돌려주면 점검 담당자는 그것을 읽고 원문을 찾아야 합니다. Q01에서 사용자에게 보일 두 줄을 직접 조립한 뒤, 장비명이 없는 경우에는 어떻게 화면이 달라져야 할지 정합니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter96.ipynb" download="chapter96.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>96장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-display" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>답과 원문 위치를 두 줄로 읽기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘점검 전 행동’와 ‘규정 A 2.1절’가 오른쪽의 ‘결과 화면’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>점검 방법 바로 아래에서 원문 절과 개정일을 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>첫 수용 사례　질문 “장비 A의 점검 전 확인 사항은?” / 답 “점검 전 전원 표시등을 확인합니다.” / 근거 RULE-A, 가상 장비실 규정 A, 1쪽 2.1절, 2026-11-01, rules-v1. 응답 데이터를 그대로 보여 주면 어느 숫자가 페이지인지 알기 어렵습니다. 화면 문장에 단위를 붙이되 문서의 실제 값은 바꾸지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · RULE-A의 출처 줄 만들기</h3>
+<div class="cell-before"><p>로컬 규칙 Q01의 저장 응답을 읽어 출처를 화면용 문자열로 만듭니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 21줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">reply = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
+ <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
+ <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
+ <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+<span class="tok-keyword">def</span> citation_line(source):
+    <span class="tok-keyword">return</span> (f&quot;{source[<span class="tok-string">&#x27;id&#x27;</span>]} | {source[<span class="tok-string">&#x27;source&#x27;</span>]} | p.{source[<span class="tok-string">&#x27;page&#x27;</span>]} | &quot;
+            f&quot;{source[<span class="tok-string">&#x27;section&#x27;</span>]}절 | 개정일 {source[<span class="tok-string">&#x27;revised_on&#x27;</span>]} | {source[<span class="tok-string">&#x27;version&#x27;</span>]}&quot;)
+
+<span class="tok-keyword">def</span> show_reply(response):
+    print(response[<span class="tok-string">&quot;answer&quot;</span>])
+    <span class="tok-keyword">for</span> source <span class="tok-keyword">in</span> response[<span class="tok-string">&quot;sources&quot;</span>]:
+        print(citation_line(source))
+
+show_reply(reply)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 전원 표시등을 확인합니다.
+RULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1</pre></div>
+<div class="cell-after"><p>답 바로 아래에 RULE-A의 위치가 붙습니다. 출처 ID만 나왔다면 검색 결과의 누락인지 화면 함수에서 일부 필드만 읽었는지 두 값을 대조하세요.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>장비가 빠진 질문 표시</h3>
+<div class="cell-before"><p>아래 셀을 실행한 뒤 바로 앞의 결과와 비교하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">reply_missing = {<span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;장비 A인가요, 장비 B인가요?&quot;</span>, <span class="tok-string">&quot;sources&quot;</span>: []}
+show_reply(reply_missing)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A인가요, 장비 B인가요?</pre></div>
+<div class="cell-after"><p>출처가 비어 있어서 안내 문장 한 줄만 나옵니다. 앞 질문의 RULE-A를 다시 표시하지 않습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-empty" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>장비명이 없는 첫 화면</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘질문 입력’가 가운데 ‘장비명 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>장비를 특정하기 전에는 어떤 규정인지 다시 묻습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>Q02의 완료 예시　상태 need_clarification / 문구 “장비 A 또는 장비 B 중 하나를 지정하세요.” / 출처 없음. 출처가 항상 한 건이라고 가정하고 목록의 첫 항목을 읽으면 이 화면에서는 오류가 납니다. 답변 영역은 먼저 상태를 읽고, 출처가 있을 때만 원문 위치를 그립니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 02 · 선택 연습 · 장비 B 출처 카드</h3>
+<div class="cell-before"><p>팀이 장비 B를 맡았다고 보고 같은 화면 함수로 두 번째 규정의 위치를 표시하세요.</p>
+<p>같은 표시 함수를 장비를 지정하지 않은 Q02에도 사용해 보세요. sources가 비면 첫 출처를 꺼내지 않고 되묻는 문장만 출력합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">reply_b = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
+ <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
+              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
+              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
+              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
+              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
+ <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
+ <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+<span class="tok-comment"># reply_b의 답과 근거 줄을 표시하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">reply_b = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
+ <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
+              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
+              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
+              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
+              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
+ <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
+ <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
+print(reply_b[<span class="tok-string">&quot;answer&quot;</span>])
+print(citation_line(reply_b[<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
+RULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1</pre></div>
+<div class="cell-after"><p>고정 장치, RULE-B, 2쪽 2.2절로 바뀝니다. A의 페이지나 절이 그대로면 화면에 적힌 고정 문구부터 찾으세요.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>Q01의 답과 원문 위치, Q02에서 다시 묻는 문장을 97장에 넘기세요. 화면 시안의 출처를 보고 다른 사람이 실제 절을 찾을 수 있는지는 별도 관찰 항목입니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

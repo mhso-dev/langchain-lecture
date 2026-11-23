@@ -1,0 +1,1326 @@
+{
+  "record_kind": "local_historical_regression_preparation",
+  "replay": {
+    "project_id": "PROJECT-EQUIPMENT-01",
+    "document_version": "rules-v1",
+    "module_version": "normalization-v1",
+    "mode": "actual_local_historical_replay",
+    "historical_day": 98,
+    "new_production_defect": false,
+    "changed_variable": "equipment_label_spacing_normalization",
+    "same_historical_records": true,
+    "records": [
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q01",
+        "scenario_id": "SC-01",
+        "criterion_ids": [
+          "CR-01",
+          "CR-02"
+        ],
+        "question": "장비 A의 점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 A의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 전원 표시등을 확인합니다.\nRULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 A의 점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q01",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 A의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 전원 표시등을 확인합니다.\nRULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 A의 점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q01",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q02",
+        "scenario_id": "SC-02",
+        "criterion_ids": [
+          "CR-03"
+        ],
+        "question": "점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q02",
+            "scenario_id": "SC-02",
+            "criterion_ids": [
+              "CR-03"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q02",
+            "scenario_id": "SC-02",
+            "criterion_ids": [
+              "CR-03"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q03",
+        "scenario_id": "SC-03",
+        "criterion_ids": [
+          "CR-04"
+        ],
+        "question": "장비 A를 다음 달에 교체하기로 확정했나요?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 A를 다음 달에 교체하기로 확정했나요?",
+            "result": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "no_evidence: 주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 A를 다음 달에 교체하기로 확정했나요?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q03",
+            "scenario_id": "SC-03",
+            "criterion_ids": [
+              "CR-04"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 A를 다음 달에 교체하기로 확정했나요?",
+            "result": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "no_evidence: 주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 A를 다음 달에 교체하기로 확정했나요?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q03",
+            "scenario_id": "SC-03",
+            "criterion_ids": [
+              "CR-04"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q04",
+        "scenario_id": "SC-01",
+        "criterion_ids": [
+          "CR-01",
+          "CR-02"
+        ],
+        "question": "장비 B의 점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 B의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 고정 장치를 확인합니다.\nRULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 B의 점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q04",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비 B의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 고정 장치를 확인합니다.\nRULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 B의 점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q04",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q05",
+        "scenario_id": "SC-04",
+        "criterion_ids": [
+          "CR-05"
+        ],
+        "question": "관리자 전용 절차를 알려 주세요.",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "관리자 전용 절차를 알려 주세요.",
+            "result": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "no_evidence: 주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "관리자 전용 절차를 알려 주세요.",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q05",
+            "scenario_id": "SC-04",
+            "criterion_ids": [
+              "CR-05"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "관리자 전용 절차를 알려 주세요.",
+            "result": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "no_evidence: 주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "관리자 전용 절차를 알려 주세요.",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q05",
+            "scenario_id": "SC-04",
+            "criterion_ids": [
+              "CR-05"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "no_evidence",
+              "answer": "주어진 문서에서 확인할 수 없습니다. 담당자에게 확인하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q06",
+        "scenario_id": "SC-05",
+        "criterion_ids": [
+          "CR-06"
+        ],
+        "question": "   ",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "   ",
+            "result": {
+              "status": "invalid_input",
+              "answer": "질문을 입력하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "invalid_input: 질문을 입력하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "   ",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q06",
+            "scenario_id": "SC-05",
+            "criterion_ids": [
+              "CR-06"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "invalid_input",
+              "answer": "질문을 입력하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "   ",
+            "result": {
+              "status": "invalid_input",
+              "answer": "질문을 입력하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "invalid_input: 질문을 입력하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "   ",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q06",
+            "scenario_id": "SC-05",
+            "criterion_ids": [
+              "CR-06"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "invalid_input",
+              "answer": "질문을 입력하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "original_eval_v1",
+        "question_id": "Q07",
+        "scenario_id": "SC-04",
+        "criterion_ids": [
+          "CR-05",
+          "CR-02"
+        ],
+        "question": "관리자 전용 절차를 알려 주세요.",
+        "trusted_fixture_group": "admin",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "관리자 전용 절차를 알려 주세요.",
+            "result": {
+              "status": "answered",
+              "answer": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+              "sources": [
+                {
+                  "id": "RULE-ADMIN",
+                  "text": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+                  "source": "가상 장비실 내부 규정",
+                  "page": 3,
+                  "section": "3.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.\nRULE-ADMIN | 가상 장비실 내부 규정 | p.3 | 3.1절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "관리자 전용 절차를 알려 주세요.",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q07",
+            "scenario_id": "SC-04",
+            "criterion_ids": [
+              "CR-05",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+              "sources": [
+                {
+                  "id": "RULE-ADMIN",
+                  "text": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+                  "source": "가상 장비실 내부 규정",
+                  "page": 3,
+                  "section": "3.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "관리자 전용 절차를 알려 주세요.",
+            "result": {
+              "status": "answered",
+              "answer": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+              "sources": [
+                {
+                  "id": "RULE-ADMIN",
+                  "text": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+                  "source": "가상 장비실 내부 규정",
+                  "page": 3,
+                  "section": "3.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.\nRULE-ADMIN | 가상 장비실 내부 규정 | p.3 | 3.1절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "관리자 전용 절차를 알려 주세요.",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q07",
+            "scenario_id": "SC-04",
+            "criterion_ids": [
+              "CR-05",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+              "sources": [
+                {
+                  "id": "RULE-ADMIN",
+                  "text": "관리자 전용 절차는 선임 검토 기록을 확인하는 것입니다.",
+                  "source": "가상 장비실 내부 규정",
+                  "page": 3,
+                  "section": "3.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "extension_dev98",
+        "question_id": "Q98-N01",
+        "scenario_id": "SC-01",
+        "criterion_ids": [
+          "CR-01",
+          "CR-02"
+        ],
+        "question": "장비A의 점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비A의 점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비A의 점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q98-N01",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": false,
+            "checks": {
+              "status": false,
+              "source_ids": false,
+              "required_facts": false,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [
+              "status",
+              "source_ids",
+              "required_facts"
+            ],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비A의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 전원 표시등을 확인합니다.\nRULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 A의 점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q98-N01",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 전원 표시등을 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-A",
+                  "text": "점검 전 전원 표시등을 확인합니다.",
+                  "source": "가상 장비실 규정 A",
+                  "page": 1,
+                  "section": "2.1",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "extension_dev98",
+        "question_id": "Q98-N02",
+        "scenario_id": "SC-01",
+        "criterion_ids": [
+          "CR-01",
+          "CR-02"
+        ],
+        "question": "장비B의 점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비B의 점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비B의 점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q98-N02",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": false,
+            "checks": {
+              "status": false,
+              "source_ids": false,
+              "required_facts": false,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [
+              "status",
+              "source_ids",
+              "required_facts"
+            ],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비B의 점검 전 확인 사항은?",
+            "result": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "answered: 점검 전 고정 장치를 확인합니다.\nRULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비 B의 점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q98-N02",
+            "scenario_id": "SC-01",
+            "criterion_ids": [
+              "CR-01",
+              "CR-02"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "answered",
+              "answer": "점검 전 고정 장치를 확인합니다.",
+              "sources": [
+                {
+                  "id": "RULE-B",
+                  "text": "점검 전 고정 장치를 확인합니다.",
+                  "source": "가상 장비실 규정 B",
+                  "page": 2,
+                  "section": "2.2",
+                  "revised_on": "2026-11-01",
+                  "version": "rules-v1"
+                }
+              ],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      },
+      {
+        "scope": "extension_dev98",
+        "question_id": "Q98-G01",
+        "scenario_id": "SC-02",
+        "criterion_ids": [
+          "CR-03"
+        ],
+        "question": "장비AB의 점검 전 확인 사항은?",
+        "trusted_fixture_group": "public",
+        "baseline": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비AB의 점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비AB의 점검 전 확인 사항은?",
+            "module_version": "day97-baseline"
+          },
+          "evaluation": {
+            "question_id": "Q98-G01",
+            "scenario_id": "SC-02",
+            "criterion_ids": [
+              "CR-03"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        },
+        "candidate": {
+          "outcome": {
+            "project_id": "PROJECT-EQUIPMENT-01",
+            "document_version": "rules-v1",
+            "question": "장비AB의 점검 전 확인 사항은?",
+            "result": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "display": "need_clarification: 장비 A 또는 장비 B 중 하나를 지정하세요.",
+            "trace": [
+              "received",
+              "module_returned",
+              "source_checked",
+              "presented"
+            ],
+            "limits": "로컬 문자열 표시; 실제 인증·화면 원문 열기·API·LLM 미검증",
+            "normalized_question": "장비AB의 점검 전 확인 사항은?",
+            "module_version": "normalization-v1"
+          },
+          "evaluation": {
+            "question_id": "Q98-G01",
+            "scenario_id": "SC-02",
+            "criterion_ids": [
+              "CR-03"
+            ],
+            "passed": true,
+            "checks": {
+              "status": true,
+              "source_ids": true,
+              "required_facts": true,
+              "source_metadata": true,
+              "allowed_sources": true,
+              "execution_mode": true
+            },
+            "failed_checks": [],
+            "observed": {
+              "status": "need_clarification",
+              "answer": "장비 A 또는 장비 B 중 하나를 지정하세요.",
+              "sources": [],
+              "mode": "local_rule_fixture",
+              "model_calls": 0
+            },
+            "manual_semantic_review": "not_performed_by_automatic_checker"
+          }
+        }
+      }
+    ],
+    "summary": {
+      "original_eval_v1": {
+        "total": 7,
+        "baseline": 7,
+        "candidate": 7
+      },
+      "extension_dev98": {
+        "total": 3,
+        "baseline": 1,
+        "candidate": 3
+      }
+    },
+    "source110_consumer_sha256": "231101451c61e98849e9284746fadb7016c730b1b0fc23d2b132bcb938f98121",
+    "actual_user_observation": false,
+    "actual_web": false,
+    "actual_performance_gain": null,
+    "actual_cost_gain": null
+  },
+  "candidate": {
+    "local_candidate": true,
+    "decision": "hold_pending_evidence",
+    "failed_case_ids": [],
+    "historically_repaired_ids": [
+      "Q98-N01",
+      "Q98-N02"
+    ],
+    "missing_or_failed_gates": [
+      "actual_HTTP",
+      "actual_performance_cost",
+      "actual_user_checks",
+      "source106_UI",
+      "source109_full"
+    ],
+    "gate_states": {
+      "actual_HTTP": "not_run",
+      "actual_performance_cost": "not_run",
+      "actual_user_checks": "not_run",
+      "source106_UI": "not_run",
+      "source109_full": "not_run"
+    },
+    "automatic_deployment": false,
+    "production_release_approved": false,
+    "new_defect_fixed": false,
+    "semantic_review": "human_evidence_required"
+  },
+  "source109_prepared_security": "independent evidence reused, full app pending",
+  "source110_prepared_boundaries": "same 7+3 and diagnostic3 preserved; synthetic timer",
+  "actual_release_candidate": null,
+  "actual_user_feedback": []
+}

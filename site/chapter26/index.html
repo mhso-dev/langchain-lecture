@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph와 세 필드 State로 실행 흐름 읽기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 26 / LANGGRAPH</p>
+<span class="sidebar-title">LangGraph와 세 필드 State로 실행 흐름 읽기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-three-fields"><span>02</span>질문을 다듬으면 어떤 값이 돌아올까요?</a><a href="#nb-run-graph"><span>03</span>검색 노드 뒤에서 답변 읽기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 26 / LANGGRAPH</span><span class="template-badge">학생용 교재</span></div>
+<h1>LangGraph와 세 필드 State로 실행 흐름 읽기</h1>
+<p class="hero-description">도서 대출 기간을 물었더니 검색 함수가 문장 목록을 돌려줬습니다. 화면에 띄울 답은 한 문장입니다. 세 함수에 같은 상태를 건네고 각 함수가 어느 칸만 바꾸는지 따라갑니다. 이 장부터 수업용 Python 커널에 LangGraph와 langchain-core가 필요합니다. 검색과 문장 작성에는 로컬 규칙을 씁니다.</p>
+<div class="hero-meta"><span>입문 이후</span><span>교육일 026 · 8H</span><span>Python 함수·딕셔너리·타입 힌트, LCEL RAG의 검색→답변 흐름</span></div>
+</header>
+<span id="setup"></span><section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter26.ipynb" download="chapter26.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>26장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
+</div>
+</section>
+<section id="nb-three-fields" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>질문을 다듬으면 어떤 값이 돌아올까요?</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘그래프 상태’ 안에서 ‘질문 정리’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>질문을 다듬은 노드는 question의 변경분만 반환합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>State는 한 질문을 처리하면서 여러 단계가 함께 읽는 값입니다. 여기서는 question에 질문, documents에 찾은 문장 목록, answer에 최종 안내를 담습니다. 노드가 값을 읽어 바꿀 부분만 돌려주면 그래프가 앞 상태에 합칩니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문 앞뒤 공백 지우기</h3>
+<div class="cell-before"><p>normalize가 돌려줄 딕셔너리의 키를 예측해 보세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 16줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> TypedDict
+<span class="tok-keyword">from</span> langgraph.graph <span class="tok-keyword">import</span> StateGraph, START, END
+
+<span class="tok-keyword">class</span> State(TypedDict):
+    question: str
+    documents: list[str]
+    answer: str
+
+<span class="tok-keyword">def</span> normalize(state: State) -&gt; dict:
+    question = state[<span class="tok-string">&quot;question&quot;</span>].strip()
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question:
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;질문을 입력하세요.&quot;</span>)
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;question&quot;</span>: question}
+
+initial = {<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;  대출 기간은?  &#x27;</span>, <span class="tok-string">&#x27;documents&#x27;</span>: [], <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;&#x27;</span>}
+print(normalize(initial))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;대출 기간은?&#x27;}</pre></div>
+<div class="cell-after"><p>question 하나만 보입니다. strip이 앞뒤 공백을 뺐고, normalize는 문서나 답변을 만들지 않았습니다. 이 반환값을 다음 단계의 전체 상태로 넘기면 나머지 키가 사라집니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 상태에 변경분 합치기</h3>
+<div class="cell-before"><p>직접 호출에서는 딕셔너리를 합쳐 그래프가 하는 일을 한 번 따라 해 봅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">normalized = {**initial, **normalize(initial)}
+print(normalized)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;대출 기간은?&#x27;, &#x27;documents&#x27;: [], &#x27;answer&#x27;: &#x27;&#x27;}</pre></div>
+<div class="cell-after"><p>documents와 answer의 빈 값이 남습니다. 두 칸은 이제 검색과 답변 노드가 채울 자리입니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-run-graph" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>검색 노드 뒤에서 답변 읽기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘질문 상태’에서 출발해 ‘검색 결과’를 거친 뒤 ‘답변 상태’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>검색으로 채운 문서를 다음 노드가 읽어 답합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>엣지는 어떤 함수를 다음에 부를지 정하는 연결입니다. START에서 normalize, lookup, compose 순으로 연결한 뒤 END에서 멈춥니다. 검색 결과를 미리 써 넣지 않고 질문에 들어 있는 낱말을 자료와 대조합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 세 노드 연결하기</h3>
+<div class="cell-before"><p>이번 셀의 lookup은 노트북 안에 넣어 둔 두 가상 문장에서 찾습니다. 등록된 노드 이름과 엣지의 이름을 맞춰 보세요.</p>
+<p>초기값부터 normalize, lookup, compose 순서로 따라가세요. 한 노드가 돌려주는 사전은 이번에 바꿀 칸만 담습니다. 나머지 두 칸은 앞 상태의 값을 유지합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">rows = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>, <span class="tok-string">&#x27;keyword&#x27;</span>: <span class="tok-string">&#x27;대출&#x27;</span>, <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>, <span class="tok-string">&#x27;keyword&#x27;</span>: <span class="tok-string">&#x27;휴관&#x27;</span>, <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>}]
+
+<span class="tok-keyword">def</span> lookup(state):
+    found = [r[<span class="tok-string">&#x27;text&#x27;</span>] <span class="tok-keyword">for</span> r <span class="tok-keyword">in</span> rows <span class="tok-keyword">if</span> r[<span class="tok-string">&#x27;keyword&#x27;</span>] <span class="tok-keyword">in</span> state[<span class="tok-string">&#x27;question&#x27;</span>]]
+    <span class="tok-keyword">return</span> {<span class="tok-string">&#x27;documents&#x27;</span>: found}
+
+<span class="tok-keyword">def</span> compose(state: State) -&gt; dict:
+    documents = state[<span class="tok-string">&quot;documents&quot;</span>]
+    answer = <span class="tok-string">&quot; / &quot;</span>.join(documents) <span class="tok-keyword">if</span> documents <span class="tok-keyword">else</span> <span class="tok-string">&quot;제공된 문서에서 확인할 수 없습니다.&quot;</span>
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;answer&quot;</span>: answer}
+
+<span class="tok-keyword">def</span> make_graph():
+    builder = StateGraph(State)
+    builder.add_node(<span class="tok-string">&quot;normalize&quot;</span>, normalize)
+    builder.add_node(<span class="tok-string">&quot;lookup&quot;</span>, lookup)
+    builder.add_node(<span class="tok-string">&quot;compose&quot;</span>, compose)
+    builder.add_edge(START, <span class="tok-string">&quot;normalize&quot;</span>)
+    builder.add_edge(<span class="tok-string">&quot;normalize&quot;</span>, <span class="tok-string">&quot;lookup&quot;</span>)
+    builder.add_edge(<span class="tok-string">&quot;lookup&quot;</span>, <span class="tok-string">&quot;compose&quot;</span>)
+    builder.add_edge(<span class="tok-string">&quot;compose&quot;</span>, END)
+    <span class="tok-keyword">return</span> builder.compile()
+
+graph = make_graph()
+print(graph.invoke(initial)[<span class="tok-string">&#x27;answer&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서 대출 기간은 14일입니다.</pre></div>
+<div class="cell-after"><p>14일이라는 문장이 나옵니다. lookup이 대출 문장을 골라 documents에 넣었고 compose는 그대로 이어 붙였습니다. 모델에 날짜를 묻는 과정은 없습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 휴관 질문의 근거 확인하기</h3>
+<div class="cell-before"><p>질문을 ‘휴관 요일은?’로 바꾸어 실행하고 최종 상태에서 documents만 표시하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 초기 상태의 질문을 바꾼 뒤 그래프에 넘기세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">request = {**initial, <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;휴관 요일은?&#x27;</span>}
+print(graph.invoke(request)[<span class="tok-string">&#x27;documents&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;도서관은 월요일에 휴관합니다.&#x27;]</pre></div>
+<div class="cell-after"><p>휴관에 해당하는 문장 한 개가 목록에 남습니다. answer가 문자열인 데 비해 이 칸은 검색이 여러 건일 수 있어 목록입니다.</p>
+</div>
+</details>
+</article>
+<figure class="flow" data-flow id="flow-6"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>초기 상태와 세 노드의 변경값</h3>
+<p>각 단계에서 이전 값 중 무엇이 남는지 말해 보세요. 이 그림은 설명용이며 Python을 실행하지 않습니다.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>각 노드가 바꾼 필드와 이전 값을 유지한 필드를 나란히 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>노드는 상태의 변경분을 반환하고 그래프가 이를 반영하므로 나머지 필드가 이어집니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>입력</span></li>
+<li><span class="flow-index">02</span><span>정리</span></li>
+<li><span class="flow-index">03</span><span>문서</span></li>
+<li><span class="flow-index">04</span><span>답변</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-6-step-0"><img class="flow-proof" loading="lazy" alt="초기 상태 만들기" src="../assets/media/svg-e1c03fb70a47bb.svg"><span class="eyebrow">STEP 01 · 호출자</span><h4>초기 상태 만들기</h4>
+<p>질문을 넣고 결과 칸은 비웁니다.</p><pre>question  = &#x27;  대출 기간은?  &#x27;
+documents = []
+answer    = &quot;&quot;</pre></article>
+<article class="flow-panel" id="flow-6-step-1"><img class="flow-proof" loading="lazy" alt="질문의 공백 제거" src="../assets/media/svg-7bc585d34ec69b.svg"><span class="eyebrow">STEP 02 · normalize</span><h4>질문의 공백 제거</h4>
+<p>question만 갱신하고 다른 키는 유지합니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
+documents = []
+answer    = &quot;&quot;</pre></article>
+<article class="flow-panel" id="flow-6-step-2"><img class="flow-proof" loading="lazy" alt="질문에 맞는 문장 조회" src="../assets/media/svg-89ae034ec99158.svg"><span class="eyebrow">STEP 03 · lookup</span><h4>질문에 맞는 문장 조회</h4>
+<p>가상 문서 중 대출 키워드가 맞는 문장을 고릅니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
+documents = [&quot;도서 대출 기간은 14일입니다.&quot;]
+answer    = &quot;&quot;</pre></article>
+<article class="flow-panel" id="flow-6-step-3"><img class="flow-proof" loading="lazy" alt="문서를 답변으로 연결" src="../assets/media/svg-9db7df7a2fb120.svg"><span class="eyebrow">STEP 04 · compose</span><h4>문서를 답변으로 연결</h4>
+<p>documents를 읽고 answer를 갱신합니다.</p><pre>question  = &#x27;대출 기간은?&#x27;
+documents = [&quot;도서 대출 기간은 14일입니다.&quot;]
+answer    = &quot;도서 대출 기간은 14일입니다.&quot;</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>주차 질문을 넣었을 때 답변을 만든 노드와 빈 목록을 만든 노드를 구별해 보세요. 다음 장은 빈 검색 뒤 한 번 더 찾을지 결정합니다.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>실행 순서와 상태를 나누어 보기</summary><div class="prose"><p>Node는 이번에 실행할 Python 함수입니다. Edge는 어떤 함수 다음에 어떤 함수를 실행할지 정한 연결입니다. State는 실행 중 공유하는 값의 묶음입니다. 문서가 어디에 저장되는지와 어느 함수가 다음에 호출되는지를 한 용어로 섞으면 오류 원인을 찾기 어렵습니다.</p>
+<p>예를 들어 질문의 공백을 지우는 normalize는 question을 읽고 question만 갱신합니다. 문서를 고르는 lookup은 question을 읽고 documents를 갱신합니다. 답변을 만드는 compose는 documents를 읽고 answer를 갱신합니다. 이번 그래프에서는 모델이 다음 노드를 고르지 않고 코드의 고정된 연결을 따릅니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>세 요소를 코드에 대응하기</caption><thead><tr><th scope="col">요소</th><th scope="col">예제</th><th scope="col">변경의 의미</th></tr>
+</thead><tbody><tr><td>Node</td><td>normalize, lookup, compose</td><td>처리할 계산을 바꿈</td></tr>
+<tr><td>Edge</td><td>normalize → lookup</td><td>실행 순서를 바꿈</td></tr>
+<tr><td>State</td><td>question, documents, answer</td><td>전달하고 보관할 값을 바꿈</td></tr>
+</tbody></table></div>
+</details>
+<span id="state"></span><details class="reading-topic" id="reading-state"><summary>TypedDict로 세 필드의 약속 적기</summary><div class="prose"><p>State는 실행 중 사용할 딕셔너리의 키와 값 형태를 적은 타입입니다. question은 질문 문자열, documents는 문장 문자열의 리스트, answer는 답변 문자열입니다. 실제 값은 graph.invoke에 넘기는 initial에 들어 있습니다. 타입 선언만으로 질문이 자동 생성되지는 않습니다.</p>
+<p>TypedDict는 정적 타입 확인을 돕는 선언입니다. 잘못된 자료형이나 빈 입력을 모든 경우 자동으로 막아 주는 런타임 검증기로 생각하지 마세요. 이번 예제는 question.strip() 결과가 비었는지 노드에서 직접 검사합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>초기 상태 예측</caption><thead><tr><th scope="col">키</th><th scope="col">초기 값</th><th scope="col">누가 갱신하나요?</th></tr>
+</thead><tbody><tr><td>question</td><td>&quot;  대출 기간은?  &quot;</td><td>normalize</td></tr>
+<tr><td>documents</td><td>[]</td><td>lookup</td></tr>
+<tr><td>answer</td><td>&quot;&quot;</td><td>compose</td></tr>
+</tbody></table></div>
+</details>
+<span id="nodes"></span><details class="reading-topic" id="reading-nodes"><summary>노드는 상태를 읽고 변경분을 반환합니다</summary><div class="prose"><p>normalize가 반환한 딕셔너리에는 question 하나만 있습니다. 반환에서 빠진 documents와 answer를 지우라는 뜻이 아닙니다. 이번처럼 별도 갱신 규칙을 지정하지 않은 필드는 해당 키가 반환되면 새 값으로 바뀌며, 반환하지 않은 필드는 유지됩니다.</p>
+<p>입력 딕셔너리의 값을 직접 바꿔 놓고 아무것도 반환하지 않는 방식을 피합니다. 갱신할 내용을 새 딕셔너리로 반환하면 노드의 책임과 검사할 결과가 분명해집니다. 이 장은 순차 실행만 다루며 여러 노드가 동시에 같은 키를 갱신하는 경우는 포함하지 않습니다.</p>
+</div>
+</details>
+<span id="edges"></span><details class="reading-topic" id="reading-edges"><summary>노드 등록과 연결 뒤에 실행하기</summary><div class="prose"><p>StateGraph는 그래프를 만드는 빌더입니다. add_node의 첫 인자는 그래프에서 사용하는 이름이고 두 번째 인자는 실행할 함수입니다. add_edge는 등록한 이름으로 연결합니다. START는 입력을 받은 시작 위치, END는 종료 위치입니다.</p>
+<p>compile로 실행 가능한 그래프를 만든 뒤 invoke를 호출합니다. 컴파일 단계가 실제 문서 내용의 품질이나 모든 런타임 오류를 증명해 주지는 않습니다. 문서 파일 누락처럼 실행할 때 드러나는 문제도 직접 검사해야 합니다.</p>
+</div>
+</details>
+<span id="observe"></span><details class="reading-topic" id="reading-observe"><summary>변경분과 최종 상태를 각각 관찰하기</summary><div class="prose"><p>stream_mode=&quot;updates&quot;에서는 실행된 노드 이름과 그 노드의 갱신 내용을 차례로 봅니다. invoke 결과는 실행이 끝난 뒤의 상태입니다. 예제는 관찰을 위해 두 호출을 모두 사용하므로 그래프 전체가 두 번 실행됩니다. 실제 API를 노드에 넣는다면 그만큼 호출이 다시 발생할 수 있습니다.</p>
+<p>첫 번째 출력은 question만, 두 번째는 documents만, 세 번째는 answer만 담습니다. 그 사이 다른 값이 사라지는 것이 아닙니다. 출력된 변경분을 초기 상태에 차례로 적용하여 마지막 상태를 손으로 완성해 보세요.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>상태 기록표 양식</caption><thead><tr><th scope="col">시점</th><th scope="col">question</th><th scope="col">documents</th><th scope="col">answer</th></tr>
+</thead><tbody><tr><td>입력</td><td>공백 포함 질문</td><td>[]</td><td>빈 문자열</td></tr>
+<tr><td>normalize 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
+<tr><td>lookup 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
+<tr><td>compose 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
+</tbody></table></div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://reference.langchain.com/python/langgraph/graph/state/StateGraph" target="_blank" rel="noopener noreferrer">LangGraph StateGraph 공식 API ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

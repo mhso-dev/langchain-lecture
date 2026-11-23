@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>HTTP·외부 API와
+실패를 구분하는 클라이언트 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 06 / PYTHON</p>
+<span class="sidebar-title">HTTP·외부 API와
+실패를 구분하는 클라이언트</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-request"><span>02</span>주소에서 기록 하나 지정하기</a><a href="#nb-failures"><span>03</span>상태 오류와 본문 오류를 따로 읽기</a><a href="#nb-validate"><span>04</span>문자열 false를 완료로 잘못 표시하지 않기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 06 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
+<h1>HTTP·외부 API와
+실패를 구분하는 클라이언트</h1>
+<p class="hero-description">할 일 1번을 요청했는데 제목 대신 ‘찾을 수 없음’이 돌아왔습니다. 먼저 HTTP 응답을 받은 것인지, 받은 데이터가 원하는 기록인지부터 나눠서 확인합니다. 가상 응답으로 연습하므로 외부 서버와 계정은 필요하지 않습니다.</p>
+<div class="hero-meta"><span>입문</span><span>교육일 006 · 8H</span><span>5장까지: 함수·예외·모듈·JSON</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter06.ipynb" download="chapter06.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>6장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 httpx 0.28.1입니다.</p>
+</div>
+</section>
+<section id="nb-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>주소에서 기록 하나 지정하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘기본 주소’에서 출발해 ‘/todos/1’를 거친 뒤 ‘기록 한 건’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>주소 끝의 1이 가져올 할 일을 지정합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>GET은 값을 읽어 달라는 요청입니다. /todos/1에서 /todos는 자료 종류, 마지막 1은 요청한 기록 번호입니다. 서버는 상태 코드와 본문을 돌려줍니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 요청 주소와 ID</h3>
+<div class="cell-before"><p>입력받은 번호를 주소에서 한 번만 사용하도록 만듭니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">todo_id = <span class="tok-number">1</span>
+path = f&quot;/todos/{todo_id}&quot;
+print(path)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">/todos/1</pre></div>
+<div class="cell-after"><p>/todos/1입니다. 뒤에서 받은 데이터의 id가 1인지 다시 확인할 때 같은 todo_id를 사용합니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 성공한 응답의 본문 읽기</h3>
+<div class="cell-before"><p>서버가 보냈다고 가정한 JSON 한 건을 Python 값으로 바꿉니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">import</span> json
+body = <span class="tok-string">&#x27;{&quot;id&quot;:1,&quot;title&quot;:&quot;  HTTP 연습  &quot;,&quot;completed&quot;:false}&#x27;</span>
+todo = json.loads(body)
+print(todo[<span class="tok-string">&quot;title&quot;</span>].strip())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">HTTP 연습</pre></div>
+<div class="cell-after"><p>HTTP 연습이 나옵니다. 문자열을 해석했다고 해서 값까지 올바르다는 뜻은 아닙니다. 예를 들어 id가 2이면 요청한 기록과 다릅니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 요청한 번호 확인하기</h3>
+<div class="cell-before"><p>응답에서 id만 2로 바꿨습니다. 받은 번호가 요청 번호와 같은지 출력하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">received = {**todo, <span class="tok-string">&quot;id&quot;</span>: <span class="tok-number">2</span>}
+<span class="tok-comment"># 받은 번호와 요청한 번호를 비교하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">received = {**todo, <span class="tok-string">&quot;id&quot;</span>: <span class="tok-number">2</span>}
+print(received[<span class="tok-string">&quot;id&quot;</span>] == todo_id)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="cell-after"><p>False이므로 이 제목을 1번 기록으로 표시하면 안 됩니다. 상태 코드가 200인 경우에도 검사할 수 있는 내용입니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="nb-failures" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>상태 오류와 본문 오류를 따로 읽기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘서버 응답’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘상태 오류’, 아래쪽은 ‘본문 해석 오류’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>오류가 본문을 읽기 전인지, 읽는 중인지 살펴보세요.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>404는 요청에 응답했지만 해당 자원을 찾지 못했다는 상태입니다. 타임아웃이면 읽을 응답 본문조차 없을 수 있습니다. 상태 확인을 먼저 하고 성공했을 때만 JSON을 읽습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · JSON 문서가 아닌 응답</h3>
+<div class="cell-before"><p>상태 코드는 200인데 본문에는 HTML이 담겼다고 가정합니다. 어떤 변환에서 실패하는지 확인하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">try</span>:
+    json.loads(<span class="tok-string">&quot;&lt;html&gt;점검 중&lt;/html&gt;&quot;</span>)
+<span class="tok-keyword">except</span> json.JSONDecodeError <span class="tok-keyword">as</span> error:
+    print(type(error).__name__)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">JSONDecodeError</pre></div>
+<div class="cell-after"><p>JSONDecodeError가 나옵니다. URL을 다시 요청하기 전에 이미 받은 본문의 종류와 형식을 점검할 수 있습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · HTTPX로 404 응답 받기</h3>
+<div class="cell-before"><p>httpx가 설치된 수업 커널에서는 MockTransport가 정한 상태로 응답합니다. 네트워크 연결은 없습니다.</p>
+<p>client.get(path)를 호출하면 MockTransport가 이 셀의 missing(request)를 대신 부릅니다. Response(404)를 만든 곳은 바로 그 함수입니다. 인터넷을 끊어도 이 404를 관찰할 수 있습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
+<span class="tok-keyword">if</span> find_spec(<span class="tok-string">&quot;httpx&quot;</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
+    <span class="tok-keyword">import</span> httpx
+    <span class="tok-keyword">def</span> missing(request):
+        <span class="tok-keyword">return</span> httpx.Response(<span class="tok-number">404</span>, json={<span class="tok-string">&quot;detail&quot;</span>: <span class="tok-string">&quot;할 일을 찾을 수 없습니다.&quot;</span>})
+    <span class="tok-keyword">with</span> httpx.Client(transport=httpx.MockTransport(missing), base_url=<span class="tok-string">&quot;https://example.invalid&quot;</span>) <span class="tok-keyword">as</span> client:
+        response = client.get(path)
+        <span class="tok-keyword">try</span>:
+            response.raise_for_status()
+        <span class="tok-keyword">except</span> httpx.HTTPStatusError <span class="tok-keyword">as</span> error:
+            print(error.response.status_code)
+<span class="tok-keyword">else</span>:
+    print(<span class="tok-string">&quot;HTTPX가 설치된 커널에서 404 응답 실습을 실행하세요.&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">404</pre></div>
+<div class="cell-after"><p>HTTPX를 사용한 출력은 404입니다. 연결 실패 예외와 달리 error.response에서 서버의 상태 값을 읽습니다. 외부 서버의 가동 여부는 이 모의 요청으로 알 수 없습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-validate" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>문자열 false를 완료로 잘못 표시하지 않기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘완료 입력’가 가운데 ‘타입 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>문자열로 받은 false를 불리언 값과 구별합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>JSON의 false는 파이썬의 False가 되지만 따옴표가 있는 &quot;false&quot;는 비어 있지 않은 문자열입니다. 자료형을 먼저 검사하면 잘못된 완료 표시를 막을 수 있습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 완료 값 검증하기</h3>
+<div class="cell-before"><p>잘못 들어온 문자열을 bool()로 바꾸지 말고 완료 값이 실제 bool인지 확인하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-7">completed = <span class="tok-string">&quot;false&quot;</span>
+<span class="tok-comment"># completed의 자료형을 확인하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-8">completed = <span class="tok-string">&quot;false&quot;</span>
+print(type(completed) <span class="tok-keyword">is</span> bool)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="cell-after"><p>False가 나옵니다. 응답 형식 오류로 기록할 입력입니다. bool(completed)를 쓰면 내용과 관계없이 비어 있지 않은 문자열이어서 True가 됩니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>주소를 잘못 썼을 때, 기다리는 동안 연결이 끊겼을 때, JSON의 칸이 잘못됐을 때를 차례로 떠올려 보세요. 같은 ‘조회 실패’ 화면에서도 기록할 정보와 다음에 확인할 곳이 달라집니다.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="http"></span><details class="reading-topic" id="reading-http"><summary>요청한 자원과 받은 응답 구분하기</summary><div class="prose"><p>HTTP 요청은 서버에 어떤 자원을 어떻게 다룰지 전달하는 메시지입니다. URL은 주소, GET은 조회 방법입니다. 서버는 상태 코드·헤더·본문을 응답합니다. JSON은 응답 본문에 담길 수 있는 데이터 형식이며 HTTP 자체와 같은 뜻은 아닙니다.</p>
+<p>이 장은 인증키가 필요 없는 공개 연습용 할 일 API를 사용합니다. 외부 호출은 조회(GET) 한 건으로 제한합니다. 같은 URL이더라도 서버나 네트워크 상태에 따라 결과가 달라지므로 함수와 실패 처리를 따로 만듭니다. requests도 많이 쓰이지만 이번 실습은 HTTPX 하나로 통일하고 비동기 호출은 다루지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>URL·응답 구성</caption><thead><tr><th scope="col">부분</th><th scope="col">예</th><th scope="col">역할</th></tr>
+</thead><tbody><tr><td>주소</td><td>https://jsonplaceholder.typicode.com</td><td>연결할 서비스</td></tr>
+<tr><td>경로</td><td>/todos/1</td><td>조회할 자원</td></tr>
+<tr><td>쿼리</td><td>?userId=1</td><td>조회 조건의 예</td></tr>
+<tr><td>상태 코드</td><td>200 / 404</td><td>처리 결과의 종류</td></tr>
+<tr><td>헤더</td><td>Content-Type: application/json</td><td>본문 형식 등의 정보</td></tr>
+<tr><td>본문</td><td>id·title·completed</td><td>실제 데이터</td></tr>
+</tbody></table></div>
+<div class="table-scroll" tabindex="0"><table><caption>이 장에서 구분할 상태</caption><thead><tr><th scope="col">범위·예</th><th scope="col">뜻</th><th scope="col">대응 예</th></tr>
+</thead><tbody><tr><td>2xx / 200</td><td>서버가 성공으로 응답</td><td>본문 형식도 추가 확인</td></tr>
+<tr><td>400</td><td>잘못된 요청</td><td>요청 값·문서 확인</td></tr>
+<tr><td>401 / 403</td><td>인증 필요 / 접근 거부</td><td>권한·인증 설정 확인</td></tr>
+<tr><td>404</td><td>해당 자원 없음</td><td>경로·식별자 확인</td></tr>
+<tr><td>429</td><td>요청 제한</td><td>즉시 반복하지 않고 정책 확인</td></tr>
+<tr><td>5xx</td><td>서버 측 실패</td><td>기록하고 재시도 정책 확인</td></tr>
+</tbody></table></div>
+<figure class="flow" data-flow id="flow-9"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>조회에서 사용까지</h3>
+<p>200만 확인하고 곧바로 화면에 쓰지 않습니다.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>404, HTML 본문, 잘못된 completed 값이 각각 어디에서 멈추는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>HTTP 성공, JSON 해석, 필드 검증은 각각 확인해야 합니다. 한 단계의 성공이 다음 단계까지 보장하지 않습니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>요청</span></li>
+<li><span class="flow-index">02</span><span>상태</span></li>
+<li><span class="flow-index">03</span><span>변환</span></li>
+<li><span class="flow-index">04</span><span>검증</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-9-step-0"><img class="flow-proof" loading="lazy" alt="GET /todos/1" src="../assets/media/svg-74fe16d8b27193.svg"><span class="eyebrow">STEP 01 · 클라이언트</span><h4>GET /todos/1</h4>
+<p>타임아웃을 설정하고 요청합니다.</p><pre>요청할 id = 1</pre></article>
+<article class="flow-panel" id="flow-9-step-1"><img class="flow-proof" loading="lazy" alt="성공 코드 검사" src="../assets/media/svg-b43f9cdeeefa5e.svg"><span class="eyebrow">STEP 02 · HTTPX</span><h4>성공 코드 검사</h4>
+<p>raise_for_status()로 2xx가 아닌 응답을 구분합니다.</p><pre>200 → 본문 읽기
+404 → 상태 검사에서 중단 (셀 05)</pre></article>
+<article class="flow-panel" id="flow-9-step-2"><img class="flow-proof" loading="lazy" alt="본문을 Python 값으로" src="../assets/media/svg-8c59e193d04485.svg"><span class="eyebrow">STEP 03 · JSON</span><h4>본문을 Python 값으로</h4>
+<p>JSON 파싱이 실패할 수도 있습니다.</p><pre>JSON → Python 값
+HTML → JSON 변환에서 중단 (셀 04)</pre></article>
+<article class="flow-panel" id="flow-9-step-3"><img class="flow-proof" loading="lazy" alt="필요한 키·타입 검사" src="../assets/media/svg-6694a0d43c7107.svg"><span class="eyebrow">STEP 04 · 우리 함수</span><h4>필요한 키·타입 검사</h4>
+<p>id·title·completed 계약을 확인한 뒤 사용합니다.</p><pre>title = &quot;HTTP 연습&quot;</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</details>
+<span id="response"></span><details class="reading-topic" id="reading-response"><summary>모의 응답으로 HTTPX 사용법 익히기</summary><div class="prose"><p>httpx.Response는 응답을 나타내는 객체입니다. 먼저 응답 객체를 직접 만들어 상태와 JSON을 읽는 동작을 확인합니다. 이 예제는 네트워크에 접속하지 않습니다. example.test는 모의 주소입니다.</p>
+<p>response.json()은 JSON을 Python 값으로 바꾸지만 필요한 키나 값의 의미를 검증하지는 않습니다. raise_for_status()는 2xx가 아닌 상태에서 HTTPStatusError를 발생시킵니다. 상태가 성공이어도 본문이 올바른지는 별도 확인해야 합니다.</p>
+</div>
+</details>
+<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>JSON의 모양과 값 검증하기</summary><div class="prose"><p>외부에서 받은 값은 우리 코드의 타입 힌트대로 온다고 가정하지 않습니다. 이 함수는 JSON 객체(dict), 양의 정수 id, 비어 있지 않은 문자열 title, bool completed를 요구합니다. 필요한 키가 없거나 종류가 다르면 ValueError로 거부합니다.</p>
+<p>isinstance(값, 종류)는 해당 종류인지 검사합니다. bool은 Python에서 int의 하위 종류이므로 id에 True가 들어오는 것을 막으려면 type(todo_id) is int처럼 정확한 종류를 확인할 수 있습니다. 여기서는 숫자와 bool을 구분하는 과제 규칙에 사용합니다.</p>
+<p>문자열 &quot;false&quot;를 bool(...)로 바꾸면 비어 있지 않아 True가 됩니다. completed를 임의 변환하지 말고 JSON의 true/false가 Python bool로 읽혔는지 확인합니다.</p>
+</div>
+</details>
+<span id="client"></span><details class="reading-topic" id="reading-client"><summary>외부 호출과 실패 처리를 함수로 묶기</summary><div class="prose"><p>fetch_todo는 HTTPX Client를 인자로 받습니다. 호출자는 실제 통신용 또는 모의 통신용 Client를 전달할 수 있고 함수의 검증 로직은 유지됩니다. 이것이 3장에서 분리한 외부 호출 경계입니다.</p>
+<p>except 순서는 더 구체적인 타임아웃을 먼저 처리하도록 둡니다. RuntimeError는 호출자가 구분해 기록할 실패를 뜻합니다. raise ... from exc는 원래 예외를 연결해 원인 추적이 가능하게 합니다. 지금은 사용자에게 메시지를 보여 주고 종료하며 자동 재시도는 넣지 않습니다.</p>
+<p>요청 id와 응답 id가 같은지도 확인합니다. 서버가 형식은 맞지만 다른 항목을 반환했다면 원하는 결과를 얻었다고 볼 수 없습니다.</p>
+</div>
+</details>
+<span id="mock"></span><details class="reading-topic" id="reading-mock"><summary>모의 응답으로 여섯 경로 반복 확인하기</summary><div class="prose"><p>MockTransport는 실제 소켓 통신 대신 handler 함수가 만든 응답을 돌려줍니다. 외부 인터넷이 끊겨도 같은 입력을 반복할 수 있어 실패 처리 학습에 사용합니다. 제공 handler의 경로별 응답을 읽고 바꿔 보는 것이 기본 활동입니다.</p>
+<p>모의 타임아웃은 예외를 즉시 발생시킨 것입니다. 실제 서버를 기다려 5초가 지났다는 측정 결과가 아닙니다. 이 검사만으로 DNS·TLS·프록시·실제 서버 접속이 된다고 판단하지 않습니다.</p>
+</div>
+</details>
+<span id="live"></span><details class="reading-topic" id="reading-live"><summary>공개 API 한 건 호출하기</summary><div class="prose"><p>timeout=5.0은 연결·읽기 등 네트워크 단계의 대기 제한에 사용됩니다. 전체 프로그램이 반드시 5초 안에 끝난다는 보장은 아닙니다. 무제한 대기를 피하려는 설정이며 상세 시간 측정은 별도로 해야 합니다.</p>
+</div>
+</details>
+<span id="verify"></span><details class="reading-topic" id="reading-verify"><summary>정상·실패 검사를 자동으로 비교하기</summary><div class="prose"><p>expected.items()는 딕셔너리의 키와 값을 쌍으로 순회합니다. 성공 케이스 하나와 실패 메시지 다섯 개를 확인합니다. 이 장에서는 assert로 먼저 비교하고, 7장에서는 같은 원리를 pytest의 테스트 함수로 묶습니다.</p>
+</div>
+</details>
+<span id="challenge"></span><details class="reading-topic" id="reading-challenge"><summary>완성 과제와 운영 기록</summary><div class="table-scroll" tabindex="0"><table><caption>실패 기록에 남길 내용</caption><thead><tr><th scope="col">항목</th><th scope="col">예</th></tr>
+</thead><tbody><tr><td>실행 종류</td><td>모의 / 실제</td></tr>
+<tr><td>요청</td><td>GET /todos/1, 공개 연습 데이터</td></tr>
+<tr><td>결과</td><td>성공 / 상태 코드 / 형식 오류 / 연결 실패</td></tr>
+<tr><td>확인 범위</td><td>JSON 검증까지 / 외부 연결 미확인</td></tr>
+<tr><td>다음 행동</td><td>입력 수정·네트워크 확인·수업용 모의 전환</td></tr>
+</tbody></table></div>
+</details>
+<details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://www.python-httpx.org/quickstart/" target="_blank" rel="noopener noreferrer">HTTPX 빠른 시작 ↗</a><span></span></li>
+<li><a href="https://www.python-httpx.org/advanced/timeouts/" target="_blank" rel="noopener noreferrer">HTTPX 타임아웃 ↗</a><span></span></li>
+<li><a href="https://www.python-httpx.org/advanced/transports/" target="_blank" rel="noopener noreferrer">HTTPX 모의 전송 ↗</a><span></span></li>
+<li><a href="https://jsonplaceholder.typicode.com/" target="_blank" rel="noopener noreferrer">JSONPlaceholder ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

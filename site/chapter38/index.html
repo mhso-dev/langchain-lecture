@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Reranking·MultiQuery · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 038</p>
+<span class="sidebar-title">Reranking·MultiQuery</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-reorder"><span>02</span>후보 안에 답이 있을 때 순서 고치기</a><a href="#nb-variant"><span>03</span>질문 표현을 늘려 검색 후보 모으기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 038</span><span class="template-badge">학생용 교재</span></div>
+<h1>Reranking·MultiQuery</h1>
+<p class="hero-description">대출 기간을 물었는데 후보 목록 맨 앞에 마침표만 남은 청크가 있습니다. 답을 담은 청크가 후보 안에는 있는지 먼저 확인하세요. 후보 안에서 순서를 고치는 일과 질문 표현을 늘려 다시 찾는 일은 서로 다른 문제를 풉니다.</p>
+<div class="hero-meta"><span>Python·RAG 기초 이후</span><span>8H · 전반 4H / 후반 4H</span><span>23일 R1 · 36일 평가 · 37일 단일 변수 실험</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter38.ipynb" download="chapter38.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>38장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-reorder" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>후보 안에 답이 있을 때 순서 고치기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>마침표 조각과 14일이 든 조각을 끝까지 따라가세요. 새 문서가 들어오는지, 두 문서의 자리만 바뀌는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>같은 두 조각 중 14일을 담은 문서가 1위가 됩니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>37장의 16글자 청크 중 library-1:0에는 14일이 있고 library-1:1에는 마침표만 있습니다. 순위 차이를 눈으로 보기 위해 이 두 입력의 순서를 뒤집어 둡니다. 여기서 쓰는 점수는 수업용 단어 일치이며 학습된 재순위 모델의 결과와 구분합니다.</p>
+</figcaption>
+</figure>
+<details><summary style="padding:16px;cursor:pointer;font-weight:700">직접 실험하기 · 3D 시뮬레이션</summary><iframe loading="lazy" title="조작형 개념 실험" style="width:100%;height:560px;border:0" src="simulation.html"></iframe></details>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 재순위 전 첫 청크 확인하기</h3>
+<div class="cell-before"><p>후보 두 건을 그대로 받아 첫 번째 청크의 본문을 읽습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">candidates = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1:1&#x27;</span>, <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;.&#x27;</span>, <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>, <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1:0&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>}]
+print(candidates[<span class="tok-number">0</span>][<span class="tok-string">&#x27;id&#x27;</span>], repr(candidates[<span class="tok-number">0</span>][<span class="tok-string">&#x27;text&#x27;</span>]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1:1 &#x27;.&#x27;</pre></div>
+<div class="cell-after"><p>마침표만 있는 library-1:1이 보입니다. 원문은 맞지만 이 조각만 받은 답변 함수에는 기간을 확인할 숫자가 없습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 대출 낱말이 들어 있는 청크 먼저 놓기</h3>
+<div class="cell-before"><p>같은 후보 안에서 ‘대출’이 있는지 채점해 가장 앞에 놓습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">ranked = sorted(candidates, key=<span class="tok-keyword">lambda</span> doc: <span class="tok-string">&#x27;대출&#x27;</span> <span class="tok-keyword">in</span> doc[<span class="tok-string">&#x27;text&#x27;</span>], reverse=<span class="tok-keyword">True</span>)
+print(ranked[<span class="tok-number">0</span>][<span class="tok-string">&#x27;id&#x27;</span>], ranked[<span class="tok-number">0</span>][<span class="tok-string">&#x27;text&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1:0 도서 대출 기간은 14일입니다</pre></div>
+<div class="cell-after"><p>library-1:0이 첫째가 되고 14일이 보입니다. 후보에 이 청크가 없었다면 재정렬만으로 새 문장을 가져올 수는 없습니다.</p>
+</div>
+</article>
+<figure class="flow" data-flow id="flow-3"><figcaption><span class="eyebrow">단계별 그림</span><h3>같은 후보 두 건에서 1위가 바뀌는 과정</h3>
+<p>셀 01에서는 순위가 뒤집힌 입력에서 출발합니다. 같은 두 후보의 순서만 바꿉니다.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>두 후보의 ID가 바뀌는지, 후보의 순위만 바뀌는지 확인하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>재정렬은 가져온 후보 안에서 답을 담은 조각을 앞세웁니다. 후보 밖의 문서는 추가하지 않습니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>처음 순위</span></li>
+<li><span class="flow-index">02</span><span>비교 기준</span></li>
+<li><span class="flow-index">03</span><span>바뀐 순위</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-3-step-0"><img class="flow-proof" loading="lazy" alt="첫 후보에는 마침표만 있습니다." src="../assets/media/svg-7cc72ed08d3b66.svg"><span class="eyebrow">STEP 01 · 검색 결과</span><h4>첫 후보에는 마침표만 있습니다.</h4>
+<p>대출 기간을 담은 청크는 이미 둘째 자리에 있습니다.</p><pre>1. library-1:1  .
+2. library-1:0  도서 대출 기간은 14일입니다</pre></article>
+<article class="flow-panel" id="flow-3-step-1"><img class="flow-proof" loading="lazy" alt="본문에 ‘대출’이 있는지 봅니다." src="../assets/media/svg-89b3304da7f38a.svg"><span class="eyebrow">STEP 02 · 수업용 규칙</span><h4>본문에 ‘대출’이 있는지 봅니다.</h4>
+<p>첫 청크의 비교값은 False, 둘째 청크는 True입니다. 노트북의 정렬 규칙은 True를 앞으로 보냅니다.</p><pre>library-1:1  False
+library-1:0  True</pre></article>
+<article class="flow-panel" id="flow-3-step-2"><img class="flow-proof" loading="lazy" alt="같은 두 후보의 순서가 달라집니다." src="../assets/media/svg-3d43f26bc3fd96.svg"><span class="eyebrow">STEP 03 · 정렬 결과</span><h4>같은 두 후보의 순서가 달라집니다.</h4>
+<p>맨 앞에서 본문을 하나만 읽어도 이제 14일이라는 내용을 확인할 수 있습니다.</p><pre>1. library-1:0  도서 대출 기간은 14일입니다
+2. library-1:1  .</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 3</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</section>
+<section id="nb-variant" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>질문 표현을 늘려 검색 후보 모으기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘원래 질문’와 ‘대출 기간’가 오른쪽의 ‘검색 후보 합집합’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>다른 검색문에서 같은 조각을 찾으면 ID로 한 번만 남깁니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>‘책을 빌릴 수 있는 기간은?’을 세 낱말 벡터로 바꾸면 대출 항목이 0입니다. 이번에는 수업용 사전에 정한 표현 ‘대출 기간’을 더해 검색합니다. 원래 질문도 남겨 두고, 공백만 다른 표현은 한 번만 검색합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 중복 검색문 제거하기</h3>
+<div class="cell-before"><p>원래 질문과 확장문을 순서대로 읽어 공백을 정리하고 중복 없이 남기세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">queries = [<span class="tok-string">&#x27;책을 빌릴 수 있는 기간은?&#x27;</span>, <span class="tok-string">&#x27;대출 기간&#x27;</span>, <span class="tok-string">&#x27;대출   기간&#x27;</span>]
+<span class="tok-comment"># 첫 등장 순서를 지키며 중복을 제거하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">queries = [<span class="tok-string">&#x27;책을 빌릴 수 있는 기간은?&#x27;</span>, <span class="tok-string">&#x27;대출 기간&#x27;</span>, <span class="tok-string">&#x27;대출   기간&#x27;</span>]
+unique = []
+<span class="tok-keyword">for</span> query <span class="tok-keyword">in</span> queries:
+    clean = <span class="tok-string">&#x27; &#x27;</span>.join(query.split())
+    <span class="tok-keyword">if</span> clean <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> unique:
+        unique.append(clean)
+print(unique)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;책을 빌릴 수 있는 기간은?&#x27;, &#x27;대출 기간&#x27;]</pre></div>
+<div class="cell-after"><p>두 검색문이 남습니다. 검색문 중복을 줄였어도 양쪽 검색 결과에 같은 청크가 나올 수 있습니다. 결과를 합칠 때는 청크 ID 기준으로 한 번 더 확인합니다.</p>
+</div>
+</details>
+</article>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 같은 청크를 찾은 두 검색의 중복 제거</h3>
+<div class="cell-before"><p>같은 고정 인덱스에서 검색문별 결과를 받아 첫 등장 순서대로 합칩니다. 이 예의 검색은 ‘대출’ 포함 여부로 찾는 작은 로컬 검색입니다.</p>
+<p>과제 03에서는 ‘책을 빌릴 수 있는 기간은?’을 출발점으로 표현을 늘렸습니다. 이번 셀은 두 표현 모두 ‘대출’을 포함하는 별도 예입니다. 여기서 관찰할 것은 새 문서 발견이 아니라 두 검색이 돌려준 같은 ID를 한 번만 남기는 과정입니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6">index = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1:0&#x27;</span>,
+  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다&#x27;</span>,
+  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
+  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1:1&#x27;</span>, <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;.&#x27;</span>, <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>, <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>}]
+search_queries = [<span class="tok-string">&#x27;대출 기간은 며칠인가요?&#x27;</span>, <span class="tok-string">&#x27;대출 기간&#x27;</span>]
+
+<span class="tok-keyword">def</span> find_chunks(query):
+    <span class="tok-keyword">return</span> [row[<span class="tok-string">&#x27;id&#x27;</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> index <span class="tok-keyword">if</span> <span class="tok-string">&#x27;대출&#x27;</span> <span class="tok-keyword">in</span> query <span class="tok-keyword">and</span> <span class="tok-string">&#x27;대출&#x27;</span> <span class="tok-keyword">in</span> row[<span class="tok-string">&#x27;text&#x27;</span>]]
+
+batches = [find_chunks(query) <span class="tok-keyword">for</span> query <span class="tok-keyword">in</span> search_queries]
+merged = list(dict.fromkeys(chunk <span class="tok-keyword">for</span> batch <span class="tok-keyword">in</span> batches <span class="tok-keyword">for</span> chunk <span class="tok-keyword">in</span> batch))
+print(batches)
+print(merged)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[[&#x27;library-1:0&#x27;], [&#x27;library-1:0&#x27;]]
+[&#x27;library-1:0&#x27;]</pre></div>
+<div class="cell-after"><p>질문 표현 두 개가 같은 library-1:0을 찾았습니다. 검색은 두 번 했지만 답의 근거에는 청크 하나만 넘기면 됩니다. 원래 후보에 없던 청크가 추가되려면 확장한 검색문에서 실제로 다른 결과를 얻어야 합니다.</p>
+</div>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>키워드 재순위가 성공한 위 사례는 의도적으로 순서를 뒤집은 연습입니다. 실제 채택 여부는 다음 장의 같은 평가 질문에서 나온 결과와 추가 작업 횟수로 판단하세요.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="candidates"></span><details class="reading-topic" id="reading-candidates"><summary>후보 수와 최종 k는 어디에서 쓰일까요?</summary><div class="prose"><p>후보는 첫 검색이 돌려준 검토 대상입니다. candidate_k=2이면 질의 하나에서 최대 두 청크를 받습니다. final_k=1이면 그중 한 청크만 A1으로 넘깁니다. 후보 상한을 늘리면 점수 계산에 쓸 자료가 늘고, 최종 k를 늘리면 답변 생성기에 전달할 문맥이 늘어납니다. 두 값의 역할이 다릅니다.</p>
+<p>오늘의 기준선도 두 후보를 받은 뒤 첫 문서 한 개를 사용합니다. 같은 정렬의 앞부분이므로 37일 k=1 결과와 같습니다. 재순위만 비교하려고 후보 수를 모든 방법에서 고정했으며 실제 결과도 대조했습니다. 후보 수와 재순위 방법을 동시에 바꾸지 않습니다.</p>
+</div>
+<div class="prose"><p>기본 검색에서 14일 청크는 처음부터 1위입니다. 셀 01은 순위 변화를 보려고 후보 순서만 뒤집은 별도 입력입니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>대출 질문의 예</caption><thead><tr><th scope="col">단계</th><th scope="col">내용</th><th scope="col">관찰</th></tr>
+</thead><tbody><tr><td>첫 검색 후보</td><td>library-1:0, library-1:1</td><td>첫 청크는 대출 14일, 둘째 청크는 마침표</td></tr>
+<tr><td>기준선 최종 1개</td><td>library-1:0</td><td>현재는 이미 필요한 청크가 앞에 있음</td></tr>
+<tr><td>규칙 재순위 후 최종 1개</td><td>library-1:0</td><td>이 질문에서는 순위와 답변이 바뀌지 않음</td></tr>
+</tbody></table></div>
+</details>
+<span id="rerank-demo"></span><details class="reading-topic" id="reading-rerank-demo"><summary>정답 문서가 후보에 없으면 재정렬로 찾을 수 있을까요?</summary><div class="prose"><p>다음은 원리를 보기 위해 후보 순서만 일부러 바꾼 진단입니다. 기본 Q1 비교 결과나 일반 검색 품질 점수에 섞지 않습니다. 휴관 청크가 앞에 있고 대출 청크가 뒤에 있으면 대출 키워드 규칙이 순서를 바꿉니다. 대출 청크를 목록에서 빼면 같은 규칙으로 복구할 수 없습니다.</p>
+</div>
+</details>
+<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>같은 조건에서 검색 개선을 비교하기</summary><div class="prose"><p>대출 기간을 묻는 질문에 필요한 근거가 두 번째 후보에 있다면 순서를 바꿀 수 있습니다. 후보 목록에 대출 안내가 아예 없다면 순서만 바꿔서는 찾을 수 없습니다. 오늘은 이 두 상황을 나누어 Reranking과 MultiQuery의 역할을 확인합니다.</p>
+</div>
+</details>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>36–37일 평가 파일에서 조건을 먼저 찾기</summary><div class="prose"><p>baseline.csv에는 질문 문장이나 전체 답변이 없을 수 있습니다. questions.jsonl의 question_id로 질문을 찾고, baseline.json에서 실제 문서와 A1 응답을 읽습니다. 질문 ID만 같다고 다른 문서·다른 설정의 점수를 바로 빼면 변경 원인을 알 수 없습니다.</p>
+<p>37일에는 청크 크기와 중첩, k를 이웃한 비교쌍에서 하나씩 바꿨습니다. 오늘은 그중 size16/overlap0/k1을 출발점으로 고릅니다. 이 선택 자체가 최적 설정이라는 뜻은 아닙니다. 본문이 끊기는 청크도 있으므로 원문과 답변을 함께 읽어야 합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>고정 입력</caption><thead><tr><th scope="col">대상</th><th scope="col">오늘의 값</th><th scope="col">확인 위치</th></tr>
+</thead><tbody><tr><td>원문</td><td>가상 도서관 안내 3개</td><td>data/source_documents.json</td></tr>
+<tr><td>선택 인덱스</td><td>size16 / overlap0, 청크 5개</td><td>input-index/</td></tr>
+<tr><td>질문</td><td>개발 3문항, 원문 그대로</td><td>input-evaluation/questions.jsonl</td></tr>
+<tr><td>후보 상한 / 최종 k</td><td>2 / 1, 세 방법 공통</td><td>optimization-input.json</td></tr>
+<tr><td>입력 버전</td><td>35–37 인계 파일 SHA 유지</td><td>input-consumer-contract.json</td></tr>
+</tbody></table></div>
+</details>
+<span id="run"></span><details class="reading-topic" id="reading-run"><summary>전체 예제를 실행하고 기준선 일치 확인하기</summary><div class="prose"><p>examples 폴더로 이동해 명령을 실행합니다. 프로그램은 37일 인덱스와 입력 파일 해시를 검사한 뒤 개발 질문만 평가합니다. 파일이 달라졌다는 오류가 나면 해시 값을 임의로 고치지 말고 수정한 파일과 버전을 먼저 확인합니다.</p>
+</div>
+</details>
+<span id="rerank"></span><details class="reading-topic" id="reading-rerank"><summary>Reranking: 후보 안에서 다시 순서를 정하기</summary><div class="prose"><p>재순위는 질문과 각 후보가 얼마나 관련되는지 추가로 비교한 뒤 순서를 정합니다. 학습된 CrossEncoder는 질문과 문서를 함께 입력받아 점수를 계산하는 방식으로 사용할 수 있습니다. 점수의 척도와 비용은 모델마다 다르므로 오늘의 정수 점수와 같은 값으로 해석하지 않습니다.</p>
+<p>이 예제의 rule_rerank는 질문과 청크에 함께 있는 대출·휴관·반납 키워드 수를 셉니다. 학습된 모델도, 일반적인 의미 유사도도 아닙니다. 같은 점수에서는 이전 순서를 유지합니다. 간단한 규칙 덕분에 어떤 후보가 왜 앞에 왔는지 손으로 재계산할 수 있습니다.</p>
+</div>
+<div class="prose"><p>검증할 원본도 같은 객체를 가리키면 정렬 함수의 제자리 변경을 놓칠 수 있습니다. checked_rerank는 deepcopy로 비교용 원본과 작업 사본을 따로 만들고 작업 사본만 콜백에 전달합니다. deepcopy는 이 파일 맨 위에서 copy 모듈로부터 가져옵니다. 제자리 reverse처럼 순서만 바꾸는 함수도 사용할 수 있고 호출자 입력은 보존됩니다.</p>
+</div>
+</details>
+<span id="multiquery"></span><details class="reading-topic" id="reading-multiquery"><summary>MultiQuery: 질문 표현을 여러 개로 만들어 검색하기</summary><div class="prose"><p>같은 의도를 다른 표현으로 말하면 첫 검색에서 놓친 근거가 후보에 들어올 수 있습니다. MultiQuery는 원질의에서 여러 검색 질의를 만들고 각각 검색한 결과를 모읍니다. 실제 LLM을 쓰는 구성에서는 질의 생성 자체에도 시간·토큰·실패 가능성이 있습니다.</p>
+<p>오늘의 fixed_expansion은 사전에 적은 짧은 문구를 반환합니다. 대출 질문에는 대출 기간을 더하고, 휴관 질문에는 휴관 요일을 더합니다. 원질의도 보존합니다. 생성된 질의가 항상 원래 의도를 유지한다고 가정하지 말고 사람이 읽어 확인해야 합니다.</p>
+</div>
+<figure class="flow" data-flow id="flow-7"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>확장부터 최종 문서까지</h3>
+<p>과제 03에서 질문 문구를 정리한 뒤, 셀 04에서는 새 질문으로 같은 청크가 두 번 나오는 경우를 살핍니다.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>두 검색문이 같은 청크 ID를 반환한 뒤 최종 목록에서 몇 번 남는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>질문 표현을 늘리면 검색 기회가 늘고, 같은 근거는 청크 ID로 합칩니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>1</span></li>
+<li><span class="flow-index">02</span><span>2</span></li>
+<li><span class="flow-index">03</span><span>3</span></li>
+<li><span class="flow-index">04</span><span>4</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-7-step-0"><img class="flow-proof" loading="lazy" alt="원질의와 확장 목록" src="../assets/media/svg-70ecbdf3eaadf6.svg"><span class="eyebrow">STEP 01 · 질의</span><h4>원질의와 확장 목록</h4>
+<p>고정 규칙이 문구를 반환합니다. 실제 모델 생성이 아닙니다.</p><pre>과제 03 · 책을 빌릴 수 있는 기간은?
+확장: 대출 기간 / 대출   기간</pre></article>
+<article class="flow-panel" id="flow-7-step-1"><img class="flow-proof" loading="lazy" alt="공백 정리와 중복 제거" src="../assets/media/svg-75406a29272c19.svg"><span class="eyebrow">STEP 02 · 질의</span><h4>공백 정리와 중복 제거</h4>
+<p>같은 문구는 한 번만 검색합니다. 총 질의 상한은 3개입니다.</p><pre>책을 빌릴 수 있는 기간은?
+대출 기간</pre></article>
+<article class="flow-panel" id="flow-7-step-2"><img class="flow-proof" loading="lazy" alt="같은 인덱스에 각각 질의" src="../assets/media/svg-d26ab167438d7c.svg"><span class="eyebrow">STEP 03 · 검색</span><h4>같은 인덱스에 각각 질의</h4>
+<p>각 검색의 후보 상한은 2개입니다. 실패 시 부분 결과를 성공으로 넘기지 않습니다.</p><pre>셀 04 · 대출 기간은 며칠인가요?
+두 번째 검색어: 대출 기간</pre></article>
+<article class="flow-panel" id="flow-7-step-3"><img class="flow-proof" loading="lazy" alt="청크 ID 중복 제거와 절단" src="../assets/media/svg-8efe213a1cbd77.svg"><span class="eyebrow">STEP 04 · 문서</span><h4>청크 ID 중복 제거와 절단</h4>
+<p>처음 나온 순서를 보존해 합친 뒤 최종 1개를 전달합니다.</p><pre>[library-1:0] + [library-1:0]
+중복 제거 → [library-1:0]</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</details>
+<span id="dedup"></span><details class="reading-topic" id="reading-dedup"><summary>질의 중복과 청크 중복을 따로 제거하기</summary><div class="prose"><p>대출 기간과 대출   기간은 이 실습의 공백 정리 규칙을 거치면 같은 문구입니다. 두 번 검색해도 새 근거가 생기는 것은 아니므로 중복 호출을 줄입니다. 단어 순서가 다른 표현을 자동으로 같은 뜻이라고 판정하지는 않습니다.</p>
+<p>검색 결과는 문장 내용이 같다는 이유로 합치지 않습니다. 서로 다른 원문 페이지가 같은 문장을 포함할 수 있기 때문입니다. 청크 ID를 기준으로 합치되 같은 ID의 본문·출처·페이지가 다르면 자료 충돌로 처리합니다. 원문 ID가 같은 서로 다른 청크를 하나로 합치면 필요한 문장을 잃을 수 있습니다.</p>
+</div>
+</details>
+<span id="union"></span><details class="reading-topic" id="reading-union"><summary>후보가 늘어도 최종 답변은 같을 수 있다</summary><div class="prose"><p>여러 질의가 같은 문서를 찾으면 합집합의 크기는 검색 횟수만큼 늘지 않습니다. 새 문서가 뒤에 추가되더라도 최종 k=1에서 잘리면 A1이 읽는 근거는 바뀌지 않습니다. 후보 확대와 최종 선택은 따로 관찰해야 합니다.</p>
+<p>이 실습은 원질의에서 먼저 나온 청크의 순서를 유지하는 단순 병합을 씁니다. 서로 다른 질의의 점수를 바로 더하지 않고, 재순위를 함께 적용하지도 않습니다. 두 기술을 묶으면 어떤 변경이 결과를 바꿨는지 오늘의 비교로는 설명하기 어렵습니다.</p>
+</div>
+</details>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>확장·검색·재순위 실패를 기록하기</summary><div class="prose"><p>확장 호출이 실패하면 검색은 아직 시작하지 않았습니다. 두 번째 검색이 실패하면 첫 번째 검색 결과가 기록에 남아 있을 수 있지만 전체 정책의 성공으로 내보내지는 않습니다. 이 예제는 해당 질문의 result를 None으로 남기고 시도 횟수를 기록합니다. 실제 서비스에서 부분 결과를 허용한다면 별도 정책과 화면 표시가 필요합니다.</p>
+<p>failure_stage는 앞선 metrics.py의 공통 분류이고 optimization_failure_stage는 확장/검색/재순위 중 어디서 실패했는지를 덧붙입니다. 같은 검색 파이프라인 한 번 안에서 여러 검색이 일어나므로 pipeline_calls와 retrieval_calls도 구분합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>오류를 읽는 순서</caption><thead><tr><th scope="col">관찰</th><th scope="col">확인</th><th scope="col">다음 행동</th></tr>
+</thead><tbody><tr><td>확장 0 / 검색 0</td><td>기법과 분기 확인</td><td>baseline이면 정상</td></tr>
+<tr><td>확장 1 / 검색 0 / 오류</td><td>확장 함수의 예외·출력형식</td><td>원질의만으로 성공 처리하지 않기</td></tr>
+<tr><td>검색 2 / 첫 batch만 존재</td><td>두 번째 검색 오류</td><td>실패 행과 시도 2 유지</td></tr>
+<tr><td>후보 ID 변경 오류</td><td>재순위 함수의 반환 목록</td><td>기존 후보의 순서만 반환</td></tr>
+</tbody></table></div>
+</details>
+<span id="metrics"></span><details class="reading-topic" id="reading-metrics"><summary>Recall·인용·내용을 나누어 보기</summary><div class="prose"><p>반환 청크 library-1:0은 source-map에서 원문 library-1로 연결됩니다. 기대 원문을 포함했는지 계산할 때는 원문 ID 집합으로 중복을 제거합니다. 같은 원문의 청크 두 개를 찾았다고 두 문서를 맞힌 것으로 세지 않습니다.</p>
+<p>주차 질문은 기대 근거가 비어 있어 Recall의 분모가 0입니다. JSON에서는 null, CSV에서는 NA와 empty_gold를 기록합니다. 이를 1점으로 바꾸지 않습니다. 검색/매핑 실패의 NA도 이유를 보존하고 답변 가능 질문 전체 분모에서 빠뜨리지 않습니다.</p>
+</div>
+</details>
+<span id="compare"></span><details class="reading-topic" id="reading-compare"><summary>기법별 효과와 추가 작업 비교하기</summary><div class="table-scroll" tabindex="0"><table><caption>개발 3문항의 로컬 실행</caption><thead><tr><th scope="col">방법</th><th scope="col">검색 시도 합</th><th scope="col">확장 호출</th><th scope="col">재순위 호출</th><th scope="col">답변 생성</th><th scope="col">기준선과 최종 답변</th></tr>
+</thead><tbody><tr><td>baseline</td><td>3</td><td>0</td><td>0</td><td>2</td><td>기준</td></tr>
+<tr><td>rerank</td><td>3</td><td>0</td><td>2</td><td>2</td><td>3문항 모두 같음</td></tr>
+<tr><td>multiquery</td><td>5</td><td>3</td><td>0</td><td>2</td><td>3문항 모두 같음</td></tr>
+</tbody></table></div>
+<div class="prose"><p>이 표의 호출은 서로 다른 작업입니다. 재순위 한 번은 여러 후보의 점수를 계산할 수 있고, 확장 한 번은 질의를 여러 개 만들 수 있습니다. 따라서 모두 더한 숫자를 토큰 수나 요금으로 읽으면 안 됩니다. 실제 모델을 연결할 때는 각 단계의 실제 호출·입력량·요금·오류를 별도로 측정합니다.</p>
+<p>현재 예제에서는 개선 기법이 최종 결과를 바꾸지 않았습니다. 새 기술이 나왔다는 이유만으로 채택할 근거는 없습니다. 다음 장에서는 이 결과에 원문/답변 대조와 회귀·실패 기록을 더해 보류 이유를 작성합니다.</p>
+</div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>39일에 넘길 원본 결과와 비교 조건</summary><div class="prose"><p>공개 확인 질문은 숨겨진 시험이 아닙니다. 오늘 기본 기법 선택에는 개발 3문항만 사용하고, 다른 질문을 보고 규칙을 바꾸었다면 질문 버전과 선택 근거를 새로 기록합니다. 다음 장에서 기준선을 유지하는 판단도 근거 있는 결정으로 다룹니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html" target="_blank" rel="noopener noreferrer">Sentence Transformers: Retrieve &amp; Re-Rank ↗</a><span></span></li>
+<li><a href="https://reference.langchain.com/python/langchain-classic/retrievers/multi_query/MultiQueryRetriever" target="_blank" rel="noopener noreferrer">LangChain: MultiQueryRetriever ↗</a><span></span></li>
+<li><a href="https://www.langchain.com/blog/query-transformations" target="_blank" rel="noopener noreferrer">LangChain: Query transformations ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>성능·호출 비용 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 110 / PROJECT QUALITY</p>
+<span class="sidebar-title">성능·호출 비용 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-measurement"><span>02</span>시간의 시작점과 끝점 정하기</a><a href="#nb-tradeoff"><span>03</span>빠른 답이 같은 답인지 살피기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 110 / PROJECT QUALITY</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>성능·호출 비용 · 방향과 예시</h1>
+<p class="hero-description">사용자가 답을 기다린 시간을 줄이고 싶습니다. 이때 로컬 함수의 처리 시간과 화면이 뜰 때까지의 시간을 섞어 재면 바꿀 곳을 잘못 고를 수 있습니다. 한 요청의 시작과 끝부터 표시해 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter110.ipynb" download="chapter110.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>110장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-measurement" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>시간의 시작점과 끝점 정하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘경과 시간’를 기준으로 양쪽의 ‘시작 시각’와 ‘종료 시각’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>같은 시작점과 끝점 사이의 경과 시간을 비교합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>측정 카드 예시　Q01 / rules-v1 / 공개 그룹 / 시작은 서비스 처리 직전 / 종료는 결과 검증과 JSON 저장이 끝난 시점 / 업무 결과 answered / 근거 RULE-A. 실제 사용자 대기는 브라우저 전송과 표시 시간까지 더 관찰해야 합니다. 아래 숫자는 단위를 연습하기 위해 만든 합성 시각입니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 합성 시각을 밀리초로 바꾸기</h3>
+<div class="cell-before"><p>두 값은 같은 시계의 나노초 눈금입니다. 날짜처럼 해석하지 말고 차이를 구해 보세요.</p>
+<p>실패 시도의 기록 예는 ‘종료 사건 timeout / 성공 여부 False / 브라우저 대기 시간 미측정’입니다. Q01의 정상 완료 기록과 구분하세요. 관찰하지 못한 시간 칸에 0을 적으면 즉시 끝났다는 뜻으로 읽힙니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">started_ns = <span class="tok-number">12_000_000</span>
+finished_ns = <span class="tok-number">15_500_000</span>
+elapsed_ms = (finished_ns - started_ns) / <span class="tok-number">1_000_000</span>
+print(elapsed_ms, <span class="tok-string">&quot;ms (합성 시각)&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3.5 ms (합성 시각)</pre></div>
+<div class="cell-after"><p>3.5ms는 이 두 고정 숫자의 차이입니다. 팀이 실제 시간을 잴 때는 같은 장비와 자료, 같은 시작·종료 위치에서 여러 번 관찰하고 실패한 시도도 남깁니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-tradeoff" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>빠른 답이 같은 답인지 살피기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘동일 질문’를 기준으로 양쪽의 ‘기준 답변’와 ‘빠른 답변’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>답의 내용이 유지됐는지 확인한 뒤 시간과 비용을 봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>비교표 한 행의 예시　대상 Q01 / 가설 “같은 공개 문서의 읽기 준비를 줄일 수 있다” / 고정 기준 본문 전원 표시등, RULE-A·2.1절·판본·허용 범위 / 바꾸려는 부분 문서 준비 횟수 / 결정 실측 전 보류. 현재 예제는 외부 모델 호출 0회입니다. 측정하지 않은 운영비와 청구 토큰을 비용 0원으로 적을 근거는 없습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 비용 칸을 채울 수 있는지 보기</h3>
+<div class="cell-before"><p>모델 호출은 없었지만 서비스의 청구 자료는 아직 받지 못했습니다. 현재 측정 범위를 한 줄로 정리하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 호출 수와 실제 운영 비용의 미확인 상태를 한 기록에 남기세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">record = {<span class="tok-string">&quot;model_calls&quot;</span>: <span class="tok-number">0</span>, <span class="tok-string">&quot;actual_operating_cost&quot;</span>: <span class="tok-keyword">None</span>, <span class="tok-string">&quot;source&quot;</span>: <span class="tok-string">&quot;로컬 규칙 실행&quot;</span>}
+print(record[<span class="tok-string">&quot;source&quot;</span>], record[<span class="tok-string">&quot;model_calls&quot;</span>], record[<span class="tok-string">&quot;actual_operating_cost&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">로컬 규칙 실행 0 None</pre></div>
+<div class="cell-after"><p>0은 관찰한 모델 호출 수입니다. None은 운영비를 측정하지 않았다는 뜻입니다. 팀에 청구서가 생기면 기간·통화·포함 항목부터 확인하세요.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>111장에는 측정 구간, 자료·질문 버전, 같은 결과를 보장하는 기준을 함께 넘기세요. 실제 HTTP 지연이나 청구서를 확보하기 전에는 운영 시간과 비용을 빈칸으로 둡니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

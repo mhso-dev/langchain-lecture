@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>문서·인수인계 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 114 / FINAL PROJECT</p>
+<span class="sidebar-title">문서·인수인계 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-readme"><span>02</span>인수자에게 전달할 README 예시</a><a href="#nb-handoff"><span>03</span>재현이 막힌 위치를 구체적으로 요청하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 114 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>문서·인수인계 · 방향과 예시</h1>
+<p class="hero-description">팀 밖의 동료가 처음 교재를 받고 “어디서 첫 질문을 실행하죠?”라고 묻습니다. 파일을 모두 나열하는 대신, 무엇을 열고 어떤 답을 보면 첫 확인이 끝나는지 적은 짧은 README를 건넵니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter114.ipynb" download="chapter114.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>114장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-readme" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>인수자에게 전달할 README 예시</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘README’에서 출발해 ‘인수자 실행’를 거친 뒤 ‘결과 확인’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>인수자가 같은 질문으로 같은 규정과 위치를 찾도록 합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>첫 실행 안내　① 지금 받은 chapter114.ipynb를 Python 커널에서 열고 위에서부터 실행하세요. “첫 질문과 기대 출처” 셀에서 장비 A 답과 RULE-A 2.1절을 확인합니다. 이 셀은 제공 자료를 읽는 오프라인 예시입니다. ② 이 장 첫 셀 아래에서 두 인수 문서를 받으세요. HANDOFF_PUBLIC.md에서 문서·모듈 판본과 전달 범위를 확인하세요. ③ API_HANDOFF.md에서 같은 입력을 실제 API로 확인할 조건을 읽으세요. 실제 서버·로그인·DB 연결 및 동료 환경에서의 재현은 별도 확인이 필요합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 질문과 기대 출처</h3>
+<div class="cell-before"><p>규정 A의 원문이 담긴 자료를 다시 읽어 인수자가 볼 첫 출력과 위치를 맞춥니다.</p>
+<p>노트북만 받은 인수자는 먼저 이 셀의 장비 A 답과 RULE-A 2.1절을 대조하세요. README의 examples/HANDOFF_PUBLIC.md와 examples/API_HANDOFF.md는 팀 저장소에서 함께 받아야 할 두 파일입니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">question = <span class="tok-string">&#x27;장비 A의 점검 전 확인 사항은?&#x27;</span>
+rule = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+print(question)
+print(rule[<span class="tok-string">&quot;text&quot;</span>])
+print(f&#x27;{rule[<span class="tok-string">&quot;id&quot;</span>]} · {rule[<span class="tok-string">&quot;source&quot;</span>]} {rule[<span class="tok-string">&quot;page&quot;</span>]}쪽 {rule[<span class="tok-string">&quot;section&quot;</span>]}절 · {rule[<span class="tok-string">&quot;revised_on&quot;</span>]}&#x27;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?
+점검 전 전원 표시등을 확인합니다.
+RULE-A · 가상 장비실 규정 A 1쪽 2.1절 · 2026-11-01</pre></div>
+<div class="cell-after"><p>질문 아래에 전원 표시등, RULE-A, 1쪽 2.1절, 2026-11-01이 보입니다. 인수자는 자기 화면에서 이 값이 다른지 보고 차이가 난 위치부터 알려 줄 수 있습니다.</p>
+</div>
+</article>
+<p><a class="lesson-file" href="downloads/HANDOFF_PUBLIC.md" download="HANDOFF_PUBLIC.md">인수 범위와 판본 확인 문서 받기</a></p>
+<p><a class="lesson-file" href="downloads/API_HANDOFF.md" download="API_HANDOFF.md">API 인수 조건 문서 받기</a></p>
+</section>
+<section id="nb-handoff" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>재현이 막힌 위치를 구체적으로 요청하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘재현 입력’를 기준으로 양쪽의 ‘실패 위치’와 ‘기대 결과’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>재현에 막힌 입력과 기대 결과를 함께 전달합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>인수 요청 예시　“Q01 원문 위치까지 확인한 뒤, 환경과 실행한 셀 제목, 직접 읽은 마지막 줄을 알려 주세요. API를 실행하지 않았다면 ‘노트북까지 확인’으로 적어 주세요.” 고정된 파일 내용의 일치와 실제 다른 사람의 재현은 다른 근거를 요구합니다. 받은 사람의 이름이나 수행 결과를 대신 채우지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 인수자에게 보낼 문항 바꾸기</h3>
+<div class="cell-before"><p>선택 시연을 장비 B로 바꾸면 인수자가 대조할 질문·답·절을 갱신해 보세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">rule_b = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 B&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+<span class="tok-comment"># 인수 메모의 질문과 기대 결과 한 줄을 작성하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">rule_b = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-B&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 B&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 고정 장치를 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 B&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.2&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+print(<span class="tok-string">&quot;장비 B의 점검 전 확인 사항은?&quot;</span>)
+print(f&#x27;{rule_b[<span class="tok-string">&quot;text&quot;</span>]} 근거 {rule_b[<span class="tok-string">&quot;id&quot;</span>]} {rule_b[<span class="tok-string">&quot;section&quot;</span>]}절&#x27;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 B의 점검 전 확인 사항은?
+점검 전 고정 장치를 확인합니다. 근거 RULE-B 2.2절</pre></div>
+<div class="cell-after"><p>고정 장치와 RULE-B 2.2절이 한 줄에 들어갑니다. 실행 화면에 그대로 보이는 값이 있으면 인수자가 문제를 설명하기 쉽습니다.</p>
+</div>
+</details>
+</article>
+<p><a class="chapter-link" href="../chapter96/index.html">96장 · 장비가 빠진 질문의 화면 예시</a></p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>발표 팀에는 처음 열 파일, 성공 예시, 남은 연결 조건을 함께 넘기세요. 작성자 혼자 새 위치에서 파일을 다시 읽은 결과와 다른 사람이 설명서만으로 수행한 기록은 별도로 남깁니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

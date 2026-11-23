@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>평가 기준선 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 090 / FINAL PROJECT</p>
+<span class="sidebar-title">평가 기준선 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-pairs"><span>02</span>답이 있는 질문과 없는 질문 만들기</a><a href="#nb-split"><span>03</span>개발 중 꺼내지 않을 확인용 질문</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 090 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>평가 기준선 · 방향과 예시</h1>
+<p class="hero-description">질문을 실행한 뒤에 정답을 맞춰 쓰면 다음 버전의 개선 여부를 판단하기 어렵습니다. 장비 A 질문 하나부터 원문과 기대 답을 미리 연결하고, 답할 수 없는 질문에도 기대 상태를 붙입니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter90.ipynb" download="chapter90.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>90장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-pairs" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>답이 있는 질문과 없는 질문 만들기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘기대 근거’를 기준으로 양쪽의 ‘Q01’와 ‘RULE-A’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>질문을 실행하기 전에 기대 답과 근거를 묶습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>개발용 Q01　질문 “장비 A의 점검 전 확인 사항은?” / 기대 상태 answered / 답에 ‘전원 표시등’ 포함 / 출처 RULE-A 2.1절. Q03　질문 “장비 A를 다음 달에 교체하기로 확정했나요?” / 기대 상태 no_evidence / 인용 없음 / 담당자에게 확인하도록 안내. “아니요”도 근거 없이 일정을 단정하므로 정답으로 삼을 수 없습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기대 근거를 원문과 대조하기</h3>
+<div class="cell-before"><p>Q01에서 기대하는 짧은 표현이 실제 규정 문장에 있는지 확인해 보세요.</p>
+<p>지금 Q01에 고정하는 것은 답안지입니다. 두 True는 기대 문구와 출처가 원문에 있다는 뜻입니다. 서비스의 실제 응답 칸은 비워 두고, 다음 장에서 첫 응답을 얻은 뒤 채우세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 19줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">case = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;Q01&#x27;</span>,
+ <span class="tok-string">&#x27;scenario_id&#x27;</span>: <span class="tok-string">&#x27;SC-01&#x27;</span>,
+ <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;장비 A의 점검 전 확인 사항은?&#x27;</span>,
+ <span class="tok-string">&#x27;trusted_fixture_group&#x27;</span>: <span class="tok-string">&#x27;public&#x27;</span>,
+ <span class="tok-string">&#x27;expected_status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
+ <span class="tok-string">&#x27;expected_source_ids&#x27;</span>: [<span class="tok-string">&#x27;RULE-A&#x27;</span>],
+ <span class="tok-string">&#x27;criterion_ids&#x27;</span>: [<span class="tok-string">&#x27;CR-01&#x27;</span>, <span class="tok-string">&#x27;CR-02&#x27;</span>],
+ <span class="tok-string">&#x27;expected_answer_facts&#x27;</span>: [<span class="tok-string">&#x27;전원 표시등&#x27;</span>]}
+doc = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+print(case[<span class="tok-string">&quot;expected_source_ids&quot;</span>] == [doc[<span class="tok-string">&quot;id&quot;</span>]])
+print(case[<span class="tok-string">&quot;expected_answer_facts&quot;</span>][<span class="tok-number">0</span>] <span class="tok-keyword">in</span> doc[<span class="tok-string">&quot;text&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True
+True</pre></div>
+<div class="cell-after"><p>두 값이 모두 True입니다. 첫째는 문서 식별자, 둘째는 필수 표현을 확인합니다. 문장 전체가 질문에 정확히 답하는지는 자동 비교 뒤에 따로 읽습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-split" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>개발 중 꺼내지 않을 확인용 질문</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘평가 질문’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘공개 개발 문항’, 아래쪽은 ‘별도 확인 문항’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>확인할 질문은 개발 때 본 질문과 분리해 둡니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>eval-v1에는 Q01~Q07 일곱 개의 공개 개발 문항이 있습니다. 아직 독립 확인용 문항은 없습니다. 확인 문항 작성 예시　“B 장비를 살펴보기 전에 어디를 확인할까요?” / 기대 상태 answered / 기대 답 “고정 장치를 확인합니다.” / 근거 RULE-B, 2쪽 2.2절. 이 예시는 교재에 이미 공개했습니다. 실제 성능을 확인할 때는 구현 담당자가 보지 않은 새 질문을 별도로 받아 잠가 두세요.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 근거가 없는 문항</h3>
+<div class="cell-before"><p>Q03의 기대 상태와 인용 목록을 출력하세요. 문서에 근거가 없을 때 상태와 인용 목록이 어떻게 짝을 이루는지 확인합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">missing_case = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;Q03&#x27;</span>,
+ <span class="tok-string">&#x27;scenario_id&#x27;</span>: <span class="tok-string">&#x27;SC-03&#x27;</span>,
+ <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;장비 A를 다음 달에 교체하기로 확정했나요?&#x27;</span>,
+ <span class="tok-string">&#x27;trusted_fixture_group&#x27;</span>: <span class="tok-string">&#x27;public&#x27;</span>,
+ <span class="tok-string">&#x27;expected_status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>,
+ <span class="tok-string">&#x27;expected_source_ids&#x27;</span>: [],
+ <span class="tok-string">&#x27;criterion_ids&#x27;</span>: [<span class="tok-string">&#x27;CR-04&#x27;</span>],
+ <span class="tok-string">&#x27;expected_answer_facts&#x27;</span>: [<span class="tok-string">&#x27;확인할 수 없&#x27;</span>, <span class="tok-string">&#x27;담당자&#x27;</span>]}
+<span class="tok-comment"># expected_status와 expected_source_ids를 표시하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">missing_case = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;Q03&#x27;</span>,
+ <span class="tok-string">&#x27;scenario_id&#x27;</span>: <span class="tok-string">&#x27;SC-03&#x27;</span>,
+ <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;장비 A를 다음 달에 교체하기로 확정했나요?&#x27;</span>,
+ <span class="tok-string">&#x27;trusted_fixture_group&#x27;</span>: <span class="tok-string">&#x27;public&#x27;</span>,
+ <span class="tok-string">&#x27;expected_status&#x27;</span>: <span class="tok-string">&#x27;no_evidence&#x27;</span>,
+ <span class="tok-string">&#x27;expected_source_ids&#x27;</span>: [],
+ <span class="tok-string">&#x27;criterion_ids&#x27;</span>: [<span class="tok-string">&#x27;CR-04&#x27;</span>],
+ <span class="tok-string">&#x27;expected_answer_facts&#x27;</span>: [<span class="tok-string">&#x27;확인할 수 없&#x27;</span>, <span class="tok-string">&#x27;담당자&#x27;</span>]}
+print(missing_case[<span class="tok-string">&quot;expected_status&quot;</span>], missing_case[<span class="tok-string">&quot;expected_source_ids&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence []</pre></div>
+<div class="cell-after"><p>no_evidence 옆에 빈 목록이 나옵니다. 출처가 없는 상태에서 RULE-A를 달면 답의 표현만 조심스럽게 써도 평가에서 실패합니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>고정한 질문과 원문 버전을 91장에 건네세요. 개발 중 여러 번 읽은 Q01~Q07은 이후에도 개발용으로 표시하고, 독립 확인용 문항은 팀원이 따로 보관합니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

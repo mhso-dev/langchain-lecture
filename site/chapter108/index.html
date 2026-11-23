@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>확인용 평가 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 108 / FINAL PROJECT</p>
+<span class="sidebar-title">확인용 평가 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-overlap"><span>02</span>ID가 달라도 같은 질문일 수 있습니다</a><a href="#nb-failure"><span>03</span>기대와 실제가 다른 위치 남기기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 108 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>확인용 평가 · 방향과 예시</h1>
+<p class="hero-description">개발자가 Q01을 보며 코드를 고친 뒤 같은 질문으로 통과했다면 회귀 확인에는 쓸 수 있습니다. 처음 보는 질문에 대한 평가에는 다른 질문이 필요합니다. 공백을 붙이거나 ID만 바꾼 복제 질문부터 가려 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter108.ipynb" download="chapter108.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>108장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-overlap" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>ID가 달라도 같은 질문일 수 있습니다</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘내용 중복’를 기준으로 양쪽의 ‘개발 질문’와 ‘확인용 질문’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>ID가 달라도 같은 질문이면 독립된 확인 문항이 아닙니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>준비 자료의 PUBLIC-DUP-01은 Q01 문장의 양 끝에 공백을 붙였습니다. 이름이 새로워도 이미 본 문장입니다. PUBLIC-PARAPHRASE-01의 “장비 A를 살펴보기 전에 볼 것은 무엇인가요?”처럼 글자만 달라진 문항은 사람도 의미 중복을 살펴야 합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공백을 제거한 중복 질문 찾기</h3>
+<div class="cell-before"><p>개발 질문과 공개 후보 하나를 문자열 수준에서 대조합니다.</p>
+<p>‘장비 A 점검 전에 볼 것은?’과 ‘장비 A는 점검 전 무엇을 확인하나요?’는 표기가 달라도 의도와 기대 근거 RULE-A가 같습니다. 확인용 세트에 넣기 전에 같은 능력을 다시 묻는 문항인지 검토하고 선택 이유를 남기세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">development = <span class="tok-string">&#x27;장비 A의 점검 전 확인 사항은?&#x27;</span>
+candidate = <span class="tok-string">&#x27;  장비 A의 점검 전 확인 사항은?  &#x27;</span>
+print(candidate.strip() == development.strip())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="cell-after"><p>True입니다. 이 후보는 독립 점수의 분모에서 제외할 수 있습니다. 문자열이 다르다는 결과만으로 의미가 새로운 질문이라고 판정할 수는 없습니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-failure" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>기대와 실제가 다른 위치 남기기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘실제 근거’를 기준으로 양쪽의 ‘기대 근거’와 ‘차이 위치’를 대조하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>기대 근거가 답 생성 단계까지 전달됐는지 살펴봅니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>실패 분석 연습용 가상 행　질문 “B 장비의 점검 전 기준은?” / 기대 고정 장치, RULE-B 2.2절 / 가정한 검색 결과 RULE-B / 가정한 화면 답 전원 표시등 / 판단 자료는 맞게 골랐고 출력 내용이 원문과 어긋남. 실제 실행에서 중간 결과가 없으면 ‘검색 오류’라고 단정하지 말고 관찰할 단계를 먼저 적습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패 근거 한 줄 쓰기</h3>
+<div class="cell-before"><p>위 가상 행의 답에서 원문 필수 표현이 빠졌는지 확인하고 어떤 후속 관찰이 필요한지 적으세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">answer = <span class="tok-string">&quot;점검 전 전원 표시등을 확인합니다.&quot;</span>
+<span class="tok-comment"># B의 필수 사실인 고정 장치가 답에 있는지 확인하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">answer = <span class="tok-string">&quot;점검 전 전원 표시등을 확인합니다.&quot;</span>
+print(<span class="tok-string">&quot;고정 장치&quot;</span> <span class="tok-keyword">in</span> answer)
+print(<span class="tok-string">&quot;조회한 원문이 답 생성 단계에도 그대로 전달됐는지 확인한다.&quot;</span>)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False
+조회한 원문이 답 생성 단계에도 그대로 전달됐는지 확인한다.</pre></div>
+<div class="cell-after"><p>False는 답에 기대 표현이 빠졌다는 뜻입니다. 어느 함수에서 바뀌었는지 찾으려면 검색 뒤에 실제로 넘긴 자료와 화면에 도착한 답을 읽어야 합니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>확인용 자료의 보관 담당자와 열어 본 시점을 기록하세요. 이 장에 보이는 질문은 모두 공개 연습 사례입니다. 실제 비공개 확인용 질문·점수는 아직 없습니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

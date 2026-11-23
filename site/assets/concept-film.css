@@ -1,0 +1,8 @@
+
+.concept-film{overflow:hidden;isolation:isolate;margin:20px 0 25px;border:1px solid #23364e;border-radius:16px;background:#0d1627;color:#ecf6ff;box-shadow:0 8px 24px #13283e18}
+.concept-film .film-foot{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;background:#101d30;border-top:1px solid #30415b;padding:15px 20px}
+.concept-film .film-foot p{margin:0;color:#e0edf7;line-height:1.7;font-size:15px;word-break:keep-all}
+.concept-film button{flex:none;cursor:pointer;border:1px solid #59738b;color:#e4fbff;background:#1b3046;border-radius:20px;padding:5px 12px;font:inherit;font-size:13px;min-height:34px}
+.concept-film button:focus-visible{outline:3px solid #ffcf87}
+@media(max-width:600px){.concept-film .film-foot{display:block;padding:12px}.concept-film button{margin-top:8px}.concept-film{margin-inline:0}}
+@media print{.concept-film{break-inside:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}.concept-film button{display:none}}

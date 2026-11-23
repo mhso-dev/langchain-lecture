@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>체크포인터로 대화를 이어가고 분리하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 29 / CHECKPOINT</p>
+<span class="sidebar-title">체크포인터로 대화를 이어가고 분리하기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-thread"><span>02</span>첫 질문이 저장된 곳 찾기</a><a href="#nb-isolation"><span>03</span>새 대화가 읽는 상태</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 29 / CHECKPOINT</span><span class="template-badge">학생용 교재</span></div>
+<h1>체크포인터로 대화를 이어가고 분리하기</h1>
+<p class="hero-description">대출 기간을 질문한 사람이 곧바로 반납 방법을 묻습니다. 다음 요청에서 앞선 대화를 쓰려면 메시지 목록을 병합하는 규칙과 대화별 저장 위치가 모두 필요합니다.</p>
+<div class="hero-meta"><span>입문 이후</span><span>교육일 029 · 8H</span><span>28장 messages·add_messages·메시지 ID, 함수와 상태</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter29.ipynb" download="chapter29.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>29장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12, langgraph 1.2.16, langgraph-checkpoint 4.3.0입니다.</p>
+</div>
+</section>
+<section id="nb-thread" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>첫 질문이 저장된 곳 찾기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘첫 질문’를 ‘대화별 저장’에 남기는 시점과 ‘이어서 읽기’를 확인하는 시점을 구분하세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>같은 대화 ID를 써야 이전 질문을 이어서 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>체크포인터는 그래프가 실행되는 동안 상태를 보관합니다. thread_id가 어느 대화의 상태를 읽고 쓸지 가리킵니다. 노트북에서는 그래프 하나와 메모리 저장소 하나를 만들어 여러 번 사용합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · A 대화 열기</h3>
+<div class="cell-before"><p>제공 함수는 가상 답변을 만들어 실제 LangGraph의 InMemorySaver에 저장합니다. 그래프는 이 셀에서 한 번만 만드세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 38줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Annotated, TypedDict
+<span class="tok-keyword">from</span> langgraph.graph <span class="tok-keyword">import</span> StateGraph, START, END
+<span class="tok-keyword">from</span> langchain_core.messages <span class="tok-keyword">import</span> HumanMessage, AIMessage, AnyMessage
+<span class="tok-keyword">from</span> langgraph.graph.message <span class="tok-keyword">import</span> add_messages
+<span class="tok-keyword">from</span> uuid <span class="tok-keyword">import</span> uuid4
+<span class="tok-keyword">from</span> langgraph.checkpoint.memory <span class="tok-keyword">import</span> InMemorySaver
+
+<span class="tok-keyword">class</span> State(TypedDict):
+    messages: Annotated[list[AnyMessage], add_messages]
+
+<span class="tok-keyword">def</span> respond(state: State) -&gt; dict:
+    humans = [m <span class="tok-keyword">for</span> m <span class="tok-keyword">in</span> state[<span class="tok-string">&quot;messages&quot;</span>] <span class="tok-keyword">if</span> isinstance(m, HumanMessage)]
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> humans:
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;사용자 메시지가 필요합니다.&quot;</span>)
+    content = f&quot;이 대화의 사용자 발화 {len(humans)}개. 최근 질문: {humans[-<span class="tok-number">1</span>].content}&quot;
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;messages&quot;</span>: [AIMessage(content=content, id=str(uuid4()))]}
+
+<span class="tok-keyword">def</span> make_graph():
+    builder = StateGraph(State)
+    builder.add_node(<span class="tok-string">&quot;respond&quot;</span>, respond)
+    builder.add_edge(START, <span class="tok-string">&quot;respond&quot;</span>)
+    builder.add_edge(<span class="tok-string">&quot;respond&quot;</span>, END)
+    <span class="tok-keyword">return</span> builder.compile(checkpointer=InMemorySaver())
+
+<span class="tok-keyword">def</span> config_for(thread_id: str) -&gt; dict:
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> thread_id.strip():
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;대화 ID가 필요합니다.&quot;</span>)
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;configurable&quot;</span>: {<span class="tok-string">&quot;thread_id&quot;</span>: thread_id}}
+
+<span class="tok-keyword">def</span> send(graph, thread_id: str, question: str):
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question.strip():
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;질문이 비어 있습니다.&quot;</span>)
+    update = {<span class="tok-string">&quot;messages&quot;</span>: [HumanMessage(content=question, id=str(uuid4()))]}
+    <span class="tok-keyword">return</span> graph.invoke(update, config=config_for(thread_id))
+
+graph = make_graph()
+reply = send(graph, <span class="tok-string">&#x27;A&#x27;</span>, <span class="tok-string">&#x27;대출 기간?&#x27;</span>)
+print(reply[<span class="tok-string">&#x27;messages&#x27;</span>][-<span class="tok-number">1</span>].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">이 대화의 사용자 발화 1개. 최근 질문: 대출 기간?</pre></div>
+<div class="cell-after"><p>사용자 발화가 1개로 나옵니다. respond가 이 대화 안의 HumanMessage만 세므로 AI 답변은 개수에 들어가지 않습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 같은 대화 이어 쓰기</h3>
+<div class="cell-before"><p>이미 저장된 첫 질문을 다시 넘기지 말고 두 번째 질문만 보냅니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">reply = send(graph, <span class="tok-string">&#x27;A&#x27;</span>, <span class="tok-string">&#x27;반납 방법?&#x27;</span>)
+print(reply[<span class="tok-string">&#x27;messages&#x27;</span>][-<span class="tok-number">1</span>].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">이 대화의 사용자 발화 2개. 최근 질문: 반납 방법?</pre></div>
+<div class="cell-after"><p>사용자 발화 2개가 되었습니다. 같은 저장소와 같은 A를 썼기 때문입니다. 중간에 첫 셀을 다시 실행하면 저장소를 새로 만들어 과거 상태가 사라집니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-isolation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>새 대화가 읽는 상태</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>기존 대화의 질문과 새 대화의 첫 질문을 나란히 읽으세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>새 대화는 다른 대화의 질문을 읽지 않습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>학생 두 명에게 같은 대화 ID를 주면 기록이 섞일 수 있습니다. 새 대화 ID와 기존 대화 ID는 서로 다른 상태를 가리킵니다. InMemorySaver의 기록은 현재 프로세스가 끝나면 사라집니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · B 대화의 첫 질문 세기</h3>
+<div class="cell-before"><p>B 대화에 ‘휴관일?’을 보내 마지막 답의 발화 수를 확인하세요.</p>
+<p>A의 두 번의 왕복은 사용자 → 답변 → 사용자 → 답변 순입니다. 전체 메시지는 4개, 그중 사용자 질문은 2개입니다. B에서 첫 질문 수가 1이 되어도 A의 네 메시지는 같은 저장소의 다른 ID 아래 남아 있습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># graph는 그대로 사용하고 대화 ID만 B로 바꾸세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">reply_b = send(graph, <span class="tok-string">&#x27;B&#x27;</span>, <span class="tok-string">&#x27;휴관일?&#x27;</span>)
+print(reply_b[<span class="tok-string">&#x27;messages&#x27;</span>][-<span class="tok-number">1</span>].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">이 대화의 사용자 발화 1개. 최근 질문: 휴관일?</pre></div>
+<div class="cell-after"><p>A에 두 번 질문했어도 B의 첫 질문은 1개입니다. B에서 3개라면 호출 때 전달한 ID부터 살펴보세요.</p>
+</div>
+</details>
+</article>
+<figure class="flow" data-flow id="flow-5"><figcaption><span class="eyebrow">단계별 그림</span><h3>같은 저장소에서 대화 A와 B 따라가기</h3>
+<p>대화 ID가 바뀔 때 어느 대화의 이전 발화를 불러오는지 살펴보세요.</p>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>같은 저장소에서 대화 A와 B가 각각 어떤 질문을 다시 읽는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>체크포인트는 대화 식별자별로 조회합니다. 같은 저장소를 써도 대화 내용은 분리됩니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>A 첫 질문</span></li>
+<li><span class="flow-index">02</span><span>A 후속 질문</span></li>
+<li><span class="flow-index">03</span><span>B 첫 질문</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-5-step-0"><img class="flow-proof" loading="lazy" alt="A에 대출 기간을 묻습니다." src="../assets/media/svg-6be0c8c6400e1c.svg"><span class="eyebrow">STEP 01 · thread_id = A</span><h4>A에 대출 기간을 묻습니다.</h4>
+<p>A에 쌓인 사용자 발화는 한 개입니다.</p><pre>A · 1개 · 대출 기간?</pre></article>
+<article class="flow-panel" id="flow-5-step-1"><img class="flow-proof" loading="lazy" alt="A에서 반납 방법을 묻습니다." src="../assets/media/svg-79a41e3e114726.svg"><span class="eyebrow">STEP 02 · thread_id = A</span><h4>A에서 반납 방법을 묻습니다.</h4>
+<p>같은 대화를 다시 열었으므로 첫 질문도 기록에 남습니다.</p><pre>A · 2개 · 반납 방법?</pre></article>
+<article class="flow-panel" id="flow-5-step-2"><img class="flow-proof" loading="lazy" alt="B에서 휴관일을 묻습니다." src="../assets/media/svg-ba3c3d63e82cfb.svg"><span class="eyebrow">STEP 03 · thread_id = B</span><h4>B에서 휴관일을 묻습니다.</h4>
+<p>같은 저장소를 써도 B의 사용자 발화는 한 개입니다. A의 두 발화는 A에 남습니다.</p><pre>A · 2개 · 대출 기간? / 반납 방법?
+B · 1개 · 휴관일?</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 3</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>graph.get_state(config_for(&#x27;A&#x27;)).values에서 메시지 수를 예측해 보세요. 두 발화에 각각 답이 붙어 총 네 개입니다. 이미 실행한 셀을 반복하면 그만큼 새 발화가 더해집니다.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>세 가지 역할을 나누기</summary><div class="prose"><p>add_messages는 새 메시지를 기존 목록에 어떻게 반영할지 정합니다. 체크포인터는 대화별 그래프 상태를 저장하고 다음 실행에서 이어 쓰게 합니다. thread_id는 어느 대화의 상태를 사용할지 지정하는 이름입니다. 같은 이름을 써도 다른 저장소 객체를 만들면 이전 기록을 찾을 수 없습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>역할 비교</caption><thead><tr><th scope="col">요소</th><th scope="col">질문</th><th scope="col">이 예제</th></tr>
+</thead><tbody><tr><td>messages 갱신 규칙</td><td>새 메시지를 어떻게 합칠까?</td><td>add_messages</td></tr>
+<tr><td>체크포인터</td><td>대화 상태를 어디에 보관할까?</td><td>InMemorySaver의 RAM</td></tr>
+<tr><td>thread_id</td><td>어느 대화를 이어갈까?</td><td>A / B / C</td></tr>
+</tbody></table></div>
+</details>
+<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>파일과 실행 준비</summary><div class="prose"><p>Python 3.12.x, langgraph 1.2.22, langchain-core 1.8.0을 기준으로 확인합니다. API 키나 서버는 필요 없습니다. 설치 후에는 로컬 메모리에서 예제가 실행됩니다. 기존 가상환경을 사용할 때는 패키지 버전을 먼저 확인하세요.</p>
+</div>
+</details>
+<span id="compile"></span><details class="reading-topic" id="reading-compile"><summary>체크포인터를 붙이고 그래프를 재사용하기</summary><div class="prose"><p>make_graph는 호출할 때 InMemorySaver를 새로 만듭니다. 예제의 시작에서 한 번만 호출해 graph를 만든 뒤 여러 send 호출에 같은 객체를 넘깁니다. 질문을 보낼 때마다 make_graph를 다시 호출하면 그때마다 새 저장소가 생겨 이전 상태가 이어지지 않습니다.</p>
+<p>RAM에 있는 상태는 프로그램이 종료되면 사라집니다. 이 동작을 데이터베이스 영구 저장으로 설명하지 마세요. 후반 서비스에서는 보관 기간·삭제·접근 제어까지 별도 설계합니다. 여기서는 저장소 수명과 대화 구분의 원리를 확인합니다.</p>
+</div>
+</details>
+<span id="send"></span><details class="reading-topic" id="reading-send"><summary>같은 대화에는 같은 ID와 새 입력 보내기</summary><div class="prose"><p>thread_id는 State의 messages 안에 넣지 않고 호출 config의 configurable에 넣습니다. send는 이번 사용자 질문 한 개만 변경분으로 보냅니다. 체크포인터가 가져온 이전 상태에 add_messages 규칙으로 새 입력이 반영되고 respond가 실행됩니다.</p>
+<p>이전 전체 기록을 새로운 ID로 다시 만들어 보내면 이전 질문이 중복 추가될 수 있습니다. 새 질문과 이미 저장된 이력의 책임을 나눕니다. 이 장은 수정·삭제 요청을 구현하지 않으며 새 입력 추가만 다룹니다.</p>
+</div>
+</details>
+<span id="observe"></span><details class="reading-topic" id="reading-observe"><summary>상태 조회로 대화 분리 확인하기</summary><div class="prose"><p>get_state는 해당 대화의 저장 상태를 읽습니다. 이 코드에서는 조회한다고 respond가 다시 실행되거나 답변이 추가되지 않습니다. 반대로 invoke는 그래프를 실행합니다. 이전 실행 결과를 확인하려고 같은 질문을 invoke로 반복 보내면 새 메시지가 생기는 이유를 구분하세요.</p>
+</div>
+</details>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>새 대화와 저장소 수명 실험하기</summary><div class="table-scroll" tabindex="0"><table><caption>막혔을 때</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
+</thead><tbody><tr><td>같은 대화가 이어지지 않음</td><td>graph 객체·thread_id</td><td>같은 graph와 같은 ID인지 비교</td></tr>
+<tr><td>다른 대화가 섞임</td><td>A/B에 실제로 전달한 ID</td><td>호출 인자 기록 확인</td></tr>
+<tr><td>질문이 중복됨</td><td>전체 이력 재전송·새 ID</td><td>이번 새 사용자 입력만 전달</td></tr>
+<tr><td>프로그램 재실행 후 기록 없음</td><td>InMemorySaver 수명</td><td>RAM 저장의 정상 범위로 기록</td></tr>
+<tr><td>빈 대화 ID 오류</td><td>config_for 입력</td><td>비어 있지 않은 학습용 ID 사용</td></tr>
+</tbody></table></div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>관찰을 기록하고 다음 장에 넘기기</summary><div class="prose"><p>templates/graph/thread-isolation.json을 작업 폴더의 graph/thread-isolation.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">위치</th><th scope="col">기록</th></tr>
+</thead><tbody><tr><td>entry_evidence</td><td>28장 메시지 갱신 사례와 오늘 thread_id의 역할 비교</td></tr>
+<tr><td>AB_two_turns</td><td>A/B 각각 두 요청의 thread_id·입력·실제 메시지 목록</td></tr>
+<tr><td>C 전후 / A 재조회</td><td>C 시작이 A를 지우지 않음, 조회는 응답을 추가하지 않음</td></tr>
+<tr><td>new_store_same_A</td><td>새 InMemorySaver에서 같은 A의 상태와 저장소 수명 설명</td></tr>
+</tbody></table></div>
+<div class="prose"><p>graph/thread-isolation.json에 A/B 각 두 질문·C 시작 전후·A 보존·반복 조회·새 저장소를 기록합니다. 새 C 시작은 삭제가 아니며, get_state는 새 답변 생성이 아님을 설명합니다. 이후 수업에 이 관찰을 넘기되 30장의 순차 RAG에 대화 메모리를 억지로 붙이지 않습니다. 장기 Store와 운영 정책은 후속 수업에서 다룹니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://docs.langchain.com/oss/python/langgraph/persistence" target="_blank" rel="noopener noreferrer">LangGraph Persistence ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

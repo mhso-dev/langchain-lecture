@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>범위·일정 합의 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 088 / FINAL PROJECT</p>
+<span class="sidebar-title">범위·일정 합의 · 방향과 예시</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-criteria"><span>02</span>출처 하나의 수용 기준</a><a href="#nb-schedule"><span>03</span>첫 주를 기능과 자료 단위로 나누기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 088 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
+<h1>범위·일정 합의 · 방향과 예시</h1>
+<p class="hero-description">“출처를 표시한다”는 합의만 남긴 팀에서는 개발자가 문서 ID를 출력하고, 기획자는 원문 절과 개정일도 나올 거라고 기대하기 쉽습니다. 한 사람이 구현하고 다른 사람이 같은 화면에서 확인할 수 있을 만큼 조건을 좁혀 봅니다.</p>
+<div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter88.ipynb" download="chapter88.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>88장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-criteria" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>출처 하나의 수용 기준</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘문서 식별자’와 ‘쪽과 절’가 오른쪽의 ‘출처 기준’에 함께 들어가는 위치를 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>출처 한 건이 갖춰야 할 문서와 위치 정보를 정합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>범위 합의 예시　SC-01을 필수로 정하고 CR-01에서는 답에 전원 표시등이 들어가는지, CR-02에서는 인용한 ID·자료명·페이지·절·개정일·버전이 원문과 맞는지 봅니다. 학생이 출처를 보고 실제 절을 찾을 수 있는지는 동료가 확인합니다. 예약·결제와 점검 승인은 첫 버전에서 제외하고 말투 선택은 여유가 생기면 검토합니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 합의문으로 누락 찾기</h3>
+<div class="cell-before"><p>첫 시안이 문서 ID만 보낸다고 가정하세요. 원문을 열려는 사람이 더 필요로 하는 필드를 확인합니다.</p>
+<p>자료 담당이 규정 개정일을 찾지 못했다면 출처 검수는 보류합니다. 화면 담당은 임시 자료로 카드 배치를 진행할 수 있습니다. 일정표에 다시 만날 시점과 누가 개정일을 확인해 넘길지 적으세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">required = (<span class="tok-string">&quot;id&quot;</span>, <span class="tok-string">&quot;source&quot;</span>, <span class="tok-string">&quot;page&quot;</span>, <span class="tok-string">&quot;section&quot;</span>, <span class="tok-string">&quot;revised_on&quot;</span>, <span class="tok-string">&quot;version&quot;</span>)
+first_citation = {<span class="tok-string">&quot;id&quot;</span>: <span class="tok-string">&quot;RULE-A&quot;</span>}
+print([name <span class="tok-keyword">for</span> name <span class="tok-keyword">in</span> required <span class="tok-keyword">if</span> name <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> first_citation])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;source&#x27;, &#x27;page&#x27;, &#x27;section&#x27;, &#x27;revised_on&#x27;, &#x27;version&#x27;]</pre></div>
+<div class="cell-after"><p>source부터 version까지 다섯 이름이 남습니다. 확인자가 문서를 찾게 하려면 화면 담당자만 수정해서는 부족합니다. 자료 담당자가 원문에서 그 값을 확보해야 합니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-schedule" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>첫 주를 기능과 자료 단위로 나누기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘첫 주 범위’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘구현할 기능’, 아래쪽은 ‘준비할 자료’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>첫 주에 구현할 기능과 준비할 자료를 나눕니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>일정 예시　월요일에는 기획·자료 담당자가 Q01의 문장과 원문 절을 합의합니다. 화요일에는 자료 담당자가 가상 규정 A·B에 개정일을 적고, 수요일에는 구현 담당자가 입력부터 화면까지 연결합니다. 목요일에는 서로 역할을 바꿔 답을 보고 원문을 찾습니다. 금요일에는 누락된 절 정보와 일정 질문 오답을 따로 기록해 우선순위를 정합니다. 실제 날짜와 담당자는 팀 일정에 맞게 바꾸세요.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 원문 한 건으로 인수하기</h3>
+<div class="cell-before"><p>규정 A에서 여섯 필드가 모두 있는지 확인하세요. 누락 목록이 비었을 때도 값 자체가 맞는지는 사람이 대조해야 합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">received = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+<span class="tok-comment"># required를 이용해 빠진 필드를 찾아보세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">received = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
+ <span class="tok-string">&#x27;equipment&#x27;</span>: <span class="tok-string">&#x27;장비 A&#x27;</span>,
+ <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
+ <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
+ <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
+ <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
+ <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
+ <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>,
+ <span class="tok-string">&#x27;groups&#x27;</span>: [<span class="tok-string">&#x27;public&#x27;</span>, <span class="tok-string">&#x27;admin&#x27;</span>]}
+print([name <span class="tok-keyword">for</span> name <span class="tok-keyword">in</span> required <span class="tok-keyword">if</span> name <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> received])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]</pre></div>
+<div class="cell-after"><p>빈 목록이 나옵니다. 필드 이름은 모두 있지만 페이지나 절의 오타까지 찾아낸 것은 아닙니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>팀 자료로 이어가기</h2>
+</div>
+</header>
+<div class="prose"><p>다음 자료 담당자에게 CR-02의 여섯 출처 필드를 넘기세요. 원문을 읽어도 채울 수 없는 필드가 있으면 어떤 단계의 일정이 밀리는지 함께 표시합니다.</p>
+</div>
+</section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

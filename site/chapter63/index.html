@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 프로젝트를 에이전틱 서비스로 묶기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<!-- COURSE_NAV -->
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 63 / AGENTIC SERVICE</p>
+<span class="sidebar-title">같은 프로젝트를 에이전틱 서비스로 묶기</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-document"><span>02</span>검색 함수에 원문 한 건 전달하기</a><a href="#nb-envelope"><span>03</span>서비스가 처리한 결과와 답변을 나누기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 63 / AGENTIC SERVICE</span><span class="template-badge">학생용 교재</span></div>
+<h1>같은 프로젝트를 에이전틱 서비스로 묶기</h1>
+<p class="hero-description">‘과제는 어디에 내나요?’라는 질문을 받았습니다. 이제까지 배운 검색·근거 표시·사용자별 대화를 한 서비스 함수에서 이어 봅니다. 질문과 출처는 기존 과정 안내 예제를 그대로 사용합니다.</p>
+<div class="hero-meta"><span>입문</span><span>교육일 063 · 8H</span><span>52일 프로젝트·54일 owner 경계·56일 실행 정책·58/60/62일 소비 자료</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>수업 노트북</h2>
+</div>
+</header>
+<a class="download" href="chapter63.ipynb" download="chapter63.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>63장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+</section>
+<section id="nb-document" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>검색 함수에 원문 한 건 전달하기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘검색 질문’에서 출발해 ‘과제함 문단’를 거친 뒤 ‘원문 전달’가 되는 순서를 따라가세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>질문과 함께 실제 검색 함수가 읽을 원문을 전달합니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>문서 번호와 페이지는 역할이 다릅니다. course-guide-v1:p2는 자료를 구별하는 ID이고 이 문장이 인쇄된 쪽은 1쪽입니다. 답변과 출처를 같은 원문에서 가져오면 다음 단계에서 다시 대조할 수 있습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 가상 과정 운영 안내에서 찾기</h3>
+<div class="cell-before"><p>한 문서만 있는 작은 검색입니다. 저장한 자료를 어떤 질문에 반환할지 확인하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">document = {<span class="tok-string">&quot;id&quot;</span>: <span class="tok-string">&quot;course-guide-v1:p2&quot;</span>, <span class="tok-string">&quot;source&quot;</span>: <span class="tok-string">&quot;가상 과정 운영 안내 · 45일 수업용 페이지판 (source-pages.html)&quot;</span>,
+            <span class="tok-string">&quot;page&quot;</span>: <span class="tok-number">1</span>, <span class="tok-string">&quot;text&quot;</span>: <span class="tok-string">&quot;과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.&quot;</span>}
+
+<span class="tok-keyword">def</span> search(question):
+    <span class="tok-keyword">return</span> [document] <span class="tok-keyword">if</span> <span class="tok-string">&quot;과제&quot;</span> <span class="tok-keyword">in</span> question <span class="tok-keyword">else</span> []
+
+print(search(<span class="tok-string">&quot;과제는 어디에 내나요?&quot;</span>)[<span class="tok-number">0</span>][<span class="tok-string">&quot;text&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.</pre></div>
+<div class="cell-after"><p>과제함이라는 답과 제출 후 확인할 두 항목을 모두 원문에서 찾을 수 있습니다. 여기서 쓰는 검색은 키워드 하나만 보는 수업용 함수입니다.</p>
+</div>
+</article>
+</section>
+<section id="nb-envelope" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>서비스가 처리한 결과와 답변을 나누기</h2>
+</div>
+</header>
+<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
+<div class="motion-note"><div><b>볼 곳</b><p>‘서비스 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘처리 상태’, 아래쪽은 ‘표시할 답’입니다.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>처리 상태와 사용자에게 보여 줄 답을 따로 읽습니다.</p>
+</div>
+</div>
+<figcaption class="film-foot"><p>정상 실행에도 근거가 없을 수 있습니다. 앱이 읽는 run_status에는 실행 상황을, result.status에는 답변을 만들었는지 적습니다. 소유 대화인지 확인한 뒤에만 검색하고, 빈 결과에서는 생성 횟수를 늘리지 않습니다.</p>
+</figcaption>
+</figure>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 한 질문을 끝까지 처리하기</h3>
+<div class="cell-before"><p>제공 서비스의 읽기 경로를 줄인 함수입니다. 이 요청의 답과 출처 쪽수를 확인하세요.</p>
+<p>소유자가 맞지 않으면 조회를 계속하기 전에 거부합니다. 허용된 소유자에게서 검색이 빈 경우에는 근거 부족 결과로 끝납니다. 문서를 찾은 경우에만 그 원문을 건네 답을 만듭니다. 세 경우의 마지막 줄을 각각 찾아보세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">owners = {<span class="tok-string">&quot;chat-a&quot;</span>: <span class="tok-string">&quot;alice&quot;</span>}
+<span class="tok-keyword">def</span> answer(question, *, owner, conversation):
+    <span class="tok-keyword">if</span> owners.get(conversation) != owner:
+        <span class="tok-keyword">raise</span> PermissionError(<span class="tok-string">&quot;conversation_not_owned&quot;</span>)
+    docs = search(question)
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> docs:
+        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;run_status&quot;</span>: <span class="tok-string">&quot;completed&quot;</span>, <span class="tok-string">&quot;result&quot;</span>: {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;no_evidence&quot;</span>, <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;자료에서 확인할 수 없습니다.&quot;</span>, <span class="tok-string">&quot;sources&quot;</span>: [], <span class="tok-string">&quot;generation_calls&quot;</span>: <span class="tok-number">0</span>}}
+    doc = docs[<span class="tok-number">0</span>]
+    result = {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;answered&quot;</span>, <span class="tok-string">&quot;answer&quot;</span>: f&quot;{doc[<span class="tok-string">&#x27;text&#x27;</span>]} [{doc[<span class="tok-string">&#x27;id&#x27;</span>]}]&quot;,
+              <span class="tok-string">&quot;sources&quot;</span>: [doc], <span class="tok-string">&quot;generation_calls&quot;</span>: <span class="tok-number">1</span>}
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;run_status&quot;</span>: <span class="tok-string">&quot;completed&quot;</span>, <span class="tok-string">&quot;result&quot;</span>: result}
+
+row = answer(<span class="tok-string">&quot;과제는 어디에 내나요?&quot;</span>, owner=<span class="tok-string">&quot;alice&quot;</span>, conversation=<span class="tok-string">&quot;chat-a&quot;</span>)
+print(row[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;answer&quot;</span>])
+print(row[<span class="tok-string">&quot;result&quot;</span>][<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>][<span class="tok-string">&quot;page&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다. [course-guide-v1:p2]
+1</pre></div>
+<div class="cell-after"><p>답변 끝에 문서 ID가 붙고 다음 줄에는 1이 나옵니다. generation_calls는 이 축약 예제의 고정 답변 생성 경로에 들어간 횟수입니다. 실제 모델 호출은 없습니다.</p>
+</div>
+</article>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 안내문에 없는 주차 질문 처리</h3>
+<div class="cell-before"><p>같은 사용자가 주차비를 물었습니다. 결과 상태와 생성 횟수를 꺼내세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># answer에 주차 질문을 전달하고 result를 확인하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">missing = answer(<span class="tok-string">&#x27;주차는 무료인가요?&#x27;</span>, owner=<span class="tok-string">&#x27;alice&#x27;</span>, conversation=<span class="tok-string">&#x27;chat-a&#x27;</span>)[<span class="tok-string">&#x27;result&#x27;</span>]
+print(missing[<span class="tok-string">&#x27;status&#x27;</span>], missing[<span class="tok-string">&#x27;generation_calls&#x27;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence 0</pre></div>
+<div class="cell-after"><p>no_evidence 0입니다. 주차비가 0원이라는 답과는 다릅니다. DB나 MCP 없이도 이 질문에서 필요한 기능을 완성할 수 있습니다.</p>
+</div>
+</details>
+</article>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>다시 풀어 보기</h2>
+</div>
+</header>
+<div class="prose"><p>이 서비스에 문의 등록 버튼을 붙이면 데이터를 바꾸는 일이 생깁니다. 누가 무슨 내용을 등록하려는지 보여 주는 단계는 어디에 넣을지 생각해 보세요.</p>
+</div>
+</section>
+<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>관련 개념 더 읽기</h2>
+</div>
+</header>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>이전 프로젝트에서 무엇을 가져오나요?</summary><div class="prose"><p>첫 교시의 15분을 사용합니다. 처음 5분에는 자신의 회고에서 Q03 수정 이력을 찾습니다. 개인 기록이 없으면 references52/intake-summary.json의 evidence_chain과 q03 항목을 읽습니다. 제공 demo-and-retrospective.md는 빈 양식이므로 실제 회고나 수행 기록으로 취급하지 않습니다. 다음 5분에는 Q04에 답할 근거가 있는지 예측합니다. 마지막 5분에는 54일의 owner 조건과 56일의 모델/도구 상한 위치를 설명합니다. 개인 과제 파일이 없으면 제공 사례를 읽었다고 기록하고 실제 팀 발표를 했다고 쓰지 않습니다.</p>
+</div>
+<div class="prose"><p>Q03은 이미 관찰하고 고친 공개 질문입니다. I49-Q03에서 검색 실패를 발견했고 CH50-01에서 근거 기반 생성 경로를 수정했으며 R50-Q03과 D50-01로 판단을 남겼습니다. 이 질문을 다시 맞혔다고 새 질문에 대한 성능을 입증한 것은 아닙니다.</p>
+</div>
+</details>
+<span id="envelope"></span><details class="reading-topic" id="reading-envelope"><summary>서비스 외피와 답변 A1을 구분하기</summary><div class="prose"><p>서비스는 입력을 받아 여러 내부 함수를 연결하고, 호출자가 읽을 수 있는 하나의 결과를 돌려주는 경계입니다. 오늘은 Python 객체의 answer 메서드로 그 경계를 만듭니다. HTTP 서버나 화면을 먼저 만드는 단계는 아닙니다.</p>
+<p>기존 A1은 답변의 상태·문장·출처·생성 횟수를 표현합니다. 서비스 외피는 실행을 끝냈는지, 어느 단계에서 오류가 났는지, 어떤 기능과 호출 수를 사용했는지 덧붙입니다. A1을 답변 문자열로 줄이지 않고 result 안에 원형으로 넣어야 다음 장이 출처와 실패를 보존할 수 있습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>서로 다른 두 상태</caption><thead><tr><th scope="col">필드</th><th scope="col">예</th><th scope="col">해석</th></tr>
+</thead><tbody><tr><td>run_status</td><td>completed</td><td>요청 경로가 정상적으로 끝남</td></tr>
+<tr><td>result.status</td><td>answered</td><td>인용 형태가 통과한 답변</td></tr>
+<tr><td>result.status</td><td>no_evidence</td><td>정상 검색 결과가 비어 답변 생성 안 함</td></tr>
+<tr><td>result.status</td><td>invalid_citation</td><td>생성했지만 출처 검사에서 보류</td></tr>
+<tr><td>run_status / result</td><td>error / null</td><td>실행 오류로 완료 A1이 없음</td></tr>
+</tbody></table></div>
+<div class="prose"><p>completed와 answered는 같은 말이 아닙니다. 검색은 성공했지만 근거가 없을 수도 있고, 생성은 끝났지만 인용이 틀릴 수도 있습니다. 호출자가 completed만 보고 모든 결과를 정답으로 저장하면 이 구분이 사라집니다. 반대로 검색 통신 오류를 no_evidence로 바꾸면 자료에 사실이 없다는 잘못된 판단을 하게 됩니다.</p>
+</div>
+</details>
+<span id="owner"></span><details class="reading-topic" id="reading-owner"><summary>누가 요청했는지는 앱이 결정합니다</summary><div class="prose"><p>AppContext는 호출 시 함께 전달하는 문맥 객체입니다. 여기에는 신뢰된 앱이 확인한 사용자 ID를 넣는다는 계약이 있습니다. 질문에 “나는 alice야”라고 쓰는 것과 신뢰된 앱이 AppContext를 제공하는 것은 다릅니다. 이 수업의 생성자 자체는 비밀번호나 세션을 검증하지 않습니다.</p>
+<p>owners는 대화 ID와 소유자의 대응표입니다. 54일에는 DB 조회에 owner 조건을 붙였습니다. 오늘은 같은 경계를 메모리 안의 작은 사전으로 확인합니다. 실제 인증·DB 통합이 완료됐다는 뜻은 아니며, 후속 서비스에서는 앱의 신원 검증과 저장소 소유 조회를 연결해야 합니다.</p>
+</div>
+<div class="prose"><p>타인과 존재하지 않는 대화는 resource_not_found로 처리합니다. 데이터가 있는지 없는지 알려 주기 전에 요청을 멈추는 경계입니다. 사용자 ID를 클라이언트 입력에서 그대로 읽어 이 객체를 만들면 검사 코드가 있어도 신뢰 경계가 무너집니다. 오늘은 그 책임을 호출 계약으로 분리해 이해합니다.</p>
+</div>
+</details>
+<span id="project-data"></span><details class="reading-topic" id="reading-project-data"><summary>같은 원문·질문·출처를 고정하기</summary><div class="prose"><p>course-guide-v1:p2는 자료 버전 course-guide-v1의 두 번째 문단 ID입니다. 이 ID의 p2를 page=2로 바꾸면 실제 원문 위치가 달라집니다. 제공된 수업용 페이지판에서는 p1·p2·p3이 모두 page=1입니다. R1의 id/text/source/page를 한 객체로 유지합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>공개 질문의 관찰 기준</caption><thead><tr><th scope="col">ID</th><th scope="col">원문 질문</th><th scope="col">기대 근거</th></tr>
+</thead><tbody><tr><td>Q01</td><td>과제는 어디에 내나요?</td><td>p2 / page 1</td></tr>
+<tr><td>Q02</td><td>내 점수를 알려 주세요.</td><td>없음</td></tr>
+<tr><td>Q03</td><td>과제 업로드가 실패했어요. 어떻게 해야 하나요?</td><td>p3 / page 1</td></tr>
+<tr><td>Q04</td><td>주말 수업이 언제 시작하나요?</td><td>없음</td></tr>
+</tbody></table></div>
+<div class="prose"><p>manifest는 입력 파일 이름과 바이트 해시를 묶은 목록입니다. 값이 달라졌다는 사실을 확인할 수 있지만, 그 파일이 올바른 설명이라는 뜻은 아닙니다. 따라서 해시 대조와 원문 의미 대조를 함께 합니다. 입력 사본은 그대로 두고 새 실행 기록은 runs 아래에 씁니다.</p>
+</div>
+</details>
+<span id="mandatory-search"></span><details class="reading-topic" id="reading-mandatory-search"><summary>검색을 먼저 하고 정상 빈 결과를 끝내기</summary><div class="prose"><p>오늘의 업무 요청은 프로젝트 지식 질문입니다. 모델이 검색 여부를 자유롭게 결정하기 전에 코드가 필수 검색과 R1 검사를 수행합니다. 검색 결과가 비면 모델을 부를 이유가 없으므로 no_evidence로 끝냅니다. 이 종료는 실패를 감춘 결과가 아니라 정상 빈 목록을 확인한 결과입니다.</p>
+<p>검색 예외와 출처 누락은 다른 경로입니다. 검색 함수가 TimeoutError를 내면 error/result=null이며, id/text/source/page 중 필수 필드가 빠지면 데이터 오류가 됩니다. 임의의 출처 이름이나 page=1을 채워 성공한 것처럼 만들지 않습니다. 요청한 k보다 많은 결과도 계약 오류로 처리합니다.</p>
+</div>
+<figure class="flow" data-flow id="flow-5"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>필수 검색의 결과와 종료</h3>
+<p>셀 02에서 조건별로 어느 줄에서 끝나는지 보세요. 마지막 두 패널은 서로 다른 질문의 결과입니다.</p>
+<div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">입력</th><th scope="col">셀 02의 끝점</th></tr>
+</thead><tbody><tr><td>다른 소유자의 대화</td><td>검색 전 PermissionError</td></tr>
+<tr><td>내 대화 · 주차 질문</td><td>검색 [] → no_evidence · 생성 0회</td></tr>
+<tr><td>내 대화 · 과제 질문</td><td>문서 발견 → 답과 출처 반환</td></tr>
+</tbody></table></div>
+</figcaption>
+<div class="motion-note"><div><b>볼 곳</b><p>다른 소유자, 빈 검색 결과, 근거가 있는 검색 결과가 각각 어디서 끝나는지 보세요.</p>
+</div>
+<div><b>애니메이션의 의미</b><p>필수 검색을 쓰더라도 권한 검사와 근거 유무에 따라 서로 다른 위치에서 종료됩니다.</p>
+</div>
+</div>
+<ol class="flow-track"><li><span class="flow-index">01</span><span>1</span></li>
+<li><span class="flow-index">02</span><span>2</span></li>
+<li><span class="flow-index">03</span><span>빈 결과로 종료</span></li>
+<li><span class="flow-index">04</span><span>문서를 찾은 경우</span></li>
+</ol><div class="flow-panels"><article class="flow-panel" id="flow-5-step-0"><img class="flow-proof" loading="lazy" alt="소유자와 입력 확인" src="../assets/media/svg-47b7a8598d3aa8.svg"><span class="eyebrow">STEP 01 · 앱</span><h4>소유자와 입력 확인</h4>
+<p>질문·k와 대화 소유자가 유효해야 검색합니다.</p><pre>invalid input → 실행 오류</pre></article>
+<article class="flow-panel" id="flow-5-step-1"><img class="flow-proof" loading="lazy" alt="검색과 R1 검사" src="../assets/media/svg-05785750c46c4a.svg"><span class="eyebrow">STEP 02 · 서비스</span><h4>검색과 R1 검사</h4>
+<p>한 번 검색하고 출처 객체·개수 계약을 확인합니다.</p><pre>mandatory_retrieval_calls = 1</pre></article>
+<article class="flow-panel" id="flow-5-step-2"><img class="flow-proof" loading="lazy" alt="빈 결과로 종료" src="../assets/media/svg-aa9052df906ade.svg"><span class="eyebrow">STEP 03 · 서비스</span><h4>빈 결과로 종료</h4>
+<p>문서가 []이면 모델과 생성은 호출하지 않습니다.</p><pre>주차 질문 → no_evidence · 생성 0회</pre></article>
+<article class="flow-panel" id="flow-5-step-3"><img class="flow-proof" loading="lazy" alt="문서를 찾은 경우" src="../assets/media/svg-dd2b9110958c5c.svg"><span class="eyebrow">STEP 04 · 서비스</span><h4>문서를 찾은 경우</h4>
+<p>주차 질문을 마친 뒤의 단계가 아닙니다. 과제 질문으로 새로 실행한 경우입니다.</p><pre>과제 질문 → course-guide-v1:p2</pre></article>
+</div>
+<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
+</div>
+</figure>
+</details>
+<span id="limited-agent"></span><details class="reading-topic" id="reading-limited-agent"><summary>제한 에이전트에 같은 근거를 전달하기</summary><div class="prose"><p>근거가 있는 경우에는 56일의 실제 create_agent를 사용합니다. 다만 56일의 기본 도서관 대본은 프로젝트에 맞지 않습니다. 검색 함수뿐 아니라 생성 문장과 인용 ID도 같은 course-guide 자료를 사용하도록 고정했습니다. 원본 다섯 파일과 프로젝트용 파생 파일을 따로 남겨 변경 범위를 볼 수 있게 했습니다.</p>
+<p>고정 모델 대본은 먼저 search_documents를 요청하고 다음 호출에서 AnswerDraft를 반환합니다. 이때 도구는 이미 검색·검증한 같은 근거를 전달합니다. 새 자료를 다시 검색하지 않습니다. 도구 요청의 질문과 k가 원래 값과 다르면 거부합니다. 따라서 모델 호출 2와 검색 1을 혼동하면 안 됩니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>정상 Q01/Q03의 서로 다른 횟수</caption><thead><tr><th scope="col">항목</th><th scope="col">기본 관측</th><th scope="col">의미</th></tr>
+</thead><tbody><tr><td>mandatory_retrieval_calls</td><td>1</td><td>프로젝트 검색 함수 실행</td></tr>
+<tr><td>draft_generate_calls</td><td>1</td><td>근거 문장 초안 콜백</td></tr>
+<tr><td>model_calls</td><td>2</td><td>create_agent 안의 고정 모델 호출</td></tr>
+<tr><td>tool_executions</td><td>1</td><td>같은 근거를 전달한 도구 실행</td></tr>
+<tr><td>agent_evidence_adapter_calls</td><td>1</td><td>검증된 근거 복사본 전달</td></tr>
+</tbody></table></div>
+<div class="prose"><p>max_model_calls=3과 max_tool_calls=1은 create_agent 내부 실행 정책입니다. 외부 generate 함수를 별도로 주입했다면 그 함수의 통신·재시도·토큰 비용까지 이 상한으로 통제되지 않습니다. 콜백 횟수는 별도로 기록하고 실제 외부 어댑터에는 서버 측 예산과 시간 제한을 따로 마련해야 합니다.</p>
+<p>모델이 도구 호출을 건너뛰고 답부터 돌려주면 required_evidence_delivery_missing으로 멈춥니다. 앞에서 검색했다는 사실만으로 에이전트가 그 근거를 전달받았다고 가정하지 않는 검사입니다. 반대로 도구를 반복 요청하면 두 번째 실행을 상한에서 막습니다.</p>
+</div>
+</details>
+<span id="project-skill"></span><details class="reading-topic" id="reading-project-skill"><summary>프로젝트에 맞는 Skill 하나 읽기</summary><div class="prose"><p>Skill은 반복할 작업 절차를 문서로 묶은 자료입니다. 오늘의 course-document-answer는 과정 안내 문서에 답할 때 사용할 입력·절차·출력·출처 규칙·실패 대응을 설명합니다. 58일의 로더는 그대로 재사용하지만 도서관용 문서는 새 프로젝트에 맞춰 별도로 작성했습니다.</p>
+<p>서비스는 이 Skill을 코드에서 명시적으로 선택합니다. 모델이 목록을 보고 스스로 골랐다는 실험이 아닙니다. 본문을 읽은 뒤 source-policy 참조를 읽으며 파일 경로와 해시를 검사합니다. 문서와 참고자료를 읽었다는 사실은 실제 모델이 지침을 이해하고 따랐다는 증거와 다릅니다.</p>
+</div>
+<div class="prose"><p>file_reads에는 Skill 본문과 참고자료의 두 읽기만 들어갑니다. catalog.json의 초기 읽기 1회는 별도 항목입니다. 이 숫자를 전체 파일 I/O나 비용 절감량으로 해석하지 않습니다. 질문에 근거가 없으면 Skill도 읽지 않고 종료합니다.</p>
+</div>
+</details>
+<span id="feature-choice"></span><details class="reading-topic" id="reading-feature-choice"><summary>기억과 MCP를 꼭 붙여야 할까요?</summary><div class="prose"><p>58·60·62 자료를 검토하는 일은 필수지만 모든 기능을 활성화하는 것이 과제는 아닙니다. 기능을 채택할 때는 어떤 사용자 문제를 해결하는지와 새로 생기는 상태·실패·권한을 설명해야 합니다. 필요가 없으면 미채택도 근거 있는 결정입니다.</p>
+<p>현재 네 질문은 매번 같은 안내 문서를 읽으면 됩니다. 사용자 선호를 다음 대화에 저장할 필요가 없으므로 장기 기억을 켜지 않습니다. 60일의 기억 API와 54일의 대화 저장은 서로 다른 책임이며, 선택하지 않은 기능의 DB 성공을 주장하지 않습니다.</p>
+<p>62일의 MCP 예제는 가상 도서관 운영 시간을 반환합니다. Q04에 “주말”이라는 단어가 있다고 그 시간을 수업 일정으로 가져오면 다른 업무의 데이터를 섞는 오류입니다. 현재 제공안에서는 MCP를 미채택합니다. 채택하려면 먼저 프로젝트에 맞는 도구·자료·응답 계약이 필요합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>제공안의 선택 이유</caption><thead><tr><th scope="col">기능</th><th scope="col">판단</th><th scope="col">추가로 확인할 것</th></tr>
+</thead><tbody><tr><td>문서 답변 Skill</td><td>채택</td><td>프로젝트 절차와 출처 규칙 공유; 실제 모델 준수는 미검증</td></tr>
+<tr><td>장기 기억</td><td>미채택</td><td>현재 네 질문에 지속 선호·기억 필요 없음</td></tr>
+<tr><td>도서관 MCP</td><td>미채택</td><td>과정 일정의 근거가 아니며 실제 MCP 통신도 미검증</td></tr>
+</tbody></table></div>
+</details>
+<span id="run-all"></span><details class="reading-topic" id="reading-run-all"><summary>네 질문을 같은 조건으로 실행하기</summary><div class="prose"><p>기본 네 질문의 A1은 52일의 수정 후보와 같습니다. 새 에이전트 연결이 출처·상태·답변 문장을 깨뜨리지 않았음을 확인한 결과입니다. 같은 고정 답을 유지한 검사는 품질 향상 실험이나 새로운 질문 성능 측정이 아닙니다.</p>
+</div>
+<div class="prose"><p>기본 정상 두 질문에서 source의 text와 page도 대조합니다. Q02/Q04의 sources가 빈 목록인지, 생성 횟수가 0인지 확인합니다. Q03은 원문 속 비밀키 공유 금지 문장을 유지하는지 사람이 읽습니다. 비교표에는 입력 버전과 k=2를 함께 적습니다.</p>
+</div>
+</details>
+<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>실패를 한 종류로 합치지 않기</summary><div class="prose"><p>오류를 재현할 때는 한 조건만 바꿉니다. 검색 함수만 TimeoutError를 내도록 바꾸거나, 생성 문장에 존재하지 않는 인용 ID를 넣거나, 대화 소유자만 바꿉니다. 여러 조건을 동시에 바꾸면 어느 경계에서 멈췄는지 설명하기 어렵습니다.</p>
+<p>아래 검색 실패는 로컬에서 예외를 주입한 사례입니다. 실제 네트워크 장애를 관찰한 것은 아닙니다. raw 예외의 내용은 외피에 내보내지 않고 예외 종류와 단계만 기록합니다. 실제 서비스의 추가 오류 분류와 HTTP 상태 매핑은 뒤에서 설계합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>문제별 확인 순서</caption><thead><tr><th scope="col">관측</th><th scope="col">구분</th><th scope="col">다음 행동</th></tr>
+</thead><tbody><tr><td>no_evidence</td><td>정상 빈 근거</td><td>원문에 답이 있는지 대조</td></tr>
+<tr><td>TimeoutError / retrieval</td><td>검색 실행 오류</td><td>입력과 오류 주입·어댑터 확인</td></tr>
+<tr><td>invalid_citation</td><td>A1 출처 검사 보류</td><td>근거에 존재하는 ID와 문장 확인</td></tr>
+<tr><td>model_limit / tool_limit</td><td>정책 종료</td><td>실행 전 예산과 누적 수 확인</td></tr>
+<tr><td>SkillLoadError</td><td>파일 허용/해시 오류</td><td>등록 경로·본문·참조 해시 확인</td></tr>
+<tr><td>resource_not_found</td><td>소유권 거부</td><td>신뢰된 앱 문맥과 대화 대응 확인</td></tr>
+</tbody></table></div>
+<div class="prose"><p>model_calls를 늘려 모든 오류를 덮는 것은 원인 해결이 아닙니다. 반복 도구 요청은 상한을 넘기기 전에 끊어야 하고, 검색 오류는 자료 없음으로 바꾸지 않아야 합니다. 미설치 외부 기능은 미실행으로 남깁니다.</p>
+</div>
+</details>
+<span id="meaning"></span><details class="reading-topic" id="reading-meaning"><summary>인용이 맞아도 내용은 틀릴 수 있습니다</summary><div class="prose"><p>인용 검사는 답변 속 ID가 전달받은 근거에 존재하는지와 출처 객체를 확인합니다. 문장이 원문을 정확하게 요약했는지까지 자동으로 판정하지는 않습니다. 형식과 의미를 구분하지 않으면 잘못된 답변을 성공으로 집계하게 됩니다.</p>
+<p>p3의 실제 원문은 비밀키가 보이는 화면을 공유하지 말라고 안내합니다. 같은 ID를 붙이고 그 반대 문장을 쓰면 인용 형태는 통과해도 의미는 틀립니다. 이 반례는 원문 대조가 필요한 이유를 보여 주기 위해 그대로 남깁니다.</p>
+</div>
+</details>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>서비스 구성과 결과 요약 직접 작성</summary><div class="prose"><p>이제 student_task.py의 두 함수를 완성합니다. build_service는 신뢰된 owners로 서비스를 만들고 모델 3/도구 1 상한을 유지합니다. Skill을 사용하거나 제외할 수 있지만 이유를 feature-decision.md에 적어야 합니다. summarize는 실행 오류와 A1 상태를 구분하면서 result 객체를 그대로 반환합니다.</p>
+</div>
+</details>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>다음 장으로 넘길 경계와 복습</summary><div class="prose"><p>오늘의 서비스는 읽기 답변을 제공합니다. 다음 장에서는 이 경계를 유지하고 로컬 모의 문의 등록을 별도 승인 흐름으로 붙입니다. 읽기 결과가 있다는 이유로 쓰기 권한이 생기는 것은 아닙니다. 65일의 분류도 경로 후보를 고를 뿐 소유자나 승인 검사를 대신하지 않습니다.</p>
+<p>66–67일은 같은 자료와 실패 기록을 소비해 역할 분리와 서비스 평가를 진행합니다. 현재 SERVICE_CONSUMER는 로컬 배포 진입 안내이고 최종 S1은 67일에 고정합니다. 과제 파일·관측·선택 이유·미확인을 함께 넘깁니다.</p>
+</div>
+</details>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<h2>참고 자료</h2>
+</div>
+</header>
+<ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/runtime" target="_blank" rel="noopener noreferrer">LangChain Runtime 공식 문서 ↗</a><span></span></li>
+</ul></section>
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>

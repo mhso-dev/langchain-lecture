@@ -1,0 +1,14 @@
+name: 교재 빌드와 링크 검사
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  textbook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/build.mjs
+      - run: python3 scripts/check.py
