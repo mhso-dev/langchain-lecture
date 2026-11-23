@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>최종 발표·회고 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>최종 발표·회고 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="spacing.css">
+<script defer src="spacing.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,36 @@
 <h2>개인 기여를 입출력 한 쌍으로 남기기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘변경 전후 입력’를 기준으로 양쪽의 ‘개인 기여’와 ‘관찰 결과’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>개인 기여가 드러나는 입력과 변경 결과를 한 쌍으로 남깁니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>가상 회고 한 행　역할 검색 입력 담당 / 문제 “장비A”가 RULE-A로 연결되지 않음 / 판단 임의로 모든 공백을 없애면 “장비AB”까지 잘못 고를 수 있음 / 변경 장비 A·B 표기만 정리 / 증거 98장 adoption-decision.json의 Q98-N01·Q98-N02 / 남은 일 처음 보는 장비명·질문을 별도로 평가. 이 행은 기록 방법의 예시이며 특정 수강생의 실제 기여를 뜻하지 않습니다.</p>
-</figcaption>
+<figure class="spacing-lab" id="spacing-lab" aria-labelledby="spacing-title">
+  <figcaption>
+    <h3 id="spacing-title">공백 한 칸으로 어떤 질문을 고쳤을까요?</h3>
+    <p>98장의 검색기는 ‘장비 A’와 ‘장비 B’를 찾습니다. 공백을 넣는 수정을 켜 보고, ‘장비AB’에도 같은 수정을 해도 될지 생각해 보세요.</p>
+  </figcaption>
+  <div class="spacing-controls" hidden>
+    <fieldset><legend>질문 속 장비명</legend>
+      <label><input name="equipment-case" type="radio" value="A" checked><span>장비A</span></label>
+      <label><input name="equipment-case" type="radio" value="B"><span>장비B</span></label>
+      <label><input name="equipment-case" type="radio" value="AB"><span>장비AB</span></label>
+    </fieldset>
+    <label class="patch-switch"><input type="checkbox" id="spacing-patch"><span aria-hidden="true"></span>공백 수정 적용</label>
+  </div>
+  <div class="spacing-desk">
+    <div class="proof-label"><span>검색기에 들어가는 장비명</span><code id="case-id">Q98-N01</code></div>
+    <div class="type-proof" aria-hidden="true">
+      <div class="type-track"><b>장</b><b>비</b><i class="space-mark">␣</i><span class="letter-pair"><b id="equipment-letter">A</b><b id="equipment-tail" hidden>B</b></span></div>
+    </div>
+    <div aria-live="polite" aria-atomic="true">
+    <p class="proof-note" id="proof-note">‘비’와 ‘A’가 붙어 있습니다. 검색기가 찾는 ‘장비 A’와 공백 한 칸이 다릅니다.</p>
+    <div class="proof-record"><small>98장 실행 기록에서 나온 답</small>
+      <div><strong id="proof-answer">장비 A 또는 장비 B 중 하나를 지정하세요.</strong> <code id="proof-rule">근거 규정 없음</code></div>
+    </div>
+  </div>
+  </div>
+  <p class="proof-takeaway">회고에는 고친 질문과 그대로 둔 질문을 함께 남깁니다. ‘장비AB’는 A인지 B인지 알 수 없어 수정 뒤에도 어느 쪽 규정도 고르지 않습니다.</p>
+  <noscript><p>수정 전에는 세 질문 모두 장비를 다시 지정하라는 답이 나옵니다. 수정 후 ‘장비A’는 RULE-A(전원 표시등), ‘장비B’는 RULE-B(고정 장치)로 연결됩니다.</p></noscript>
 </figure>
+<p>가상 회고 한 행　역할 검색 입력 담당 / 문제 “장비A”가 RULE-A로 연결되지 않음 / 판단 임의로 모든 공백을 없애면 “장비AB”까지 잘못 고를 수 있음 / 변경 장비 A·B 표기만 정리 / 증거 98장 adoption-decision.json의 Q98-N01·Q98-N02 / 남은 일 처음 보는 장비명·질문을 별도로 평가. 이 행은 기록 방법의 예시이며 특정 수강생의 실제 기여를 뜻하지 않습니다.</p>
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 발표에서 인용할 수정 범위 읽기</h3>
 <div class="cell-before"><p>98장의 로컬 채택 기록에서 고쳐진 질문 ID와 채택 범위를 되짚습니다.</p>
 </div>
@@ -60,15 +83,8 @@ print(decision[<span class="tok-string">&quot;scope&quot;</span>])</code></pre><
 <h2>질의응답 뒤의 인계 메모 완성하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘발표 질문’에서 출발해 ‘남은 확인 사항’를 거친 뒤 ‘담당자 인계’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>남은 확인 사항을 맡을 사람에게 질문과 근거를 건넵니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>가상 질의　“규정에 없는 교체 일정도 알려 주나요?” 답변 예시　“이번에 사용한 규정에는 일정이 없습니다. Q03은 날짜를 만들지 않고 담당자 확인을 안내합니다.” 인계 예시　대상 PROJECT-EQUIPMENT-01 / 문서 rules-v1 / 모듈 normalization-v1 / 실제 서버·사용자 확인은 남음 / 다음 담당자는 Q01은 114장 셀 01에서, Q03은 115장 과제 02에서 재현. 실제 발표에서 받지 않은 질문은 예상 질문으로 표시합니다.</p>
-</figcaption>
-</figure>
+<p>가상 질의　“규정에 없는 교체 일정도 알려 주나요?” 답변 예시　“이번에 사용한 규정에는 일정이 없습니다. Q03은 날짜를 만들지 않고 담당자 확인을 안내합니다.” 인계 예시　대상 PROJECT-EQUIPMENT-01 / 문서 rules-v1 / 모듈 normalization-v1 / 실제 서버·사용자 확인은 남음 / 다음 담당자는 Q01은 114장 셀 01에서, Q03은 115장 과제 02에서 재현. 실제 발표에서 받지 않은 질문은 예상 질문으로 표시합니다.</p>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 남은 일에 검증 방법 붙이기</h3>
 <div class="cell-before"><p>자기 팀에서 아직 확인하지 못한 주장 하나를 고르고, 그 주장을 확인할 자료와 담당 역할을 적어 보세요.</p>
 <p>인수자가 처음 확인할 위치는 두 곳입니다. Q01 장비 A 점검은 114장 셀 01, Q03 교체 일정은 115장 과제 02입니다. 각 출력을 다시 본 사람이 재현 날짜와 증거 위치를 작성하세요.</p>
@@ -99,4 +115,4 @@ print(followup[<span class="tok-string">&quot;필요한 자료&quot;</span>], fo
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>
