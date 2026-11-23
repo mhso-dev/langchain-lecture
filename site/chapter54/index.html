@@ -4,6 +4,8 @@
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
 <script defer src="../assets/concept-labs.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -68,7 +70,17 @@ print(get_title(<span class="tok-string">&#x27;alice&#x27;</span>, doc_id))</cod
 <h2>변경한 제목을 되돌릴 수 있을까요?</h2>
 </div>
 </header>
-<p>트랜잭션은 함께 확정하거나 되돌리는 변경의 단위입니다. UPDATE 직후 같은 연결에서는 바뀐 제목을 읽을 수 있습니다. 커밋 전에 롤백하면 앞서 커밋한 초안으로 돌아갑니다.</p><section class="concept-lab" id="concept-lab" data-lab="transaction"><h3>되돌리면 어느 제목이 남을까요?</h3><p>이 연결에서 제목을 고치고 rollback을 눌러 보세요. 이번에는 수정 뒤 commit을 먼저 누르고 같은 실험을 해 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>이 연결에서 읽은 제목</small><output data-out="working">초안</output></div><div class="lab-tile"><small>마지막으로 확정한 제목</small><output data-out="committed">초안</output></div></div><div class="lab-actions"><button type="button" data-action="edit">제목 수정</button><button type="button" data-action="commit">commit · 확정</button><button type="button" data-action="rollback">rollback · 취소</button><button type="button" data-action="reset">처음 값 복원</button></div></section>
+<p>트랜잭션은 함께 확정하거나 되돌리는 변경의 단위입니다. UPDATE 직후 같은 연결에서는 바뀐 제목을 읽을 수 있습니다. 커밋 전에 롤백하면 앞서 커밋한 초안으로 돌아갑니다.</p>
+<!-- MOTION carbon-rollback -->
+<figure class="motion-study" id="motion-carbon-rollback" data-sheet="motion/carbon-rollback.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>취소할 수 있는 수정은 어느 종이에 적혀 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/carbon-rollback-still.webp" width="800" height="272" alt="확정된 제목은 초안입니다. 같은 연결에서 수정한 제목을 읽어도 commit 전이라면 rollback이 임시 수정을 걷어내 원래 제목이 다시 보입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>확정된 제목은 초안입니다. 같은 연결에서 수정한 제목을 읽어도 commit 전이라면 rollback이 임시 수정을 걷어내 원래 제목이 다시 보입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+<section class="concept-lab" id="concept-lab" data-lab="transaction"><h3>되돌리면 어느 제목이 남을까요?</h3><p>이 연결에서 제목을 고치고 rollback을 눌러 보세요. 이번에는 수정 뒤 commit을 먼저 누르고 같은 실험을 해 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>이 연결에서 읽은 제목</small><output data-out="working">초안</output></div><div class="lab-tile"><small>마지막으로 확정한 제목</small><output data-out="committed">초안</output></div></div><div class="lab-actions"><button type="button" data-action="edit">제목 수정</button><button type="button" data-action="commit">commit · 확정</button><button type="button" data-action="rollback">rollback · 취소</button><button type="button" data-action="reset">처음 값 복원</button></div></section>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 제목을 고친 뒤 같은 연결에서 읽기</h3>
 <div class="cell-before"><p>아직 commit을 호출하지 않습니다.</p>
 </div>

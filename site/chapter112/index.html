@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>배포·자동화 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,16 @@
 </div>
 </header>
 <p>배포 시안　서버 한 프로세스, JSON 자료 볼륨 p1-json, 호스트 127.0.0.1, 교육용 접근 주체, 이미지 변수명 P1_IMAGE. 실제 이미지 식별자·플랫폼은 미확인입니다. 아래의 고정된 주소는 같은 컴퓨터의 접속 범위를 뜻합니다. 누군가 밖에서 접속했다고 보고하려면 다른 환경에서 실제로 확인한 응답이 필요합니다.</p>
+<!-- MOTION mount-bridge -->
+<figure class="motion-study" id="motion-mount-bridge" data-sheet="motion/mount-bridge.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>컨테이너 경로와 자료 볼륨은 어떻게 이어질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/mount-bridge-still.webp" width="800" height="272" alt="시안은 p1-json을 앱의 runtime-data 위치에 연결합니다. 재배포 뒤 데이터 보존 여부는 같은 볼륨을 연결하고 실제 세션을 다시 읽어 확인합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>시안은 p1-json을 앱의 runtime-data 위치에 연결합니다. 재배포 뒤 데이터 보존 여부는 같은 볼륨을 연결하고 실제 세션을 다시 읽어 확인합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 설정 사본의 포트와 볼륨 확인</h3>
 <div class="cell-before"><p>제공 Compose 설정의 p1 항목에서 실제로 지정한 값 두 개만 읽습니다.</p>
 </div>

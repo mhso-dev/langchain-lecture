@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>최소 동작 경로 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -84,6 +86,16 @@ print(reply[<span class="tok-string">&quot;answer&quot;</span>], reply[<span cla
 </div>
 </header>
 <p>장비명은 맞지만 질문의 목적이 다른 경우입니다. 규정 A의 문장이 사실이어도 교체 일정의 근거로는 쓸 수 없습니다.</p>
+<!-- MOTION intent-key -->
+<figure class="motion-study" id="motion-intent-key" data-sheet="motion/intent-key.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>장비 A가 같으면 교체 일정도 알 수 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/intent-key-still.webp" width="800" height="272" alt="점검 전 확인 사항과 교체 일정은 서로 다른 질문입니다. 장비 이름만 맞추는 첫 구현은 두 질문에 같은 점검 문장을 반환해 일정 질문에서 틀립니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>점검 전 확인 사항과 교체 일정은 서로 다른 질문입니다. 장비 이름만 맞추는 첫 구현은 두 질문에 같은 점검 문장을 반환해 일정 질문에서 틀립니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · Q03의 응답 읽기</h3>
 <div class="cell-before"><p>함수는 그대로 두고 질문만 바꿉니다.</p>
 <p>인계 기록을 둘로 나눠 적으세요. Q01은 답 문장은 맞지만 출처의 절이 빠졌습니다. Q03은 교체 일정을 물었는데도 표시등 안내가 나왔습니다. 다음 팀원이 고칠 곳은 각각 출처 위치와 질문 의도입니다.</p>

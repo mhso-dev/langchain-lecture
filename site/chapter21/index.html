@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>문서를 정리하고 원문 위치를 보존하며 청킹하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,6 +32,16 @@
 <h2>문자 경계와 겹치는 부분 찾기</h2>
 </div>
 </header>
+<!-- MOTION overlap-scissors -->
+<figure class="motion-study" id="motion-overlap-scissors" data-sheet="motion/overlap-scissors.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>가위가 네 글자 되돌아가면 어느 부분이 두 번 남을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/overlap-scissors-still.webp" width="800" height="272" alt="첫 청크는 처음 16글자입니다. 다음 시작점을 16에서 12로 되돌리면 “일입니다” 네 글자가 두 청크에 모두 남습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<div class="motion-choices" hidden><button type="button" data-frame="0">겹침 0글자</button><button type="button" data-frame="19">겹침 2글자</button><button type="button" data-frame="39">겹침 4글자</button></div>
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>첫 청크는 처음 16글자입니다. 다음 시작점을 16에서 12로 되돌리면 “일입니다” 네 글자가 두 청크에 모두 남습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
 <div class="motion-note"><div><b>볼 곳</b><p>금색 ‘반납 기한은’이 원문에 남은 채 오른쪽 조각에도 생기는 순간을 보세요.</p>
 </div>
@@ -78,6 +90,18 @@ print(first[-<span class="tok-number">4</span>:])</code></pre></figure>
 </div>
 </header>
 <p>검색 결과에 조각 본문만 담으면 근거가 어느 자료 몇 쪽인지 잊기 쉽습니다. 표시할 문서에는 id, text, source, page를 두고 원문의 위치는 별도 표에 남길 수 있습니다.</p>
+<!-- MOTION source-offset -->
+<figure class="motion-study" id="motion-source-offset" data-sheet="motion/source-offset.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>잘린 조각으로 원문의 자리를 되찾을 수 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/source-offset-still.webp" width="800" height="272" alt="조각에 원문 ID와 위치를 붙이면 짧은 “일입니다.”도 원래 문장의 어느 부분인지 찾을 수 있습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>조각에 원문 ID와 위치를 붙이면 짧은 “일입니다.”도 원래 문장의 어느 부분인지 찾을 수 있습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 둘째 조각의 문서와 위치</h3>
 <div class="cell-before"><p>실험용 식별자에는 0부터 센 조각 번호를 붙입니다.</p>
 </div>

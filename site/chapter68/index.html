@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>서비스 함수를 HTTP로 제공하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -80,6 +82,16 @@ print(response.status_code, response.json()[<span class="tok-string">&quot;resul
 </div>
 </header>
 <p>입력을 읽을 수 없는 경우와, 입력은 정상이지만 근거를 찾지 못한 경우에 화면이 해야 할 일이 다릅니다. 전자는 입력을 고치고 후자는 다른 자료나 질문이 필요한지 안내합니다.</p>
+<!-- MOTION two-verdicts -->
+<figure class="motion-study" id="motion-two-verdicts" data-sheet="motion/two-verdicts.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>422와 빈 근거는 어디에서 갈라질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/two-verdicts-still.webp" width="800" height="272" alt="공백 질문은 입력 검사에서 422가 됩니다. 형식이 맞는 질문으로 검색을 마쳤지만 문서가 없었다면 입력 오류로 고칠 이유가 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>공백 질문은 입력 검사에서 422가 됩니다. 형식이 맞는 질문으로 검색을 마쳤지만 문서가 없었다면 입력 오류로 고칠 이유가 없습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 공백 질문 전송</h3>
 <div class="cell-before"><p>Pydantic의 입력 검사를 통과하지 못한 요청의 상태 코드를 확인하세요.</p>
 </div>

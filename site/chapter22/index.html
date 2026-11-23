@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>벡터를 저장하고 Chroma와 FAISS 검색 비교하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,6 +32,16 @@
 <h2>단어의 순서가 숫자의 뜻을 정합니다</h2>
 </div>
 </header>
+<!-- MOTION squared-tiles -->
+<figure class="motion-study" id="motion-squared-tiles" data-sheet="motion/squared-tiles.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>대출과 휴관 사이의 제곱거리 2는 어디서 나올까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/squared-tiles-still.webp" width="800" height="272" alt="세 축은 대출·휴관·반납입니다. [1,0,0]과 [0,1,0]은 두 축에서 1씩 달라서 차이의 제곱을 더하면 2가 됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>세 축은 대출·휴관·반납입니다. [1,0,0]과 [0,1,0]은 두 축에서 1씩 달라서 차이의 제곱을 더하면 2가 됩니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
 <div class="motion-note"><div><b>볼 곳</b><p>‘대출’, ‘휴관’, ‘반납’ 아래에 놓이는 숫자를 왼쪽부터 읽으세요.</p>
 </div>
@@ -128,6 +140,17 @@ has_chroma = find_spec(<span class="tok-string">&quot;chromadb&quot;</span>) <sp
 </div>
 </header>
 <p>이번에는 같은 숫자들을 FAISS의 L2 인덱스에 넣습니다. 검색 결과가 행 번호로 오므로 원래 documents의 같은 위치에서 ID를 꺼냅니다.</p>
+<!-- MOTION faiss-index -->
+<figure class="motion-study" id="motion-faiss-index" data-sheet="motion/faiss-index.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>검색 위치 0은 문서 번호 0일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/faiss-index-still.webp" width="800" height="272" alt="FAISS가 돌려준 위치를 저장 순서에 맞춘 목록에서 읽습니다. 이 예제의 위치 0에 대응하는 문서 ID는 library-1입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>FAISS가 돌려준 위치를 저장 순서에 맞춘 목록에서 읽습니다. 이 예제의 위치 0에 대응하는 문서 ID는 library-1입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <div class="learn-detail"><h4>같은 대출 질문으로 두 저장소 비교하기</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">저장소</th><th scope="col">노트북에 저장된 출력</th><th scope="col">내 커널에서 확인할 값</th></tr>
 </thead><tbody><tr><td>Chroma · 셀 04~05</td><td>패키지 없음 · 저장과 재열기 미실행</td><td>다시 열고 첫 검색 문서가 library-1인지 확인</td></tr>

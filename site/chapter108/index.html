@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>확인용 평가 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,17 @@
 </div>
 </header>
 <p>준비 자료의 PUBLIC-DUP-01은 Q01 문장의 양 끝에 공백을 붙였습니다. 이름이 새로워도 이미 본 문장입니다. PUBLIC-PARAPHRASE-01의 “장비 A를 살펴보기 전에 볼 것은 무엇인가요?”처럼 글자만 달라진 문항은 사람도 의미 중복을 살펴야 합니다.</p>
+<!-- MOTION trim-overlay -->
+<figure class="motion-study" id="motion-trim-overlay" data-sheet="motion/trim-overlay.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>ID가 다른 질문이 같은 평가 문항일 수 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/trim-overlay-still.webp" width="800" height="272" alt="PUBLIC-DUP-01은 Q01 문장의 양끝에 공백을 붙인 예입니다. 양끝을 정리한 두 문장을 겹치면 ID가 달라도 질문 내용은 같습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>PUBLIC-DUP-01은 Q01 문장의 양끝에 공백을 붙인 예입니다. 양끝을 정리한 두 문장을 겹치면 ID가 달라도 질문 내용은 같습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공백을 제거한 중복 질문 찾기</h3>
 <div class="cell-before"><p>개발 질문과 공개 후보 하나를 문자열 수준에서 대조합니다.</p>
 <p>‘장비 A 점검 전에 볼 것은?’과 ‘장비 A는 점검 전 무엇을 확인하나요?’는 표기가 달라도 의도와 기대 근거 RULE-A가 같습니다. 확인용 세트에 넣기 전에 같은 능력을 다시 묻는 문항인지 검토하고 선택 이유를 남기세요.</p>

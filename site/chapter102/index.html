@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>API 통합 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -81,6 +83,16 @@ RULE-A</pre></div>
 </div>
 </header>
 <p>응답 예시　대화 lesson / 요청 unsaved / 로컬 전송 상태 503 / 업무 답 장비 B의 고정 장치 / 오류 코드 storage_failure. 이 경우 “관련 문서가 없습니다”라고 표시하면 다음 행동을 고르기 어렵습니다. 이전 요청이 저장되었는지 먼저 확인하도록 안내합니다.</p>
+<!-- MOTION split-receipt -->
+<figure class="motion-study" id="motion-split-receipt" data-sheet="motion/split-receipt.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>답을 만들었다는 영수증이 저장까지 보장할까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/split-receipt-still.webp" width="800" height="272" alt="계산한 답과 저장 결과는 독립된 필드입니다. 저장 실패 사례에서는 답이 있어도 저장을 완료했다고 표시할 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>계산한 답과 저장 결과는 독립된 필드입니다. 저장 실패 사례에서는 답이 있어도 저장을 완료했다고 표시할 수 없습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 저장 실패를 구분해 표시하기</h3>
 <div class="cell-before"><p>기록에서 계산한 답과 저장 오류명을 꺼내어 담당자가 확인할 두 줄을 만드세요.</p>
 <p>failed는 로컬에 제공한 503 기록에서 python_response에 해당하는 부분만 꺼낸 값입니다. 여기서는 result부터 읽습니다. 앞의 기록 전체에서 시작할 때만 body와 python_response를 먼저 거치세요.</p>

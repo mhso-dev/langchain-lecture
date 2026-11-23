@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>AI가 뽑은 행사명과 날짜 확인하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -93,6 +95,16 @@ print(has_start(missing))</code></pre></figure>
 </div>
 </header>
 <p>이제 행사명, 시작일, 대상을 어떻게 적을지 코드로 정합니다. Notice는 공지 한 건의 규칙을 담은 Pydantic 모델입니다. 셀을 실행하면 꼭 있어야 하는 항목의 이름이 나옵니다.</p>
+<!-- MOTION schema-stencil -->
+<figure class="motion-study" id="motion-schema-stencil" data-sheet="motion/schema-stencil.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>형식 검사를 통과한 제목도 틀릴 수 있을까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/schema-stencil-still.webp" width="800" height="272" alt="“요리 모임”도 문자열이라 형식 검사를 통과합니다. 공지에 적힌 “독서 모임”과 나란히 읽어야 내용 오류가 드러납니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>“요리 모임”도 문자열이라 형식 검사를 통과합니다. 공지에 적힌 “독서 모임”과 나란히 읽어야 내용 오류가 드러납니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 02 · 공지 한 건의 스키마</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="셀 02 · 공지 한 건의 스키마 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 02 · 공지 한 건의 스키마"><code id="code-4"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Literal
 <span class="tok-keyword">from</span> pydantic <span class="tok-keyword">import</span> BaseModel, ConfigDict, ValidationError
 

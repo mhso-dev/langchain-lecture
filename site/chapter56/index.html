@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>도구·구조화 응답·실행 정책 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,16 @@
 </div>
 </header>
 <p>수업의 search_documents는 k에 양의 정수를 받습니다. 기존 SearchArgs는 StrictInt로 이 약속을 검사합니다. 아래에서는 같은 조건을 Python에서 풀어 써서 어떤 값 때문에 멈추는지 봅니다.</p>
+<!-- MOTION positive-k -->
+<figure class="motion-study" id="motion-positive-k" data-sheet="motion/positive-k.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>검색 개수 k의 첫 허용 눈금은 어디일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/positive-k-still.webp" width="800" height="272" alt="이 도구는 양의 정수 k를 받습니다. 0에서는 입력 오류가 나고 1은 이 조건을 만족합니다. 출처와 호출 한도는 별도로 검사합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>이 도구는 양의 정수 k를 받습니다. 0에서는 입력 오류가 나고 1은 이 조건을 만족합니다. 출처와 호출 한도는 별도로 검사합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문자열로 온 검색 개수</h3>
 <div class="cell-before"><p>문자열을 검사 함수에 보내고 어떤 오류 메시지가 나오는지 보세요.</p>
 </div>

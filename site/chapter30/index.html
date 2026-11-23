@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색 함수를 필수 Retriever Node로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,16 @@
 </div>
 </header>
 <p>노트북의 자료는 앞서 사용한 가상 도서관 안내 세 쪽입니다. 읽는 법에 집중하려고 로컬 검색 함수는 세 낱말의 유무를 거리로 바꾸며 k개를 고릅니다. Chroma 서버나 외부 임베딩을 호출하는 셀은 없습니다.</p>
+<!-- MOTION evidence-luggage -->
+<figure class="motion-study" id="motion-evidence-luggage" data-sheet="motion/evidence-luggage.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>문장을 건넬 때 출처 꼬리표는 따라갈까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/evidence-luggage-still.webp" width="800" height="272" alt="검색 결과에는 문장과 문서 ID·쪽 번호가 함께 들어 있습니다. 답변 노드가 근거 위치를 읽으려면 꼬리표까지 전달해야 합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>검색 결과에는 문장과 문서 ID·쪽 번호가 함께 들어 있습니다. 답변 노드가 근거 위치를 읽으려면 꼬리표까지 전달해야 합니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 검색된 한 쪽 펼치기</h3>
 <div class="cell-before"><p>대출 질문을 넣고 목록의 첫 번째 레코드를 읽으세요.</p>
 </div>

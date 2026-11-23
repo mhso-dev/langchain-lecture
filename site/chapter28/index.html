@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>메시지와 상태의 덮어쓰기·누적 구분하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -89,6 +91,17 @@ print([(m.id, m.type) <span class="tok-keyword">for</span> m <span class="tok-ke
 </div>
 </header>
 <p>내용이 비슷해도 ID가 다르면 새 발화입니다. 반대로 ID를 그대로 쓰면 그 발화를 수정할 수 있습니다. 같은 답변 ID를 계속 재사용하면 새 대화가 쌓이지 않는 이유도 여기에 있습니다.</p>
+<!-- MOTION message-id-edit -->
+<figure class="motion-study" id="motion-message-id-edit" data-sheet="motion/message-id-edit.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>같은 ID로 오타를 고치면 말풍선이 늘어날까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/message-id-edit-still.webp" width="800" height="272" alt="질문 한 건이 든 initial에 같은 h1으로 수정한 질문을 넣습니다. 기존 말풍선의 문장이 바뀌고 개수는 한 개로 유지됩니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>질문 한 건이 든 initial에 같은 h1으로 수정한 질문을 넣습니다. 기존 말풍선의 문장이 바뀌고 개수는 한 개로 유지됩니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 처음 질문을 고쳐 쓰기</h3>
 <div class="cell-before"><p>h1의 내용을 ‘반납 방법은?’으로 바꿔 보세요. 수정 후 사용자 메시지의 개수와 내용을 표시하세요.</p>
 <p>이번에 수정하는 initial에는 사용자 메시지 h1 하나만 있습니다. 같은 ID로 고치면 한 자리의 내용만 바뀝니다. h1과 a1이 모두 있는 combined를 입력했다면 a1도 그대로 남습니다.</p>

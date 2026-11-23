@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색 Tool을 조건에 따라 반복하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,6 +34,16 @@
 </div>
 </header>
 <p>제공 그래프는 판단을 돌리는 자리에 세 낱말을 검사하는 로컬 규칙을 둡니다. model에서 tool로 간 경우에만 rounds가 늘고 다시 model로 돌아옵니다. 실습의 한도는 검색 한 차례입니다. 생성 모델의 실제 도구 선택 성공률을 재는 예제는 아닙니다.</p>
+<!-- MOTION unused-tool -->
+<figure class="motion-study" id="motion-unused-tool" data-sheet="motion/unused-tool.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>도구 요청이 없으면 검색기는 움직일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/unused-tool-still.webp" width="800" height="272" alt="도구 호출 목록이 비어 있으면 검색 노드를 실행하지 않고 끝냅니다. 도구를 사용할 수 있다는 사실만으로 호출 횟수가 늘지는 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>도구 호출 목록이 비어 있으면 검색 노드를 실행하지 않고 끝냅니다. 도구를 사용할 수 있다는 사실만으로 호출 횟수가 늘지는 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 선택 검색 경로 연결하기</h3>
 <div class="cell-before"><p>decide에서 finish를 돌려주는 두 조건을 찾아보세요. 주차 요금 한 건을 넣습니다.</p>
 </div>

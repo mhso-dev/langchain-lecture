@@ -4,6 +4,8 @@
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
 <script defer src="../assets/concept-labs.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -33,6 +35,16 @@
 </div>
 </header>
 <p>검색을 마쳤는데 빈 목록이 돌아오면 답변 생성을 건너뛸 수 있습니다. 반면 통신이 끊기면 문서가 있는지조차 확인하지 못했습니다.</p>
+<!-- MOTION empty-or-timeout -->
+<figure class="motion-study" id="motion-empty-or-timeout" data-sheet="motion/empty-or-timeout.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>빈 목록과 시간 초과는 어떻게 구별할까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/empty-or-timeout-still.webp" width="800" height="272" alt="[]는 검색을 마치고 받은 빈 결과입니다. 시간 초과에서는 결과를 받지 못했습니다. 두 경우 모두 근거 문장은 없지만 관찰한 사건이 다릅니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>[]는 검색을 마치고 받은 빈 결과입니다. 시간 초과에서는 결과를 받지 못했습니다. 두 경우 모두 근거 문장은 없지만 관찰한 사건이 다릅니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 빈 검색 결과에서 멈추기</h3>
 <div class="cell-before"><p>가상 도서관의 주차 질문을 로컬 자료에서 찾습니다.</p>
 </div>

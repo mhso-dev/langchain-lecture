@@ -38,3 +38,7 @@ Vercel에서 이 저장소를 연결하고 운영 브랜치를 `main`으로 사�
 2026년 11월 23일판 단일 HTML(102,132,697바이트)에서 장별 본문·학생 노트북·시각 자료를 분리했다. 원문에 있던 교육 검수 상태는 각 장에 표시한다. 개발용 기록과 강사 전용 자료는 상위 강의 프로젝트에서 관리한다.
 
 [1–116장 개념 애니메이션 전수 검수와 장별 변경 내역](reports/visual-audit.md)
+
+[개념 애니메이션 124개의 재생 주소와 장별 설명](reports/concept-motion.md)
+
+작화 원본은 `artwork/`에 있다. 예를 들어 21장 청크의 가위 위치는 `unit_closeups.py`의 `scissors`에서 정한다. 한 장을 고칠 때는 Pillow가 설치된 환경에서 `python artwork/render.py 21`을 실행하면 웹의 프레임·정지 이미지와 해당 노트북의 GIF가 같은 그림에서 생성된다. 기본 글꼴은 macOS Apple SD Gothic Neo이며 다른 환경에서는 `LESSON_FONT`와 `LESSON_BOLD_FONT`에 한글 글꼴 파일 경로를 지정한다. 이후 `node scripts/build.mjs`, `python scripts/check.py`를 실행한다. `python artwork/verify.py`는 작화에 사용한 글꼴로 모든 프레임을 다시 그려 배포 자산과 대조한다. Vercel 빌드는 커밋된 미디어를 사용한다.

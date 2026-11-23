@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>함수 명세와 모델의 도구 호출 요청 읽기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -31,6 +33,17 @@
 </div>
 </header>
 <p>도구 명세에는 함수 이름, 기능 설명, 허용 인자를 적습니다. 수업용 가상 도서관은 day 하나만 받고, 평일이나 주말 중 하나를 고르게 했습니다.</p>
+<!-- MOTION enum-wheel -->
+<figure class="motion-study" id="motion-enum-wheel" data-sheet="motion/enum-wheel.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>도구가 받을 수 있는 요일은 어느 쪽일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/enum-wheel-still.webp" width="800" height="272" alt="day의 허용값은 weekday와 weekend입니다. 주말 조회에는 weekend가 들어가며, 명세에 없는 Friday는 허용값 밖입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>day의 허용값은 weekday와 weekend입니다. 주말 조회에는 weekend가 들어가며, 명세에 없는 Friday는 허용값 밖입니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 모델에 전달할 요일 선택지</h3>
 <div class="cell-before"><p>아래 사전은 함수의 파이썬 본문 없이도 모델에 보낼 수 있는 기능 설명입니다.</p>
 </div>

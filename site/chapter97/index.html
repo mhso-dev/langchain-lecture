@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>핵심 기능 B · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -73,6 +75,16 @@ RULE-A</pre></div>
 </div>
 </header>
 <p>인계 카드　Q01 answered·RULE-A → Q03 no_evidence·인용 없음 → Q04 answered·RULE-B. 이 순서에는 근거 있는 답에서 없는 답으로 가는 경우와 다시 근거가 생기는 경우가 모두 있습니다. 팀 주제에서는 연속 질문을 보낸 다음 현재 화면과 접힌 과거 이력의 자료가 각각 어느 질문에 속하는지 표시하세요.</p>
+<!-- MOTION turn-filmstrip -->
+<figure class="motion-study" id="motion-turn-filmstrip" data-sheet="motion/turn-filmstrip.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>새 질문이 와도 예전 턴의 근거까지 지워질까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/turn-filmstrip-still.webp" width="800" height="272" alt="화면은 현재 턴의 출처만 읽습니다. Q03에서 빈 목록이 보이더라도 이력의 Q01은 RULE-A를 유지하고, Q04에는 RULE-B가 붙습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>화면은 현재 턴의 출처만 읽습니다. Q03에서 빈 목록이 보이더라도 이력의 Q01은 RULE-A를 유지하고, Q04에는 RULE-B가 붙습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 마지막 화면을 장비 B로 바꾸기</h3>
 <div class="cell-before"><p>장비 B 응답이 들어왔을 때 출처가 없는 이전 응답을 이력에 보존하고 새 답의 출처를 읽어 보세요.</p>
 <p>이력에 들어 있는 직전 Q03의 상태는 no_evidence입니다. 지금 Q04에서 답과 함께 보여 줄 출처는 RULE-B입니다. 직전 상태가 현재 출처를 지우거나 이전 출처가 현재 카드에 남아서는 안 됩니다.</p>

@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LCEL의 입력과 출력을 연결해 작은 체인 만들기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -96,6 +98,17 @@ has_lcel = find_spec(<span class="tok-string">&quot;langchain_core&quot;</span>)
 </div>
 </header>
 <p>invoke는 한 번에 결과를 받고 stream은 차례로 오는 조각을 읽습니다. 조각 하나의 경계는 문장이나 단어의 경계와 같지 않을 수 있습니다.</p>
+<!-- MOTION stream-typesetter -->
+<figure class="motion-study" id="motion-stream-typesetter" data-sheet="motion/stream-typesetter.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>조각으로 받은 답은 어디에서 한 문장이 될까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/stream-typesetter-still.webp" width="800" height="272" alt="먼저 도착한 글자는 자리에 남고 다음 조각이 뒤에 붙습니다. 마지막에 이어 읽은 문자열과 조각 한 개를 구별해 보세요."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>먼저 도착한 글자는 자리에 남고 다음 조각이 뒤에 붙습니다. 마지막에 이어 읽은 문자열과 조각 한 개를 구별해 보세요.</figcaption>
+</figure>
+<!-- END MOTION -->
+
+
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 스트림을 한 문장으로 복원하기</h3>
 <div class="cell-before"><p>LCEL 환경에서는 chain.stream의 조각을 이어 전체 답을 출력하세요. 라이브러리가 없는 경우 제공 조각으로 결합 연산만 연습합니다.</p>
 </div>

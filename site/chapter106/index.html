@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>전체 기능 연결 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -53,6 +55,16 @@ committed True</pre></div>
 </div>
 </header>
 <p>저장 실패 예시　요청 save_failure / 계산은 완료 / storage_status failed / 오류 storage_failure / 새로 읽은 답의 일치 여부 미관측. 화면은 사용자에게 계산한 답이 아직 저장되지 않았다고 알려야 합니다. 요청 ID를 받은 운영 담당자는 같은 시도의 저장 오류부터 확인할 수 있습니다.</p>
+<!-- MOTION two-indicators -->
+<figure class="motion-study" id="motion-two-indicators" data-sheet="motion/two-indicators.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>답은 있는데 저장에 실패한 요청은 어떻게 보일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/two-indicators-still.webp" width="800" height="272" alt="계산 완료와 저장 완료를 두 표시등으로 봅니다. 저장 실패 사례에서는 답 계산 쪽만 켜지고 저장 완료 쪽은 켜지지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>계산 완료와 저장 완료를 두 표시등으로 봅니다. 저장 실패 사례에서는 답 계산 쪽만 켜지고 저장 완료 쪽은 켜지지 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패한 요청의 인계 줄 만들기</h3>
 <div class="cell-before"><p>로컬 실패 기록에서 운영 담당자에게 전달할 필드를 골라 보세요.</p>
 </div>

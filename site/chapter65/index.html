@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangChain 요청 분류와 Jev 연결 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -65,6 +67,16 @@ print(rule_route(<span class="tok-string">&quot;API 호출에 401 오류가 납�
 </div>
 </header>
 <p>LangChain 도구는 모델에 제시할 수 있는 설명과 실제 호출 함수를 함께 갖습니다. 여기서는 분류의 영향을 보기 위해 모델의 자유 선택을 생략하고, 허용 목록에서 얻은 도구를 직접 invoke합니다.</p>
+<!-- MOTION tool-apertures -->
+<figure class="motion-study" id="motion-tool-apertures" data-sheet="motion/tool-apertures.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>기술 문의에 열리는 도구 칸은 어디일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/tool-apertures-still.webp" width="800" height="272" alt="기술 문의로 분류한 예제는 technical_faq를 사용합니다. 분류값이 정해졌다고 모든 도구가 허용되는 것은 아닙니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>기술 문의로 분류한 예제는 technical_faq를 사용합니다. 분류값이 정해졌다고 모든 도구가 허용되는 것은 아닙니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 기술 문의에 붙인 도구</h3>
 <div class="cell-before"><p>도구 이름과 실제 안내를 확인합니다.</p>
 <p>복합 문의의 분류값 clarify에는 바로 실행할 도구가 없습니다. 이 값이면 도구 목록을 찾기 전에 질문을 돌려주세요. 아래의 기술 문의만 technical 목록에서 함수를 골라 실행합니다.</p>

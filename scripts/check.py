@@ -16,12 +16,13 @@ class Page(HTMLParser):
         self.links = []
         self.notebooks = []
         self.simulations = []
+        self.motion = []
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
         if "id" in attrs:
             self.ids.add(attrs["id"])
-        for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still"):
+        for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still", "data-sheet"):
             value = attrs.get(key)
             if not value or value.startswith("data:"):
                 continue
@@ -29,6 +30,8 @@ class Page(HTMLParser):
                 self.links.extend(item.split()[0] for item in value.split(",") if item.strip())
             else:
                 self.links.append(value)
+        if tag == "figure" and "motion-study" in attrs.get("class", "").split():
+            self.motion.append(Path(attrs["data-sheet"]).stem + ".gif")
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
         if tag == "iframe" and attrs.get("src") == "simulation.html":
@@ -64,6 +67,9 @@ def main():
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
+        attachments = {name for cell in notebook["cells"] for name in cell.get("attachments", {})}
+        if not page.motion or not set(page.motion) <= attachments:
+            errors.append(f"{name} 웹 애니메이션과 노트북 GIF를 대조하세요.")
         for cell in notebook["cells"]:
             if cell["cell_type"] != "markdown":
                 continue

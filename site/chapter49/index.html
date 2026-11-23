@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>품질·비용 점검 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -52,6 +54,16 @@ print(candidate)</code></pre></figure>
 </div>
 </header>
 <p>실험 기록 예시｜실행 모드는 로컬 규칙, 외부 모델 호출은 0회, 모델 비용과 모델 지연은 미측정입니다. 로컬 코드의 실행 시간에는 화면 대기와 실제 모델 응답시간이 포함되지 않습니다.</p>
+<!-- MOTION instrument-blanks -->
+<figure class="motion-study" id="motion-instrument-blanks" data-sheet="motion/instrument-blanks.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>호출 수 0과 비용 미측정은 같은 눈금일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/instrument-blanks-still.webp" width="800" height="272" alt="로컬 규칙에서 외부 모델 호출은 0회입니다. 모델 비용과 지연은 재지 않았으므로 계기판에 0을 채우지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>로컬 규칙에서 외부 모델 호출은 0회입니다. 모델 비용과 지연은 재지 않았으므로 계기판에 0을 채우지 않습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 원 단위 수치를 비워 둔 까닭 읽기</h3>
 <div class="cell-before"><p>후보의 비용 관측 필드만 꺼내 봅니다.</p>
 </div>

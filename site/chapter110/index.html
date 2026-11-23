@@ -4,6 +4,8 @@
 <script defer src="../assets/deep-link.js"></script>
 <link rel="stylesheet" href="../assets/concept-labs.css">
 <script defer src="../assets/concept-labs.js"></script>
+<link rel="stylesheet" href="../assets/motion-study.css">
+<script defer src="../assets/motion-study.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -32,7 +34,17 @@
 <h2>시간의 시작점과 끝점 정하기</h2>
 </div>
 </header>
-<p>측정 카드 예시　Q01 / rules-v1 / 공개 그룹 / 시작은 서비스 처리 직전 / 종료는 결과 검증과 JSON 저장이 끝난 시점 / 업무 결과 answered / 근거 RULE-A. 실제 사용자 대기는 브라우저 전송과 표시 시간까지 더 관찰해야 합니다. 아래 숫자는 단위를 연습하기 위해 만든 합성 시각입니다.</p><section class="concept-lab" id="concept-lab" data-lab="timing"><h3>처리는 같은 3.5ms인데 왜 더 오래 기다릴까요?</h3><p>눈금은 합성 시각입니다. 요청이 서비스에 도착하기 전 대기 시간을 늘려 보세요. 서비스에서 잰 구간의 폭과 요청을 시작해서 처리가 끝날 때까지의 전체 폭을 비교하세요.</p><label>도착 전 대기 <input type="range" min="0" max="12" value="0" step=".5" data-input="wait"> <output data-out="wait">0ms</output></label><div class="time-track" aria-hidden="true"><i></i><b></b></div><p>빗금은 도착 전 대기 시간, 초록색은 서비스 처리 시간입니다.</p><div class="lab-landscape"><div class="lab-tile"><small>서비스 구간 · 12~15.5ms</small>3.5ms</div><div class="lab-tile"><small>요청 시작부터 처리 종료까지</small><output data-out="total">3.5ms</output></div></div></section>
+<p>측정 카드 예시　Q01 / rules-v1 / 공개 그룹 / 시작은 서비스 처리 직전 / 종료는 결과 검증과 JSON 저장이 끝난 시점 / 업무 결과 answered / 근거 RULE-A. 실제 사용자 대기는 브라우저 전송과 표시 시간까지 더 관찰해야 합니다. 아래 숫자는 단위를 연습하기 위해 만든 합성 시각입니다.</p>
+<!-- MOTION stopwatch-span -->
+<figure class="motion-study" id="motion-stopwatch-span" data-sheet="motion/stopwatch-span.webp" data-frames="40" data-cols="5" data-duration="5000">
+<h3>12와 15.5라는 눈금 사이에서 잰 값은 무엇일까요?</h3>
+<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/stopwatch-span-still.webp" width="800" height="272" alt="서비스 시작과 종료에 찍은 합성 시각의 차이는 3.5ms입니다. 브라우저에서 요청을 보내고 답을 그리는 시간은 이 두 눈금 밖에 있습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+
+<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
+<figcaption>서비스 시작과 종료에 찍은 합성 시각의 차이는 3.5ms입니다. 브라우저에서 요청을 보내고 답을 그리는 시간은 이 두 눈금 밖에 있습니다.</figcaption>
+</figure>
+<!-- END MOTION -->
+<section class="concept-lab" id="concept-lab" data-lab="timing"><h3>처리는 같은 3.5ms인데 왜 더 오래 기다릴까요?</h3><p>눈금은 합성 시각입니다. 요청이 서비스에 도착하기 전 대기 시간을 늘려 보세요. 서비스에서 잰 구간의 폭과 요청을 시작해서 처리가 끝날 때까지의 전체 폭을 비교하세요.</p><label>도착 전 대기 <input type="range" min="0" max="12" value="0" step=".5" data-input="wait"> <output data-out="wait">0ms</output></label><div class="time-track" aria-hidden="true"><i></i><b></b></div><p>빗금은 도착 전 대기 시간, 초록색은 서비스 처리 시간입니다.</p><div class="lab-landscape"><div class="lab-tile"><small>서비스 구간 · 12~15.5ms</small>3.5ms</div><div class="lab-tile"><small>요청 시작부터 처리 종료까지</small><output data-out="total">3.5ms</output></div></div></section>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 합성 시각을 밀리초로 바꾸기</h3>
 <div class="cell-before"><p>두 값은 같은 시계의 나노초 눈금입니다. 날짜처럼 해석하지 말고 차이를 구해 보세요.</p>
 <p>실패 시도의 기록 예는 ‘종료 사건 timeout / 성공 여부 False / 브라우저 대기 시간 미측정’입니다. Q01의 정상 완료 기록과 구분하세요. 관찰하지 못한 시간 칸에 0을 적으면 즉시 끝났다는 뜻으로 읽힙니다.</p>
