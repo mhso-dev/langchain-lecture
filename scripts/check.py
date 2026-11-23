@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import json
+import re
 
 ROOT = Path(__file__).resolve().parents[1] / "dist"
 
@@ -63,6 +64,13 @@ def main():
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
+        for cell in notebook["cells"]:
+            if cell["cell_type"] != "markdown":
+                continue
+            references = set(re.findall(r"attachment:([^\s)]+)", "".join(cell["source"])))
+            missing = references - cell.get("attachments", {}).keys()
+            if missing:
+                errors.append(f"{name} 노트북 첨부 누락 {sorted(missing)}")
         if not any(cell["cell_type"] == "code" for cell in notebook["cells"]):
             errors.append(f"{name} 코드 셀 누락")
     if errors:

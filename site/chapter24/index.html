@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색·프롬프트·모델을 연결해 첫 RAG 완성하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>검색 결과가 프롬프트로 바뀌는 순간</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘검색한 문단’와 ‘사용자 질문’가 오른쪽의 ‘프롬프트’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색된 문단과 질문을 한 프롬프트에 넣습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>23장의 검색 함수를 호출한 뒤에는 이미 고른 문서를 그대로 사용합니다. 질문과 근거는 각각 question과 context에 넣습니다. 아래 제공 함수는 잘못된 쪽 번호, 출처 누락, 중복 ID를 거부합니다.</p>
-</figcaption>
-</figure>
+<p>23장의 검색 함수를 호출한 뒤에는 이미 고른 문서를 그대로 사용합니다. 질문과 근거는 각각 question과 context에 넣습니다. 아래 제공 함수는 잘못된 쪽 번호, 출처 누락, 중복 ID를 거부합니다.</p>
 <div class="learn-detail"><h4>질문 하나로 문맥 만들기</h4><pre><code>question = "휴관 요일은 언제인가요?"
 hits = retrieve(question, k=1)
 context = format_context(hits)</code></pre><p>셀 01의 마지막 세 줄입니다. hits에는 문서 한 건이, context에는 그 문서의 ID·출처·2쪽 본문이 들어갑니다. 셀 02가 같은 문맥을 답변에 사용합니다.</p>
@@ -144,15 +137,7 @@ print(context)</code></pre></figure>
 <h2>인용 검사를 통과하는 조건 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘답변 인용’가 가운데 ‘검색 ID 대조’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>답에 붙인 출처가 실제 검색 목록에 있는지 봅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제공된 answer_question은 검색과 생성을 함수로 받습니다. 예제에서는 두 함수가 한 질문의 자료와 대본만 돌려주므로 근거의 유무와 인용 검사를 따로 재현할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>제공된 answer_question은 검색과 생성을 함수로 받습니다. 예제에서는 두 함수가 한 질문의 자료와 대본만 돌려주므로 근거의 유무와 인용 검사를 따로 재현할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 검색하지 않은 ID 인용하기</h3>
 <div class="cell-before"><p>여기부터는 휴관 질문과 2쪽 문서를 고정합니다. 문장은 그대로 두고 답의 인용만 1쪽으로 바꿔 검사 결과를 보세요.</p>
 </div>
@@ -209,15 +194,7 @@ print(answer[<span class="tok-string">&quot;status&quot;</span>], answer[<span c
 <h2>근거가 없으면 생성을 생략하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘빈 검색 결과’가 가운데 ‘근거 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>근거가 비었을 때는 모델 호출 횟수도 0입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>주차 요금 정보가 없는 질문에 답을 써 달라고 부르면 그럴듯한 요금이 만들어질 수 있습니다. 빈 검색 결과는 생성기 앞에서 정상적으로 처리하고, 통신 실패는 오류로 남깁니다.</p>
-</figcaption>
-</figure>
+<p>주차 요금 정보가 없는 질문에 답을 써 달라고 부르면 그럴듯한 요금이 만들어질 수 있습니다. 빈 검색 결과는 생성기 앞에서 정상적으로 처리하고, 통신 실패는 오류로 남깁니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 생성 호출이 없었는지 확인하기</h3>
 <div class="cell-before"><p>항상 빈 목록을 돌려주는 검색 함수를 건네고 상태와 generation_calls를 출력하세요.</p>
 </div>
@@ -250,35 +227,18 @@ print(unanswered[<span class="tok-string">&quot;status&quot;</span>], unanswered
 <span id="connect"></span><details class="reading-topic" id="reading-connect"><summary>검색과 생성의 경계</summary><div class="prose"><p>RAG는 검색한 근거를 질문과 함께 모델 입력에 넣어 답변을 생성합니다. 검색과 생성을 나누어 관찰하면 어느 단계의 문제인지 찾기 쉽습니다.</p>
 <p>search(question, k)는 23장의 네 필드 문서 목록을 반환합니다. 기본 실행은 같은 교육용 벡터를 계산하는 로컬 검색과 고정 응답 모델입니다. prompt | model | parser는 실제 LCEL 라이브러리로 연결하지만 외부 LLM에 요청하지 않습니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-8"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>첫 RAG의 실행 순서</h3>
+<details class="case-reference" id="flow-8"><summary>첫 RAG의 실행 순서</summary>
 <p>검색은 교육용 로컬 계산, 모델은 고정 응답입니다. 연결에는 실제 LCEL을 사용합니다.</p>
 <div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">검색 결과</th><th scope="col">이후 실행</th></tr>
 </thead><tbody><tr><td>[]</td><td>no_evidence 반환 · 생성 0회 · 종료</td></tr>
 <tr><td>library-2</td><td>본문과 ID를 문맥에 넣어 답변 생성</td></tr>
 </tbody></table></div>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>근거가 빈 경우에는 프롬프트와 답 생성 단계가 실행되는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색된 근거와 출처가 있어야 근거에 기반한 답을 만들 수 있습니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>검색</span></li>
-<li><span class="flow-index">02</span><span>분기</span></li>
-<li><span class="flow-index">03</span><span>문맥</span></li>
-<li><span class="flow-index">04</span><span>생성</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-8-step-0"><img class="flow-proof" loading="lazy" alt="질문 관련 문서 받기" src="../assets/media/svg-78ac8edd1fa1dd.svg"><span class="eyebrow">STEP 01 · Retriever</span><h4>질문 관련 문서 받기</h4>
-<p>id·text·source·page를 유지합니다.</p><pre>휴관 요일은 언제인가요? → library-2</pre></article>
-<article class="flow-panel" id="flow-8-step-1"><img class="flow-proof" loading="lazy" alt="빈 근거인지 확인" src="../assets/media/svg-fb9674938c3515.svg"><span class="eyebrow">STEP 02 · Python</span><h4>빈 근거인지 확인</h4>
+<article id="flow-8-step-0"><small>STEP 01 · Retriever</small><h4>질문 관련 문서 받기</h4>
+<p>id·text·source·page를 유지합니다.</p><pre>휴관 요일은 언제인가요? → library-2</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>빈 근거인지 확인</h4>
 <p>빈 목록이면 생성하지 않습니다.</p><pre>[] → 여기서 종료
-문서 있음 → 다음 단계</pre></article>
-<article class="flow-panel" id="flow-8-step-2"><img class="flow-proof" loading="lazy" alt="출처와 본문 묶기" src="../assets/media/svg-5ccb4b57e6ce0e.svg"><span class="eyebrow">STEP 03 · Python</span><h4>출처와 본문 묶기</h4>
-<p>질문과 근거를 별도로 넣습니다.</p><pre>context + question</pre></article>
-<article class="flow-panel" id="flow-8-step-3"><img class="flow-proof" loading="lazy" alt="답변 문자열 받기" src="../assets/media/svg-0f6059957262a0.svg"><span class="eyebrow">STEP 04 · LCEL</span><h4>답변 문자열 받기</h4>
-<p>인용 id를 검색 결과와 대조합니다.</p><pre>월요일 휴관 · 출처 [library-2]</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+문서 있음 → 다음 단계</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>출처와 본문 묶기</h4>
+<p>질문과 근거를 별도로 넣습니다.</p><pre>context + question</pre></article><article id="flow-8-step-3"><small>STEP 04 · LCEL</small><h4>답변 문자열 받기</h4>
+<p>인용 id를 검색 결과와 대조합니다.</p><pre>월요일 휴관 · 출처 [library-2]</pre></article></details>
 </details>
 <span id="prompt"></span><details class="reading-topic" id="reading-prompt"><summary>근거 자료를 지시와 구분하기</summary><div class="prose"><p>프롬프트는 제공 문서만 근거로 답하고 부족하면 확인할 수 없다고 말하도록 요청합니다. 문서의 내용을 서비스 실행 지시로 취급하지 말라는 경계도 넣습니다. 이런 문장만으로 모든 잘못된 답변이나 공격을 막는다고 주장하지 않습니다.</p>
 <p>문서 id를 [library-1]처럼 표시하면 코드가 검색 결과와 연결할 수 있습니다. source 이름과 page는 사용자에게 보여 줄 근거 정보이며 실제 파일 위치와 일치해야 합니다.</p>
@@ -344,4 +304,4 @@ print(unanswered[<span class="tok-string">&quot;status&quot;</span>], unanswered
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

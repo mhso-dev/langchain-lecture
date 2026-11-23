@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>도구 요청을 실행하고 결과를 모델에 돌려주기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>요청을 받은 쪽에서 실제 함수 실행하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘weekend’에서 출발해 ‘시간 조회 함수’를 거친 뒤 ‘10:00~16:00’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>운영 시간을 실제로 읽는 쪽은 도구 실행 함수입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>명세만 본 모델은 운영 시간을 알 수 없습니다. 읽기 전용 조회 함수 안의 표에서 시간을 꺼내면 비로소 답에 쓸 값이 생깁니다.</p>
-</figcaption>
-</figure>
+<p>명세만 본 모델은 운영 시간을 알 수 없습니다. 읽기 전용 조회 함수 안의 표에서 시간을 꺼내면 비로소 답에 쓸 값이 생깁니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 가상 도서관 조회</h3>
 <div class="cell-before"><p>이번 셀에서는 모델 없이 파이썬 함수를 직접 부릅니다.</p>
 </div>
@@ -86,15 +79,7 @@ print(json.loads(reply[<span class="tok-string">&quot;output&quot;</span>])[<spa
 <h2>결과를 어느 요청에 붙일지 확인하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘call_1’를 기준으로 양쪽의 ‘호출 요청’와 ‘함수 결과’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>call_1이 요청과 그 실행 결과를 연결합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>결과를 돌려주는 쪽은 임의의 새 ID를 붙이지 않습니다. 모델이 보낸 호출 항목의 call_id를 그대로 써야 요청과 결과가 한 쌍이 됩니다.</p>
-</figcaption>
-</figure>
+<p>결과를 돌려주는 쪽은 임의의 새 ID를 붙이지 않습니다. 모델이 보낸 호출 항목의 call_id를 그대로 써야 요청과 결과가 한 쌍이 됩니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 호출 ID 연결 확인</h3>
 <div class="cell-before"><p>원본 call과 결과 reply의 ID가 같은지 확인하고, 같으면 그 ID를 출력하세요.</p>
 </div>
@@ -121,15 +106,7 @@ print(json.loads(rejected[<span class="tok-string">&quot;output&quot;</span>]))<
 <h2>모델이 읽을 마지막 기록 만들기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘실행 결과’에서 출발해 ‘도구 결과 메시지’를 거친 뒤 ‘다음 모델 입력’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>실행 결과를 모델에 돌려주어야 최종 답을 작성합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>도구 호출을 제안한 응답과 함수 실행 결과를 대화 끝에 차례로 넣습니다. 모델에 다시 보내기 직전에는 결과가 어느 항목인지, 조회 실패를 개관 시간으로 오해하지 않았는지 살펴보세요.</p>
-</figcaption>
-</figure>
+<p>도구 호출을 제안한 응답과 함수 실행 결과를 대화 끝에 차례로 넣습니다. 모델에 다시 보내기 직전에는 결과가 어느 항목인지, 조회 실패를 개관 시간으로 오해하지 않았는지 살펴보세요.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 대화에 결과 더하기</h3>
 <div class="cell-before"><p>대화 내역을 만든 뒤 마지막 항목의 유형을 읽습니다.</p>
 </div>
@@ -155,33 +132,16 @@ print(history[-<span class="tok-number">1</span>][<span class="tok-string">&quot
 </div>
 </details>
 </article>
-<figure class="flow" data-flow id="flow-9"><figcaption><span class="eyebrow">단계별 그림</span><h3>호출 요청 한 건이 답변에 쓰이기까지</h3>
+<details class="case-reference" id="flow-9"><summary>호출 요청 한 건이 답변에 쓰이기까지</summary>
 <p>단계를 넘기며 call_1이 어디에 남고 운영 시간이 어느 단계에서 처음 생기는지 보세요.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>요청과 함수 결과에 적힌 호출 ID를 서로 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>호출 ID가 도구의 결과를 원래 요청과 연결해야 모델이 그 결과를 최종 답에 쓸 수 있습니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>요청</span></li>
-<li><span class="flow-index">02</span><span>조회</span></li>
-<li><span class="flow-index">03</span><span>연결</span></li>
-<li><span class="flow-index">04</span><span>안내</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-9-step-0"><img class="flow-proof" loading="lazy" alt="주말 운영 시간을 요청합니다." src="../assets/media/svg-b3a085d779ee39.svg"><span class="eyebrow">STEP 01 · 모델 응답 예시</span><h4>주말 운영 시간을 요청합니다.</h4>
+<article id="flow-9-step-0"><small>STEP 01 · 모델 응답 예시</small><h4>주말 운영 시간을 요청합니다.</h4>
 <p>이 시점에는 조회할 함수와 요일만 정해졌습니다.</p><pre>call_id = call_1
-get_library_hours(day=&quot;weekend&quot;)</pre></article>
-<article class="flow-panel" id="flow-9-step-1"><img class="flow-proof" loading="lazy" alt="시간표에서 주말 항목을 찾습니다." src="../assets/media/svg-4aab8b75510c70.svg"><span class="eyebrow">STEP 02 · 파이썬 함수</span><h4>시간표에서 주말 항목을 찾습니다.</h4>
-<p>함수를 호출한 프로그램이 결과를 받았습니다. 요청을 받기만 한 상태에서는 이 값을 알 수 없습니다.</p><pre>hours = 10:00~16:00</pre></article>
-<article class="flow-panel" id="flow-9-step-2"><img class="flow-proof" loading="lazy" alt="조회 결과에 같은 ID를 붙입니다." src="../assets/media/svg-a20051df6ba3a3.svg"><span class="eyebrow">STEP 03 · 대화 기록</span><h4>조회 결과에 같은 ID를 붙입니다.</h4>
+get_library_hours(day=&quot;weekend&quot;)</pre></article><article id="flow-9-step-1"><small>STEP 02 · 파이썬 함수</small><h4>시간표에서 주말 항목을 찾습니다.</h4>
+<p>함수를 호출한 프로그램이 결과를 받았습니다. 요청을 받기만 한 상태에서는 이 값을 알 수 없습니다.</p><pre>hours = 10:00~16:00</pre></article><article id="flow-9-step-2"><small>STEP 03 · 대화 기록</small><h4>조회 결과에 같은 ID를 붙입니다.</h4>
 <p>function_call_output과 원래 요청이 call_1로 이어집니다. 대화 목록에서 서로 이웃하는지만 보고 연결하면 호출 두 개의 결과가 뒤바뀔 수 있습니다.</p><pre>type = function_call_output
 call_id = call_1
-운영 시간 = 10:00~16:00</pre></article>
-<article class="flow-panel" id="flow-9-step-3"><img class="flow-proof" loading="lazy" alt="결과에서 시간을 읽어 안내합니다." src="../assets/media/svg-fa69f6d604b195.svg"><span class="eyebrow">STEP 04 · 수업 예시</span><h4>결과에서 시간을 읽어 안내합니다.</h4>
-<p>이 장의 풀이에서는 저장한 결과로 안내 문장을 만듭니다.</p><pre>가상 주말 운영 시간: 10:00~16:00</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+운영 시간 = 10:00~16:00</pre></article><article id="flow-9-step-3"><small>STEP 04 · 수업 예시</small><h4>결과에서 시간을 읽어 안내합니다.</h4>
+<p>이 장의 풀이에서는 저장한 결과로 안내 문장을 만듭니다.</p><pre>가상 주말 운영 시간: 10:00~16:00</pre></article></details>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>다시 풀어 보기</h2>
@@ -200,31 +160,14 @@ call_id = call_1
 <span id="flow"></span><details class="reading-topic" id="reading-flow"><summary>한 번의 왕복에서 누가 일하나요?</summary><div class="prose"><p>모델이 get_library_hours와 day=weekend를 요청하면 Python 코드가 이름과 인자를 검사합니다. 조건에 맞으면 Python 함수가 실제로 실행되고 결과를 JSON 문자열로 바꿉니다. 이후 모델이 그 결과를 받아 답변을 작성합니다.</p>
 <p>여기서 실제로 실행되는 함수는 교육용 정적 시간표를 반환합니다. 실제 도서관 서버나 예약 시스템에 접속하지 않습니다. 기본 모델 응답은 모의 자료지만 도구 함수 실행과 메시지 연결 코드는 실제로 실행합니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-10"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>실행하기 전에 걸러지는 요청</h3>
+<details class="case-reference" id="flow-10"><summary>실행하기 전에 걸러지는 요청</summary>
 <p>함수 호출 전에 이름과 요일을 확인합니다. 허용된 요청만 3단계로 계속합니다.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>이름이나 인자가 맞지 않는 요청이 실제 조회까지 도달하는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>모델이 도구를 요청해도 앱이 도구 이름과 인자를 검사한 뒤에만 함수를 실행합니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>요청</span></li>
-<li><span class="flow-index">02</span><span>검사</span></li>
-<li><span class="flow-index">03</span><span>실행</span></li>
-<li><span class="flow-index">04</span><span>반환</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-10-step-0"><img class="flow-proof" loading="lazy" alt="함수 이름·인자 제안" src="../assets/media/svg-8f20e0517c636c.svg"><span class="eyebrow">STEP 01 · 모델</span><h4>함수 이름·인자 제안</h4>
-<p>호출 ID와 함께 도구를 요청합니다.</p><pre>function_call</pre></article>
-<article class="flow-panel" id="flow-10-step-1"><img class="flow-proof" loading="lazy" alt="허용 목록·필드 확인" src="../assets/media/svg-57455eda74b58c.svg"><span class="eyebrow">STEP 02 · Python</span><h4>허용 목록·필드 확인</h4>
+<article id="flow-10-step-0"><small>STEP 01 · 모델</small><h4>함수 이름·인자 제안</h4>
+<p>호출 ID와 함께 도구를 요청합니다.</p><pre>function_call</pre></article><article id="flow-10-step-1"><small>STEP 02 · Python</small><h4>허용 목록·필드 확인</h4>
 <p>조건이 틀리면 오류 결과를 만듭니다.</p><pre>weekday 또는 weekend → 조회로 이동
-그 밖의 값 → 검사 실패, 조회 0회</pre></article>
-<article class="flow-panel" id="flow-10-step-2"><img class="flow-proof" loading="lazy" alt="가상 운영 시간 조회" src="../assets/media/svg-02be0a6b0b3538.svg"><span class="eyebrow">STEP 03 · Python 함수</span><h4>가상 운영 시간 조회</h4>
-<p>읽기 전용 딕셔너리를 조회합니다.</p><pre>hours</pre></article>
-<article class="flow-panel" id="flow-10-step-3"><img class="flow-proof" loading="lazy" alt="동일 ID로 결과 전달" src="../assets/media/svg-4ed35f7da8f5e5.svg"><span class="eyebrow">STEP 04 · Python → 모델</span><h4>동일 ID로 결과 전달</h4>
-<p>도구 결과를 받은 뒤 최종 답변을 요청합니다.</p><pre>function_call_output</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+그 밖의 값 → 검사 실패, 조회 0회</pre></article><article id="flow-10-step-2"><small>STEP 03 · Python 함수</small><h4>가상 운영 시간 조회</h4>
+<p>읽기 전용 딕셔너리를 조회합니다.</p><pre>hours</pre></article><article id="flow-10-step-3"><small>STEP 04 · Python → 모델</small><h4>동일 ID로 결과 전달</h4>
+<p>도구 결과를 받은 뒤 최종 답변을 요청합니다.</p><pre>function_call_output</pre></article></details>
 </details>
 <span id="function"></span><details class="reading-topic" id="reading-function"><summary>작은 읽기 전용 함수부터 연결하기</summary><div class="prose"><p>함수는 day를 받아 정해진 시간표에서 값을 읽습니다. 데이터는 가상의 수업 자료입니다. 이 함수를 실행했다는 사실과 실제 기관 운영 시간이 맞는다는 주장은 구분해야 합니다.</p>
 </div>
@@ -278,4 +221,4 @@ call_id = call_1
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

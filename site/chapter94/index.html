@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>데이터 처리 구현 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>원문 레코드를 검색용 레코드로 옮기기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘규정 원문’에서 출발해 ‘위치와 식별자’를 거친 뒤 ‘검색 레코드’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>원문 위치와 식별자를 함께 옮겨 검색 기록을 만듭니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>변환 예시　원문 RULE-A에는 “점검 전 전원 표시등을 확인합니다.”와 출처 1쪽 2.1절이 있습니다. 검색용 레코드는 공백을 정리한 본문, 원본에서 계산한 SHA-256, 원래의 식별자와 허용 그룹을 보관합니다. SHA-256은 내용이 그대로인지 대조할 문자열입니다. 출처가 믿을 만한지나 문장이 사실인지는 알려 주지 않습니다.</p>
-</figcaption>
-</figure>
+<p>변환 예시　원문 RULE-A에는 “점검 전 전원 표시등을 확인합니다.”와 출처 1쪽 2.1절이 있습니다. 검색용 레코드는 공백을 정리한 본문, 원본에서 계산한 SHA-256, 원래의 식별자와 허용 그룹을 보관합니다. SHA-256은 내용이 그대로인지 대조할 문자열입니다. 출처가 믿을 만한지나 문장이 사실인지는 알려 주지 않습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원문 지문과 위치 보존하기</h3>
 <div class="cell-before"><p>원문에 손대지 않고 새 레코드를 만든 뒤 94장 제공 processed.json의 RULE-A와 같은 지문이 나오는지 읽습니다.</p>
 <p>이 셀에서 새로 계산하는 지문은 raw의 UTF-8 본문에서 나옵니다. 제공된 processed.json의 지문은 비교 대상입니다. 파일을 직접 읽어 대조하지 않았다면 새로 계산한 값과 파일 내용을 확인한 일을 따로 적으세요.</p>
@@ -68,15 +62,7 @@ RULE-A 2.1 rules-v1</pre></div>
 <h2>들여쓰기만 달라진 문서도 확인하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘내용 지문’를 기준으로 양쪽의 ‘이전 파일’와 ‘새 파일’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>파일이 달라졌는지와 문서 내용이 달라졌는지 구별합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>재처리 메모 예시　교정 사본에는 점검 전 뒤에 줄바꿈이 들어갔습니다. 검색용 본문을 만들면 두 내용이 같지만 원문 지문은 달라집니다. 팀은 정리 전 원본의 차이를 보관하고 출처의 절 번호가 달라졌는지 확인한 뒤 새 판본을 발행합니다.</p>
-</figcaption>
-</figure>
+<p>재처리 메모 예시　교정 사본에는 점검 전 뒤에 줄바꿈이 들어갔습니다. 검색용 본문을 만들면 두 내용이 같지만 원문 지문은 달라집니다. 팀은 정리 전 원본의 차이를 보관하고 출처의 절 번호가 달라졌는지 확인한 뒤 새 판본을 발행합니다.</p><section class="concept-lab" id="concept-lab" data-lab="digest"><h3>줄 하나를 바꾸면 같은 문서일까요?</h3><p>‘전’ 뒤의 공백을 줄바꿈으로 바꿔 보세요. 검색용 문장을 정리하기 전 원문의 UTF-8 바이트로 지문을 계산합니다.</p><div class="lab-actions"><button type="button" data-action="space">한 칸 띄우기</button><button type="button" data-action="newline">줄바꿈 넣기</button></div><div class="lab-landscape"><div class="lab-tile"><small>원문</small><output data-out="raw">점검 전 전원 표시등을 확인합니다.</output></div><div class="lab-tile"><small>공백을 정리한 검색용 문장</small><output data-out="clean">점검 전 전원 표시등을 확인합니다.</output></div></div><div class="lab-tile"><small>원문 SHA-256</small><output data-out="digest">8336aeeaa41f3a89559a2364950ef88f7d6128639fb3dad46974a7be38ac2f42</output></div></section>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 줄바꿈이 있는 사본</h3>
 <div class="cell-before"><p>예시 원문에 줄바꿈을 넣어 지문이 달라지는지, 정리한 문장이 같은지 각각 확인하세요.</p>
 </div>
@@ -106,4 +92,4 @@ True</pre></div>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>체크포인터로 대화를 이어가고 분리하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>첫 질문이 저장된 곳 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘첫 질문’를 ‘대화별 저장’에 남기는 시점과 ‘이어서 읽기’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>같은 대화 ID를 써야 이전 질문을 이어서 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>체크포인터는 그래프가 실행되는 동안 상태를 보관합니다. thread_id가 어느 대화의 상태를 읽고 쓸지 가리킵니다. 노트북에서는 그래프 하나와 메모리 저장소 하나를 만들어 여러 번 사용합니다.</p>
-</figcaption>
-</figure>
+<p>체크포인터는 그래프가 실행되는 동안 상태를 보관합니다. thread_id가 어느 대화의 상태를 읽고 쓸지 가리킵니다. 노트북에서는 그래프 하나와 메모리 저장소 하나를 만들어 여러 번 사용합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · A 대화 열기</h3>
 <div class="cell-before"><p>제공 함수는 가상 답변을 만들어 실제 LangGraph의 InMemorySaver에 저장합니다. 그래프는 이 셀에서 한 번만 만드세요.</p>
 </div>
@@ -119,28 +112,13 @@ print(reply_b[<span class="tok-string">&#x27;messages&#x27;</span>][-<span class
 </div>
 </details>
 </article>
-<figure class="flow" data-flow id="flow-5"><figcaption><span class="eyebrow">단계별 그림</span><h3>같은 저장소에서 대화 A와 B 따라가기</h3>
+<details class="case-reference" id="flow-5"><summary>같은 저장소에서 대화 A와 B 따라가기</summary>
 <p>대화 ID가 바뀔 때 어느 대화의 이전 발화를 불러오는지 살펴보세요.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>같은 저장소에서 대화 A와 B가 각각 어떤 질문을 다시 읽는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>체크포인트는 대화 식별자별로 조회합니다. 같은 저장소를 써도 대화 내용은 분리됩니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>A 첫 질문</span></li>
-<li><span class="flow-index">02</span><span>A 후속 질문</span></li>
-<li><span class="flow-index">03</span><span>B 첫 질문</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-5-step-0"><img class="flow-proof" loading="lazy" alt="A에 대출 기간을 묻습니다." src="../assets/media/svg-6be0c8c6400e1c.svg"><span class="eyebrow">STEP 01 · thread_id = A</span><h4>A에 대출 기간을 묻습니다.</h4>
-<p>A에 쌓인 사용자 발화는 한 개입니다.</p><pre>A · 1개 · 대출 기간?</pre></article>
-<article class="flow-panel" id="flow-5-step-1"><img class="flow-proof" loading="lazy" alt="A에서 반납 방법을 묻습니다." src="../assets/media/svg-79a41e3e114726.svg"><span class="eyebrow">STEP 02 · thread_id = A</span><h4>A에서 반납 방법을 묻습니다.</h4>
-<p>같은 대화를 다시 열었으므로 첫 질문도 기록에 남습니다.</p><pre>A · 2개 · 반납 방법?</pre></article>
-<article class="flow-panel" id="flow-5-step-2"><img class="flow-proof" loading="lazy" alt="B에서 휴관일을 묻습니다." src="../assets/media/svg-ba3c3d63e82cfb.svg"><span class="eyebrow">STEP 03 · thread_id = B</span><h4>B에서 휴관일을 묻습니다.</h4>
+<article id="flow-5-step-0"><small>STEP 01 · thread_id = A</small><h4>A에 대출 기간을 묻습니다.</h4>
+<p>A에 쌓인 사용자 발화는 한 개입니다.</p><pre>A · 1개 · 대출 기간?</pre></article><article id="flow-5-step-1"><small>STEP 02 · thread_id = A</small><h4>A에서 반납 방법을 묻습니다.</h4>
+<p>같은 대화를 다시 열었으므로 첫 질문도 기록에 남습니다.</p><pre>A · 2개 · 반납 방법?</pre></article><article id="flow-5-step-2"><small>STEP 03 · thread_id = B</small><h4>B에서 휴관일을 묻습니다.</h4>
 <p>같은 저장소를 써도 B의 사용자 발화는 한 개입니다. A의 두 발화는 A에 남습니다.</p><pre>A · 2개 · 대출 기간? / 반납 방법?
-B · 1개 · 휴관일?</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 3</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+B · 1개 · 휴관일?</pre></article></details>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>다시 풀어 보기</h2>

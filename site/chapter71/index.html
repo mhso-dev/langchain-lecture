@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 API를 Docker 이미지로 옮기기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>이미지가 실행할 첫 프로세스 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘Dockerfile’에서 출발해 ‘이미지’를 거친 뒤 ‘기본 실행 명령’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>Dockerfile이 이미지의 기본 실행 명령을 정합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
-</figcaption>
-</figure>
+<p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원본 Dockerfile에서 CMD 읽기</h3>
 <div class="cell-before"><p>71장 입문 이미지의 Dockerfile에서 마지막 CMD 줄을 가져왔습니다. JSON 배열을 읽어 프로그램과 포트를 나눠 보세요.</p>
 </div>
@@ -67,15 +60,7 @@ print(next(step <span class="tok-keyword">for</span> step <span class="tok-keywo
 <h2>같은 컨테이너를 중지하고 다시 시작하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘이미지’를 ‘컨테이너 생성’에 남기는 시점과 ‘실행 상태’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>이미지로 컨테이너를 만들고 실행 상태를 확인합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>강사가 Docker 엔진과 수업용 이미지를 미리 준비한 경우에만 아래 선택 셀의 image_id에 제공받은 로컬 이미지 ID를 넣으세요. 새 컨테이너 하나를 포트 공개 없이 만들고 네트워크를 끈 상태에서 확인한 뒤 그 컨테이너만 정리합니다. 기본값은 Docker를 호출하지 않습니다.</p>
-</figcaption>
-</figure>
+<p>강사가 Docker 엔진과 수업용 이미지를 미리 준비한 경우에만 아래 선택 셀의 image_id에 제공받은 로컬 이미지 ID를 넣으세요. 새 컨테이너 하나를 포트 공개 없이 만들고 네트워크를 끈 상태에서 확인한 뒤 그 컨테이너만 정리합니다. 기본값은 Docker를 호출하지 않습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 선택 실습 · Docker 엔진에서 상태 읽기</h3>
 <div class="cell-before"><p>강사가 제공한 이미지 안에서 Python 대기 프로세스를 실행할 수 있어야 합니다. create는 객체만 만들고, start와 stop은 같은 ID를 대상으로 합니다.</p>
 <p>여기서는 API 대신 대기 프로세스를 띄워 컨테이너가 실행 상태를 유지하는지 봅니다. 컨테이너가 실행 중이어도 요청에 답하는지는 아직 모릅니다. API를 올렸을 때는 질문을 보내 상태 코드와 응답을 따로 확인하세요.</p>
@@ -129,34 +114,17 @@ image_id = <span class="tok-string">&quot;&quot;</span>  <span class="tok-commen
 <tr><td>컨테이너</td><td>그 기반으로 만든 프로세스 실행 단위</td><td>container ID·이름·상태</td></tr>
 <tr><td>로그</td><td>프로세스 표준 출력/오류 기록</td><td>명령·관측 시각·관련 오류</td></tr>
 </tbody></table></div>
-<figure class="flow" data-flow id="flow-5"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>한 파일 변경이 실행에 반영되는 경로</h3>
+<details class="case-reference" id="flow-5"><summary>한 파일 변경이 실행에 반영되는 경로</summary>
 <p>작성한 소스와 이미 생성된 컨테이너 사이에 무엇이 있는지 확인합니다.</p>
 <div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">조작</th><th scope="col">코드가 복사된 이미지로 실행한 경우</th></tr>
 </thead><tbody><tr><td>같은 컨테이너 restart</td><td>기존 이미지의 코드로 재시작</td></tr>
 <tr><td>파일 변경 → build → 새 컨테이너 생성</td><td>새 이미지의 코드로 시작</td></tr>
 </tbody></table></div>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>파일 수정 뒤 기존 컨테이너를 재시작한 경우와 새 이미지로 만든 경우를 비교하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>이미지에 복사한 코드 변경을 반영하려면 다시 빌드한 이미지로 컨테이너를 만들어야 합니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>1</span></li>
-<li><span class="flow-index">02</span><span>2</span></li>
-<li><span class="flow-index">03</span><span>3</span></li>
-<li><span class="flow-index">04</span><span>4</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-5-step-0"><img class="flow-proof" loading="lazy" alt="파일 수정" src="../assets/media/svg-3bc6fc7bc42df2.svg"><span class="eyebrow">STEP 01 · 작성자</span><h4>파일 수정</h4>
-<p>호스트 application의 코드를 수정합니다. 기존 이미지에는 아직 반영되지 않습니다.</p><pre>호스트 파일</pre></article>
-<article class="flow-panel" id="flow-5-step-1"><img class="flow-proof" loading="lazy" alt="새 이미지 생성" src="../assets/media/svg-884fb0444c9296.svg"><span class="eyebrow">STEP 02 · 빌드</span><h4>새 이미지 생성</h4>
-<p>Dockerfile과 컨텍스트로 새 이미지를 만듭니다. 실제 성공은 build 결과로 확인합니다.</p><pre>새 image ID</pre></article>
-<article class="flow-panel" id="flow-5-step-2"><img class="flow-proof" loading="lazy" alt="새 컨테이너 생성" src="../assets/media/svg-47979b2ae66e36.svg"><span class="eyebrow">STEP 03 · 실행</span><h4>새 컨테이너 생성</h4>
-<p>선택한 이미지와 환경으로 컨테이너를 만듭니다. 기존 컨테이너 restart와 다릅니다.</p><pre>새 container ID</pre></article>
-<article class="flow-panel" id="flow-5-step-3"><img class="flow-proof" loading="lazy" alt="같은 질문 대조" src="../assets/media/svg-b306dec555fa7d.svg"><span class="eyebrow">STEP 04 · 검증</span><h4>같은 질문 대조</h4>
-<p>정상·실패·전체 출처를 같은 기준으로 확인합니다.</p><pre>같은 질문으로 답과 출처를 다시 확인</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+<article id="flow-5-step-0"><small>STEP 01 · 작성자</small><h4>파일 수정</h4>
+<p>호스트 application의 코드를 수정합니다. 기존 이미지에는 아직 반영되지 않습니다.</p><pre>호스트 파일</pre></article><article id="flow-5-step-1"><small>STEP 02 · 빌드</small><h4>새 이미지 생성</h4>
+<p>Dockerfile과 컨텍스트로 새 이미지를 만듭니다. 실제 성공은 build 결과로 확인합니다.</p><pre>새 image ID</pre></article><article id="flow-5-step-2"><small>STEP 03 · 실행</small><h4>새 컨테이너 생성</h4>
+<p>선택한 이미지와 환경으로 컨테이너를 만듭니다. 기존 컨테이너 restart와 다릅니다.</p><pre>새 container ID</pre></article><article id="flow-5-step-3"><small>STEP 04 · 검증</small><h4>같은 질문 대조</h4>
+<p>정상·실패·전체 출처를 같은 기준으로 확인합니다.</p><pre>같은 질문으로 답과 출처를 다시 확인</pre></article></details>
 </details>
 <span id="lifecycle"></span><details class="reading-topic" id="reading-lifecycle"><summary>build, run, start를 시간 순서로 읽기</summary><div class="prose"><p>build는 Dockerfile을 읽어 이미지를 만드는 작업입니다. run은 이미지에서 새 컨테이너를 생성하고 시작합니다. stop은 해당 프로세스를 멈추며 start는 이미 존재하는 중지 컨테이너를 다시 시작합니다. restart도 기존 컨테이너를 다시 실행하는 동작이므로 새 소스나 바뀐 환경 설정을 자동으로 받아들이지 않습니다.</p>
 <p>처음 실행할 때 컨테이너 이름을 정하고 이후 명령에 같은 이름을 사용하면 대상을 추적하기 쉽습니다. 이름 충돌이 나면 먼저 ps -a로 기존 대상의 상태를 확인합니다. 다른 실습의 컨테이너를 정리하거나 전체 자원을 한꺼번에 삭제해 해결하지 않습니다.</p>
@@ -254,4 +222,4 @@ image_id = <span class="tok-string">&quot;&quot;</span>  <span class="tok-commen
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

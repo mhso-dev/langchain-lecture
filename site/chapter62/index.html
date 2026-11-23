@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>에이전트에 MCP 도구 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>세션 수명 안에 도구 연결하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘도구 요청’가 가운데 ‘열린 세션’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>세션이 열린 동안에만 연결된 도구를 호출합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제공 셀에는 두 가지 코드가 있습니다. 위쪽은 서버의 시간표이고, 다음 셀의 어댑터는 LangChain 도구의 day 인자를 MCP 요청으로 바꿉니다. 메모리 전송이므로 원격 서버 배포나 인증 설정 없이 왕복을 확인할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>제공 셀에는 두 가지 코드가 있습니다. 위쪽은 서버의 시간표이고, 다음 셀의 어댑터는 LangChain 도구의 day 인자를 MCP 요청으로 바꿉니다. 메모리 전송이므로 원격 서버 배포나 인증 설정 없이 왕복을 확인할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 61장의 시간표 서버</h3>
 <div class="cell-before"><p>같은 서버, 같은 두 요일, 같은 자료 버전을 유지합니다.</p>
 </div>
@@ -88,15 +81,7 @@ print(result)</code></pre></figure>
 <h2>응답 모양이 맞아도 요일이 틀릴 수 있습니다</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘응답 요일’를 기준으로 양쪽의 ‘요청 요일’와 ‘의미 검사’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>응답 형식과 실제로 조회한 요일을 각각 확인합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>운영 시간이 문자열인지 확인하는 것만으로 어느 날의 시간인지 보장할 수 없습니다. 받은 요일과 요청한 요일을 같이 검사합니다. 시간 초과는 이 검사보다 앞서 통신 단계에서 처리해야 합니다.</p>
-</figcaption>
-</figure>
+<p>운영 시간이 문자열인지 확인하는 것만으로 어느 날의 시간인지 보장할 수 없습니다. 받은 요일과 요청한 요일을 같이 검사합니다. 시간 초과는 이 검사보다 앞서 통신 단계에서 처리해야 합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 응답에서 요청 요일 대조하기</h3>
 <div class="cell-before"><p>주말 요청에 돌아온 응답이 평일입니다. 요일 불일치를 찾아내는 조건을 작성하세요.</p>
 </div>
@@ -116,15 +101,7 @@ print(received[<span class="tok-string">&#x27;day&#x27;</span>] == requested)</c
 <h2>에이전트의 도구 요청을 같은 세션에서 처리하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘hours-1’를 기준으로 양쪽의 ‘모델 요청’와 ‘서버 결과’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>요청 ID를 유지해 에이전트와 서버의 결과를 짝짓습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>평일 요청 한 건을 내는 대본 모델을 실제 create_agent에 연결합니다. 최종 답안은 대본에 고정했으므로 도구가 어디에서 무엇을 가져왔는지는 도구 메시지로 확인하세요.</p>
-</figcaption>
-</figure>
+<p>평일 요청 한 건을 내는 대본 모델을 실제 create_agent에 연결합니다. 최종 답안은 대본에 고정했으므로 도구가 어디에서 무엇을 가져왔는지는 도구 메시지로 확인하세요.</p>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · MCP 응답을 실제 ToolMessage에서 읽기</h3>
 <div class="cell-before"><p>lookup에 등록한 실행 함수가 MCP를 한 번 부릅니다. 수업용 모델과 서버 모두 네트워크를 사용하지 않습니다.</p>
 </div>
@@ -184,35 +161,16 @@ model = DemoModel(responses=[
 <span id="direct"></span><details class="reading-topic" id="reading-direct"><summary>먼저 같은 함수를 LangChain Tool로 호출하기</summary><div class="prose"><p>DirectEndpoint는 get_library_hours를 같은 프로세스 안에서 부릅니다. make_tool은 day를 받는 함수를 StructuredTool로 만들어 create_agent에 전달합니다. coroutine은 기다릴 수 있는 실행 함수를 지정하는 자리이며, 이 예제는 직접 경로와 원격 준비 경로의 호출 형태를 맞추기 위해 모두 비동기 함수로 제공합니다.</p>
 <p>response_format=content_and_artifact는 모델에게 전달할 JSON 문자열과 코드가 검사할 사전을 함께 남기게 합니다. 화면에 읽히는 content만 보고 원본 결과를 잃지 않도록 artifact에 같은 세 필드를 보관합니다. 도구를 등록했어도 실행 허용 목록과 인자 검사는 별도로 적용됩니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-6"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
+<details class="case-reference" id="flow-6"><summary>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</summary>
 <p>셀 02에서는 주말을 직접 요청했습니다. 여기서는 셀 04의 모델이 평일을 요청합니다. 같은 hours-1을 요청과 결과에서 찾아보세요.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>weekday와 hours-1이 모델 요청에서 결과 메시지까지 이어지는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>서버의 운영 시간이 원래 도구 요청과 연결돼야 모델이 맞는 요일의 답을 작성합니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>평일 조회 요청</span></li>
-<li><span class="flow-index">02</span><span>MCP 세션으로 전달</span></li>
-<li><span class="flow-index">03</span><span>시간표에서 평일 조회</span></li>
-<li><span class="flow-index">04</span><span>요청과 시간 연결</span></li>
-<li><span class="flow-index">05</span><span>도구 메시지 출력</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-6-step-0"><img class="flow-proof" loading="lazy" alt="평일 조회 요청" src="../assets/media/svg-7cbb13cbf41200.svg"><span class="eyebrow">STEP 01 · 모델</span><h4>평일 조회 요청</h4>
-<p>대본 모델이 lookup에 전달할 요일과 호출 ID를 만듭니다.</p><pre>lookup(day=&quot;weekday&quot;) · id=hours-1</pre></article>
-<article class="flow-panel" id="flow-6-step-1"><img class="flow-proof" loading="lazy" alt="MCP 세션으로 전달" src="../assets/media/svg-220cf5d3759542.svg"><span class="eyebrow">STEP 02 · 어댑터</span><h4>MCP 세션으로 전달</h4>
-<p>lookup은 현재 열린 세션에서 서버 도구를 부릅니다.</p><pre>session.call_tool(&quot;get_library_hours&quot;, {&quot;day&quot;: &quot;weekday&quot;})</pre></article>
-<article class="flow-panel" id="flow-6-step-2"><img class="flow-proof" loading="lazy" alt="시간표에서 평일 조회" src="../assets/media/svg-582aeb64c0c556.svg"><span class="eyebrow">STEP 03 · 서버</span><h4>시간표에서 평일 조회</h4>
+<article id="flow-6-step-0"><small>STEP 01 · 모델</small><h4>평일 조회 요청</h4>
+<p>대본 모델이 lookup에 전달할 요일과 호출 ID를 만듭니다.</p><pre>lookup(day=&quot;weekday&quot;) · id=hours-1</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션으로 전달</h4>
+<p>lookup은 현재 열린 세션에서 서버 도구를 부릅니다.</p><pre>session.call_tool(&quot;get_library_hours&quot;, {&quot;day&quot;: &quot;weekday&quot;})</pre></article><article id="flow-6-step-2"><small>STEP 03 · 서버</small><h4>시간표에서 평일 조회</h4>
 <p>서버가 요청 요일과 시간을 돌려줍니다. 어댑터가 요일을 확인하고 hours를 반환합니다.</p><pre>day = weekday
-hours = 09:00~18:00</pre></article>
-<article class="flow-panel" id="flow-6-step-3"><img class="flow-proof" loading="lazy" alt="요청과 시간 연결" src="../assets/media/svg-3e1d4043002b07.svg"><span class="eyebrow">STEP 04 · 프레임워크</span><h4>요청과 시간 연결</h4>
+hours = 09:00~18:00</pre></article><article id="flow-6-step-3"><small>STEP 04 · 프레임워크</small><h4>요청과 시간 연결</h4>
 <p>도구가 돌려준 시간이 같은 ID의 도구 메시지 본문에 들어갑니다.</p><pre>ToolMessage · tool_call_id=hours-1
-content = 09:00~18:00</pre></article>
-<article class="flow-panel" id="flow-6-step-4"><img class="flow-proof" loading="lazy" alt="도구 메시지 출력" src="../assets/media/svg-44f64ce78db04b.svg"><span class="eyebrow">STEP 05 · 셀 04</span><h4>도구 메시지 출력</h4>
-<p>마지막 모델 문장은 대본에 들어 있습니다. 실제로 받은 시간은 메시지의 호출 ID와 함께 출력합니다.</p><pre>hours-1 09:00~18:00</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 5</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+content = 09:00~18:00</pre></article><article id="flow-6-step-4"><small>STEP 05 · 셀 04</small><h4>도구 메시지 출력</h4>
+<p>마지막 모델 문장은 대본에 들어 있습니다. 실제로 받은 시간은 메시지의 호출 ID와 함께 출력합니다.</p><pre>hours-1 09:00~18:00</pre></article></details>
 <div class="prose"><p>generation_calls는 도구를 요청하지 않는 응답을 받은 횟수입니다. 여기서는 두 번째 대본 응답이 한 번이므로 1입니다. 실제 외부 모델 호출은 0이며 토큰·요금·응답 시간은 측정하지 않았습니다.</p>
 </div>
 </details>
@@ -290,4 +248,4 @@ content = 09:00~18:00</pre></article>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

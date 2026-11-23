@@ -30,15 +30,7 @@
 <h2>실행 직전의 요청 한 건 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘도구 요청’가 가운데 ‘인자 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>실행 전에 도구 이름과 인자가 약속에 맞는지 봅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>get_loan_rule은 입력 칸이 없는 도구입니다. 요청에는 이름과 비어 있지 않은 호출 ID가 있어야 하고 arguments에는 빈 JSON 객체를 적은 문자열이 와야 합니다.</p>
-</figcaption>
-</figure>
+<p>get_loan_rule은 입력 칸이 없는 도구입니다. 요청에는 이름과 비어 있지 않은 호출 ID가 있어야 하고 arguments에는 빈 JSON 객체를 적은 문자열이 와야 합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 빈 객체와 빈 문자열 구분하기</h3>
 <div class="cell-before"><p>겉보기에는 내용이 없어도 문자열을 풀었을 때 어떤 값이 남는지가 중요합니다.</p>
 </div>
@@ -63,15 +55,7 @@ print(bool(call_id.strip()))</code></pre></figure>
 <h2>검사 함수를 고쳐 한 건 통과시키기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘검사 수정’를 기준으로 양쪽의 ‘실패한 입력’와 ‘같은 입력’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검사 함수를 고친 뒤 같은 입력을 다시 넣습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>요청의 바깥 자료형부터 확인하고 안쪽 칸을 읽습니다. 유효하지 않은 입력이면 함수 안에서 False를 돌려주면 됩니다. 사전의 값을 덮어쓰지 않으면 실패 원인을 나중에도 다시 읽을 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>요청의 바깥 자료형부터 확인하고 안쪽 칸을 읽습니다. 유효하지 않은 입력이면 함수 안에서 False를 돌려주면 됩니다. 사전의 값을 덮어쓰지 않으면 실패 원인을 나중에도 다시 읽을 수 있습니다.</p>
 <div class="learn-detail"><h4>같은 c1 요청에서 어느 층을 바꿨나요?</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">원본에서 바꾼 부분</th><th scope="col">풀이 함수의 반환</th><th scope="col">이유</th></tr>
 </thead><tbody><tr><td>원본 arguments는 문자열 &quot;{}&quot;</td><td>True</td><td>도구에 전달할 인자가 없음</td></tr>
@@ -109,15 +93,7 @@ print(validate_request(item))</code></pre></figure>
 <h2>조회 결과가 없는 기록 설명하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘조회 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘기록 있음’, 아래쪽은 ‘기록 없음’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>결과가 비었다면 기록을 찾지 못한 이유를 확인합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>이제 증상을 보고 필요한 부분으로 돌아갑니다. 인자를 풀지 못한 경우라면 15장의 arguments를, 요청 ID와 결과 ID가 다르면 16장 왕복을, 상한이 보이면 17장 마지막 반복을 다시 살펴보세요.</p>
-</figcaption>
-</figure>
+<p>이제 증상을 보고 필요한 부분으로 돌아갑니다. 인자를 풀지 못한 경우라면 15장의 arguments를, 요청 ID와 결과 ID가 다르면 16장 왕복을, 상한이 보이면 17장 마지막 반복을 다시 살펴보세요.</p>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 실행 전 차단한 요청 남기기</h3>
 <div class="cell-before"><p>도구 이름이 허용 목록과 다른 요청을 받았습니다. 프로그램이 기록할 값 한 개를 계산합니다.</p>
 </div>
@@ -226,4 +202,4 @@ print(allowed)</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

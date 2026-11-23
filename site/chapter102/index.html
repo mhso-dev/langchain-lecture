@@ -30,15 +30,7 @@
 <h2>POST /p1/ask에 보낼 요청</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘질문 본문’에서 출발해 ‘POST /p1/ask’를 거친 뒤 ‘서비스 응답’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>질문과 세션 식별자를 POST 본문에 함께 보냅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>준비 계약은 session_id·request_id·question 세 문자열을 받습니다. 수업 주체는 준비한 헤더나 서버의 검사 설정으로 결정합니다. 질문 본문에 적은 권한을 서버가 믿어서는 안 됩니다. 유효한 대화를 먼저 만든 뒤 다음 요청을 보낸다는 설정입니다.</p>
-</figcaption>
-</figure>
+<p>준비 계약은 session_id·request_id·question 세 문자열을 받습니다. 수업 주체는 준비한 헤더나 서버의 검사 설정으로 결정합니다. 질문 본문에 적은 권한을 서버가 믿어서는 안 됩니다. 유효한 대화를 먼저 만든 뒤 다음 요청을 보낸다는 설정입니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 보낼 JSON 만들기</h3>
 <div class="cell-before"><p>준비된 정상 사례의 대화 lesson, 요청 normal에 정확히 어떤 문장이 실리는지 확인합니다.</p>
 </div>
@@ -88,15 +80,7 @@ RULE-A</pre></div>
 <h2>답은 만들었지만 저장하지 못한 요청</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘응답 처리’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘답 생성 성공’, 아래쪽은 ‘저장 실패’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>답을 만들었어도 저장이 실패하면 실패 상태를 남깁니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>응답 예시　대화 lesson / 요청 unsaved / 로컬 전송 상태 503 / 업무 답 장비 B의 고정 장치 / 오류 코드 storage_failure. 이 경우 “관련 문서가 없습니다”라고 표시하면 다음 행동을 고르기 어렵습니다. 이전 요청이 저장되었는지 먼저 확인하도록 안내합니다.</p>
-</figcaption>
-</figure>
+<p>응답 예시　대화 lesson / 요청 unsaved / 로컬 전송 상태 503 / 업무 답 장비 B의 고정 장치 / 오류 코드 storage_failure. 이 경우 “관련 문서가 없습니다”라고 표시하면 다음 행동을 고르기 어렵습니다. 이전 요청이 저장되었는지 먼저 확인하도록 안내합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 저장 실패를 구분해 표시하기</h3>
 <div class="cell-before"><p>기록에서 계산한 답과 저장 오류명을 꺼내어 담당자가 확인할 두 줄을 만드세요.</p>
 <p>failed는 로컬에 제공한 503 기록에서 python_response에 해당하는 부분만 꺼낸 값입니다. 여기서는 result부터 읽습니다. 앞의 기록 전체에서 시작할 때만 body와 python_response를 먼저 거치세요.</p>
@@ -163,4 +147,4 @@ storage_failure</pre></div>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

@@ -3,6 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>함수·예외·타입으로
 입출력 약속 만들기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -33,15 +35,7 @@
 <h2>화면에 보인 수를 다음 계산에 쓰기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘계산 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘print · 화면’, 아래쪽은 ‘return · 호출자’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>화면에 찍힌 숫자와 호출자에게 돌아온 값은 다릅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>함수 안에서 결과를 출력하는 것과 결과를 호출한 곳으로 돌려주는 일은 따로 일어납니다. 다음 계산에 쓸 값은 return으로 보냅니다.</p>
-</figcaption>
-</figure>
+<p>함수 안에서 결과를 출력하는 것과 결과를 호출한 곳으로 돌려주는 일은 따로 일어납니다. 다음 계산에 쓸 값은 return으로 보냅니다.</p><section class="concept-lab" id="concept-lab" data-lab="return"><h3>30은 어디에 남을까요?</h3><p>함수를 골라 같은 입력 "30"을 보내 보세요. 화면에 찍힌 수와 saved에 담긴 값을 따로 읽어 보세요.</p><div class="lab-actions"><button type="button" data-action="print">show_minutes("30")</button><button type="button" data-action="return">parse_minutes("30")</button></div><div class="return-bench" aria-hidden="true"><span>화면</span><i>30</i><span>호출한 곳</span></div><div class="lab-landscape"><div class="lab-tile"><small>함수 안의 화면 출력</small><output data-out="screen">30</output></div><div class="lab-tile"><small>saved에 담긴 값</small><output data-out="saved">None</output></div><div class="lab-tile"><small>saved + 10</small><output data-out="sum">TypeError</output></div></div></section>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 출력한 함수의 반환값</h3>
 <div class="cell-before"><p>show_minutes가 30을 화면에 쓴 뒤 saved에는 무엇이 남을까요?</p>
 </div>
@@ -74,15 +68,7 @@ print(parse_minutes(<span class="tok-string">&quot; 30 &quot;</span>) + <span cl
 <h2>어느 줄에서 멈췄나요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘입력 시간’가 가운데 ‘0~480분’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>허용 범위를 벗어난 시간은 계산 전에 멈춥니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>화면에 어떤 안내를 띄울지는 함수를 호출한 쪽에서 정합니다. 계산 함수는 잘못된 입력으로 계속 진행하지 않도록 예외를 올립니다.</p>
-</figcaption>
-</figure>
+<p>화면에 어떤 안내를 띄울지는 함수를 호출한 쪽에서 정합니다. 계산 함수는 잘못된 입력으로 계속 진행하지 않도록 예외를 올립니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 481분을 입력한 경우</h3>
 <div class="cell-before"><p>이번에는 정수 변환은 성공하고 범위 검사에서 멈춥니다.</p>
 </div>
@@ -112,15 +98,7 @@ print(minutes)</code></pre></figure>
 <h2>입력을 정리하는 일과 안내하는 일 나누기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘제목 입력’에서 출발해 ‘공백 정리’를 거친 뒤 ‘Python 기초’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>공백을 정리한 제목을 다음 함수에 건넵니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제목 안에 붙은 여러 공백은 한 칸으로 합치고, 시간은 앞에서 만든 함수에 맡깁니다. 두 함수는 키보드나 파일 없이 문자열만 주면 확인할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>제목 안에 붙은 여러 공백은 한 칸으로 합치고, 시간은 앞에서 만든 함수에 맡깁니다. 두 함수는 키보드나 파일 없이 문자열만 주면 확인할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 띄어쓰기가 다른 제목 정리하기</h3>
 <div class="cell-before"><p>split에 구분자를 주지 않으면 연속된 공백을 건너뜁니다.</p>
 </div>
@@ -163,32 +141,15 @@ print(normalize_title(<span class="tok-string">&quot;  Python   기초 &quot;</s
 <p>return은 결과를 호출한 자리로 돌려주고 해당 함수 실행을 끝냅니다. print는 화면에 보여 줄 뿐 호출자에게 계산 결과를 돌려주는 역할을 하지 않습니다. return을 쓰지 않은 함수의 반환값은 None입니다.</p>
 <p>함수 안에서 만든 result는 그 호출 안에서 사용하는 지역 변수입니다. 함수 밖에서는 combined처럼 반환값을 저장한 이름을 사용합니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-9"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>같은 30분을 출력할 때와 돌려줄 때</h3>
+<details class="case-reference" id="flow-9"><summary>같은 30분을 출력할 때와 돌려줄 때</summary>
 <p>셀 01과 셀 02를 비교합니다. 화면에 찍힌 값과 호출한 쪽이 받은 값을 따로 보세요.</p>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>화면에 찍힌 30과 saved가 가리키는 값을 각각 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>print로 표시한 수는 호출자에게 전해지지 않습니다. 다음 계산에는 함수가 return한 값이 쓰입니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>함수 안에서 출력</span></li>
-<li><span class="flow-index">02</span><span>호출자가 받은 값</span></li>
-<li><span class="flow-index">03</span><span>함수가 값 반환</span></li>
-<li><span class="flow-index">04</span><span>반환값으로 계산</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-9-step-0"><img class="flow-proof" loading="lazy" alt="함수 안에서 출력" src="../assets/media/svg-225dd0ee767b37.svg"><span class="eyebrow">STEP 01 · 셀 01</span><h4>함수 안에서 출력</h4>
+<article id="flow-9-step-0"><small>STEP 01 · 셀 01</small><h4>함수 안에서 출력</h4>
 <p>show_minutes가 문자열을 정수로 바꾸고 화면에 씁니다.</p><pre>show_minutes(&quot;30&quot;)
-화면: 30</pre></article>
-<article class="flow-panel" id="flow-9-step-1"><img class="flow-proof" loading="lazy" alt="호출자가 받은 값" src="../assets/media/svg-aa5ad014272468.svg"><span class="eyebrow">STEP 02 · 셀 01</span><h4>호출자가 받은 값</h4>
+화면: 30</pre></article><article id="flow-9-step-1"><small>STEP 02 · 셀 01</small><h4>호출자가 받은 값</h4>
 <p>함수 끝에 return이 없어 saved에는 None이 들어갑니다.</p><pre>saved = None
-print(saved) → None</pre></article>
-<article class="flow-panel" id="flow-9-step-2"><img class="flow-proof" loading="lazy" alt="함수가 값 반환" src="../assets/media/svg-fd8a8d2d4a25d1.svg"><span class="eyebrow">STEP 03 · 셀 02</span><h4>함수가 값 반환</h4>
-<p>parse_minutes는 공백을 지우고 범위를 확인한 뒤 정수 30을 돌려줍니다.</p><pre>parse_minutes(&quot; 30 &quot;) → 30</pre></article>
-<article class="flow-panel" id="flow-9-step-3"><img class="flow-proof" loading="lazy" alt="반환값으로 계산" src="../assets/media/svg-ee87f134f74872.svg"><span class="eyebrow">STEP 04 · 셀 02</span><h4>반환값으로 계산</h4>
-<p>호출한 쪽이 30에 10을 더해 출력합니다.</p><pre>print(30 + 10) → 40</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+print(saved) → None</pre></article><article id="flow-9-step-2"><small>STEP 03 · 셀 02</small><h4>함수가 값 반환</h4>
+<p>parse_minutes는 공백을 지우고 범위를 확인한 뒤 정수 30을 돌려줍니다.</p><pre>parse_minutes(&quot; 30 &quot;) → 30</pre></article><article id="flow-9-step-3"><small>STEP 04 · 셀 02</small><h4>반환값으로 계산</h4>
+<p>호출한 쪽이 30에 10을 더해 출력합니다.</p><pre>print(30 + 10) → 40</pre></article></details>
 </details>
 <span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>타입 힌트와 검증 규칙 적기</summary><div class="prose"><p>title: str은 문자열을 받을 의도, -&gt; str은 문자열을 반환할 의도를 나타내는 타입 힌트입니다. 실행기가 이 표기만 보고 값을 자동 변환하거나 잘못된 타입을 모두 막지는 않습니다. 입력 규칙과 검사 코드를 함께 작성해야 합니다.</p>
 <p>normalize_title은 공백으로 나눈 단어들을 공백 하나로 다시 합칩니다. &quot; &quot;.join(목록)은 문자열 목록 사이에 공백을 넣어 연결합니다. parse_minutes는 정수로 바꾼 뒤 이 수업 예제의 허용 범위인 0~480분인지 확인합니다. 이 범위는 Python의 제한이 아니라 과제 규칙입니다.</p>
@@ -239,4 +200,4 @@ print(saved) → None</pre></article>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

@@ -40,15 +40,7 @@
 <h2>행사명·시작일·대상을 어떻게 기록할까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘원문 행사명’와 ‘항목 이름’가 오른쪽의 ‘title · 독서 모임’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>항목 이름이 있으면 안내 순서가 바뀌어도 행사명을 찾습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>행사명·시작일·대상을 어떻게 기록할까요?</p>
-</figcaption>
-</figure>
+<p>행사명·시작일·대상을 어떻게 기록할까요?</p>
 <div class="table-scroll" tabindex="0"><table><caption>독서 모임 공지의 기록 규칙</caption><thead><tr><th scope="col">항목</th><th scope="col">이 공지에 넣을 값</th><th scope="col">판단 근거</th></tr>
 </thead><tbody><tr><td>title</td><td>독서 모임</td><td>원문에 적힌 행사명</td></tr>
 <tr><td>start</td><td>null</td><td>날짜를 추후 안내한다고 했으므로 값은 미정</td></tr>
@@ -100,15 +92,7 @@ print(has_start(missing))</code></pre></figure>
 <h2>공지 세 항목의 규칙 정하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘공지 응답’가 가운데 ‘스키마 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>형식 검사를 통과한 행사명도 원문과 대조해야 합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>이제 행사명, 시작일, 대상을 어떻게 적을지 코드로 정합니다. Notice는 공지 한 건의 규칙을 담은 Pydantic 모델입니다. 셀을 실행하면 꼭 있어야 하는 항목의 이름이 나옵니다.</p>
-</figcaption>
-</figure>
+<p>이제 행사명, 시작일, 대상을 어떻게 적을지 코드로 정합니다. Notice는 공지 한 건의 규칙을 담은 Pydantic 모델입니다. 셀을 실행하면 꼭 있어야 하는 항목의 이름이 나옵니다.</p>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 02 · 공지 한 건의 스키마</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="셀 02 · 공지 한 건의 스키마 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 02 · 공지 한 건의 스키마"><code id="code-4"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Literal
 <span class="tok-keyword">from</span> pydantic <span class="tok-keyword">import</span> BaseModel, ConfigDict, ValidationError
 
@@ -156,15 +140,7 @@ print(checked.title)</code></pre></figure>
 <h2>모델에게 같은 형식을 요청하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-04.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘Notice 규칙’에서 출발해 ‘요청 설정’를 거친 뒤 ‘허용 값’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>스키마의 허용 값을 요청 설정에 함께 넣습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>셀 02에서 정한 Notice의 규칙을 요청에도 넣어 봅시다. Notice.model_json_schema()로 규칙을 꺼내 쓰면 나중에 선택지를 바꿀 때 Notice 한 곳만 고치면 됩니다.</p>
-</figcaption>
-</figure>
+<p>셀 02에서 정한 Notice의 규칙을 요청에도 넣어 봅시다. Notice.model_json_schema()로 규칙을 꺼내 쓰면 나중에 선택지를 바꿀 때 Notice 한 곳만 고치면 됩니다.</p>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 04 · SDK에 전달할 형식 설정</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="셀 04 · SDK에 전달할 형식 설정 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 04 · SDK에 전달할 형식 설정"><code id="code-8">format_spec = {<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;json_schema&quot;</span>, <span class="tok-string">&quot;name&quot;</span>: <span class="tok-string">&quot;notice&quot;</span>,
                <span class="tok-string">&quot;strict&quot;</span>: <span class="tok-keyword">True</span>, <span class="tok-string">&quot;schema&quot;</span>: Notice.model_json_schema()}
 request_options = {<span class="tok-string">&quot;input&quot;</span>: <span class="tok-string">&quot;성인 독서 모임을 엽니다. 시작일은 추후 안내합니다.&quot;</span>,
@@ -179,15 +155,7 @@ print(format_spec[<span class="tok-string">&quot;schema&quot;</span>][<span clas
 <h2>응답 안에서 읽을 본문 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-05.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘응답 봉투’ 안에서 ‘본문 항목’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>메시지 본문을 찾은 뒤 JSON 문자열을 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>셀 05의 response는 실제 응답에서 필요한 항목만 남겨 만든 예입니다. output 안에 항목이 둘 있습니다. 공지 본문이 어느 쪽에 들어 있는지 먼저 찾아보세요.</p>
-</figcaption>
-</figure>
+<p>셀 05의 response는 실제 응답에서 필요한 항목만 남겨 만든 예입니다. output 안에 항목이 둘 있습니다. 공지 본문이 어느 쪽에 들어 있는지 먼저 찾아보세요.</p>
 <a class="download" href="figures.html#response-trace"><span class="download-icon" aria-hidden="true">↓</span><span><strong>셀 05 그림 · 중첩 응답에서 item과 part 따라가기</strong><small>reasoning을 건너뛰고 message.content에서 output_text의 text를 찾으세요.</small></span><span aria-hidden="true">↗</span></a><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 05 · 메시지와 본문 조각</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-9" type="button" aria-label="셀 05 · 메시지와 본문 조각 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 05 · 메시지와 본문 조각"><code id="code-9">message = {<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;message&quot;</span>, <span class="tok-string">&quot;content&quot;</span>: [{<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;output_text&quot;</span>, <span class="tok-string">&quot;text&quot;</span>: raw}]}
 response = {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;completed&quot;</span>,
             <span class="tok-string">&quot;output&quot;</span>: [{<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;reasoning&quot;</span>}, message]}
@@ -231,15 +199,7 @@ print(join_text(parts_to_read))</code></pre></figure>
 <h2>같은 공지가 도착한 다섯 가지 모습</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-06.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘같은 공지’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘읽을 수 있는 값’, 아래쪽은 ‘처리가 필요한 값’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>같은 공지라도 응답 상태에 따라 처리 경로가 달라집니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>같은 공지가 도착한 다섯 가지 모습</p>
-</figcaption>
-</figure>
+<p>같은 공지가 도착한 다섯 가지 모습</p>
 <div class="table-scroll" tabindex="0"><table><caption>응답별 검사 결과</caption><thead><tr><th scope="col">받은 응답</th><th scope="col">확인할 부분</th><th scope="col">다음 행동</th></tr>
 </thead><tbody><tr><td>도중 중단</td><td>status가 incomplete</td><td>부분 문자열을 공지로 해석하지 않고 중단</td></tr>
 <tr><td>처리 거절</td><td>완료 응답 속 refusal</td><td>거절로 안내</td></tr>
@@ -252,15 +212,7 @@ print(join_text(parts_to_read))</code></pre></figure>
 <h2>응답을 어디서 멈춰야 할까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-07.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘응답 본문’가 가운데 ‘빈 값 검사’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>빈 본문은 형식 검사에 넘기기 전에 멈춥니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>inspect_response는 먼저 status를 읽습니다. 응답이 끝까지 왔으면 메시지에 refusal이 있는지 살핍니다. 거절이 없을 때만 본문 조각을 이어 붙이고, 공백을 빼고도 글자가 남아 있으면 Notice로 형식을 검사합니다.</p>
-</figcaption>
-</figure>
+<p>inspect_response는 먼저 status를 읽습니다. 응답이 끝까지 왔으면 메시지에 refusal이 있는지 살핍니다. 거절이 없을 때만 본문 조각을 이어 붙이고, 공백을 빼고도 글자가 남아 있으면 Notice로 형식을 검사합니다.</p>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 06 · 다음 단계로 전달할 값 고르기</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-12" type="button" aria-label="셀 06 · 다음 단계로 전달할 값 고르기 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 06 · 다음 단계로 전달할 값 고르기"><code id="code-12"><span class="tok-keyword">def</span> inspect_response(response):
     <span class="tok-keyword">if</span> response[<span class="tok-string">&quot;status&quot;</span>] != <span class="tok-string">&quot;completed&quot;</span>:
         <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">False</span>, <span class="tok-string">&quot;reason&quot;</span>: <span class="tok-string">&quot;incomplete&quot;</span>}
@@ -308,15 +260,7 @@ print(notice_for_review(inspect_response(response)))</code></pre></figure>
 <h2>화면에 문장이 다 보이면 끝난 걸까요?</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-08.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘부분 응답 표시’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘완료 신호 도착’, 아래쪽은 ‘완료 전 단절’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>마침표까지 보여도 완료 신호를 확인해야 합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>두 화면 모두 “안녕하세요.”의 마침표까지 표시합니다. 아래 그림에서 그다음을 보세요. 한쪽에는 서버의 완료 신호가 도착하고, 다른 쪽은 신호를 받기 전에 연결이 끊깁니다.</p>
-</figcaption>
-</figure>
+<p>두 화면 모두 “안녕하세요.”의 마침표까지 표시합니다. 아래 그림에서 그다음을 보세요. 한쪽에는 서버의 완료 신호가 도착하고, 다른 쪽은 신호를 받기 전에 연결이 끊깁니다.</p>
 <figure class="illustration"><details><summary>두 수신 경로를 GIF로 비교하기</summary><picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/media/png-b9f7e5886638ad.png"><img width="800" height="450" loading="lazy" src="../assets/media/gif-df5174389cc54c.gif" alt="두 화면에 같은 문장이 보여도 A만 완료 이벤트를 받습니다. B는 최종 결과를 반환할 수 없습니다."></picture></details>
 <figcaption><div class="motion-note"><div><b>볼 곳</b><p>마침표가 나타난 뒤 두 실행에 완료 신호가 모두 오는지 확인하세요.</p>
 </div>
@@ -368,15 +312,7 @@ print(is_complete(last_events))</code></pre></figure>
 <h2>SDK 호출부터 성공·시간 초과까지</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-09.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘SDK 요청’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘정상 응답’, 아래쪽은 ‘시간 초과’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>시간 초과라면 검사기에 넘길 응답이 없습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>이번에는 셀 06의 검사기를 SDK 호출에 연결합니다. 정상적으로 응답을 받으면 reply.model_dump()로 딕셔너리를 만들어 inspect_response에 건넵니다.</p>
-</figcaption>
-</figure>
+<p>이번에는 셀 06의 검사기를 SDK 호출에 연결합니다. 정상적으로 응답을 받으면 reply.model_dump()로 딕셔너리를 만들어 inspect_response에 건넵니다.</p>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 09 · 제공 함수 · SDK 응답을 검사 결과로 연결하기</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-19" type="button" aria-label="셀 09 · 제공 함수 · SDK 응답을 검사 결과로 연결하기 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 09 · 제공 함수 · SDK 응답을 검사 결과로 연결하기"><code id="code-19"><span class="tok-keyword">from</span> openai <span class="tok-keyword">import</span> OpenAI, APITimeoutError
 
 <span class="tok-keyword">def</span> request_notice(client):
@@ -408,15 +344,7 @@ print(is_complete(last_events))</code></pre></figure>
 <h2>어느 단계에서 멈췄는지 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-10.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘요청 처리’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘응답 전 실패’, 아래쪽은 ‘응답 검사 실패’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>요청 실패와 빈 응답은 점검할 위치가 다릅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>어느 단계에서 멈췄는지 읽기</p>
-</figcaption>
-</figure>
+<p>어느 단계에서 멈췄는지 읽기</p>
 <div class="table-scroll" tabindex="0"><table><caption>응답이 없을 때와 응답 검사에서 실패할 때</caption><thead><tr><th scope="col">상황</th><th scope="col">알 수 있는 사실</th><th scope="col">후속 처리</th></tr>
 </thead><tbody><tr><td>요청 제한 시간 초과</td><td>호출자가 시간 안에 응답을 받지 못함</td><td>완료 여부 미확인으로 기록. 같은 공지를 중복 저장하지 않도록 확인</td></tr>
 <tr><td>서버가 incomplete 상태를 보냄</td><td>응답은 받았고 완성되지 않음</td><td>제공된 미완료 사유 확인</td></tr>

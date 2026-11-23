@@ -30,15 +30,7 @@
 <h2>첫 질문의 첫 번째 결과 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘질문별 결과’ 안에서 ‘첫 번째 후보’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>질문별 검색 결과 안에서 첫 문서의 ID를 꺼냅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>Chroma의 질의 응답은 여러 질문을 한 번에 받을 수 있게 질문별로 다시 묶여 있습니다. 아래 자료는 실제 서버를 호출하지 않고 그 모양만 담아 둔 한 질문의 응답 예시입니다.</p>
-</figcaption>
-</figure>
+<p>Chroma의 질의 응답은 여러 질문을 한 번에 받을 수 있게 질문별로 다시 묶여 있습니다. 아래 자료는 실제 서버를 호출하지 않고 그 모양만 담아 둔 한 질문의 응답 예시입니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 바깥 목록과 안쪽 목록</h3>
 <div class="cell-before"><p>첫 질문에 딸린 ID 목록에서 첫 번째 항목을 골라 보세요.</p>
 </div>
@@ -67,15 +59,7 @@ print(row)</code></pre></figure>
 <h2>같은 입력 약속으로 검색 함수 부르기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘휴관일 질문’에서 출발해 ‘검색 함수’를 거친 뒤 ‘library-2’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>질문이 달라도 검색 함수가 반환하는 모양은 같습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>retrieve(question, k)는 문서 목록을 돌려줍니다. 여기서는 세 키워드의 거리로 계산하는 로컬 검색을 실행합니다. 앞의 Chroma 모양 예시를 실제 조회했다는 뜻은 아닙니다.</p>
-</figcaption>
-</figure>
+<p>retrieve(question, k)는 문서 목록을 돌려줍니다. 여기서는 세 키워드의 거리로 계산하는 로컬 검색을 실행합니다. 앞의 Chroma 모양 예시를 실제 조회했다는 뜻은 아닙니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 휴관 질문에 한 건 요청하기</h3>
 <div class="cell-before"><p>자료의 원문 ID를 유지합니다. k는 최대 후보 수이고, 질문은 공백을 제외한 문자열이어야 합니다.</p>
 <p>휴관 질문에서는 결과 한 건이 있지만 주차 요금에는 대응하는 단어가 없어 빈 목록이 돌아옵니다. 질문을 바꾸면 첫 항목을 읽기 전 목록에 문서가 있는지 확인하세요.</p>
@@ -132,15 +116,7 @@ print(filtered[<span class="tok-number">0</span>][<span class="tok-string">&quot
 <h2>질문과 근거를 나눠 전달하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘사용자 질문’와 ‘출처 붙인 근거’가 오른쪽의 ‘답변 입력’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>휴관일 문장에 library-2와 2쪽을 붙여 건넵니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>생성 단계에는 사용자가 물은 문장과 검색한 문서를 별개로 전달합니다. 근거에 식별자와 출처를 표시해 두어야 나중에 어느 문장을 썼는지 확인할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>생성 단계에는 사용자가 물은 문장과 검색한 문서를 별개로 전달합니다. 근거에 식별자와 출처를 표시해 두어야 나중에 어느 문장을 썼는지 확인할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 검색 문서를 한 줄 제목과 본문으로 표시하기</h3>
 <div class="cell-before"><p>hits의 첫 문서에서 ID를 꺼내 대괄호로 감싸고 출처와 쪽을 붙인 다음 줄에 본문을 출력하세요.</p>
 </div>
@@ -232,4 +208,4 @@ print(f&quot;[{hit[<span class="tok-string">&#x27;id&#x27;</span>]}] {hit[<span 
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

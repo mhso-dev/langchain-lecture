@@ -30,15 +30,7 @@
 <h2>연동을 보류하는 결정도 기록하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘연동 제안’가 가운데 ‘필요 자료 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>현재 자료로 답할 수 있는 범위를 보고 연동 여부를 정합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>선택 기록 예시　후보 외부 장비 예약 API / 대상 SC-01 점검 전 확인 / 필요한 데이터 규정 본문과 위치 / 예약 변경 권한 불필요 / 결정 보류 / 이유 규정은 이미 rules-v1에 있고, 현재 묻는 작업에는 예약 읽기나 쓰기가 필요하지 않음. Skill이나 MCP도 누가 어떤 입력을 보내 어떤 결과를 받을지 설명할 수 있을 때 비교 대상에 올립니다.</p>
-</figcaption>
-</figure>
+<p>선택 기록 예시　후보 외부 장비 예약 API / 대상 SC-01 점검 전 확인 / 필요한 데이터 규정 본문과 위치 / 예약 변경 권한 불필요 / 결정 보류 / 이유 규정은 이미 rules-v1에 있고, 현재 묻는 작업에는 예약 읽기나 쓰기가 필요하지 않음. Skill이나 MCP도 누가 어떤 입력을 보내 어떤 결과를 받을지 설명할 수 있을 때 비교 대상에 올립니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 현재 조회 함수가 쓰는 근거</h3>
 <div class="cell-before"><p>저장된 회귀 결과에서 Q01 한 건이 어떤 출처로 끝났는지 읽습니다.</p>
 <p>이 팀의 결과물은 ‘장비 예약 API 연동 보류 메모’입니다. 다시 검토할 질문은 ‘이 장비를 실제로 예약할 수 있나요?’입니다. 현재 범위인 점검 안내에서 예약까지 맡기로 결정했을 때 권한과 운영 책임을 검토합니다.</p>
@@ -54,15 +46,7 @@ print(record[<span class="tok-string">&quot;question_id&quot;</span>], record[<s
 <h2>나중에 연동할 조건 남기기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘일정 자료’와 ‘읽기 권한’가 오른쪽의 ‘재검토 조건’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>새 일정 자료와 읽기 권한이 생길 때 연동을 검토합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>연결을 다시 검토할 조건 예시　사용자가 “오늘 점검 가능한 시간”을 묻고 팀이 공개 가능한 일정 읽기 권한과 기준 시각을 확보했을 때. 그때는 규정 ID와 날짜를 보내고, 일정 목록 및 조회 시각을 받는 읽기 전용 연결을 고려할 수 있습니다. 연결 실패 시에는 캐시의 오래된 시간을 확정 일정으로 보여 주지 않고 담당자 확인을 안내합니다. 아래는 아직 채택하지 않은 문서 시안입니다.</p>
-</figcaption>
-</figure>
+<p>연결을 다시 검토할 조건 예시　사용자가 “오늘 점검 가능한 시간”을 묻고 팀이 공개 가능한 일정 읽기 권한과 기준 시각을 확보했을 때. 그때는 규정 ID와 날짜를 보내고, 일정 목록 및 조회 시각을 받는 읽기 전용 연결을 고려할 수 있습니다. 연결 실패 시에는 캐시의 오래된 시간을 확정 일정으로 보여 주지 않고 담당자 확인을 안내합니다. 아래는 아직 채택하지 않은 문서 시안입니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 팀의 도입 조건 쓰기</h3>
 <div class="cell-before"><p>우리 팀이 다음에 외부 자료를 검토할 조건과 연결 실패 시 보여 줄 문장을 한 건의 결정 메모로 작성하세요.</p>
 </div>
@@ -91,4 +75,4 @@ print(decision_note[<span class="tok-string">&quot;도입 조건&quot;</span>], 
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

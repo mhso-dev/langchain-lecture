@@ -30,15 +30,7 @@
 <h2>도구를 부를 때 필요한 칸 읽기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘함수 명세’ 안에서 ‘요일 인자’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>요일 인자는 weekday와 weekend 중 하나를 받습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>도구 명세에는 함수 이름, 기능 설명, 허용 인자를 적습니다. 수업용 가상 도서관은 day 하나만 받고, 평일이나 주말 중 하나를 고르게 했습니다.</p>
-</figcaption>
-</figure>
+<p>도구 명세에는 함수 이름, 기능 설명, 허용 인자를 적습니다. 수업용 가상 도서관은 day 하나만 받고, 평일이나 주말 중 하나를 고르게 했습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 모델에 전달할 요일 선택지</h3>
 <div class="cell-before"><p>아래 사전은 함수의 파이썬 본문 없이도 모델에 보낼 수 있는 기능 설명입니다.</p>
 </div>
@@ -75,15 +67,7 @@ print(TOOL[<span class="tok-string">&quot;parameters&quot;</span>][<span class="
 <h2>응답 속 호출 요청 한 건 풀어 보기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘모델 응답’ 안에서 ‘호출의 인자’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>응답 안의 weekend가 실제 조회 함수에 필요한 값입니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>호출 요청의 arguments는 JSON이 적힌 문자열입니다. 프로그램이 함수에 넘기기 전에 내용을 풀고 명세에 맞는지 검사해야 합니다.</p>
-</figcaption>
-</figure>
+<p>호출 요청의 arguments는 JSON이 적힌 문자열입니다. 프로그램이 함수에 넘기기 전에 내용을 풀고 명세에 맞는지 검사해야 합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 주말 조회를 요청한 항목</h3>
 <div class="cell-before"><p>모델 응답의 모양을 본떠 만든 요청입니다. 호출 ID와 함수명을 그대로 보관합니다.</p>
 </div>
@@ -121,15 +105,7 @@ print(inspect_calls(items)[<span class="tok-number">0</span>][<span class="tok-s
 <h2>응답이 글로만 끝난 경우</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘모델 응답’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘호출 요청’, 아래쪽은 ‘본문만 반환’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>글만 온 응답에는 실행할 도구 요청이 없습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>모델은 도구를 항상 요청하는 것이 아닙니다. 사용자에게 전달할 문장만 담긴 응답이라면 실행할 함수도 없습니다.</p>
-</figcaption>
-</figure>
+<p>모델은 도구를 항상 요청하는 것이 아닙니다. 사용자에게 전달할 문장만 담긴 응답이라면 실행할 함수도 없습니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 호출하지 않은 응답 확인하기</h3>
 <div class="cell-before"><p>글로만 답한 items를 만들고 inspect_calls에 전달해 보세요.</p>
 </div>
@@ -224,4 +200,4 @@ print(inspect_calls(items))</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

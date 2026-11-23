@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>대화 상태와 사용자별 기억 저장 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>두 가지 값으로 기억 찾기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘사용자 ID’와 ‘기억 키’가 오른쪽의 ‘저장 값’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>사용자 ID와 기억 이름을 함께 써서 값을 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>메시지는 어느 대화에서 나온 말인지가 중요합니다. 사용자 선호는 새 대화에서도 찾기 위해 사용자와 설정 이름을 함께 키로 삼습니다. 아래는 저장소 조회 범위를 메모리로 재현한 예입니다. PostgreSQL의 영속성은 이 셀에서 측정하지 않습니다.</p>
-</figcaption>
-</figure>
+<p>메시지는 어느 대화에서 나온 말인지가 중요합니다. 사용자 선호는 새 대화에서도 찾기 위해 사용자와 설정 이름을 함께 키로 삼습니다. 아래는 저장소 조회 범위를 메모리로 재현한 예입니다. PostgreSQL의 영속성은 이 셀에서 측정하지 않습니다.</p><section class="concept-lab" id="concept-lab" data-lab="owner"><h3>같은 language 키로 누구의 값이 열릴까요?</h3><p>alice의 서랍에만 한국어가 들어 있습니다. 사용자 이름을 바꿔 같은 키를 조회해 보세요.</p><div class="lab-actions"><button type="button" data-action="alice">alice 조회</button><button type="button" data-action="bob">bob 조회</button></div><div class="lab-landscape"><div class="lab-tile"><small>조회한 키</small><output data-out="key">(alice, language)</output></div><div class="lab-tile"><small>찾은 값</small><output data-out="value">한국어</output></div></div></section>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 사용자의 설정 키 읽기</h3>
 <div class="cell-before"><p>새 대화 ID 없이도 해당 사용자의 선호를 찾는지 보세요.</p>
 <p>설정 키에 사용자 ID는 들어 있지만 대화 ID는 없습니다. 같은 사용자가 대화 A와 B에서 설정을 읽어도 같은 키를 조회합니다. 이 셀이 보여 주는 것은 키의 구성이고, 새 세션 연결은 따로 확인해야 합니다.</p>
@@ -63,15 +57,7 @@ print(memory.get((owner, <span class="tok-string">&quot;language&quot;</span>)))
 <h2>누가 저장할지는 앱에서 결정합니다</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘저장 요청’가 가운데 ‘앱의 소유자’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>기억을 저장할 소유자는 앱이 결정합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>실제 수업 구현 memory_service.py의 put은 앱이 건넨 컨텍스트에서 소유자를 읽고 입력 본문에서는 memory_key와 value만 받습니다. 사용자가 보낸 문장으로 소유자를 정하면 다른 사람의 기억에 섞일 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>실제 수업 구현 memory_service.py의 put은 앱이 건넨 컨텍스트에서 소유자를 읽고 입력 본문에서는 memory_key와 value만 받습니다. 사용자가 보낸 문장으로 소유자를 정하면 다른 사람의 기억에 섞일 수 있습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 한 사용자 선호만 수정하기</h3>
 <div class="cell-before"><p>alice의 값은 유지하고 bob의 언어를 영어로 저장한 뒤 bob의 값을 읽으세요.</p>
 </div>
@@ -101,15 +87,7 @@ print(saved)</code></pre></figure>
 <h2>실제 SQL에서 소유자 조건 확인하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-03.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘기억 테이블’ 안에서 ‘소유자 조건’를 거쳐 어느 값이 오른쪽에 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>소유자 조건을 건 조회가 해당 사용자의 값을 돌려줍니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>제공 PostgreSQL 저장소는 SELECT value FROM course_memories WHERE owner=%s AND memory_key=%s에 (user_id, memory_key)를 따로 전달합니다. 아래는 메모리 SQLite DB에 같은 행을 넣어 조건을 직접 실행하는 실습입니다. 두 드라이버가 쓰는 자리표시자가 다릅니다.</p>
-</figcaption>
-</figure>
+<p>제공 PostgreSQL 저장소는 SELECT value FROM course_memories WHERE owner=%s AND memory_key=%s에 (user_id, memory_key)를 따로 전달합니다. 아래는 메모리 SQLite DB에 같은 행을 넣어 조건을 직접 실행하는 실습입니다. 두 드라이버가 쓰는 자리표시자가 다릅니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 같은 키에서 alice의 행만 조회</h3>
 <div class="cell-before"><p>SQLite의 ? 두 자리에 소유자와 설정 이름을 순서대로 전달합니다.</p>
 </div>
@@ -244,4 +222,4 @@ print(row[<span class="tok-number">0</span>])</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

@@ -2,6 +2,7 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 프로젝트를 에이전틱 서비스로 묶기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +31,7 @@
 <h2>검색 함수에 원문 한 건 전달하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘검색 질문’에서 출발해 ‘과제함 문단’를 거친 뒤 ‘원문 전달’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>질문과 함께 실제 검색 함수가 읽을 원문을 전달합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>문서 번호와 페이지는 역할이 다릅니다. course-guide-v1:p2는 자료를 구별하는 ID이고 이 문장이 인쇄된 쪽은 1쪽입니다. 답변과 출처를 같은 원문에서 가져오면 다음 단계에서 다시 대조할 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>문서 번호와 페이지는 역할이 다릅니다. course-guide-v1:p2는 자료를 구별하는 ID이고 이 문장이 인쇄된 쪽은 1쪽입니다. 답변과 출처를 같은 원문에서 가져오면 다음 단계에서 다시 대조할 수 있습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 가상 과정 운영 안내에서 찾기</h3>
 <div class="cell-before"><p>한 문서만 있는 작은 검색입니다. 저장한 자료를 어떤 질문에 반환할지 확인하세요.</p>
 </div>
@@ -58,15 +51,7 @@ print(search(<span class="tok-string">&quot;과제는 어디에 내나요?&quot;
 <h2>서비스가 처리한 결과와 답변을 나누기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘서비스 결과’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘처리 상태’, 아래쪽은 ‘표시할 답’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>처리 상태와 사용자에게 보여 줄 답을 따로 읽습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>정상 실행에도 근거가 없을 수 있습니다. 앱이 읽는 run_status에는 실행 상황을, result.status에는 답변을 만들었는지 적습니다. 소유 대화인지 확인한 뒤에만 검색하고, 빈 결과에서는 생성 횟수를 늘리지 않습니다.</p>
-</figcaption>
-</figure>
+<p>정상 실행에도 근거가 없을 수 있습니다. 앱이 읽는 run_status에는 실행 상황을, result.status에는 답변을 만들었는지 적습니다. 소유 대화인지 확인한 뒤에만 검색하고, 빈 결과에서는 생성 횟수를 늘리지 않습니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 한 질문을 끝까지 처리하기</h3>
 <div class="cell-before"><p>제공 서비스의 읽기 경로를 줄인 함수입니다. 이 요청의 답과 출처 쪽수를 확인하세요.</p>
 <p>소유자가 맞지 않으면 조회를 계속하기 전에 거부합니다. 허용된 소유자에게서 검색이 빈 경우에는 근거 부족 결과로 끝납니다. 문서를 찾은 경우에만 그 원문을 건네 답을 만듭니다. 세 경우의 마지막 줄을 각각 찾아보세요.</p>
@@ -152,35 +137,18 @@ print(missing[<span class="tok-string">&#x27;status&#x27;</span>], missing[<span
 <span id="mandatory-search"></span><details class="reading-topic" id="reading-mandatory-search"><summary>검색을 먼저 하고 정상 빈 결과를 끝내기</summary><div class="prose"><p>오늘의 업무 요청은 프로젝트 지식 질문입니다. 모델이 검색 여부를 자유롭게 결정하기 전에 코드가 필수 검색과 R1 검사를 수행합니다. 검색 결과가 비면 모델을 부를 이유가 없으므로 no_evidence로 끝냅니다. 이 종료는 실패를 감춘 결과가 아니라 정상 빈 목록을 확인한 결과입니다.</p>
 <p>검색 예외와 출처 누락은 다른 경로입니다. 검색 함수가 TimeoutError를 내면 error/result=null이며, id/text/source/page 중 필수 필드가 빠지면 데이터 오류가 됩니다. 임의의 출처 이름이나 page=1을 채워 성공한 것처럼 만들지 않습니다. 요청한 k보다 많은 결과도 계약 오류로 처리합니다.</p>
 </div>
-<figure class="flow" data-flow id="flow-5"><figcaption><span class="eyebrow">단계별로 살펴보기</span><h3>필수 검색의 결과와 종료</h3>
+<details class="case-reference" id="flow-5"><summary>필수 검색의 결과와 종료</summary>
 <p>셀 02에서 조건별로 어느 줄에서 끝나는지 보세요. 마지막 두 패널은 서로 다른 질문의 결과입니다.</p>
 <div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">입력</th><th scope="col">셀 02의 끝점</th></tr>
 </thead><tbody><tr><td>다른 소유자의 대화</td><td>검색 전 PermissionError</td></tr>
 <tr><td>내 대화 · 주차 질문</td><td>검색 [] → no_evidence · 생성 0회</td></tr>
 <tr><td>내 대화 · 과제 질문</td><td>문서 발견 → 답과 출처 반환</td></tr>
 </tbody></table></div>
-</figcaption>
-<div class="motion-note"><div><b>볼 곳</b><p>다른 소유자, 빈 검색 결과, 근거가 있는 검색 결과가 각각 어디서 끝나는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>필수 검색을 쓰더라도 권한 검사와 근거 유무에 따라 서로 다른 위치에서 종료됩니다.</p>
-</div>
-</div>
-<ol class="flow-track"><li><span class="flow-index">01</span><span>1</span></li>
-<li><span class="flow-index">02</span><span>2</span></li>
-<li><span class="flow-index">03</span><span>빈 결과로 종료</span></li>
-<li><span class="flow-index">04</span><span>문서를 찾은 경우</span></li>
-</ol><div class="flow-panels"><article class="flow-panel" id="flow-5-step-0"><img class="flow-proof" loading="lazy" alt="소유자와 입력 확인" src="../assets/media/svg-47b7a8598d3aa8.svg"><span class="eyebrow">STEP 01 · 앱</span><h4>소유자와 입력 확인</h4>
-<p>질문·k와 대화 소유자가 유효해야 검색합니다.</p><pre>invalid input → 실행 오류</pre></article>
-<article class="flow-panel" id="flow-5-step-1"><img class="flow-proof" loading="lazy" alt="검색과 R1 검사" src="../assets/media/svg-05785750c46c4a.svg"><span class="eyebrow">STEP 02 · 서비스</span><h4>검색과 R1 검사</h4>
-<p>한 번 검색하고 출처 객체·개수 계약을 확인합니다.</p><pre>mandatory_retrieval_calls = 1</pre></article>
-<article class="flow-panel" id="flow-5-step-2"><img class="flow-proof" loading="lazy" alt="빈 결과로 종료" src="../assets/media/svg-aa9052df906ade.svg"><span class="eyebrow">STEP 03 · 서비스</span><h4>빈 결과로 종료</h4>
-<p>문서가 []이면 모델과 생성은 호출하지 않습니다.</p><pre>주차 질문 → no_evidence · 생성 0회</pre></article>
-<article class="flow-panel" id="flow-5-step-3"><img class="flow-proof" loading="lazy" alt="문서를 찾은 경우" src="../assets/media/svg-dd2b9110958c5c.svg"><span class="eyebrow">STEP 04 · 서비스</span><h4>문서를 찾은 경우</h4>
-<p>주차 질문을 마친 뒤의 단계가 아닙니다. 과제 질문으로 새로 실행한 경우입니다.</p><pre>과제 질문 → course-guide-v1:p2</pre></article>
-</div>
-<div class="flow-controls js-only"><span class="flow-status" role="status" aria-live="polite">1 / 4</span><div><button data-flow-action="reset" type="button">처음</button><button data-flow-action="previous" type="button">이전</button><button data-flow-action="play" type="button">자동 재생</button><button data-flow-action="next" type="button" class="primary">다음 단계 →</button></div>
-</div>
-</figure>
+<article id="flow-5-step-0"><small>STEP 01 · 앱</small><h4>소유자와 입력 확인</h4>
+<p>질문·k와 대화 소유자가 유효해야 검색합니다.</p><pre>invalid input → 실행 오류</pre></article><article id="flow-5-step-1"><small>STEP 02 · 서비스</small><h4>검색과 R1 검사</h4>
+<p>한 번 검색하고 출처 객체·개수 계약을 확인합니다.</p><pre>mandatory_retrieval_calls = 1</pre></article><article id="flow-5-step-2"><small>STEP 03 · 서비스</small><h4>빈 결과로 종료</h4>
+<p>문서가 []이면 모델과 생성은 호출하지 않습니다.</p><pre>주차 질문 → no_evidence · 생성 0회</pre></article><article id="flow-5-step-3"><small>STEP 04 · 서비스</small><h4>문서를 찾은 경우</h4>
+<p>주차 질문을 마친 뒤의 단계가 아닙니다. 과제 질문으로 새로 실행한 경우입니다.</p><pre>과제 질문 → course-guide-v1:p2</pre></article></details>
 </details>
 <span id="limited-agent"></span><details class="reading-topic" id="reading-limited-agent"><summary>제한 에이전트에 같은 근거를 전달하기</summary><div class="prose"><p>근거가 있는 경우에는 56일의 실제 create_agent를 사용합니다. 다만 56일의 기본 도서관 대본은 프로젝트에 맞지 않습니다. 검색 함수뿐 아니라 생성 문장과 인용 ID도 같은 course-guide 자료를 사용하도록 고정했습니다. 원본 다섯 파일과 프로젝트용 파생 파일을 따로 남겨 변경 범위를 볼 수 있게 했습니다.</p>
 <p>고정 모델 대본은 먼저 search_documents를 요청하고 다음 호출에서 AnswerDraft를 반환합니다. 이때 도구는 이미 검색·검증한 같은 근거를 전달합니다. 새 자료를 다시 검색하지 않습니다. 도구 요청의 질문과 k가 원래 값과 다르면 거부합니다. 따라서 모델 호출 2와 검색 1을 혼동하면 안 됩니다.</p>
@@ -256,4 +224,4 @@ print(missing[<span class="tok-string">&#x27;status&#x27;</span>], missing[<span
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

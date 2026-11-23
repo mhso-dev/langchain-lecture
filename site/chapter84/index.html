@@ -30,15 +30,7 @@
 <h2>기존 할 일에 새 필드 추가하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘기존 할 일’를 ‘새 열 기본값’에 남기는 시점과 ‘이전 행 보존’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>새 열을 추가해도 이전 할 일의 제목은 유지됩니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>새로 만들 때와 예전 행을 읽을 때 모두 due_date는 비어 있을 수 있고 priority의 기본값은 normal입니다. PostgreSQL에서는 날짜 타입을 사용합니다. 여기서는 SQLite의 ISO 날짜 문자열과 CHECK 조건으로 같은 동작을 좁혀 봅니다.</p>
-</figcaption>
-</figure>
+<p>새로 만들 때와 예전 행을 읽을 때 모두 due_date는 비어 있을 수 있고 priority의 기본값은 normal입니다. PostgreSQL에서는 날짜 타입을 사용합니다. 여기서는 SQLite의 ISO 날짜 문자열과 CHECK 조건으로 같은 동작을 좁혀 봅니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기존 행이 있는 테이블에 열 추가하기</h3>
 <div class="cell-before"><p>변경 전의 복습 한 건을 넣고 ADD COLUMN을 적용합니다.</p>
 </div>
@@ -58,15 +50,7 @@ print(db.execute(<span class="tok-string">&quot;SELECT title, due_date, priority
 <h2>고칠 열과 값을 정해 두기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘변경 요청’가 가운데 ‘허용 열 확인’에 도착한 뒤 오른쪽에 어떤 결과가 남는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>허용한 열에만 새 값을 적용합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>마감일과 우선순위가 함께 온 경우에는 두 열만 고치는 고정 SQL을 선택할 수 있습니다. 입력에서 직접 열 이름을 만들어 붙이지 않습니다. 한 필드가 누락된 요청과 일부러 null을 보내 날짜를 지우는 요청도 구분합니다.</p>
-</figcaption>
-</figure>
+<p>마감일과 우선순위가 함께 온 경우에는 두 열만 고치는 고정 SQL을 선택할 수 있습니다. 입력에서 직접 열 이름을 만들어 붙이지 않습니다. 한 필드가 누락된 요청과 일부러 null을 보내 날짜를 지우는 요청도 구분합니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 두 열의 고정 UPDATE와 바인딩 값</h3>
 <div class="cell-before"><p>날짜 문자열은 실제 달력 날짜인지 확인한 뒤 SQL 자리표시자에 넣습니다.</p>
 <p>날짜와 우선순위를 저장한 다음, 같은 행의 제목만 바꿔 보세요. 제목 변경 뒤에도 날짜는 2027-04-02, 우선순위는 high여야 합니다. 다음 과제에서 날짜를 직접 비울 때와 비교합니다.</p>
@@ -206,4 +190,4 @@ high</pre></div>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

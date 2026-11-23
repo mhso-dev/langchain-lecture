@@ -30,15 +30,7 @@
 <h2>상태표에 종료 위치 표시하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘근거 확인’에서 갈라지는 두 경우를 비교하세요. 위쪽은 ‘답변 가능’, 아래쪽은 ‘근거 없음’입니다.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>근거가 없는 질문이 어디서 종료되는지 표시합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>설계안　질문 수신 → 빈 입력 검사 → 장비나 질문 목적 확인 → 허용 문서 검색 → 답과 출처 표시. 공백 질문이면 invalid_input에서, 장비를 특정하기 어려우면 need_clarification에서 끝냅니다. 문서에 없는 교체 일정은 no_evidence로 마칩니다. 검색 결과가 있을 때만 answered로 원문 위치를 보냅니다. 인증·모델·외부 도구는 이 로컬 규칙을 구현하는 데 필요하지 않습니다.</p>
-</figcaption>
-</figure>
+<p>설계안　질문 수신 → 빈 입력 검사 → 장비나 질문 목적 확인 → 허용 문서 검색 → 답과 출처 표시. 공백 질문이면 invalid_input에서, 장비를 특정하기 어려우면 need_clarification에서 끝냅니다. 문서에 없는 교체 일정은 no_evidence로 마칩니다. 검색 결과가 있을 때만 answered로 원문 위치를 보냅니다. 인증·모델·외부 도구는 이 로컬 규칙을 구현하는 데 필요하지 않습니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 일정 문의의 종료 위치</h3>
 <div class="cell-before"><p>정해 둔 일정 질문을 넣었을 때 자료를 읽는 단계까지 가는지 예측하세요.</p>
 <p>no_evidence는 여기서 사용자에게 근거 부족을 안내하고 끝낼 수 있는 상태입니다. check_equipment는 다음 함수로 보낼 내부 단계 이름입니다. 화면에 check_equipment라는 문자열을 최종 답으로 표시하지 않습니다.</p>
@@ -60,15 +52,7 @@ print(next_step(<span class="tok-string">&quot;장비 A를 다음 달에 교체�
 <h2>답과 출처가 화면으로 들어가는 자리</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘상태 필드’와 ‘출처 필드’가 오른쪽의 ‘화면 응답’에 함께 들어가는 위치를 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>응답의 상태와 출처를 화면에서 읽을 자리를 정합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>응답 설계 예시　입력 Q01 / 검색어 장비 A / 후보 RULE-A / 본문 점검 전 전원 표시등을 확인합니다. / 표시할 위치 가상 장비실 규정 A, 1쪽 2.1절, 2026-11-01 / 문서판 rules-v1. 저장을 붙이는 팀은 답을 받는 단계와 저장 성공 여부를 분리하세요. 저장 실패 때문에 근거 없는 질문으로 보이면 사용자 행동이 달라집니다.</p>
-</figcaption>
-</figure>
+<p>응답 설계 예시　입력 Q01 / 검색어 장비 A / 후보 RULE-A / 본문 점검 전 전원 표시등을 확인합니다. / 표시할 위치 가상 장비실 규정 A, 1쪽 2.1절, 2026-11-01 / 문서판 rules-v1. 저장을 붙이는 팀은 답을 받는 단계와 저장 성공 여부를 분리하세요. 저장 실패 때문에 근거 없는 질문으로 보이면 사용자 행동이 달라집니다.</p>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 빈 입력이 들어오는 자리</h3>
 <div class="cell-before"><p>공백만 넣었을 때 짧은 분기의 종료 위치를 표시하세요. 질문을 더 받으면 되는 상태와 구분해 봅니다.</p>
 </div>
@@ -94,4 +78,4 @@ print(next_step(<span class="tok-string">&quot;장비 A를 다음 달에 교체�
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

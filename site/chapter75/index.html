@@ -2,6 +2,8 @@
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>HTTPS와 데이터 복구의 근거 남기기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
+<link rel="stylesheet" href="../assets/concept-labs.css">
+<script defer src="../assets/concept-labs.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -30,15 +32,7 @@
 <h2>원본과 복구 대상을 분리하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘원본 DB’를 ‘백업 사본’에 남기는 시점과 ‘별도 복구 대상’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>원본을 보존한 채 다른 위치에 사본을 복구합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>수업용 DB에는 alice의 과제 안내 문서 하나를 넣습니다. SQLite의 실제 백업 API로 독립된 복사본을 만듭니다. EC2 볼륨 스냅샷이나 PostgreSQL pg_dump를 실행하는 실습과 구분하세요.</p>
-</figcaption>
-</figure>
+<p>수업용 DB에는 alice의 과제 안내 문서 하나를 넣습니다. SQLite의 실제 백업 API로 독립된 복사본을 만듭니다. EC2 볼륨 스냅샷이나 PostgreSQL pg_dump를 실행하는 실습과 구분하세요.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 백업본 만들기</h3>
 <div class="cell-before"><p>별개의 DB 객체를 만들고 원본에 커밋한 다음 백업합니다.</p>
 </div>
@@ -73,15 +67,7 @@ print(restored_row, restored_row == original_row)</code></pre></figure>
 <h2>행 개수만 맞는 복구에서 빠지는 오류</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘행 단위 대조’를 기준으로 양쪽의 ‘원본 내용’와 ‘복구 내용’를 대조하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>행 수가 같아도 내용이 달라질 수 있어 다시 대조합니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>복구 대상의 문장만 다른 상황을 만들어 봅니다. 대상은 버려도 되는 수업용 메모리 DB입니다. 운영 원본을 덮어쓰지 않고도 점검 방식의 차이를 볼 수 있습니다.</p>
-</figcaption>
-</figure>
+<p>복구 대상의 문장만 다른 상황을 만들어 봅니다. 대상은 버려도 되는 수업용 메모리 DB입니다. 운영 원본을 덮어쓰지 않고도 점검 방식의 차이를 볼 수 있습니다.</p><section class="concept-lab" id="concept-lab" data-lab="restore"><h3>한 행을 복구했는데 내용도 같을까요?</h3><p>복구본의 본문만 고쳐 보세요. 원본과 복구본에서 같은 키 (alice, doc-1)로 꺼낸 한 줄을 대조합니다.</p><div class="lab-actions"><button type="button" data-action="same">백업에서 복원</button><button type="button" data-action="change">복구본 본문 변경</button></div><div class="lab-landscape"><div class="lab-tile"><small>원본 · 1행</small>과제함에 제출합니다.</div><div class="lab-tile"><small>복구본 · 1행</small><output data-out="body">과제함에 제출합니다.</output></div></div><output data-out="equal">본문 일치 · True</output></section>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 복원 뒤 문장이 변한 행 찾아내기</h3>
 <div class="cell-before"><p>가상 복구본에서 doc-1 원문만 바뀌었습니다. 행 수를 세는 대신 앞서 선택한 원문과 다시 대조하세요.</p>
 <p>origin에서 backup으로 복사하고, backup에서 target으로 복원했습니다. backup.backup(target)에서 점 왼쪽은 읽을 DB이고 괄호 안은 받을 DB입니다. 이번 과제에서는 복원본 target의 본문만 바꿉니다.</p>
@@ -198,4 +184,4 @@ print(target.execute(query, key).fetchone() == original_row)</code></pre></figur
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

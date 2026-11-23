@@ -30,15 +30,7 @@
 <h2>접수한 문서를 검색 가능 상태로 바꾸기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘파일 전송’에서 출발해 ‘수신 상태’를 거친 뒤 ‘후속 처리’가 되는 순서를 따라가세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>파일 수신 상태를 남긴 뒤 후속 처리를 이어갑니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>아래는 70장의 소유자·문서·상태 셋을 남긴 SQLite 실습입니다. 실제 PostgreSQL 버전은 UUID와 복합 외래키로 문서·대화·출처를 연결합니다. 여기서는 업로드 본문 한 건의 변화를 관찰합니다.</p>
-</figcaption>
-</figure>
+<p>아래는 70장의 소유자·문서·상태 셋을 남긴 SQLite 실습입니다. 실제 PostgreSQL 버전은 UUID와 복합 외래키로 문서·대화·출처를 연결합니다. 여기서는 업로드 본문 한 건의 변화를 관찰합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 파일을 접수하고 상태 읽기</h3>
 <div class="cell-before"><p>과제 안내를 alice 문서로 접수합니다. 텍스트를 저장하기 전에는 ready로 표시하지 않습니다.</p>
 </div>
@@ -72,15 +64,7 @@ print(db.execute(<span class="tok-string">&quot;SELECT status, body FROM docs WH
 <h2>결과와 출처를 같은 턴에 저장하기</h2>
 </div>
 </header>
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>‘서비스 응답’를 ‘출처와 함께 저장’에 남기는 시점과 ‘다시 연 대화’를 확인하는 시점을 구분하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>답과 출처를 함께 저장해야 대화를 다시 열 수 있습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>답변 문장만 저장하면 같은 대화를 다시 열 때 어떤 문서와 쪽수를 썼는지 복원하기 어렵습니다. 서비스 결과 A1을 통째로 저장하고 다시 읽습니다. 수업용 doc-1 식별자는 업로드한 문서를 가리킵니다.</p>
-</figcaption>
-</figure>
+<p>답변 문장만 저장하면 같은 대화를 다시 열 때 어떤 문서와 쪽수를 썼는지 복원하기 어렵습니다. 서비스 결과 A1을 통째로 저장하고 다시 읽습니다. 수업용 doc-1 식별자는 업로드한 문서를 가리킵니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 저장한 답변에서 출처 복원</h3>
 <div class="cell-before"><p>소유자의 준비된 문서에서 원문을 읽고, 답변과 함께 출처·호출 수를 저장합니다.</p>
 </div>
@@ -215,4 +199,4 @@ print(row)</code></pre></figure>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>
