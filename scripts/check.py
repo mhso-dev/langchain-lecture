@@ -28,7 +28,7 @@ class Page(HTMLParser):
             self.closed_lesson_blocks.append(attrs.get("id", attrs.get("class", "details")))
         if "id" in attrs:
             self.ids.add(attrs["id"])
-        for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still", "data-sheet"):
+        for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still", "data-sheet", "data-page-image"):
             value = attrs.get(key)
             if not value or value.startswith("data:"):
                 continue
@@ -40,8 +40,11 @@ class Page(HTMLParser):
         if tag == "video":
             self.videos.append(attrs.get("src"))
             if not attrs.get("src", "").endswith(".mp4"):
-                self.clip_playback_errors.append("개념 영상 파일 경로 누락")
-            if not {"autoplay", "loop", "muted", "playsinline"}.issubset(attrs) or "controls" in attrs:
+                self.clip_playback_errors.append("영상 파일 경로 누락")
+            if "observation-clip" in attrs.get("class", "").split():
+                if not {"controls", "playsinline"}.issubset(attrs) or not attrs.get("poster") or "autoplay" in attrs:
+                    self.clip_playback_errors.append("관찰 영상의 재생 컨트롤·정지 화면·수동 재생 설정 오류")
+            elif not {"autoplay", "loop", "muted", "playsinline"}.issubset(attrs) or "controls" in attrs:
                 self.clip_playback_errors.append("개념 영상의 무음 자동 반복 재생 설정 오류")
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
@@ -85,6 +88,10 @@ def main():
             for asset in ("../assets/three.min.js", "../assets/practice-space.js"):
                 if asset not in page.links:
                     errors.append(f"{name} 실험 스크립트 연결 누락: {asset}")
+        if "pdf-layers" in page.ids:
+            for asset in ("../assets/three.min.js", "pdf-layers.js", "pdf-layers.css"):
+                if asset not in page.links:
+                    errors.append(f"{name} PDF 층 분리 실험 파일 연결 누락: {asset}")
         for asset in page.links:
             if asset.endswith((".svg", ".gif")) or asset == "simulation.html" or asset.startswith("motion/"):
                 errors.append(f"{name} 이전 시각 자료 연결: {asset}")
@@ -99,7 +106,8 @@ def main():
             errors.append(f"{name} 코드 셀 누락")
     if errors:
         raise SystemExit("\n".join(sorted(set(errors))))
-    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {sum(p.has_practice for p in pages.values())}곳, 개념 영상 {sum(len(p.videos) for p in pages.values())}편 통과")
+    experiments = sum(int(p.has_practice) + int("pdf-layers" in p.ids) for p in pages.values())
+    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {experiments}곳, 영상 {sum(len(p.videos) for p in pages.values())}편 통과")
 
 
 if __name__ == "__main__":
