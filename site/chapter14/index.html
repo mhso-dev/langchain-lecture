@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -71,6 +71,9 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 <!-- END MOTION -->
 
 
+<!-- lesson-visual practice-space -->
+<section class="practice-space" id="practice-space" data-practice="classify"><h3>영수증과 오류가 동시에 나오면 어디로 갈까요?</h3><p>수업의 분류 함수는 두 단어의 포함 여부를 검사합니다. 질문을 바꾸면서 강조되는 경로와 안내 작성 함수의 호출 수를 확인하세요.</p><label>문의 내용 <select><option value="영수증이 필요합니다">영수증이 필요합니다</option><option value="인증 오류입니다">인증 오류입니다</option><option value="영수증 오류입니다">영수증 오류입니다</option><option value="도와주세요">도와주세요</option></select></label><div class="practice-stage" role="img" aria-label="영수증과 오류가 동시에 나오면 어디로 갈까요?"></div><output aria-live="polite">두 단서 중 하나만 있을 때는 해당 경로에서 1회 작성합니다. 둘 다 있거나 모두 없으면 clarify로 이동하고 작성 횟수는 0입니다.</output></section>
+<!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · route_request()로 실행 경로 선택</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>

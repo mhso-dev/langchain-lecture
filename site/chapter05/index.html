@@ -72,6 +72,11 @@ print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"min
 <!-- END MOTION -->
 
 
+<!-- lesson-visual visual-clean-order -->
+<figure class="lesson-clip" id="visual-clean-order"><h3>어떤 2번 행을 남길까요?</h3>
+<video autoplay loop muted playsinline aria-label="어떤 2번 행을 남길까요?" src="visual-clean-order.mp4"></video>
+<figcaption>minutes가 빈 첫 2번 행을 먼저 제외합니다. 유효한 행만 모은 뒤 ID를 비교해야 20분짜리 2번 행이 남습니다.</figcaption></figure>
+<!-- /lesson-visual visual-clean-order -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 유효한 행만 리스트에 추가</h3>
 <div class="cell-before"><p>아래 함수는 이 작은 CSV의 정수 표기만 읽습니다. 숫자 변환과 범위 검사까지 성공한 행을 모으세요.</p>
 <p>CSV의 minutes는 문자열입니다. clean_row는 '30'을 30으로 바꾸지만 '30.0'에서는 int 변환이 실패해 행을 제외합니다. 뒤의 판다스 예시는 먼저 숫자로 읽어 정수와 값이 같은 30.0을 허용합니다. 팀 자료에는 어느 표기까지 허용할지 한 가지 규칙을 정하세요.</p>

@@ -152,7 +152,114 @@
     ['alice','bob'].forEach((u,i)=>{const x=i?2.5:-2.5;box(x,-.1,3.55,1.85,owner===u?teal:muted);label(u+' / main',x,1.45);label(i?'RULE-B':'RULE-A',x,-.10,.45);});
     return 'sessions[("'+owner+'", "main")] → ["RULE-'+(owner==='alice'?'A':'B')+'"]';
   }
-  const draw={records,overlap:chunks,size:chunks,vector:vectors,pgdist:vectors,ranking,rerank,memory,switches,latency,retry,session};
+  function bars(names, amounts, suffix) {
+    const max=Math.max(1,...amounts);
+    names.forEach((name,i)=>{
+      const x=(i-(names.length-1)/2)*3.2, height=2.7*amounts[i]/max;
+      if(height) box(x,-1.35+height/2,1.55,height,i===names.length-1?amber:teal);
+      label(String(amounts[i])+suffix,x,-1.02+height,.37);
+      label(name,x,-1.88,.32);
+    });
+  }
+  function branch(input, choices, selected) {
+    label(input,-3.8,0,.32);
+    choices.forEach((choice,i)=>{
+      const y=(choices.length-1)*.78-i*1.56, active=i===selected;
+      line(-2.35,0,.67,y,active?amber:muted);
+      box(2.65,y,3.7,.79,active?teal:muted);
+      label(choice,2.65,y,.32,active?'#102236':'#ffffff');
+    });
+  }
+  function accumulator(mode) {
+    let sum=0;
+    const totals=[30,20,40].map(n=>{ if(mode==='inside')sum=0; sum+=n; return sum; });
+    bars(['30분 처리','20분 처리','40분 처리'],totals,'분');
+    return '각 반복이 끝난 직후의 total = '+totals.join(' → ')+'분입니다.';
+  }
+  function classify(question) {
+    const billing=question.includes('영수증'), technical=question.includes('오류');
+    const route=billing===technical?'clarify':billing?'billing':'technical';
+    const choices=['billing','technical','clarify'];
+    branch('문의 단서',choices,choices.indexOf(route));
+    return '영수증 단서 '+Number(billing)+'개, 오류 단서 '+Number(technical)+'개 → '+route+
+      '. 안내 작성 함수 호출은 '+(route==='clarify'?0:1)+'회입니다.';
+  }
+  function messageIds(mode) {
+    const messages=[['h1','대출 기간은?'],['a1','답변 초안']];
+    const incoming=[mode==='new'?'a2':'a1','수정 답변'];
+    const result=mode==='plain'?[incoming]:messages.map(row=>row.slice());
+    if(mode!=='plain'){
+      const index=result.findIndex(row=>row[0]===incoming[0]);
+      if(index<0)result.push(incoming);else result[index]=incoming;
+    }
+    result.forEach(([id,content],i)=>{
+      const x=(i-(result.length-1)/2)*3.3;
+      box(x,0,2.95,1.32,id===incoming[0]?amber:teal);
+      label(id,x,1.12);label(content,x,0,.32,'#102236');
+    });
+    return '기존 [h1, a1]에 '+incoming[0]+' 수신 → ['+result.map(row=>row[0]).join(', ')+']. 수정 답변을 포함한 메시지는 총 '+result.length+'개입니다.';
+  }
+  function approvals(choice) {
+    const status=choice==='wait'?'승인 대기':choice==='approve'?'completed':'declined';
+    const choices=['승인 대기','completed','declined'];
+    branch('문의 A1',choices,choices.indexOf(status));
+    if(choice==='wait') return '__interrupt__에 대기 중인 요청이 있습니다. status는 아직 설정되지 않았고 등록은 0건입니다.';
+    return '결정 전달 뒤 status = '+status+'. 등록된 문의는 '+Number(choice==='approve')+'건입니다.';
+  }
+  function publish(choice) {
+    const [event,ref,check]=choice.split('|');
+    const allowed=event==='push'&&ref==='main'&&check==='pass';
+    branch('check', ['publish 실행','publish 생략'], allowed?0:1);
+    return event+' · '+ref+' · 검사 '+(check==='pass'?'성공':'실패')+' → publish '+(allowed?'실행':'생략')+'.';
+  }
+  function wrapping(width) {
+    const left=-4.95, scale=.0214, gap=10, input=180, button=100;
+    const wrap=input+gap+button>width, right=left+width*scale;
+    line(left,1.25,right,1.25,white);line(right,1.25,right,-1.65,white);
+    function element(text,x,y,w,c) {box(x+w*scale/2,y,w*scale,.78,c);label(text,x+w*scale/2,y,.30,'#102236');}
+    element('입력 180',left,.46,input,teal);
+    element('버튼 100',wrap?left:left+(input+gap)*scale,wrap?-.72:.46,button,amber);
+    return '고정 폭 비교 예시 · 180 + 10 + 100 = 290px. 컨테이너 '+width+'px에서 버튼은 '+(wrap?'둘째':'첫째')+' 줄입니다.';
+  }
+  function substring(needle) {
+    const titles=['복습 50%','복습 마무리'];
+    const positions=titles.map(title=>title.indexOf(needle)+1);
+    titles.forEach((title,i)=>{
+      const y=.85-i*1.7;
+      label(title,-2.8,y,.42);
+      box(1.9,y,3.2,.85,positions[i]?teal:muted);
+      label('instr = '+positions[i],1.9,y,.32,positions[i]?'#102236':'#ffffff');
+    });
+    return '검색어 「'+needle+'」 · instr()가 0보다 큰 행은 '+positions.filter(Boolean).length+'건입니다. 위치는 1부터 셉니다.';
+  }
+  function equipment(question) {
+    const found=['A','B'].filter(id=>question.includes('장비 '+id));
+    const selected=found.length===1?found[0]==='A'?0:1:2;
+    branch('장비명 검사',['RULE-A','RULE-B','추가 질문'],selected);
+    return selected===2?'장비가 하나로 정해지지 않아 추가 질문을 합니다.':
+      '장비 '+found[0]+'만 일치해 점검 안내를 돌려줍니다.'+(question.includes('교체')?' 이 규칙은 교체 일정이라는 의도를 검사하지 않아 오답입니다.':'');
+  }
+  function regexBoundary(input) {
+    const output=input.replace(/장비([AB])(?=$|[^A-Za-z0-9])/g,'장비 $1');
+    const chars=[...output];
+    chars.forEach((c,i)=>{
+      const x=(i-(chars.length-1)/2)*1.05, inserted=output!==input&&c===' ';
+      box(x,0,.91,1.13,inserted?amber:teal);
+      label(c===' '?'␣':c,x,0,.5,'#102236');
+    });
+    return '입력 「'+input+'」 → 출력 「'+output+'」. '+(input===output?'경계 조건을 통과하지 않아 원문을 유지합니다.':'A 또는 B 앞에 공백 한 칸을 넣었습니다.');
+  }
+  function taskDenominator(fourth) {
+    const outcomes=['success','failed','aborted',fourth];
+    const attempts=outcomes.filter(s=>s!=='not_started'), wins=attempts.filter(s=>s==='success');
+    outcomes.forEach((s,i)=>{
+      const x=(i-1.5)*2.6;
+      box(x,0,2.35,.96,s==='not_started'?muted:s==='success'?teal:amber);
+      label('SYN-0'+(i+1),x,1.15,.35);label(s,x,0,.25,s==='not_started'?'#ffffff':'#102236');
+    });
+    return '성공 '+wins.length+'건 / 실제 시작 '+attempts.length+'건 = '+(100*wins.length/attempts.length).toFixed(1)+'%. 중단한 과업도 시작 횟수에 포함합니다.';
+  }
+  const draw={accumulator,classify,messageIds,approvals,publish,wrapping,substring,equipment,regexBoundary,taskDenominator,records,overlap:chunks,size:chunks,vector:vectors,pgdist:vectors,ranking,rerank,memory,switches,latency,retry,session};
   let rotation=-.54;
   function update() {
     if (renderer) {

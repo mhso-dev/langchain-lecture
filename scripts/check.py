@@ -17,7 +17,7 @@ class Page(HTMLParser):
         self.notebooks = []
         self.simulations = []
         self.has_practice = False
-        self.has_clip = False
+        self.videos = []
         self.clip_playback_errors = []
         self.title = None
 
@@ -34,8 +34,10 @@ class Page(HTMLParser):
             else:
                 self.links.append(value)
         self.has_practice |= "data-practice" in attrs
-        if tag == "video" and attrs.get("src") == "concept.mp4":
-            self.has_clip = True
+        if tag == "video":
+            self.videos.append(attrs.get("src"))
+            if not attrs.get("src", "").endswith(".mp4"):
+                self.clip_playback_errors.append("개념 영상 파일 경로 누락")
             if not {"autoplay", "loop", "muted", "playsinline"}.issubset(attrs) or "controls" in attrs:
                 self.clip_playback_errors.append("개념 영상의 무음 자동 반복 재생 설정 오류")
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
@@ -74,9 +76,10 @@ def main():
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
-        for present, asset in ((page.has_practice, "../assets/practice-space.js"), (page.has_clip, "concept.mp4")):
-            if present and asset not in page.links:
-                errors.append(f"{name} 새 학습 자료 연결 누락: {asset}")
+        if page.has_practice:
+            for asset in ("../assets/three.min.js", "../assets/practice-space.js"):
+                if asset not in page.links:
+                    errors.append(f"{name} 실험 스크립트 연결 누락: {asset}")
         for asset in page.links:
             if asset.endswith((".svg", ".gif")) or asset == "simulation.html" or asset.startswith("motion/"):
                 errors.append(f"{name} 이전 시각 자료 연결: {asset}")
@@ -91,7 +94,7 @@ def main():
             errors.append(f"{name} 코드 셀 누락")
     if errors:
         raise SystemExit("\n".join(sorted(set(errors))))
-    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {sum(p.has_practice for p in pages.values())}곳, 개념 영상 {sum(p.has_clip for p in pages.values())}편 통과")
+    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {sum(p.has_practice for p in pages.values())}곳, 개념 영상 {sum(len(p.videos) for p in pages.values())}편 통과")
 
 
 if __name__ == "__main__":

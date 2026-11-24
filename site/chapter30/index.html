@@ -74,6 +74,11 @@ print(retrieve(<span class="tok-string">'대출 기간은?'</span>, <span class=
 </div>
 </header>
 <p>검색 결과를 상태에 넣을 때는 documents 키에 목록을 그대로 반환합니다. 다음 노드는 같은 목록에서 답을 꺼냅니다. 별도로 다시 검색하면 처음 확인한 근거와 다른 문서를 답에 쓰게 될 수 있습니다.</p>
+<!-- lesson-visual visual-required -->
+<figure class="lesson-clip" id="visual-required"><h3>검색 노드에서 답변까지 따라가는 문서 한 건</h3>
+<video autoplay loop muted playsinline aria-label="검색 노드에서 답변까지 따라가는 문서 한 건" src="visual-required.mp4"></video>
+<figcaption>휴관 질문은 library-2를 찾습니다. 답변 노드가 문서 본문으로 답을 만듭니다. 쪽 번호 2는 최종 상태의 documents에서 따로 읽습니다.</figcaption></figure>
+<!-- /lesson-visual visual-required -->
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색·답변 노드를 간선으로 연결</h3>
 <div class="cell-before"><p>아래 그래프에서 START 다음에 연결한 노드를 찾고 휴관 질문을 실행하세요.</p>
 <p>이 노트북의 retrieve는 공백 질문에서 []를 반환하고 답변은 상태의 answer에서 읽습니다. 뒤의 R1/A1 참고 구현은 공백을 ValueError로 처리하며 result 안에 답을 넣습니다. 두 구현의 키를 섞으면 값을 찾을 수 없습니다.</p>

@@ -57,6 +57,11 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 </div>
 </header>
 <p>마감일과 우선순위가 함께 온 경우에는 두 열만 고치는 고정 SQL을 선택할 수 있습니다. 입력에서 직접 열 이름을 만들어 붙이지 않습니다. 한 필드가 누락된 요청과 일부러 null을 보내 날짜를 지우는 요청도 구분합니다.</p>
+<!-- lesson-visual visual-patch -->
+<figure class="lesson-clip" id="visual-patch"><h3>제목만 수정할 때 다른 열의 값은?</h3>
+<video autoplay loop muted playsinline aria-label="제목만 수정할 때 다른 열의 값은?" src="visual-patch.mp4"></video>
+<figcaption>UPDATE가 지정한 열만 바뀝니다. 날짜와 우선순위를 채운 뒤 제목만 수정해도 2027-04-02와 high는 같은 행에 남습니다.</figcaption></figure>
+<!-- /lesson-visual visual-patch -->
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · UPDATE의 값 바인딩</h3>
 <div class="cell-before"><p>날짜 문자열은 실제 달력 날짜인지 확인한 뒤 SQL 자리표시자에 넣습니다.</p>
 <p>날짜와 우선순위를 저장한 다음, 같은 행의 제목만 바꿔 보세요. 제목 변경 뒤에도 날짜는 2027-04-02, 우선순위는 high여야 합니다. 다음 과제에서 날짜를 직접 비울 때와 비교합니다.</p>

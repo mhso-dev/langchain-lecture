@@ -53,6 +53,11 @@ print(sessions[(trusted_owner, <span class="tok-string">"main"</span>)])</code><
 
 <!-- END MOTION -->
 
+<!-- lesson-visual detail-expiry -->
+<figure class="lesson-clip" id="detail-expiry"><h3>같은 main에서 alice의 이력만 지우기</h3>
+<video autoplay loop muted playsinline aria-label="같은 main에서 alice의 이력만 지우기" src="detail-expiry.mp4"></video>
+<figcaption>세션 사본에서 (alice, main)을 지운 뒤 다시 조회하면 None이 나옵니다. 같은 대화 이름을 쓰는 (bob, main)에서는 여전히 RULE-B를 읽습니다.</figcaption></figure>
+<!-- /lesson-visual detail-expiry -->
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 소유자별 이력 삭제</h3>
 <div class="cell-before"><p>가상 alice가 main 삭제를 요청했습니다. 사본에서 그 키만 덜어내고 bob의 마지막 근거를 다시 읽어 보세요.</p>
 <p>최근 5턴을 남기는 세션에서 여섯 번째 턴을 저장하면 첫 번째 턴이 빠지고 2~6번째 턴이 남습니다. 생성 후 300초가 되면 세션 자체가 만료됩니다. 아래 과제에서 실제로 관찰하는 것은 소유자를 골라 삭제한 결과입니다.</p>

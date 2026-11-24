@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -74,6 +74,9 @@ display({<span class="tok-string">'text/html'</span>: fixed, <span class="tok-st
 </div>
 </header>
 <p>flex 컨테이너의 gap은 자식 사이 간격입니다. wrap을 켜면 폭이 부족할 때 버튼이 다음 줄로 내려갈 수 있습니다. 입력칸 자체의 여백만 늘리면 두 요소 사이의 간격은 의도와 다를 수 있습니다.</p>
+<!-- lesson-visual practice-space -->
+<section class="practice-space" id="practice-space" data-practice="wrapping"><h3>폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?</h3><p>입력칸 180px, 버튼 100px, gap 10px로 고정한 flex-wrap 비교 예시입니다. 컨테이너 폭을 290px와 289px로 바꿔 보세요.</p><label>컨테이너 폭(px) <input type="range" min="200" max="440" step="1" value="290"><span class="practice-value">290</span></label><div class="practice-stage" role="img" aria-label="폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?"></div><output aria-live="polite">290px에서는 입력칸과 버튼이 한 줄입니다. 289px에서는 1px가 부족해 버튼이 다음 줄로 넘어갑니다.</output></section>
+<!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 반응형 CSS 수정</h3>
 <div class="cell-before"><p>gap의 10px를 24px로 바꾸고 셀을 다시 실행해 입력칸과 버튼 사이를 보세요.</p>
 <p>아래 gap은 입력칸과 버튼 사이의 간격입니다. 값을 바꾼 뒤 같은 셀을 다시 실행하면 화면 스타일과 텍스트 설명이 함께 바뀝니다.</p>

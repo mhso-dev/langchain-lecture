@@ -34,6 +34,11 @@
 </div>
 </header>
 <p class="concept-intro">create_agent는 모델 호출과 도구 실행을 연결합니다. 대화 메시지에서 도구 요청과 결과를 찾아 어느 함수가 실행됐는지 확인합니다.</p><p>도구 요청에는 함수 이름과 인자, 결과를 받을 때 사용할 호출 ID가 들어 있습니다. 시간을 알아내는 일은 등록된 함수가 맡습니다. 아래는 대본 모델이 낸 요청을 Python으로 직접 전달해 보는 예입니다.</p>
+<!-- lesson-visual visual-tool-request -->
+<figure class="lesson-clip" id="visual-tool-request"><h3>두 도구 호출에 결과를 하나씩 돌려주기</h3>
+<video autoplay loop muted playsinline aria-label="두 도구 호출에 결과를 하나씩 돌려주기" src="visual-tool-request.mp4"></video>
+<figcaption>c1은 시간 조회, c2는 대출 규칙 요청입니다. 수업 대본의 결과를 각각 같은 ID에 연결해야 모델이 두 사실을 구분합니다.</figcaption></figure>
+<!-- /lesson-visual visual-tool-request -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 도구 함수의 인자와 결과</h3>
 <div class="cell-before"><p>요청에 시간표 값이 있는지 먼저 보세요. 조회 뒤 어느 값이 새로 생길까요?</p>
 </div>
@@ -70,6 +75,11 @@ print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'lo
 
 <!-- END MOTION -->
 
+<!-- lesson-visual detail-trace -->
+<figure class="lesson-clip" id="detail-trace"><h3>모델 메시지 세 개와 도구 메시지 두 개 세기</h3>
+<video autoplay loop muted playsinline aria-label="모델 메시지 세 개와 도구 메시지 두 개 세기" src="detail-trace.mp4"></video>
+<figcaption>대본의 역할 순서를 왼쪽부터 읽습니다. 도구 요청 두 번과 최종 안내 한 번이 ai 메시지 세 개를 만들고, 실행 결과 두 개가 tool 메시지가 됩니다.</figcaption></figure>
+<!-- /lesson-visual detail-trace -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 도구 메시지 수 집계</h3>
 <div class="cell-before"><p>대본에서 나온 메시지 종류입니다. tool이 등장한 수와 ai가 등장한 수를 따로 확인하세요.</p>
 </div>

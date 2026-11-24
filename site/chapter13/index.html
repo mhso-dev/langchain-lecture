@@ -38,6 +38,11 @@
 
 <!-- END MOTION -->
 
+<!-- lesson-visual visual-summary -->
+<figure class="lesson-clip" id="visual-summary"><h3>요약의 반환값은 다음 호출의 입력입니다</h3>
+<video autoplay loop muted playsinline aria-label="요약의 반환값은 다음 호출의 입력입니다" src="visual-summary.mp4"></video>
+<figcaption>첫 호출이 돌려준 문장 전체가 분류 함수로 이동합니다. 분류 결과 billing은 요약과 함께 작성 단계에 전달됩니다. 이 예제는 단계별 응답을 고정한 모의 호출입니다.</figcaption></figure>
+<!-- /lesson-visual visual-summary -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · mock_call()의 요약 반환값</h3>
 <div class="cell-before"><p>첫 번째 요청의 질문은 그대로 두고, 반환된 요약을 변수에 보관하세요.</p>
 </div>
@@ -103,6 +108,11 @@ print(writing_input)</code></pre></figure>
 </div>
 </header>
 <p>다음 제공 함수는 각 단계의 입력, 출력, 시간을 log에 남깁니다. 앞 단계가 성공해야 다음 요청을 보냅니다. 실제 SDK를 쓸 때는 같은 자리에 responses.create로 본문을 읽는 함수를 연결할 수 있습니다.</p>
+<!-- lesson-visual detail-trace -->
+<figure class="lesson-clip" id="detail-trace"><h3>요약이 공백이면 다음 호출은 몇 번 실행될까요?</h3>
+<video autoplay loop muted playsinline aria-label="요약이 공백이면 다음 호출은 몇 번 실행될까요?" src="detail-trace.mp4"></video>
+<figcaption>summarize가 공백만 돌려주는 경우를 run_workflow의 검사 순서로 따라갑니다. strip() 결과가 빈 문자열이면 해당 단계 이름으로 예외가 발생해 분류와 안내 작성은 시작하지 않습니다.</figcaption></figure>
+<!-- /lesson-visual detail-trace -->
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 호출 로그의 단계별 input</h3>
 <div class="cell-before"><p>처음에 입력한 질문과 두 번째 호출에 실제로 건넨 문자열을 구분하세요.</p>
 <p>두 번째 호출이 받은 것은 첫 단계의 요약 ‘사용자가 결제 영수증 확인 방법을 문의했다.’입니다. 분류 결과 billing은 그다음 작성 단계에서 요약과 함께 쓰입니다. result["log"][1]["input"]에서 분류 전의 요약을 확인하세요.</p>

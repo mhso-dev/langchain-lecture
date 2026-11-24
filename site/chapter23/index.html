@@ -33,6 +33,11 @@
 </div>
 </header>
 <p class="concept-intro">Retriever는 질문을 받아 관련 문서를 돌려주는 구성 요소입니다. 몇 건을 반환할지와 어떤 출처를 허용할지도 입력 조건이 됩니다.</p><p>Chroma의 질의 응답은 여러 질문을 한 번에 받을 수 있게 질문별로 다시 묶여 있습니다. 아래 자료는 실제 서버를 호출하지 않고 그 모양만 담아 둔 한 질문의 응답 예시입니다.</p>
+<!-- lesson-visual visual-nested-results -->
+<figure class="lesson-clip" id="visual-nested-results"><h3>세 목록에서 같은 검색 결과 꺼내기</h3>
+<video autoplay loop muted playsinline aria-label="세 목록에서 같은 검색 결과 꺼내기" src="visual-nested-results.mp4"></video>
+<figcaption>첫 번째 질의의 첫 번째 적중을 가리키는 [0][0]을 세 목록에 똑같이 적용합니다. 서로 다른 위치를 섞으면 본문과 출처가 어긋납니다.</figcaption></figure>
+<!-- /lesson-visual visual-nested-results -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 중첩 검색 결과의 인덱싱</h3>
 <div class="cell-before"><p>첫 질문에 딸린 ID 목록에서 첫 번째 항목을 골라 보세요.</p>
 </div>
@@ -66,6 +71,11 @@ print(row)</code></pre></figure>
 
 <!-- END MOTION -->
 
+<!-- lesson-visual detail-search -->
+<figure class="lesson-clip" id="detail-search"><h3>쪽 필터를 걸면 가까운 문서도 빠질까요?</h3>
+<video autoplay loop muted playsinline aria-label="쪽 필터를 걸면 가까운 문서도 빠질까요?" src="detail-search.mp4"></video>
+<figcaption>휴관 질문은 필터가 없을 때 제곱 거리가 0인 library-2를 찾습니다. page=1로 후보를 제한하면 2쪽은 순위 계산에서 빠져 대출 안내인 library-1이 반환됩니다.</figcaption></figure>
+<!-- /lesson-visual detail-search -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · retrieve()의 검색 개수</h3>
 <div class="cell-before"><p>자료의 원문 ID를 유지합니다. k는 최대 후보 수이고, 질문은 공백을 제외한 문자열이어야 합니다.</p>
 <p>휴관 질문에서는 결과 한 건이 있지만 주차 요금에는 대응하는 단어가 없어 빈 목록이 돌아옵니다. 질문을 바꾸면 첫 항목을 읽기 전 목록에 문서가 있는지 확인하세요.</p>
