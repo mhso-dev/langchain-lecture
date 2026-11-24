@@ -32,7 +32,7 @@
 <h2>규칙 기반 의도 분류</h2>
 </div>
 </header>
-<p class="concept-intro">의도 라우터는 질문의 유형에 맞는 도구를 고릅니다. 두 의도가 섞이거나 분류 근거가 약한 경우에는 추가 질문이 필요합니다.</p><p>기존 분류기와 같은 단어를 씁니다. 결제와 기술 표현이 함께 있거나 둘 다 없으면 어느 한쪽을 추측하지 않고 되묻습니다. 정답이 정해진 네트워크 없는 기준선을 먼저 만듭니다.</p>
+<p class="concept-intro">의도 라우터는 질문의 유형에 맞는 도구를 고릅니다. 두 의도가 섞이거나 분류 근거가 약한 경우에는 추가 질문이 필요합니다.</p><p>먼저 ‘영수증’, ‘결제’ 같은 단서로 문의를 분류합니다. 결제와 기술 단서가 함께 있거나 둘 다 없으면 clarify를 돌려줍니다. 이 규칙의 결과를 뒤에서 선택할 도구와 연결합니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · rule_route()의 단일 의도 판정</h3>
 <div class="cell-before"><p>두 조건 중 어떤 조건이 참인지 확인하며 마지막 반환값을 읽으세요.</p>
 </div>
@@ -61,7 +61,7 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 복합 문의를 rule_route에 넣으세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(rule_route(<span class="tok-string">'영수증 조회 중 401 오류가 납니다'</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">clarify</pre></div>
-<div class="cell-after"><p>clarify입니다. ‘영수증’과 ‘401’이 함께 있어 어느 업무부터 도울지 먼저 확인해야 합니다.</p>
+<div class="cell-after"><p>clarify입니다. ‘영수증’은 billing을, ‘401’은 technical을 참으로 만듭니다. 두 경로 중 하나만 참이어야 반환하는 조건이어서 마지막 줄로 갑니다.</p>
 </div>
 </details>
 </article>
@@ -167,8 +167,13 @@ print(choice <span class="tok-keyword">if</span> accepted <span class="tok-keywo
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>규칙, 모델 분류, Jev 판단을 비교할 때 문의와 정답 분류를 고정하세요. 분류 호출과 실제 도구 호출 수를 따로 셉니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="6" data-task="1"><h3>과제 06 · 도구가 등록되지 않은 결제 경로 처리하기</h3><div class="cell-before"><p>결제 단서만 있는 문의를 분류하고 해당 경로에 등록된 도구 이름을 출력하세요. 해당 경로의 도구 목록이 비어 있으면 호출을 멈추세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">question = "영수증을 다시 받고 싶습니다."
+# rule_route와 allowed로 분류 결과와 허용 도구 이름 목록을 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">question = "영수증을 다시 받고 싶습니다."
+route = rule_route(question)
+print(route, [item.name for item in allowed.get(route, [])])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">billing []</pre></div><div class="cell-after"><p>분류기는 결제 경로를 골랐지만 이 수업의 allowed에는 technical만 등록했습니다. 응답 화면은 결제 지원 경로를 안내할 수 있습니다. 분류 결과만 보고 첫 번째 기술 도구를 실행하면 다른 업무의 답이 나옵니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

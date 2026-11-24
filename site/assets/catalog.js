@@ -1,20 +1,20 @@
 const search = document.querySelector('#search');
-const available = document.querySelector('#available');
+const projects = document.querySelector('#projects');
 function filterChapters() {
   const query = search.value.trim().toLowerCase().replace(/^(\d+)장/, '$1');
   let count = 0;
-  for (const card of document.querySelectorAll('.card')) {
-    card.hidden = !card.dataset.search.toLowerCase().includes(query)
-      || (available.checked && card.dataset.available !== 'true');
-    if (!card.hidden) count++;
-  }
   for (const unit of document.querySelectorAll('.unit')) {
+    const include = !unit.hasAttribute('data-project') || projects?.checked;
+    for (const card of unit.querySelectorAll('.card')) {
+      card.hidden = !include || !card.dataset.search.toLowerCase().includes(query);
+      if (!card.hidden) count++;
+    }
     unit.hidden = !unit.querySelector('.card:not([hidden])');
   }
   document.querySelector('#count').textContent = count + '개 장 표시';
 }
 search.addEventListener('input', filterChapters);
-available.addEventListener('change', filterChapters);
+projects?.addEventListener('change', filterChapters);
 filterChapters();
 
 // Preserve bookmarks created by the portable textbook reader.

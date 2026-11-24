@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 31 / EVIDENCE</span><span class="template-badge">학생용 교재</span></div>
 <h1>RAG 검색 예외와 인용 검사</h1>
-<p class="hero-description">주차 요금 질문의 빈 검색 결과, 검색 시간 초과, 답변의 인용 오류를 각각 재현합니다. 자료 보충, 재시도, 인용 수정 중 어떤 조치가 필요한지 실패 지점에서 판단합니다.</p>
+<p class="hero-description">주차 요금 질문의 빈 검색 결과, 검색 시간 초과, 답변의 인용 오류를 각각 재현합니다. 문제가 생긴 위치를 찾아 자료 보충, 재시도, 인용 수정 중 필요한 조치를 고릅니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 031 · 8H</span><span>30장 Retriever Node·문서 계약, 조건 분기와 예외 처리</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -75,7 +75,7 @@ print(found)</code></pre></figure>
 </div>
 <p id="example-analysis">주차 요금 질문의 []는 검색 함수가 정상적으로 돌아온 값입니다. 시간 초과가 나면 목록 자체가 돌아오지 않아 같은 분기를 탈 수 없습니다. 두 경우를 같은 안내로 표시하면 사용자는 자료를 더 주어야 하는지, 잠시 뒤 다시 시도해야 하는지 알기 어렵습니다.</p>
 </article>
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="states"></span><div class="lesson-explanation" id="reading-states"><h3>정상 반환과 예외를 나누는 기준</h3><p>주차 질문은 검색을 마친 뒤 빈 리스트를 돌려줍니다. 검색 시간이 초과되면 함수는 리스트를 반환하기 전에 멈춥니다. 두 경우를 모두 근거 없음으로 처리하면 검색 서비스를 복구해야 하는 순간을 놓칩니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="states"></span><span class="lesson-anchor" id="reading-states"></span>
 <span class="lesson-anchor" id="setup"></span><span class="lesson-anchor" id="reading-setup"></span>
 
 
@@ -92,10 +92,10 @@ print(found)</code></pre></figure>
 <span class="tok-keyword">except</span> TimeoutError <span class="tok-keyword">as</span> error:
     print(type(error).__name__, str(error))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">TimeoutError 검색 시간이 초과되었습니다.</pre></div>
-<div class="cell-after"><p>TimeoutError가 출력됩니다. 이때는 검색 성공·빈 결과로 집계하지 않습니다. 재시도를 안내하고 결과 필드는 None으로 남깁니다.</p>
+<div class="cell-after"><p>이 셀의 except 블록은 예외 이름과 메시지만 출력합니다. 화면을 연결한다면 검색 실패를 따로 기록하고 재시도를 안내할 수 있습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="search"></span><div class="lesson-explanation" id="reading-search"><h3>TimeoutError가 전달되는 위치</h3><p>slow_search는 대출 질문을 받아도 자료를 돌려주지 못합니다. 실행은 except TimeoutError로 이동합니다. 이 셀이 출력하는 것은 예외 이름과 메시지입니다. 재검색이나 답변 생성은 이 코드에서 실행되지 않습니다.</p></div>
+<span class="lesson-anchor" id="search"></span><span class="lesson-anchor" id="reading-search"></span>
 
 </section>
 <section id="nb-citation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -114,19 +114,23 @@ cited = <span class="tok-string">'library-2'</span>
 retrieved_ids = {doc[<span class="tok-string">'id'</span>] <span class="tok-keyword">for</span> doc <span class="tok-keyword">in</span> found}
 print(cited <span class="tok-keyword">in</span> retrieved_ids)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>False입니다. 찾은 문서는 library-1이므로 이 응답은 invalid_citation으로 분리합니다. 올바른 ID를 달아도 ‘999일’처럼 원문과 다른 답이 가능해 문장 대조가 남습니다.</p>
+<div class="cell-after"><p>False가 나옵니다. 검색 결과는 library-1이고 인용은 library-2이므로 서비스에서는 이 응답을 인용 오류로 분류할 수 있습니다. 올바른 ID를 달아도 ‘999일’처럼 원문과 다른 답이 가능해 문장 대조가 남습니다.</p>
 </div>
 </details>
 </article>
-<div class="lesson-explanation" id="reading-sources"><h3>이번 요청에서 받은 문서 ID 집합</h3><p>대출 질문으로 찾은 레코드에서 id를 하나씩 꺼내 집합을 만듭니다. 답변의 인용 ID는 이번 집합과 대조해야 합니다. 도서관 자료 전체에 존재하는 ID라도 이번에 검색하지 않은 문서를 가리킬 수 있습니다.</p></div>
-<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>ID 대조 다음에 확인할 문장</h3><p>인용 ID가 일치하면 해당 문서가 검색되었다는 사실을 확인할 수 있습니다. 답변이 대출 기간을 999일이라고 썼다면 올바른 ID가 붙어 있어도 원문의 14일과 어긋납니다. 마지막에는 답변과 해당 문장의 뜻을 대조하세요.</p></div>
-<figure class="execution-trace" id="workflow-citation-against-retrieval"><h3>이번 검색에서 나온 ID만 인용 대조에 사용합니다</h3><figcaption id="workflow-citation-against-retrieval-caption">이 그림은 파이썬 집합 검사 순서입니다. 라이브러리에 존재하는 문서라도 이번 요청에서 반환하지 않은 ID이면 포함 검사 결과가 달라집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>retrieve</strong> · 질문 = 대출 기간은?</li><li><strong>ID 집합</strong> · retrieved_ids = {&#x27;library-1&#x27;}</li><li><strong>포함 검사</strong> · cited = library-2</li><li><strong>출력</strong> · cited in retrieved_ids = False</li></ol></figure>
+<span class="lesson-anchor" id="reading-sources"></span>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>인용 ID와 문장 검증</h3><p>library-1을 붙인 답이 “999일”이라고 해도 ID 검사는 통과합니다. 찾은 문서에서 숫자 14와 단위 ‘일’, 적용 대상 ‘도서 대출’을 확인해야 합니다. 연장이나 연체 기간을 설명하는 문장은 이 문서에 없습니다.</p></div>
+<figure class="execution-trace" id="workflow-citation-against-retrieval"><h3>이번 검색에서 나온 ID만 인용 대조에 사용합니다</h3><figcaption id="workflow-citation-against-retrieval-caption">아래 기록은 과제에서 검사한 값입니다. 라이브러리에 존재하는 문서라도 이번 요청에서 반환하지 않은 ID이면 포함 검사 결과가 달라집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>retrieve</strong> · 질문 = 대출 기간은?</li><li><strong>ID 집합</strong> · retrieved_ids = {&#x27;library-1&#x27;}</li><li><strong>포함 검사</strong> · cited = library-2</li><li><strong>출력</strong> · cited in retrieved_ids = False</li></ol></figure>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="transfer-practice">과제 04 · 검색 결과에 대출 문서가 있는데 연장 기간을 묻는다면</h3><div class="cell-before"><p>‘대출 연장은 며칠인가요?’를 retrieve에 전달하세요. 첫 문서의 ID와 본문을 출력하고, 이 자료만으로 연장 기간을 답할 수 있는지 판단하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-code" type="button" aria-label="노트북에서 직접 작성 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-code">question = &#x27;대출 연장은 며칠인가요?&#x27;
+# 이번 검색에서 받은 첫 문서의 ID와 본문을 표시하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-solution" type="button" aria-label="풀이 예시 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-solution">question = &#x27;대출 연장은 며칠인가요?&#x27;
+document = retrieve(question)[0]
+print(document[&#x27;id&#x27;], document[&#x27;text&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1 도서 대출 기간은 14일입니다.</pre></div><div class="cell-after"><p>검색기는 ‘대출’이 겹쳐 library-1을 반환합니다. 14일은 처음 빌리는 기간입니다. 연장 규칙이 쓰여 있지 않으므로 “제공된 안내에서 연장 기간은 확인할 수 없습니다”라고 답할 수 있습니다. 검색 성공과 답변 가능 여부를 따로 기록하세요.</p></div></details></article>
 <div class="prose"><p>사용자가 ‘자료를 더 주어야 할 때’와 ‘잠시 뒤 다시 물어야 할 때’를 구분하는 안내를 한 문장씩 써 보세요.</p>
 </div>
 </section>

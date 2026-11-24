@@ -19,7 +19,7 @@
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 084</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 스키마 변경과 부분 업데이트</h1>
 <p class="hero-description">기존 투두 데이터에 마감일과 우선순위를 추가합니다. SQL 이관 직후의 옛 행과 각 필드를 수정한 뒤의 값을 비교해 누락·초기화 오류를 확인합니다.</p>
-<div class="hero-meta"><span>기초 · 프로젝트 연결</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>83일</span></div>
+<div class="hero-meta"><span>교육일 84 · 8시간</span><span>선수 수업 · 83장 완료 상태 갱신과 회귀 검사</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -54,9 +54,7 @@ db.execute(<span class="tok-string">"ALTER TABLE todos ADD COLUMN due_date TEXT"
 db.execute(<span class="tok-string">"ALTER TABLE todos ADD COLUMN priority TEXT NOT NULL DEFAULT 'normal' CHECK(priority IN ('low','normal','high'))"</span>)
 print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM todos WHERE id=1"</span>).fetchone())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습', None, 'normal')</pre></div>
-<div class="cell-after"><p>기존 제목은 복습으로 유지되고 새 필드는 None과 normal입니다. 예전 행에 존재하지 않았던 마감일을 임의의 날짜로 채우지 않았습니다.</p>
-</div>
-<p id="example-analysis">기존 행에는 마감일이 없고 우선순위는 normal입니다. 스키마를 바꾼 직후 모든 행에 날짜가 있다고 가정하면 이 옛 항목을 표시할 때 문제가 생깁니다. 새 행 입력 외에 변경 전부터 있던 행을 열 수 있는지도 확인합니다.</p>
+<div class="cell-after"><p id="example-analysis">변경 전부터 있던 1번 행에서 새 날짜는 None, 우선순위는 normal로 읽힙니다. 기존 행을 화면에 표시할 때에는 마감일을 비워 둔 상태도 처리해야 합니다.</p></div>
 </article>
 <span class="lesson-anchor" id="section-05"></span><div class="lesson-explanation" id="reading-section-05"><h3>ALTER TABLE 이후 기존 행 읽기</h3><p>먼저 기존 형식으로 복습 한 행을 넣은 다음 열을 추가합니다. 기존 행을 다시 조회하면 새 due_date는 None, 기본값이 있는 priority는 normal입니다.</p></div>
 
@@ -81,7 +79,7 @@ due = date.fromisoformat(<span class="tok-string">"2027-04-02"</span>).isoformat
     db.execute(<span class="tok-string">"UPDATE todos SET due_date=?, priority=? WHERE id=?"</span>, (due, <span class="tok-string">"high"</span>, <span class="tok-number">1</span>))
 print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM todos WHERE id=1"</span>).fetchone())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습', '2027-04-02', 'high')</pre></div>
-<div class="cell-after"><p>복습·2027-04-02·high가 나옵니다. 바인딩 값은 SQL에 적힌 열 순서와 같습니다. 전체 T1 구현은 허용하는 변경 필드 조합별로 문장을 고릅니다.</p>
+<div class="cell-after"><p>복습·2027-04-02·high가 나옵니다. 바인딩 값은 SQL에 적힌 열 순서와 같습니다. 이 SQL은 마감일과 우선순위 두 열을 명시합니다. 다음 셀에서는 제목만 지정해 나머지 값이 보존되는지 확인합니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="section-07"></span><span class="lesson-anchor" id="reading-section-07"></span>
@@ -99,21 +97,26 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <span class="lesson-anchor" id="section-08"></span><div class="lesson-explanation" id="reading-section-08"><h3>UPDATE에서 생략한 열과 NULL을 넣은 열</h3><p>제목만 SET 하면 기존 기한과 우선순위가 유지됩니다. 기한을 지우려면 due_date를 SET 대상에 포함하고 None을 전달합니다. 필드를 건너뛴 동작과 값을 지운 동작을 출력에서 구별하세요.</p></div>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 03 · NULL과 필드 생략 구분</h3>
-<div class="cell-before"><p>기존 마감일을 NULL로 변경하고 due_date와 priority를 다시 읽으세요.</p>
+<div class="cell-before"><p>1번 할 일의 마감일만 지우세요. 변경하기 직전의 날짜와 변경 뒤의 날짜·우선순위를 조회해, 열을 생략한 이전 UPDATE와 비교하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 1번의 due_date만 None으로 설정하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5"><span class="tok-keyword">with</span> db:
-    db.execute(<span class="tok-string">'UPDATE todos SET due_date=? WHERE id=?'</span>, (<span class="tok-keyword">None</span>, <span class="tok-number">1</span>))
-print(db.execute(<span class="tok-string">'SELECT due_date, priority FROM todos WHERE id=?'</span>, (<span class="tok-number">1</span>,)).fetchone())</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(None, 'high')</pre></div>
-<div class="cell-after"><p>(None, 'high')입니다. due_date를 생략하는 요청에서는 열을 건드리지 않고, 명시적으로 null을 보낼 때만 비웁니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"># 날짜를 먼저 조회하고, due_date만 NULL로 갱신한 뒤 같은 행을 다시 읽으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">query = "SELECT due_date, priority FROM todos WHERE id=?"
+before = db.execute(query, (1,)).fetchone()
+with db:
+    db.execute("UPDATE todos SET due_date=? WHERE id=?", (None, 1))
+after = db.execute(query, (1,)).fetchone()
+print(before)
+print(after)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('2027-04-02', 'high')
+(None, 'high')</pre></div>
+<div class="cell-after"><p>앞 셀의 제목 변경에서는 SET에 due_date가 없어 날짜가 남았습니다. 여기서는 None을 명시해 그 값만 NULL로 바꿨습니다. 다시 비교할 때는 날짜를 입력한 셀부터 실행하세요.</p>
 </div>
 </details>
 </article>
 
 <span class="lesson-anchor" id="workflow-check-rollback"></span><span class="lesson-anchor" id="workflow-check-rollback-caption"></span>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3 id="example-cell-5">셀 04 · 허용 우선순위 검증</h3>
-<div class="cell-before"><p>데이터 규칙이 저장 시점에도 적용되는지 확인하세요.</p>
+<div class="cell-before"><p>셀 04는 priority에 urgent를 쓰고 같은 행을 다시 읽습니다. 예외 메시지와 조회한 값을 함께 보면 실패한 변경이 저장됐는지 판별할 수 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">try</span>:
     <span class="tok-keyword">with</span> db:
@@ -134,7 +137,7 @@ high</pre></div>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>검토할 diff에서 기존 ID·제목·완료 필드를 바꾸는 줄이 있는지, 이전 데이터가 마감일 없이 읽히는지, 빈 날짜와 필드 누락을 구별하는지 찾으세요.</p>
+<div class="prose"><p>마감일을 지우고도 high가 남는 것과 urgent를 거절한 뒤 high가 남는 것은 이유가 다릅니다. 첫 UPDATE에서는 priority 열을 생략했고, 두 번째 UPDATE는 CHECK에서 실패했습니다.</p>
 </div>
 
 <span class="lesson-anchor" id="section-11"></span><span class="lesson-anchor" id="reading-section-11"></span>

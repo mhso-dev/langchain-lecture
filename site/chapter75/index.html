@@ -21,7 +21,7 @@
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 75 / CLOUD DEPLOYMENT</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 백업과 복구 검증</h1>
 <p class="hero-description">별도 DB에 백업을 복원하고 원본의 소유자·문서·본문을 다시 조회합니다. 서비스 재시작, 백업 파일 생성, 실제 데이터 복구를 각각 다른 결과로 기록합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 075 · 8H</span><span>74일 examples/student/manual-record.md</span></div>
+<div class="hero-meta"><span>교육일 75 · 8시간</span><span>선수 수업 · 74장 프록시 경로와 서비스 상태 확인</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -70,9 +70,7 @@ original_row = origin.execute(query, key).fetchone()
 restored_row = target.execute(query, key).fetchone()
 print(restored_row, restored_row == original_row)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('과제함에 제출합니다.',) True</pre></div>
-<div class="cell-after"><p>복원한 행에 ‘과제함에 제출합니다.’가 남고 원본과 같다는 결과가 나옵니다. 실제 서비스라면 여기서 문서뿐 아니라 대화·출처·벡터 매핑까지 같은 요청으로 대조합니다.</p>
-</div>
-<p id="example-analysis">복원된 행이 한 건이라는 숫자만 보면 내용이 바뀌어도 놓칩니다. 이 셀은 새 DB에서 ‘과제함에 제출합니다.’를 다시 읽어 원본과 대조합니다. 운영 복구 기록에도 행 수와 함께 사용자가 실제로 다시 읽어야 하는 레코드 하나를 남깁니다.</p>
+<div class="cell-after"><p id="example-analysis">새 DB에서 읽은 문장과 비교 결과 True가 나옵니다. 조회 조건에 문서 ID뿐 아니라 소유자도 들어가므로 다른 소유자의 같은 이름을 가진 문서가 비교 대상으로 섞이지 않습니다.</p></div>
 </article>
 <span class="lesson-anchor" id="restart"></span><span class="lesson-anchor" id="reading-restart"></span>
 <span class="lesson-anchor" id="restore"></span><div class="lesson-explanation" id="reading-restore"><h3>원본·백업본·복구 대상을 나누기</h3><p>원본은 origin, 복사본은 backup, 복구 검사를 할 대상은 target입니다. backup.backup(target)을 호출한 뒤 target에만 변경을 가하면 원본을 비교 기준으로 계속 사용할 수 있습니다.</p></div>
@@ -94,19 +92,23 @@ print(restored_row, restored_row == original_row)</code></pre></figure>
 <span class="lesson-anchor" id="logs"></span><span class="lesson-anchor" id="reading-logs"></span>
 <span class="lesson-anchor" id="local-check"></span><span class="lesson-anchor" id="reading-local-check"></span>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 원문 필드의 불일치 검출</h3>
-<div class="cell-before"><p>가상 복구본에서 doc-1 원문만 바뀌었습니다. 행 수를 세는 대신 앞서 선택한 원문과 다시 대조하세요.</p>
-<p>origin에서 backup으로 복사하고, backup에서 target으로 복원했습니다. backup.backup(target)에서 점 왼쪽은 읽을 DB이고 괄호 안은 받을 DB입니다. 이번 과제에서는 복원본 target의 본문만 바꿉니다.</p>
+<div class="cell-before"><p>복원본의 doc-1만 수정한 뒤, 같은 키로 복원본에서 현재 값을 다시 읽으세요. 셀 02에서 읽어 둔 값과 새 조회값이 어떻게 다른지 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># target의 doc-1에 '제출 기한 미확인'을 적고 원문과 대조하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4"><span class="tok-keyword">with</span> target:
-    target.execute(<span class="tok-string">'UPDATE documents SET body=? WHERE owner=? AND id=?'</span>, (<span class="tok-string">'제출 기한 미확인'</span>, *key))
-print(target.execute(query, key).fetchone() == original_row)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>False입니다. 행은 여전히 하나지만 내용이 달라졌습니다. 실제 복구 기록에는 백업 식별자·별도 대상·조회 조건과 관찰한 값을 함께 남겨야 합니다. 이 실습에서 확인한 복구 범위는 로컬 사본입니다. 운영 복구를 보고하려면 별도 복구 대상에서 같은 ID의 내용까지 다시 읽은 기록이 필요합니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"># target의 doc-1을 ‘제출 기한 미확인’으로 바꾸세요.
+# 셀 02의 restored_row와 새 SELECT 결과를 나란히 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">with target:
+    target.execute("UPDATE documents SET body=? WHERE owner=? AND id=?",
+                   ("제출 기한 미확인", *key))
+current = target.execute(query, key).fetchone()
+print(restored_row[0], current[0], sep=" / ")
+print(current == original_row)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제함에 제출합니다. / 제출 기한 미확인
+False</pre></div>
+<div class="cell-after"><p>restored_row는 셀 02에서 읽어 둔 튜플입니다. DB를 바꿔도 그 튜플은 바뀌지 않습니다. 변경 뒤에 다시 SELECT한 current와 원본을 대조해야 복원본의 차이가 드러납니다.</p>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="compare"></span><div class="lesson-explanation" id="reading-compare"><h3>같은 키로 원문 비교하기</h3><p>문서 소유자 alice와 ID doc-1을 두 DB에서 동일하게 사용합니다. 대상의 본문만 수정하면 양쪽에 여전히 한 행이 있어도 restored_row와 original_row가 달라집니다.</p></div>
+<span class="lesson-anchor" id="compare"></span><div class="lesson-explanation" id="reading-compare"><h3>같은 키로 원문 비교하기</h3><p>restored_row와 original_row는 수정 전 값입니다. 수정한 DB에 다시 쿼리를 보내야 현재 본문을 읽을 수 있습니다. 소유자와 문서 ID를 고정하고 본문만 비교하세요.</p></div>
 <span class="lesson-anchor" id="workflow-restore-verification"></span><span class="lesson-anchor" id="workflow-restore-verification-caption"></span>
 
 </section>
@@ -114,7 +116,7 @@ print(target.execute(query, key).fetchone() == original_row)</code></pre></figur
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>HTTPS가 살아 있는지 확인한 기록과 데이터를 복원한 기록을 나누어 보세요. DB가 비어 있어도 health 응답은 정상일 수 있습니다. 이 노트북의 로컬 복원 결과를 EC2나 PostgreSQL 복구 실적으로 기록하지 않습니다.</p>
+<div class="prose"><p>복원본에서 잘못된 문장이 돌아왔는데도 검사가 통과했다면, 비교에 쓴 두 값의 조회 시점을 보세요. 변경 전에 읽은 두 튜플을 다시 비교하면 변경 후 DB의 오류를 놓칩니다.</p>
 </div>
 
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>

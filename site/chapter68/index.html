@@ -34,7 +34,7 @@
 </header>
 <p class="concept-intro">FastAPI는 HTTP 요청을 경로 함수에 전달합니다. 요청 모델에서 거부된 입력과 서비스까지 도착해 근거를 찾지 못한 입력의 결과를 비교합니다.</p><p>Pydantic 모델은 question과 k를 파싱합니다. 질문 앞뒤 공백은 정리하고 공백만 남은 질문은 거절합니다. k에는 1~10 범위의 정수만 받습니다. 아래의 수업용 서비스는 고정 문서 한 건에서 A1 결과를 만듭니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · FastAPI 앱과 요청 모델</h3>
-<div class="cell-before"><p>요청을 검사할 모델을 먼저 등록합니다.</p>
+<div class="cell-before"><p>이 셀은 앱과 AskRequest 클래스를 만듭니다. 다음 셀의 @app.post가 경로와 입력 모델을 연결합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> fastapi <span class="tok-keyword">import</span> FastAPI
 <span class="tok-keyword">from</span> fastapi.testclient <span class="tok-keyword">import</span> TestClient
@@ -76,7 +76,7 @@ client = TestClient(app)
 response = client.post(<span class="tok-string">"/ask"</span>, json={<span class="tok-string">"question"</span>: <span class="tok-string">"과제는 어디에 내나요?"</span>, <span class="tok-string">"k"</span>: <span class="tok-number">2</span>})
 print(response.status_code, response.json()[<span class="tok-string">"result"</span>][<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 course-guide-v1:p2</pre></div>
-<div class="cell-after"><p>200 뒤의 course-guide-v1:p2는 서비스가 돌려준 근거입니다. HTTP 상태만으로 이 문서가 답을 뒷받침하는지 판단할 수는 없습니다. 여기서 사용한 응답 외피는 핵심 필드만 담았습니다.</p>
+<div class="cell-after"><p>경로 함수는 입력 모델이 검사를 마친 뒤 answer(body.question)을 호출합니다. k는 검사하지만 이 한 문서짜리 검색 함수에는 전달하지 않습니다.</p>
 </div>
 <p id="example-analysis">응답 상태 200과 p2는 서로 다른 검사를 뒷받침합니다. 200은 요청 처리가 끝났다는 신호이고, p2는 답변의 근거를 추적할 식별자입니다. 요청 처리 테스트가 성공했더라도 문서 질문에 맞는 문단인지 확인하는 검사는 별도로 필요합니다.</p>
 </article>
@@ -131,8 +131,12 @@ print(reply.status_code, reply.json()[<span class="tok-string">'result'</span>][
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>요청 경로가 틀렸을 때와 JSON 내용이 틀렸을 때 서버가 같은 코드를 줄지 예측해 보세요. 실제 외부 주소·인증·DB 연결은 이 TestClient 검사의 범위 밖입니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · HTTP 422에서 수정할 입력 필드 찾기</h3><div class="cell-before"><p>질문은 그대로 두고 k를 문자열로 전송하세요. 상태 코드와 오류가 난 필드 이름을 출력하세요. 이 두 값으로 사용자가 어느 입력을 고쳐야 하는지 알 수 있습니다.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># k를 "2"로 보내고 응답의 detail 첫 항목에서 loc를 확인하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">invalid = client.post("/ask", json={"question": "과제는 어디에 내나요?", "k": "2"})
+problem = invalid.json()["detail"][0]
+print(invalid.status_code, problem["loc"][-1])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">422 k</pre></div><div class="cell-after"><p>JSON에서 2와 "2"는 서로 다른 값입니다. 이 요청은 StrictInt 검사에서 거부되며 정상 응답의 result 필드가 없습니다. k를 정수 2로 보내면 셀 02에서 본 답변 경로에 도달합니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>

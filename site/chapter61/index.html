@@ -71,9 +71,9 @@ print(get_library_hours(<span class="tok-string">'weekend'</span>)[<span class="
     catalog = <span class="tok-keyword">await</span> session.list_tools()
 print(catalog.tools[<span class="tok-number">0</span>].name)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">get_library_hours</pre></div>
-<div class="cell-after"><p>get_library_hours가 보입니다. 이름을 알았지만 아직 운영 시간은 받지 않았습니다. async with가 끝나면 이 세션도 닫힙니다.</p>
+<div class="cell-after"><p>셀 01의 직접 함수 호출과 달리 이 세션이 받은 것은 도구 목록입니다. 목록은 세션이 닫힌 뒤에도 catalog에 남습니다.</p>
 </div>
-<p id="example-analysis">list_tools() 결과에 get_library_hours가 있다는 것은 클라이언트가 호출 명세를 읽었다는 뜻입니다. 주말 시간표는 아직 조회하지 않았습니다. 실제 연결 검증에는 이름 확인과 함께 인자를 보낸 뒤 반환값을 읽는 단계가 필요합니다.</p>
+<p id="example-analysis">list_tools() 결과에 get_library_hours가 있다는 것은 클라이언트가 호출 명세를 읽었다는 뜻입니다. 목록 요청은 서버의 주말 시간표를 읽지 않습니다. 실제 연결 검증에는 이름 확인과 함께 인자를 보낸 뒤 반환값을 읽는 단계가 필요합니다.</p>
 </article>
 <span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>도구를 제공하는 쪽과 호출하는 쪽</h3><p>서버에는 get_library_hours가 등록되어 있습니다. 클라이언트는 세션으로 도구의 명세를 조회하거나 인자를 담아 호출합니다. 이 노트북의 연결은 메모리 안에서 이루어집니다.</p></div>
 <span class="lesson-anchor" id="stdio"></span><div class="lesson-explanation" id="reading-stdio"><h3>목록 조회와 실제 호출</h3><p>list_tools()가 돌려주는 것은 호출 가능한 도구의 명세입니다. 운영 시간을 받으려면 새로 연 세션의 call_tool()에 이름과 day 값을 함께 보냅니다.</p><div class="worked-case" id="flow-6"><h3>메모리 세션에서 조회할 수 있는 두 결과</h3><span class="lesson-anchor" id="flow-6-step-0"></span><span class="lesson-anchor" id="flow-6-step-1"></span><span class="lesson-anchor" id="flow-6-step-2"></span><span class="lesson-anchor" id="flow-6-step-3"></span><span class="lesson-anchor" id="flow-6-step-4"></span><p>셀 02의 세션에서 list_tools()가 반환한 첫 명세의 이름은 get_library_hours입니다. 셀 03에서는 새 메모리 세션을 열고 같은 이름과 day=&quot;weekend&quot;를 call_tool에 보냅니다. 이번에는 도구 명세 대신 weekend와 10:00~16:00이 담긴 structuredContent를 읽습니다.</p></div></div>
@@ -123,8 +123,12 @@ print(reply.structuredContent[<span class="tok-string">'hours'</span>])</code></
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>함수 이름이 목록에 없을 때는 등록과 목록 조회를, 올바른 이름이 있는데 운영 시간이 틀리면 인자와 실제 시간표 함수를 먼저 살펴보세요.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 등록된 도구의 입력 계약 읽기</h3><div class="cell-before"><p>get_library_hours가 day에 어떤 값을 허용하는지 도구 목록에서 읽으세요. 함수 본문을 열 수 없는 클라이언트도 list_tools가 돌려준 스키마에서 허용값을 읽을 수 있습니다.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># catalog에서 get_library_hours를 이름으로 찾아 day의 enum을 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">hours_tool = next(item for item in catalog.tools if item.name == "get_library_hours")
+day_schema = hours_tool.inputSchema["properties"]["day"]
+print(day_schema["enum"])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['weekday', 'weekend']</pre></div><div class="cell-after"><p>weekday와 weekend는 서버 도구의 Literal 선언에서 온 선택지입니다. 목록 조회는 호출할 때 필요한 인자를 알려 줍니다. 어느 시간에 문을 여는지는 실제로 그 인자를 보내야 알 수 있습니다.</p></div></details></article>
 </section>
 
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>

@@ -20,7 +20,7 @@
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 72 / CONTAINERS</span><span class="template-badge">학생용 교재</span></div>
 <h1>Docker Compose 네트워크와 볼륨</h1>
 <p class="hero-description">호스트에서 PostgreSQL에 접속하는 주소와 API 컨테이너에서 사용하는 주소를 비교합니다. Compose의 서비스 이름, 내부 포트, 호스트 포트, 볼륨이 각각 어디에 쓰이는지 확인합니다.</p>
-<div class="hero-meta"><span>기초 이후 · 배포 준비</span><span>교육일 072 · 8H (전반 4H / 후반 4H)</span><span>53일 관계·54일 DB 함수·70일 H1·71일 이미지</span></div>
+<div class="hero-meta"><span>교육일 72 · 8시간</span><span>선수 수업 · 53장 관계형 DB · 54장 DB 함수 · 70장 이력 저장 · 71장 이미지</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -47,7 +47,7 @@
 <span class="lesson-anchor" id="network"></span><div class="lesson-explanation" id="reading-network"><h3>API에서 보이는 주소와 호스트에서 보이는 주소</h3><p>Compose 네트워크의 API는 PGHOST에서 db를, PGPORT에서 5432를 읽습니다. 호스트 쪽 공개 주소는 127.0.0.1:55432입니다. 어디에서 접속하는지가 달라지면 같은 DB를 가리키는 주소도 달라집니다.</p><div class="worked-case" id="flow-6"><h3>Compose YAML에서 실제로 공개한 포트</h3><span class="lesson-anchor" id="flow-6-step-0"></span><span class="lesson-anchor" id="flow-6-step-1"></span><span class="lesson-anchor" id="flow-6-step-2"></span><span class="lesson-anchor" id="flow-6-step-3"></span><p>db의 ports에만 127.0.0.1:55432:5432가 있습니다. 호스트의 DB 클라이언트는 127.0.0.1:55432, 내부 api는 db:5432로 연결합니다. api에는 ports 항목이 없어 이 선언만으로 호스트의 8000번 포트에서 API에 접속할 수 없습니다.</p></div></div>
 <span class="lesson-anchor" id="variables"></span><span class="lesson-anchor" id="reading-variables"></span>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · Compose 서비스 이름과 포트</h3>
-<div class="cell-before"><p>아래는 72장 구성에서 연결·저장에 필요한 항목을 뽑은 선언입니다. PyYAML로 실제 YAML을 읽습니다.</p>
+<div class="cell-before"><p>db 서비스의 ports와 api 서비스의 environment를 비교합니다. yaml.safe_load가 두 설정을 딕셔너리로 읽으므로 Docker가 없어도 선언한 주소는 확인할 수 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> yaml
 compose_text = <span class="tok-string">"""name: course-b1
@@ -68,21 +68,23 @@ config = yaml.safe_load(compose_text)
 connection = config[<span class="tok-string">"services"</span>][<span class="tok-string">"api"</span>][<span class="tok-string">"environment"</span>]
 print(connection[<span class="tok-string">"PGHOST"</span>], connection[<span class="tok-string">"PGPORT"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">db 5432</pre></div>
-<div class="cell-after"><p>db 5432는 API가 쓰는 목적지입니다. 호스트에서 DB에 접속할 때 쓰는 55432를 대신 넣으면 이 연결 경로와 맞지 않습니다.</p>
-</div>
-<p id="example-analysis">API 컨테이너에서 DB에 접속할 때는 서비스 이름 db와 내부 포트 5432를 사용합니다. 호스트에서 열어 둔 55432는 노트북처럼 컨테이너 밖에서 접속할 때의 포트입니다. 접속 오류가 나면 먼저 요청을 보낸 프로세스가 어느 쪽에서 실행 중인지 확인합니다.</p>
+<div class="cell-after"><p id="example-analysis">db 5432는 api 컨테이너의 환경 설정에서 읽은 두 값입니다. 호스트에서 노트북을 실행할 때는 db라는 서비스 이름 대신 호스트에 공개된 IP와 포트를 사용합니다.</p></div>
 </article>
 <span class="lesson-anchor" id="same-image"></span><span class="lesson-anchor" id="reading-same-image"></span>
 <span class="lesson-anchor" id="start-order"></span><div class="lesson-explanation" id="reading-start-order"><h3>Compose 구성 검사에서 확인한 값</h3><p>docker compose config는 YAML을 해석해 정규화된 설정을 출력합니다. 여기서 DB의 target 경로를 읽은 뒤, 파일을 저장하고 다시 여는 동작은 다음 SQLite 셀에서 따로 실험합니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 호스트 포트 매핑</h3>
-<div class="cell-before"><p>db의 ports에 있는 문자열을 세 항목으로 나눠 호스트 포트만 출력하세요.</p>
+<div class="cell-before"><p>호스트에서 실행한 DB 도구와 API 컨테이너에서 사용할 접속 주소를 각각 구성하세요. 두 주소의 호스트 이름과 포트가 모두 달라야 합니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 호스트 IP:호스트 포트:컨테이너 포트 순서입니다.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">port_map = config[<span class="tok-string">'services'</span>][<span class="tok-string">'db'</span>][<span class="tok-string">'ports'</span>][<span class="tok-number">0</span>]
-print(port_map.split(<span class="tok-string">':'</span>)[<span class="tok-number">1</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">55432</pre></div>
-<div class="cell-after"><p>55432는 호스트에서 127.0.0.1로 접속할 때 사용할 포트입니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">port_map = config['services']['db']['ports'][0]
+# 예제의 IPv4 공개 포트 표기와 connection 설정에서 두 주소를 추출하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">port_map = config["services"]["db"]["ports"][0]
+host, published_port, container_port = port_map.split(":")
+print(f"{host}:{published_port}")
+print(f"{connection['PGHOST']}:{connection['PGPORT']}")</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">127.0.0.1:55432
+db:5432</pre></div>
+<div class="cell-after"><p>첫 주소는 호스트에서 열린 포트이고 둘째는 Compose 네트워크 안에서 DB 서비스가 받는 주소입니다. 공개 포트만 55433으로 바꾸면 첫 줄만 달라져야 합니다.</p>
 </div>
 </details>
 </article>
@@ -162,7 +164,7 @@ print(after[<span class="tok-number">0</span>], before == after)</code></pre></f
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>실제 수업 환경에서 보존을 확인할 때는 과제 안내 한 건을 저장하고 문서 ID와 원문을 적어 두세요. API와 DB를 재시작한 뒤 같은 소유자·같은 ID로 조회한 원문까지 일치해야 합니다.</p>
+<div class="prose"><p>SQLite 파일을 다시 연 뒤 같은 문장이 나와도 Compose 볼륨을 검증한 것은 아닙니다. 실제 DB 컨테이너를 교체할 때는 먼저 같은 볼륨이 연결됐는지 보고, 교체 전 문서 ID로 본문을 다시 읽습니다.</p>
 </div>
 
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>

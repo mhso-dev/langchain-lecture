@@ -65,7 +65,7 @@ print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span 
 </div>
 <p id="example-analysis">평가 문항에 기대 답 ‘14일’만 남기면 모델이 엉뚱한 문단을 보고 같은 숫자를 말해도 통과할 수 있습니다. 어떤 문서에 그 기간이 적혀 있는지 ID도 함께 적어 두면 검색이 맞았는지 먼저 확인할 수 있습니다.</p>
 </article>
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="ids"></span><div class="lesson-explanation" id="reading-ids"><h3>문항 ID로 질문을, 문서 ID로 근거를 찾기</h3><p>dev-01은 평가 질문에 붙인 이름입니다. 이 질문의 expected_document_ids에는 library-1이 있고, by_id에서 이 키로 꺼낸 원문이 대출 기간을 14일이라고 설명합니다. 질문 이름과 문서 이름을 서로 바꾸면 연결이 끊깁니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="ids"></span><span class="lesson-anchor" id="reading-ids"></span>
 <span class="lesson-anchor" id="scope"></span><div class="lesson-explanation" id="reading-scope"><h3>대표 문항의 적용 범위</h3><div class="prose"><p>대표 질문은 우리가 확인하려는 사용 상황을 드러내는 질문입니다. 여기서는 대출 기간, 휴관 요일, 반납함 이용 시간만 원문에 있습니다. 따라서 이 세 주제와 원문에 없는 질문을 나누어 생각합니다. 질문 수를 늘리는 것보다 어떤 상황을 포함하고 어떤 상황을 아직 다루지 않는지 먼저 기록합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>현재 자료의 질문 범위</caption><thead><tr><th scope="col">상황</th><th scope="col">질문 예</th><th scope="col">확인 근거</th><th scope="col">범위 밖</th></tr>
@@ -74,7 +74,7 @@ print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span 
 <tr><td>이용 가능 시간</td><td>반납함은 몇 시간 이용할 수 있나요?</td><td>library-3의 24시간</td><td>위치·접근 방법</td></tr>
 <tr><td>자료에 없는 정보</td><td>주차 요금은 얼마인가요?</td><td>없음</td><td>실제 기관 요금 추측</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="question-record"></span><div class="lesson-explanation" id="reading-question-record"><h3>평가 문항의 필드 읽기</h3><p>dev-01은 question에 실제 질문을, expected_document_ids에 답을 확인할 문서 ID를 담습니다. answerable은 그 문서만 보고 답할 수 있는지, split은 문항을 어느 단계의 평가에 쓰는지를 나타냅니다.</p></div>
+<span class="lesson-anchor" id="question-record"></span><div class="lesson-explanation" id="reading-question-record"><h3>문항이 속한 세트 기록</h3><p>question_id는 문항을 다시 불러올 때 사용하고 expected_document_ids는 정답 근거를 가리킵니다. split은 개발 중 반복해 볼 문항과 설정을 확정한 뒤 볼 문항을 나눕니다. 문구만 바꾼 질문을 두 세트에 복사하면 새로운 표현을 얼마나 잘 처리하는지 평가하기 어렵습니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 근거 없는 평가 문항</h3>
 <div class="cell-before"><p>주차 요금 문항의 기대 문서가 왜 비어 있는지 원문 세 쪽과 대조하세요.</p>
@@ -90,7 +90,7 @@ print(parking[<span class="tok-string">'answerable'</span>], parking[<span class
 <div class="cell-after"><p>False와 빈 목록은 답을 유보해야 한다는 뜻입니다. 평가 자료를 덜 채워 둔 경우와 구분하려고 answerable을 함께 기록합니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="unanswerable"></span><div class="lesson-explanation" id="reading-unanswerable"><h3>근거가 없는 문항의 기대값</h3><div class="prose"><p>주차 요금 질문은 문장이 명확하지만 원문에 답이 없습니다. 이 경우 answerable=false, expected_document_ids=[]로 기록합니다. 모르는 가격을 0원이나 무료로 채우면 자료에 없는 정답을 만든 셈이 됩니다.</p>
+<span class="lesson-anchor" id="unanswerable"></span><div class="lesson-explanation" id="reading-unanswerable"><h3>근거가 없는 문항의 기대값</h3><div class="prose"><p>주차 요금 질문은 문장이 명확하지만 원문에 답이 없습니다. 파이썬 문항에는 answerable을 False로, expected_document_ids를 빈 목록으로 적습니다. 모르는 가격을 0원이나 무료로 채우면 자료에 없는 정답을 만든 셈이 됩니다.</p>
 <p>“언제 이용할 수 있나요?”처럼 대상이 불명확한 질문은 다른 문제입니다. 도서관 개관 시간인지 반납함 시간인지 먼저 정해야 판정자가 같은 기준으로 읽을 수 있습니다. 이 기본 세트에는 모호한 질문을 억지로 답변 가능/불가에 넣기보다 문장을 고치고 수정 이유를 기록합니다.</p>
 <p>검색 서버의 timeout은 질문의 답변 가능 여부를 바꾸지 않습니다. 원문에 14일이 있는 질문은 서버가 실패해도 답변 가능한 질문입니다. 운영 실패는 36장의 실행 기록에서 분리합니다.</p>
 </div>
@@ -129,14 +129,21 @@ print(by_id[holiday[<span class="tok-string">'expected_document_ids'</span>][<sp
 </details>
 </article>
 <span class="lesson-anchor" id="splits"></span><div class="lesson-explanation" id="reading-splits"><h3>설정을 고르는 질문과 확인하는 질문</h3><p>개발 문항은 검색 규칙을 바꿀 때 반복해서 사용합니다. 확인 문항은 설정을 정한 뒤 다른 질문에서도 작동하는지 살피는 데 씁니다. 확인 결과를 보고 규칙을 다시 바꿨다면 어떤 문항을 참고했는지 기록하세요.</p></div>
-<span class="lesson-anchor" id="validation"></span><div class="lesson-explanation" id="reading-validation"><h3>기대 근거의 유효성</h3><p>dev-02에 적을 문서 ID를 먼저 by_id에서 찾아보세요. answerable이 True인 문항은 그 문서만 읽고도 질문에 답할 수 있어야 합니다. 주차 요금처럼 근거가 없다면 두 필드를 False와 빈 목록으로 맞춥니다.</p></div>
+<span class="lesson-anchor" id="validation"></span><span class="lesson-anchor" id="reading-validation"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>상담 운영 시간을 묻는 새 질문을 하나 만들고, 원문이 없을 때 어떤 응답을 기대할지 팀원과 먼저 맞춰 보세요.</p>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="transfer-practice">과제 04 · 확인용 문항의 근거 작성</h3><div class="cell-before"><p>“무인 반납함을 밤에도 쓸 수 있나요?”를 개발 세트와 분리해 public_check 문항으로 작성하세요. 기대 문서 ID로 원문을 조회해 밤에도 이용할 수 있다는 근거를 읽으세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-code" type="button" aria-label="노트북에서 직접 작성 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-code">question = &#x27;무인 반납함을 밤에도 쓸 수 있나요?&#x27;
+# 질문, 기대 근거, 답변 가능 여부, 분할 이름을 한 레코드에 보관하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-solution" type="button" aria-label="풀이 예시 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-solution">check = {
+    &#x27;question_id&#x27;: &#x27;check-return&#x27;, &#x27;question&#x27;: &#x27;무인 반납함을 밤에도 쓸 수 있나요?&#x27;,
+    &#x27;expected_document_ids&#x27;: [&#x27;library-3&#x27;], &#x27;answerable&#x27;: True,
+    &#x27;split&#x27;: &#x27;public_check&#x27;,
+}
+print(check[&#x27;split&#x27;], by_id[check[&#x27;expected_document_ids&#x27;][0]][&#x27;text&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">public_check 무인 반납함은 24시간 이용할 수 있습니다.</pre></div><div class="cell-after"><p>24시간이라고 쓰인 대상은 무인 반납함입니다. “도서관도 24시간 개방한다”는 답은 같은 숫자를 인용해도 범위를 잘못 옮긴 답입니다. 이 문항은 풀이까지 공개했으므로 모델을 최종 평가할 비공개 질문으로 다시 세지 않습니다.</p></div></details></article>
+<div class="prose"><p>이번에는 상담 운영 시간을 묻는 질문을 만드세요. 현재 자료로 답할 수 있는지 확인한 뒤 기대할 응답을 적어 두세요.</p>
 </div>
 </section>
 

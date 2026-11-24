@@ -50,7 +50,7 @@
 owner = <span class="tok-string">"alice"</span>  <span class="tok-comment"># 앱이 확인해 전달한 수업용 사용자</span>
 print(memory.get((owner, <span class="tok-string">"language"</span>)))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">한국어</pre></div>
-<div class="cell-after"><p>한국어가 나옵니다. 저장 키에는 대화 ID가 없으므로 다른 대화에서도 사용자의 같은 설정을 읽을 수 있습니다.</p>
+<div class="cell-after"><p>('alice', 'language')를 조회해 ‘한국어’를 얻습니다. 이 커널이 같은 딕셔너리를 사용하는 동안에는 대화 ID가 바뀌어도 같은 키를 쓸 수 있습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><div class="lesson-explanation" id="reading-goals"><h3>대화를 넘어 사용할 설정</h3><p>language 같은 설정을 다시 쓰려면 누구의 선호인지 함께 저장해야 합니다. 이 셀에서 조회의 기준은 두 값으로 만든 키 (&quot;alice&quot;, &quot;language&quot;)입니다.</p></div>
@@ -73,7 +73,7 @@ print(memory.get((owner, <span class="tok-string">"language"</span>)))</code></p
 <h2>선호 정보의 수정과 삭제</h2>
 </div>
 </header>
-<p>실제 수업 구현 memory_service.py의 put은 앱이 건넨 컨텍스트에서 소유자를 읽고 입력 본문에서는 memory_key와 value만 받습니다. 사용자가 보낸 문장으로 소유자를 정하면 다른 사람의 기억에 섞일 수 있습니다.</p>
+<p>설정 이름 language는 두 사용자가 함께 씁니다. 사용자가 보낸 문장에서 이름을 추측하면 같은 설정을 다른 사람의 값으로 덮을 수 있습니다. 이 실습의 사용자 ID는 앱에서 확인해 받았다고 가정합니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 특정 사용자의 설정 갱신</h3>
 <div class="cell-before"><p>alice의 값은 유지하고 bob의 언어를 영어로 저장한 뒤 bob의 값을 읽으세요.</p>
 </div>
@@ -136,8 +136,17 @@ print(row[<span class="tok-number">0</span>])</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>대화 안에서만 유지할 발화와 다음 대화에서도 필요한 선호를 하나씩 골라 보세요. 새 프로세스에서 읽어야 하는 정보는 이 예제의 메모리 사전만으로 보존할 수 없습니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="6" data-task="1"><h3>과제 06 · 한 사용자의 설정만 SQL로 지우기</h3><div class="cell-before"><p>같은 language 키를 가진 행 두 개 중 alice의 행만 지우고 남은 소유자와 값을 확인하세요. 다시 실행할 수 있도록 SAVEPOINT를 만든 뒤 삭제하고, 조회가 끝나면 그 지점으로 돌아가세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">db.execute("SAVEPOINT check_delete")
+# 삭제 후 남은 행을 확인하세요.
+db.execute("ROLLBACK TO check_delete")
+db.execute("RELEASE check_delete")</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">db.execute("SAVEPOINT check_delete")
+db.execute("DELETE FROM course_memories WHERE owner=? AND memory_key=?", ("alice", "language"))
+print(db.execute("SELECT owner, value FROM course_memories ORDER BY owner").fetchall())
+db.execute("ROLLBACK TO check_delete")
+db.execute("RELEASE check_delete")</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[('bob', '영어')]</pre></div><div class="cell-after"><p>삭제와 조회에 같은 연결을 써서 변경 직후의 상태를 확인했습니다. DELETE의 조건을 memory_key 하나로 줄이면 bob의 행까지 사라집니다. SAVEPOINT로 돌아가면 이 과제에서 수행한 삭제만 취소됩니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

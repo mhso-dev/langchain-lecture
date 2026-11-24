@@ -125,7 +125,7 @@ print(args[<span class="tok-string">"day"</span>])</code></pre></figure>
 items = [{<span class="tok-string">"type"</span>: <span class="tok-string">"message"</span>, <span class="tok-string">"content"</span>: []}, call]
 print(inspect_calls(items)[<span class="tok-number">0</span>][<span class="tok-string">"call_id"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">call_demo_1</pre></div>
-<div class="cell-after"><p>call_demo_1은 골라낸 요청의 식별자입니다. 결과를 돌려줄 때 이 ID가 있어야 어느 요청에 대한 답인지 연결할 수 있습니다.</p>
+<div class="cell-after"><p>call_demo_1은 요청 한 건의 식별자입니다. 이 값이 있다는 사실만으로 함수가 실행됐다는 뜻은 아닙니다. 같은 함수를 두 번 요청했다면 결과를 돌려줄 때 각 요청의 call_id를 그대로 사용해야 합니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="inspect"></span><div class="lesson-explanation" id="reading-inspect"><h3>출력 목록에서 호출 선별</h3><div class="prose"><p>모델 응답의 output에는 여러 종류의 항목이 들어갈 수 있습니다. 각 항목의 type을 보고 function_call만 읽습니다. 일반 문장에 “함수를 실행했습니다”라고 쓰여 있어도 호출 요청으로 처리하지 않습니다.</p>
@@ -137,7 +137,7 @@ print(inspect_calls(items)[<span class="tok-number">0</span>][<span class="tok-s
 <h2>메시지와 도구 호출 구분</h2>
 </div>
 </header>
-<p>모델은 도구를 항상 요청하는 것이 아닙니다. 사용자에게 전달할 문장만 담긴 응답이라면 실행할 함수도 없습니다.</p>
+<p>모델의 응답에는 사용자에게 보여 줄 문장만 있을 수도 있습니다. 그런 응답을 inspect_calls에 넣으면 함수 이름이나 인자를 임의로 만들지 않고 빈 목록을 돌려줍니다.</p>
 
 <span class="lesson-anchor" id="cases"></span><div class="lesson-explanation" id="reading-cases"><h3>모호한 도구 설명의 영향</h3><div class="prose"><p>설명에 “모든 질문을 처리한다”라고 적으면 기능의 경계가 사라집니다. 운영 시간만 조회하는 도구에는 날짜별 예약 가능 여부나 도서 재고를 처리한다고 적지 않습니다. 실제 구현이 할 수 있는 일만 설명하세요.</p>
 <p>인자가 필요한 이유도 분명해야 합니다. day가 요일 이름인지 평일/주말 구분인지 설명되지 않으면 사용자 질문과 스키마가 어긋날 수 있습니다. 허용값과 설명을 함께 읽고 지원하지 않는 질문은 추가 확인 대상으로 남깁니다.</p>
@@ -153,9 +153,14 @@ print(inspect_calls(items))</code></pre></figure>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>호출 요청의 관찰 기록</h3><div class="prose"><p>다음 장은 요청의 이름과 인자를 검사하고 Python 함수를 실제로 실행한 뒤 같은 call_id로 결과를 돌려줍니다.</p>
+<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>호출 요청의 관찰 기록</h3><div class="prose"><p>셀 04의 inspect_calls는 arguments가 JSON 객체인지까지만 검사합니다. {"day":"holiday"}도 사전이므로 이 함수를 통과합니다. 실제 함수를 실행하려면 다음 단계에서 이름과 day의 허용값까지 확인해야 합니다.</p>
 </div></div>
 
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="practice-recheck">과제 06 · 인자 해석과 허용값 검사</h3><div class="cell-before"><p>호출의 arguments에 {&quot;day&quot;:&quot;holiday&quot;}가 들어왔습니다. inspect_calls로 해석한 뒤 TOOL에서 허용 목록을 꺼내 day가 목록에 있는지 검사하세요. 함수 본문은 실행하지 않습니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="practice-recheck-starter" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-starter">unlisted = {**call, "arguments": '{"day":"holiday"}'}
+# 해석된 day를 허용 목록과 비교하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="practice-recheck-answer" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-answer">unlisted = {**call, "arguments": '{"day":"holiday"}'}
+args = inspect_calls([unlisted])[0]["arguments"]
+allowed = TOOL["parameters"]["properties"]["day"]["enum"]
+print(args.get("day") in allowed)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div><div class="cell-after"><p>올바른 JSON 객체여서 해석에는 성공합니다. 값 holiday가 weekday·weekend 중 어느 쪽에도 해당하지 않아 허용값 검사에서 걸립니다.</p></div></details></article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>

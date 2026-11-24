@@ -57,11 +57,11 @@ print(candidates[<span class="tok-number">0</span>][<span class="tok-string">'id
 <div class="cell-after"><p>마침표만 있는 library-1:1이 보입니다. 원문은 맞지만 이 조각만 받은 답변 함수에는 기간을 확인할 숫자가 없습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="candidates"></span><div class="lesson-explanation" id="reading-candidates"><h3>검색 후보와 재정렬 결과</h3><p>candidates에는 같은 원문에서 잘라 낸 청크 두 개가 있습니다. 첫 청크를 바로 고를 때와 두 후보의 순서를 다시 매긴 뒤 첫 청크를 고를 때, 답변에 쓸 수 있는 문장이 달라집니다.</p></div>
-<span class="lesson-anchor" id="rerank-demo"></span><div class="lesson-explanation" id="reading-rerank-demo"><h3>후보에 있어야 순위가 바뀝니다</h3><p>첫 후보의 본문은 마침표 하나이고, 대출 기간을 담은 문장은 둘째 후보입니다. 둘째 후보를 목록에서 빼고 정렬하면 마침표만 남습니다. 정렬 함수는 목록 밖의 문서를 새로 가져오지 않습니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="candidates"></span><span class="lesson-anchor" id="reading-candidates"></span>
+<span class="lesson-anchor" id="rerank-demo"></span><span class="lesson-anchor" id="reading-rerank-demo"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · sorted()의 key와 reverse</h3>
-<div class="cell-before"><p>같은 후보 안에서 ‘대출’이 있는지 채점해 가장 앞에 놓습니다.</p>
+<div class="cell-before"><p>각 후보의 본문에 ‘대출’이 들어 있는지 검사해 해당 문장을 앞으로 보냅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">ranked = sorted(candidates, key=<span class="tok-keyword">lambda</span> doc: <span class="tok-string">'대출'</span> <span class="tok-keyword">in</span> doc[<span class="tok-string">'text'</span>], reverse=<span class="tok-keyword">True</span>)
 print(ranked[<span class="tok-number">0</span>][<span class="tok-string">'id'</span>], ranked[<span class="tok-number">0</span>][<span class="tok-string">'text'</span>])</code></pre></figure>
@@ -70,7 +70,7 @@ print(ranked[<span class="tok-number">0</span>][<span class="tok-string">'id'</s
 </div>
 <p id="example-analysis">재정렬의 효과를 확인하려면 후보 목록에서 library-1:0을 잠시 빼 보세요. 남은 마침표를 아무리 정렬해도 ‘14일’은 돌아오지 않습니다. 이 셀의 점수는 ‘대출’이 들어 있는지를 나타내는 불리언 값입니다. 학습된 재정렬 모델이 질문과 문장의 뜻을 얼마나 잘 비교하는지는 별도 실험에서 측정해야 합니다.</p><div class="example-table"><table><caption>같은 후보 두 건의 재정렬</caption><thead><tr><th scope="col">청크 ID</th><th scope="col">청크 본문</th><th scope="col">검색 순위</th><th scope="col">키워드 정렬 후</th></tr></thead><tbody><tr><td>library-1:1</td><td>.</td><td>1</td><td>2</td></tr><tr><td>library-1:0</td><td>도서 대출 기간은 14일입니다</td><td>2</td><td>1</td></tr></tbody></table></div>
 </article>
-<span class="lesson-anchor" id="rerank"></span><div class="lesson-explanation" id="reading-rerank"><h3>불리언 값으로 재정렬하기</h3><p>key 함수는 본문에 ‘대출’이 있으면 True를 반환합니다. reverse=True로 정렬하므로 대출 문장이 마침표보다 앞으로 옵니다. 이 작은 규칙은 질문과 후보를 함께 읽는 재정렬 모델이 맡을 일을 눈으로 확인하기 위한 예입니다.</p></div>
+<span class="lesson-anchor" id="rerank"></span><span class="lesson-anchor" id="reading-rerank"></span>
 
 <div class="worked-case" id="flow-3"><h3>같은 후보 두 건에서 1위가 바뀌는 과정</h3>
 <p>셀 01에서는 순위가 뒤집힌 입력에서 출발합니다. 같은 두 후보의 순서만 바꿉니다.</p>
@@ -86,7 +86,7 @@ library-1:0  True</pre></article><article id="flow-3-step-2"><small>STEP 03 · �
 <h2>질의 확장과 청크 ID 중복 제거</h2>
 </div>
 </header>
-<p>‘책을 빌릴 수 있는 기간은?’을 세 낱말 벡터로 바꾸면 대출 항목이 0입니다. 이번에는 수업용 사전에 정한 표현 ‘대출 기간’을 더해 검색합니다. 원래 질문도 남겨 두고, 공백만 다른 표현은 한 번만 검색합니다.</p>
+<p>‘책을 빌릴 수 있는 기간은?’을 세 낱말 벡터로 바꾸면 대출 항목이 0입니다. 이번에는 검색용 표현 ‘대출 기간’을 직접 추가합니다. 원래 질문도 남겨 두고, 공백만 다른 표현은 한 번만 검색합니다.</p>
 <!-- MOTION union-of-hits -->
 
 <!-- END MOTION -->
@@ -112,10 +112,8 @@ print(unique)</code></pre></figure>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="multiquery"></span><div class="lesson-explanation" id="reading-multiquery"><h3>원래 질문과 검색용 표현</h3><p>‘책을 빌릴 수 있는 기간은?’과 ‘대출 기간’은 같은 자료를 찾는 데 쓸 수 있는 표현입니다. 노트북에서는 검색용 문구를 직접 적습니다. 표현을 늘리면 서로 다른 검색 결과를 얻을 기회가 생기지만, 같은 문서를 되풀이해 찾을 수도 있습니다.</p><div class="worked-case" id="flow-7"><h3>두 질의가 찾은 청크를 한 목록으로 모으기</h3><span class="lesson-anchor" id="flow-7-step-0"></span><span class="lesson-anchor" id="flow-7-step-1"></span><span class="lesson-anchor" id="flow-7-step-2"></span><span class="lesson-anchor" id="flow-7-step-3"></span><p>셀 04의 두 검색어 ‘대출 기간은 며칠인가요?’와 ‘대출 기간’은 모두 library-1:0을 찾습니다. batches에는 한 건씩 담긴 목록 두 개가 생깁니다. 이 목록들을 펼친 뒤 dict.fromkeys로 같은 ID를 합치면 merged에는 library-1:0 한 건이 남습니다.</p></div></div>
-<span class="lesson-anchor" id="dedup"></span><div class="lesson-explanation" id="reading-dedup"><h3>질의와 청크의 중복 제거</h3><div class="prose"><p>대출 기간과 대출   기간은 이 실습의 공백 정리 규칙을 거치면 같은 문구입니다. 두 번 검색해도 새 근거가 생기는 것은 아니므로 중복 호출을 줄입니다. 단어 순서가 다른 표현을 자동으로 같은 뜻이라고 판정하지는 않습니다.</p>
-<p>검색 결과는 문장 내용이 같다는 이유로 합치지 않습니다. 서로 다른 원문 페이지가 같은 문장을 포함할 수 있기 때문입니다. 청크 ID를 기준으로 합치되 같은 ID의 본문·출처·페이지가 다르면 자료 충돌로 처리합니다. 원문 ID가 같은 서로 다른 청크를 하나로 합치면 필요한 문장을 잃을 수 있습니다.</p>
-</div></div>
+<span class="lesson-anchor" id="multiquery"></span><div class="lesson-explanation" id="reading-multiquery"><h3>검색어가 달라지면 후보를 다시 가져옵니다</h3><p>과제의 첫 질의 ‘책을 빌릴 수 있는 기간은?’은 검색 함수가 아는 단어를 포함하지 않습니다. ‘대출 기간’을 함께 보내면 첫 질의에서 빠진 문서를 찾을 수 있습니다. 셀 04에서는 두 질의 모두 ‘대출’을 포함하도록 바꿔, 같은 청크가 돌아오는 경우를 따로 실험합니다.</p></div><span class="lesson-anchor" id="flow-7"></span><span class="lesson-anchor" id="flow-7-step-0"></span><span class="lesson-anchor" id="flow-7-step-1"></span><span class="lesson-anchor" id="flow-7-step-2"></span><span class="lesson-anchor" id="flow-7-step-3"></span>
+<span class="lesson-anchor" id="dedup"></span><div class="lesson-explanation" id="reading-dedup"><h3>무엇을 기준으로 중복을 판단할까요?</h3><p>요청을 보내기 전에는 공백을 정리한 검색문을 비교합니다. 결과를 합칠 때는 청크 ID를 비교합니다. 본문만 비교하면 서로 다른 쪽에 있는 같은 문장을 합쳐 출처 하나를 잃을 수 있습니다. 셀 04는 ID만 모으므로 같은 ID의 원문 충돌까지 검사하지는 않습니다.</p></div>
 
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 검색 결과의 청크 ID 합집합</h3>
 <div class="cell-before"><p>같은 고정 인덱스에서 검색문별 결과를 받아 첫 등장 순서대로 합칩니다. 이 예의 검색은 ‘대출’ 포함 여부로 찾는 작은 로컬 검색입니다.</p>
@@ -140,10 +138,10 @@ print(merged)</code></pre></figure>
 <div class="cell-after"><p>질문 표현 두 개가 같은 library-1:0을 찾았습니다. 검색은 두 번 했지만 답의 근거에는 청크 하나만 넘기면 됩니다. 원래 후보에 없던 청크가 추가되려면 확장한 검색문에서 실제로 다른 결과를 얻어야 합니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="union"></span><div class="lesson-explanation" id="reading-union"><h3>질의를 늘려도 같은 문서를 만날 수 있습니다</h3><p>두 검색의 반환 목록을 이어 붙이면 library-1:0이 두 번 나옵니다. dict.fromkeys로 첫 등장 순서를 유지하며 한 번만 남긴 것이 merged입니다. 서로 다른 근거가 늘었는지는 중복을 제거한 다음에 확인합니다.</p></div>
+<span class="lesson-anchor" id="union"></span><span class="lesson-anchor" id="reading-union"></span>
 <span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
 <span class="lesson-anchor" id="metrics"></span><span class="lesson-anchor" id="reading-metrics"></span>
-<span class="lesson-anchor" id="compare"></span><div class="lesson-explanation" id="reading-compare"><h3>검색 횟수와 근거 수</h3><p>search_queries는 두 문장이고 find_chunks도 두 번 실행됩니다. 두 결과가 같은 청크 ID라서 merged에는 하나만 남습니다. 호출 수를 줄이는 것과 마지막에 중복 근거를 없애는 것은 서로 다른 작업입니다.</p></div>
+<span class="lesson-anchor" id="compare"></span><span class="lesson-anchor" id="reading-compare"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 
 </section>
@@ -151,6 +149,14 @@ print(merged)</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3 id="transfer-practice">과제 05 · 정답 청크가 후보에 없을 때</h3><div class="cell-before"><p>마침표만 남은 후보를 같은 규칙으로 재정렬하세요. 이어 원래 표현과 ‘대출 기간’을 각각 find_chunks에 넣으세요. ‘14일’이 들어 있는 청크를 되찾은 단계가 무엇인지 기록하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-code" type="button" aria-label="노트북에서 직접 작성 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-code">pool = candidates[:1]
+# 주어진 후보만 정렬한 결과, 원래 질의의 검색 결과, 확장 질의의 검색 결과를 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-solution" type="button" aria-label="풀이 예시 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-solution">pool = candidates[:1]
+reranked = sorted(pool, key=lambda doc: &#x27;대출&#x27; in doc[&#x27;text&#x27;], reverse=True)
+print([doc[&#x27;id&#x27;] for doc in reranked])
+print(find_chunks(&#x27;책을 빌릴 수 있는 기간은?&#x27;))
+print(find_chunks(&#x27;대출 기간&#x27;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;library-1:1&#x27;]
+[]
+[&#x27;library-1:0&#x27;]</pre></div><div class="cell-after"><p>첫 줄은 마침표였던 후보를 그대로 반환합니다. 둘째 줄에는 ‘대출’이 없어 결과가 비었습니다. 셋째 줄은 인덱스를 다시 검색했기 때문에 후보에 없던 library-1:0을 가져왔습니다. 원래 표현과 확장 표현을 모두 실행하면 검색 함수 호출은 두 번입니다.</p></div></details></article>
 <div class="prose"><p>키워드 재순위가 성공한 위 사례는 의도적으로 순서를 뒤집은 연습입니다. 실제 채택 여부는 다음 장의 같은 평가 질문에서 나온 결과와 추가 작업 횟수로 판단하세요.</p>
 </div>
 </section>

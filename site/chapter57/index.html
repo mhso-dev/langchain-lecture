@@ -47,7 +47,7 @@
 }
 print(catalog[<span class="tok-string">"evidence-answer"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">문서를 찾아 답하고 인용한 출처를 남긴다.</pre></div>
-<div class="cell-after"><p>‘문서’와 ‘출처’가 적혀 있어 대출 기간을 확인하는 일을 맡길 수 있습니다. 목록을 읽는 동안에는 검색이 실행되지 않았습니다.</p>
+<div class="cell-after"><p>셀 01은 목록에서 evidence-answer의 설명을 읽습니다. 문서를 실제로 조회하는 함수 호출은 아직 없습니다.</p>
 </div>
 <p id="example-analysis">‘문서를 찾아 답한다’와 ‘변경 전후의 검색 호출 수를 비교한다’는 서로 다른 산출물을 요구합니다. 두 Skill의 소개에 모두 ‘보고서 작성’만 적으면 요청을 어느 쪽에 보낼지 판단하기 어렵습니다. 목록에는 각 Skill이 받는 자료와 반환할 결과를 구체적으로 적습니다.</p>
 </article>
@@ -97,7 +97,7 @@ print(answer)</code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">instruction = <span class="tok-string">'예약 시작일이 원문에 없으면 답에 날짜를 넣지 말고 담당자에게 예약 공지를 확인해 달라고 요청한다.'</span>
 print(instruction)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">예약 시작일이 원문에 없으면 답에 날짜를 넣지 말고 담당자에게 예약 공지를 확인해 달라고 요청한다.</pre></div>
-<div class="cell-after"><p>조건과 다음 행동이 문장 하나로 이어집니다. 58장에서는 필요한 상황에서만 이런 본문과 참고자료를 읽습니다.</p>
+<div class="cell-after"><p>이 문구를 따르면 ‘예약 시작일’ 칸은 비워 두고 담당자에게 확인할 자료를 지정할 수 있습니다. 대출 기간이 있다는 이유로 예약 날짜까지 추정하지 않습니다.</p>
 </div>
 </details>
 </article>
@@ -163,8 +163,14 @@ print(same_conditions(left, right))</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>본인이 쓴 설명만 동료에게 보여 주고 ‘대출 답변’과 ‘두 실행 비교’에 어떤 Skill을 고를지 물어보세요. 선택이 갈리면 설명에 받는 자료와 완성할 결과를 보강하세요.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="6" data-task="1"><h3>과제 06 · 비교 보고서에 빠진 입력 찾기</h3><div class="cell-before"><p>두 실행의 question_id와 k는 같습니다. 두 번째 실행 기록에는 비교할 검색 호출 수가 없습니다. 이 상태에서 보고서를 쓰지 않도록, 빠진 필드 이름을 출력하세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">after = {"question_id": "dev-01", "k": 2}
+required = {"question_id", "k", "retrieval_calls"}
+# after에 없는 필드 이름을 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">after = {"question_id": "dev-01", "k": 2}
+required = {"question_id", "k", "retrieval_calls"}
+print(sorted(required.difference(after)))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['retrieval_calls']</pre></div><div class="cell-after"><p>기록되지 않은 횟수에 0을 대입하면 ‘검색하지 않았다’는 관찰을 새로 만들어 버립니다. SKILL.md의 실패 처리에는 비교를 멈추고 원래 실행 기록에서 retrieval_calls를 확인하도록 적을 수 있습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

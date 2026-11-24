@@ -55,7 +55,7 @@ print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"min
 <p id="example-analysis">빈 minutes를 발견하자마자 0으로 저장하면 나중에 ‘0분 공부했다’와 ‘시간을 입력하지 않았다’를 구별할 수 없습니다. 이 예에서는 같은 ID로 20분을 적은 행도 뒤에 있습니다. 중복 제거를 먼저 하면 첫 번째 2번 행을 보존하는 방식에서는 유효한 20분 기록을 잃습니다.</p>
 </article>
 <span class="lesson-anchor" id="formats"></span><div class="lesson-explanation" id="reading-formats"><h3>CSV·JSON 직렬화와 역직렬화</h3><div class="prose"><p>CSV는 쉼표 같은 구분자로 열을 나누는 표 형식입니다. 값 안에도 쉼표가 있을 수 있어 문자열을 split(",")으로 자르지 않고 csv 모듈을 사용합니다. DictReader는 첫 행을 키로 삼아 각 행을 딕셔너리로 읽습니다. 여기서 분 값 "30"도 문자열입니다.</p>
-<p>with 블록은 파일을 사용한 뒤 닫는 처리를 맡습니다. newline=""는 csv 모듈이 줄바꿈을 처리하도록 하는 옵션입니다. list(...)는 행을 읽어 작은 목록으로 모읍니다.</p>
+<p>셀 01의 StringIO(csv_text)는 문자열을 파일처럼 한 줄씩 읽게 합니다. DictReader의 첫 행은 열 이름이어서 데이터 행 수에 포함되지 않습니다. rows에는 여섯 건이 들어 있습니다.</p>
 <p>JSON은 표 외에도 중첩 목록·객체를 담을 수 있습니다. 이번에는 CSV 행 목록을 JSON으로 바꾸고 다시 읽어 값이 같은지 확인합니다. json.dumps와 loads는 문자열을 처리하고, 실제 파일 읽기·쓰기는 Path 메서드가 맡습니다.</p>
 </div></div>
 
@@ -109,16 +109,9 @@ print([row[<span class="tok-string">"id"</span>] <span class="tok-keyword">for</
 </article>
 <span class="lesson-anchor" id="duplicates"></span><div class="lesson-explanation" id="reading-duplicates"><h3>유효성 검사와 중복 제거 순서</h3><div class="prose"><p>같은 id의 내용이 다르면 어느 것을 남길지 업무 규칙이 필요합니다. 여기서는 유효한 행 중 첫 행을 남긴다는 규칙을 명시했습니다. 모든 실제 데이터에 적용할 정답은 아닙니다.</p>
 <p>drop_duplicates는 subset에 적은 열을 비교합니다. keep="first"는 현재 순서에서 첫 행을 남깁니다. 중복 제거를 먼저 하면 누락 시간의 id=2가 남고 유효한 20분 기록을 잃을 수 있습니다.</p>
-<p>return cleaned, report는 두 값을 함께 반환합니다. 호출자는 cleaned, report = clean_table(frame)처럼 두 이름에 나누어 받습니다. 반환한 표와 보고서를 함께 확인하세요.</p>
+<p>과제 04에서 by_id의 키는 원래 CSV의 문자열 ID입니다. 유효한 행을 순서대로 읽어 첫 번째 행을 저장하고, 같은 키를 다시 만나면 건너뜁니다. 이 순서를 바꾸면 비어 있던 ID 2의 첫 행 때문에 뒤의 20분까지 빠질 수 있습니다.</p>
 </div>
-<div class="worked-case" id="flow-8"><h3>6행이 3행으로 정리되는 과정</h3>
-<p>누락 제거와 중복 제거의 순서를 눈으로 추적합니다.</p>
-<article id="flow-8-step-0"><small>STEP 01 · CSV</small><h4>CSV 입력 행 수</h4>
-<p>id=2와 id=4가 각각 두 번 있습니다.</p><pre>before = 6</pre></article><article id="flow-8-step-1"><small>STEP 02 · 조건 필터</small><h4>유효성 검사에서 제외한 행</h4>
-<p>분이 빈 id=2 한 행, 제목이 빈 id=3 한 행을 제외합니다.</p><pre>유효 ID: [1, 2, 4, 4]</pre></article><article id="flow-8-step-2"><small>STEP 03 · id 기준</small><h4>ID 중복 제거</h4>
-<p>유효한 id=4 중 첫 행을 유지합니다.</p><pre>첫 4는 유지 · 두 번째 4 제외
-남은 ID: [1, 2, 4]</pre></article><article id="flow-8-step-3"><small>STEP 04 · 출력</small><h4>정제 후 남은 행</h4>
-<p>앞의 JSON 저장 연습은 한 행을 사용합니다. 여기에 나온 세 행은 전체 표를 정리한 결과입니다.</p><pre>전체 표: 3행, 합계 90분</pre></article></div></div>
+<div class="table-scroll" tabindex="0" id="flow-8"><table><caption>유효성 검사와 중복 검사 결과</caption><thead><tr><th scope="col">입력</th><th scope="col">남은 데이터</th><th scope="col">판정 근거</th></tr></thead><tbody><tr id="flow-8-step-0"><td>CSV 원본</td><td>6행</td><td>ID 2와 4가 각각 두 번</td></tr><tr id="flow-8-step-1"><td>제목·시간 검사</td><td>ID 1, 2, 4, 4</td><td>빈 시간이 있는 첫 ID 2와 빈 제목의 ID 3 제외</td></tr><tr id="flow-8-step-2"><td>유효한 행의 ID 비교</td><td>ID 1, 2, 4</td><td>ID 4의 두 번째 행 제외</td></tr><tr id="flow-8-step-3"><td>정제 결과</td><td>3행 · 90분</td><td>30분 + 20분 + 40분</td></tr></tbody></table></div></div>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · ID별 첫 행 보존</h3>
 <div class="cell-before"><p>사전 by_id에 아직 없는 id만 저장하고 남은 기록의 시간을 출력하세요.</p>
@@ -155,7 +148,7 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 <span class="tok-keyword">else</span>:
     print(<span class="tok-string">"이 커널에는 pandas가 없습니다. CSV의 두 번째 데이터 행에서 시간을 확인하세요."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[False, True, False, False, False, False]</pre></div>
-<div class="cell-after"><p>Pandas가 있으면 여섯 값 중 둘째만 True입니다. 이는 시간 칸만 검사한 결과라서 제목이 빈 행은 아직 골라내지 않았습니다. 전체 예제의 clean_table은 제목·범위·정수 조건을 합친 뒤 중복을 제거합니다.</p>
+<div class="cell-after"><p>여섯 값 중 둘째가 True인 것은 시간 문자열을 숫자로 바꾸지 못했다는 뜻입니다. 제목만 비어 있는 넷째 행은 시간 15를 읽을 수 있어 False입니다. 제목과 시간이 모두 유효한 행을 고르는 일은 셀 03의 clean_row가 맡습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="table"></span><div class="lesson-explanation" id="reading-table"><h3>pandas 행·열 선택</h3><div class="prose"><p>DataFrame은 행과 열로 구성한 표입니다. frame["id"]는 한 열인 Series를 선택하고, frame[["id", "minutes"]]는 여러 열을 가진 표를 선택합니다. frame.shape는 (행 수, 열 수)입니다.</p>
@@ -171,7 +164,7 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 <p>메모리 안의 사전은 커널을 닫으면 사라집니다. 임시 폴더에 실제 파일을 저장하고 같은 인코딩으로 다시 열어 첫 유효 행의 값이 남았는지 확인합니다.</p>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="paths"></span><div class="lesson-explanation" id="reading-paths"><h3>작업 디렉터리와 파일 경로</h3><div class="prose"><p>Path는 경로를 다루는 객체입니다. / 연산으로 폴더·파일 이름을 연결하고 resolve()는 절대 경로로 정리하며 parent는 부모 폴더를 뜻합니다. mkdir(exist_ok=True)는 폴더가 이미 있어도 오류를 내지 않습니다.</p>
-<p>인코딩은 글자를 바이트로 저장하고 읽는 규칙입니다. 파일을 읽을 때와 쓸 때 UTF-8을 명시합니다. .read_text는 파일 전체를 문자열로 읽으므로 이번처럼 작은 파일에 사용합니다. 원본 data를 덮어쓰지 않고 output에 결과를 씁니다.</p>
+<p>셀 06은 첫 유효 행을 임시 폴더의 record.json에 UTF-8로 씁니다. read_text()가 복원하는 것은 JSON 문자열입니다. minutes를 다시 숫자로 읽으려면 json.loads()까지 실행해야 합니다.</p>
 </div></div>
 <span class="lesson-anchor" id="verification"></span><div class="lesson-explanation" id="reading-verification"><h3>파일 처리 재실행과 복구</h3><div class="table-scroll" tabindex="0"><table><caption>흔한 오류</caption><thead><tr><th scope="col">오류·증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
 </thead><tbody><tr><td>FileNotFoundError</td><td>경로·입력 파일 존재</td><td>data 폴더 구조 복구</td></tr>

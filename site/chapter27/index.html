@@ -157,8 +157,8 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="limit"></span><div class="lesson-explanation" id="reading-limit"><h3>반복 상한과 실행 오류</h3><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
-<p>빈 질문은 search에서 ValueError로 중단됩니다. 질문 자체가 없는데 재검색해도 정보가 늘지 않으므로 입력을 고치도록 합니다. 실제 네트워크 오류의 재시도 여부는 오류 종류·시간 제한·중복 실행 위험을 함께 판단해야 하며 이 장의 로컬 예제로 이를 검증했다고 주장하지 않습니다.</p>
+<span class="lesson-anchor" id="limit"></span><div class="lesson-explanation" id="reading-limit"><h3>반복 상한과 실행 오류</h3><div class="prose"><p>run의 recursion_limit=20은 그래프 실행 단계의 한도입니다. 검색을 두 번으로 제한하는 코드는 route의 attempts &lt; 2입니다. 정상 종료라면 주차 질문에서도 예외 대신 fallback의 안내를 받습니다.</p>
+<p>공백뿐인 질문은 search가 ValueError를 내므로 route까지 도달하지 않습니다. 주차 질문은 검색 함수가 빈 목록을 정상 반환해 route에서 재시도 여부를 정합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>오류 점검</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">수정 방향</th></tr>
 </thead><tbody><tr><td>끝나지 않거나 GraphRecursionError</td><td>attempts 증가·route 상한</td><td>검색 후 증가와 stop 연결 확인</td></tr>
@@ -167,7 +167,7 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 <tr><td>빈 질문 ValueError</td><td>입력 값</td><td>공백이 아닌 질문 입력</td></tr>
 <tr><td>항상 문서 없음</td><td>키워드 포함 검사</td><td>가상 검색의 정확한 조건 확인</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="assignment"></span><div class="lesson-explanation" id="reading-assignment"><h3>분기 하나를 바꾼 뒤 비교할 세 입력</h3><p>대출 기간?, 책을 빌리는 기간?, 주차장은?을 각각 실행하면 즉시 성공, 재작성 후 성공, 두 번째 검색 후 종료를 구별할 수 있습니다. 종료 안내가 맞아도 검색 횟수가 예상과 다르면 route의 조건 순서를 다시 보세요.</p></div>
+<span class="lesson-anchor" id="assignment"></span><span class="lesson-anchor" id="reading-assignment"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 <span class="lesson-anchor" id="workflow-retry-budget"></span><span class="lesson-anchor" id="workflow-retry-budget-caption"></span>
 
@@ -178,6 +178,18 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </header>
 <div class="prose"><p>검색 한 번에 바로 답하는 질문도 골라 보세요. 세 질문 모두 search 다음에 route를 거칩니다. 어떤 상태에서 다음 경로가 갈라졌나요?</p>
 </div>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3 id="transfer-practice">과제 05 · 재검색이 끝나는 노드 추적</h3><div class="cell-before"><p>주차 질문에서는 rewrite가 질문을 바꾸지 못합니다. 그래프의 stream_mode="updates"를 사용해 실제로 실행된 노드의 이름과 search가 보고한 attempts만 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">request = {"question": "주차장은?", "documents": [], "answer": "", "attempts": 0}
+# 각 갱신에 들어 있는 노드 이름과 검색 횟수를 읽으세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">request = {"question": "주차장은?", "documents": [], "answer": "", "attempts": 0}
+
+for update in make_graph().stream(request, stream_mode="updates"):
+    for node, change in update.items():
+        if node == "search":
+            print(node, change["attempts"])
+        else:
+            print(node)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search 1
+rewrite
+search 2
+fallback</pre></div><div class="cell-after"><p>첫 번째 빈 검색은 rewrite로 가지만 두 번째 빈 검색은 fallback으로 갑니다. route는 다음 노드를 고르는 조건 함수이므로 실행 노드 이름으로 따로 출력되지 않습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>

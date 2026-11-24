@@ -19,7 +19,7 @@
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 80 / CODEX</span><span class="template-badge">학생용 교재</span></div>
 <h1>Codex 요청의 수용 기준과 JavaScript 상태 변경</h1>
 <p class="hero-description">Codex로 투두 앱을 구현할 때 사용할 수용 기준을 작성합니다. 같은 제목을 두 번 입력한 경우와 공백만 입력한 경우로 항목 ID, 초기 상태, 추가 거부를 검증합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 080 · 8H</span><span>7일 재현 기록 · 78일 HTML/CSS · 79일 이벤트·JSON</span></div>
+<div class="hero-meta"><span>교육일 80 · 8시간</span><span>선수 수업 · 7장 오류 재현 · 78장 입력 화면 · 79장 이벤트 처리</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -59,9 +59,7 @@ function add(raw) {
 """</span>
 run_js(store_source + <span class="tok-string">'console.log(JSON.stringify(add("  복습  ")));'</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{"id":1,"title":"복습","completed":false}</pre></div>
-<div class="cell-after"><p>id는 1, 제목은 복습, 완료 여부는 false입니다. 양끝 공백을 지워도 제목 안쪽 공백은 유지한다는 조건을 다음 입력에서도 확인하세요.</p>
-</div>
-<p id="example-analysis">제목이 같은 ‘복습’을 하나 더 추가해도 두 항목은 서로 다른 작업일 수 있습니다. 화면에서 완료 버튼을 눌렀을 때 어떤 행을 바꿀지는 title보다 id로 정해야 합니다. 반환된 completed 값은 새 작업의 초기 상태를 확인하는 근거입니다.</p>
+<div class="cell-after"><p id="example-analysis">입력한 ‘  복습  ’은 제목 ‘복습’으로 저장됩니다. trim은 양끝 공백만 없애므로 ‘강의 복습’을 넣으면 두 단어 사이의 공백이 남습니다. 같은 제목을 두 번 추가해도 새 ID가 발급됩니다.</p></div>
 </article>
 <span class="lesson-anchor" id="first-change"></span><span class="lesson-anchor" id="reading-first-change"></span>
 <span class="lesson-anchor" id="memory"></span><div class="lesson-explanation" id="reading-memory"><h3>run_js를 다시 호출할 때의 배열</h3><p>run_js는 호출마다 별도의 Node 프로세스를 실행합니다. 같은 store_source를 다시 전달하면 nextId는 1, items는 빈 배열에서 다시 시작합니다. 서로 다른 셀의 목록을 한 목록처럼 이어서 읽지 마세요.</p></div>
@@ -101,16 +99,18 @@ catch (error) { console.log(error.message + " " + items.length); }
 <span class="lesson-anchor" id="files"></span><span class="lesson-anchor" id="reading-files"></span>
 <span class="lesson-anchor" id="complete-delete"></span><span class="lesson-anchor" id="reading-complete-delete"></span>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · ID별 완료 상태 변경</h3>
-<div class="cell-before"><p>같은 제목 두 건을 추가한 뒤 id 2만 완료하도록 JavaScript 한 줄을 작성하세요.</p>
+<div class="cell-before"><p>같은 제목의 할 일을 두 건 추가하세요. 함수가 돌려준 두 번째 항목의 ID로 대상을 찾아 완료로 바꾸고 두 행의 ID와 완료 상태를 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># run_js에 store_source와 변경 코드를 함께 전달하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">run_js(store_source + <span class="tok-string">'''
-add("복습"); add("복습");
-items.find(row =&gt; row.id === 2).completed = true;
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"># run_js 한 번 안에서 항목 두 건을 추가하고 두 번째 항목만 변경하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">run_js(store_source + """
+const first = add("복습");
+const second = add("복습");
+const selected = items.find(row =&gt; row.id === second.id);
+selected.completed = true;
 console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
-'''</span>)</code></pre></figure>
+""")</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[[1,false],[2,true]]</pre></div>
-<div class="cell-after"><p>첫 항목은 false, 두 번째는 true입니다. Codex에 수정 요청을 할 때는 중복 제목 두 개, 누른 ID, 기대한 완료 상태와 실제 결과를 함께 제시하세요.</p>
+<div class="cell-after"><p>제목으로 첫 일치 항목을 고르면 ID 1을 잘못 바꿉니다. 방금 추가한 항목이 돌려준 ID를 사용하면 nextId의 시작값을 바꿔도 두 번째 행만 완료됩니다.</p>
 </div>
 </details>
 </article>
@@ -121,7 +121,7 @@ console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>현재 저장소는 JavaScript 프로세스 안의 배열입니다. 새 실행에서 사라지는지 확인하고 81장에서 서버로 옮길 때 그대로 유지할 필드 id·title·completed를 짚어 보세요.</p>
+<div class="prose"><p>코드 검토에선 제목이 같은 두 행을 남겨 두세요. 화면에서 두 번째 행을 눌렀는데 첫 번째가 완료된다면 변경 함수의 검색 조건과 화면이 넘긴 ID를 맞춰 봅니다.</p>
 </div>
 
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>

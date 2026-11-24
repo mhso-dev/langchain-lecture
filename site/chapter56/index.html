@@ -32,7 +32,7 @@
 <h2>검색 인자의 타입과 범위 검사</h2>
 </div>
 </header>
-<p class="concept-intro">도구 입력의 유효성, 반환 결과의 근거, 반복 호출 한도는 각각 검사할 위치가 다릅니다. 실제 미들웨어가 어느 호출에서 작동하는지 확인합니다.</p><p>수업의 search_documents는 k에 양의 정수를 받습니다. 기존 SearchArgs는 StrictInt로 이 약속을 검사합니다. 아래에서는 같은 조건을 Python에서 풀어 써서 어떤 값 때문에 멈추는지 봅니다.</p>
+<p class="concept-intro">도구 입력의 유효성, 반환 결과의 근거, 반복 호출 한도는 각각 검사할 위치가 다릅니다. 실제 미들웨어가 어느 호출에서 작동하는지 확인합니다.</p><p>사용자가 검색 결과 수 k를 보낸다고 가정합니다. check_k는 값이 양의 정수인지 검사합니다. 셀 06에서 호출 횟수를 제한하는 search_documents는 별도 예제로 question만 받습니다.</p>
 <!-- MOTION positive-k -->
 
 <!-- END MOTION -->
@@ -95,7 +95,7 @@ print(sorted(draft_ids - returned_ids))</code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">cited = {<span class="tok-string">'library-1'</span>}
 print(cited &lt;= returned_ids)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
-<div class="cell-after"><p>True가 나옵니다. 이제 해당 원문의 ‘14일’과 답변의 일수를 사람이 대조할 차례입니다.</p>
+<div class="cell-after"><p>True는 인용 ID가 검색 결과에 포함됐다는 뜻입니다. 원문의 ‘14일’을 답변에서 ‘30일’로 바꿔도 ID 검사는 통과하므로 일수는 원문과 따로 대조합니다.</p>
 </div>
 </details>
 </article>
@@ -165,8 +165,19 @@ print(executed)</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>입력 오류, 정상적으로 찾은 자료가 0건인 경우, 인용 오류를 각각 어느 단계에서 알아낼 수 있는지 말해 보세요. 실제 예제 policy_agent.py는 도구 실행 전후의 검사와 호출 상한을 미들웨어에 둡니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="7" data-task="1"><h3>과제 07 · 검색 결과 수에 상한 두기</h3><div class="cell-before"><p>조회 API가 한 번에 문서를 최대 5건까지 허용한다고 가정합니다. check_k의 기존 타입 검사를 사용하고, 6을 전달하면 호출 전에 예외가 나도록 함수를 완성하세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># check_k를 호출한 뒤 5보다 큰 수를 거절하는 bounded_k를 작성하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">def bounded_k(value):
+    value = check_k(value)
+    if value &gt; 5:
+        raise ValueError("최대 5건까지 조회할 수 있습니다.")
+    return value
+
+try:
+    bounded_k(6)
+except ValueError as error:
+    print(error)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">최대 5건까지 조회할 수 있습니다.</pre></div><div class="cell-after"><p>k의 상한은 한 번의 검색이 반환할 수 있는 문서 수를 제한합니다. run_limit=1은 같은 실행에서 도구를 부를 수 있는 횟수를 제한합니다. 호출을 한 번으로 제한해도 그 한 번에 요청할 문서 수는 따로 정해야 합니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

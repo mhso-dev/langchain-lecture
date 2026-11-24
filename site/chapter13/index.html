@@ -117,7 +117,7 @@ print(writing_input)</code></pre></figure>
 <div class="cell-after"><p>오류 메시지에 summarize가 보입니다. 뒤에서 분류 실패가 난 것으로 오해하지 않고 처음 비어 버린 위치로 돌아갈 수 있습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="failure"></span><div class="lesson-explanation" id="reading-failure"><h3>빈 중간값의 실패 처리</h3><div class="prose"><p>분류 단계가 빈 문자열을 반환했는데 작성 단계로 계속 진행하면 정상처럼 보이는 안내문을 만들 수 있습니다. 빈 출력과 허용하지 않은 분류를 즉시 거부하고 뒤 단계를 실행하지 않도록 합니다.</p>
+<span class="lesson-anchor" id="failure"></span><div class="lesson-explanation" id="reading-failure"><h3>빈 중간값의 실패 처리</h3><div class="prose"><p>셀 04의 입력은 요약 단계가 돌려준 공백 세 칸입니다. strip()을 적용하면 빈 문자열이 되어 checked_text가 ValueError를 냅니다. 요약 실패를 분류기의 문제로 기록하지 않도록 예외 메시지에 단계 이름을 넣습니다.</p>
 <p>이 예제는 오류를 예외로 알립니다. 실패 시 앞 단계 로그를 외부에 반환하는 구조까지 구현하지 않았습니다. 실제 운영 로그를 만들 때는 성공 단계와 실패 단계를 함께 보관하되 민감한 입력 전체를 무조건 저장하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>실패 조건</caption><thead><tr><th scope="col">발견 위치</th><th scope="col">처리</th></tr>
@@ -171,16 +171,27 @@ print(result[<span class="tok-string">"log"</span>][<span class="tok-number">1</
 <div class="cell-after"><p>두 번째 호출 기록의 input은 첫 호출이 만든 요약입니다. result의 answer는 세 번째 모의 호출이 돌려준 접수 안내입니다. 계정 조회나 환불을 실행한 기록은 없습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>단계 실행 함수</h3><div class="prose"><p>step은 단계 이름과 입력을 받아 호출하고 결과를 검사합니다. 입력과 출력, 시간을 log에 함께 남기므로 어느 단계에서 문제가 생겼는지 읽을 수 있습니다. 이번 실습은 가상 문의만 로그에 남깁니다. 실제 서비스에서는 개인정보가 로그에 남지 않도록 범위와 보관 규칙을 정해야 합니다.</p>
+<span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>단계 실행 함수</h3><div class="prose"><p>정상 실행에서는 log[0]의 output이 log[1]의 input에 전달됩니다. 시간은 호출 전후의 차이를 소수 셋째 자리까지 반올림한 값이어서, 고정 응답처럼 빠른 함수는 0.0초로 기록될 수 있습니다.</p>
 <p>run_workflow의 call 인자는 모델 호출을 담당하는 함수입니다. 기본 실행은 mock_call을 전달합니다. 이처럼 호출 경계를 분리하면 인터넷 없이도 연결 순서와 실패 경로를 검사할 수 있습니다.</p>
 </div></div>
 
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="practice-recheck">과제 06 · 작성 호출에 전달된 요약 검사</h3><div class="cell-before"><p>result의 실행 기록에서 작성 단계가 받은 JSON 문자열을 꺼내세요. 그 안의 summary가 첫 호출의 출력과 같은지 확인합니다. summary 자체를 빼먹은 기록은 False로 판정하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="practice-recheck-starter" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-starter">import json
+
+def summary_arrived(log):
+    # 작성 단계의 입력을 읽어 요약이 전달되었는지 확인하세요.
+    pass</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="practice-recheck-answer" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-answer">import json
+
+def summary_arrived(log):
+    write_input = json.loads(log[2]["input"])
+    return write_input.get("summary") == log[0]["output"]
+
+print(summary_arrived(result["log"]))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div><div class="cell-after"><p>세 번째 호출의 input은 문자열이어서 먼저 JSON을 해석합니다. 로그를 복사해 그 입력을 {&quot;category&quot;:&quot;billing&quot;}로 바꾸면 get이 None을 돌려주고 비교 결과는 False가 됩니다.</p></div></details></article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>분류가 허용 목록에 없는 payment라면 어느 단계에서 중단해야 할까요? 작성 입력을 만들기 전에 category를 검사한 위치를 찾아 보세요. 세 번의 호출이 항상 같은 순서인 이 방식에서 다음 장은 분류별로 다른 경로를 고릅니다.</p>
+<div class="prose"><p>분류 대역이 payment를 돌려주면 run_workflow는 작성용 JSON을 만들기 전에 ValueError를 냅니다. 이 검사는 billing·technical·clarify라는 세 문자열만 허용한다는 규칙을 코드에서 보장합니다.</p>
 </div>
 </section>
 

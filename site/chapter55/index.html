@@ -72,7 +72,7 @@ print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'lo
 <h2>대화 기록에서 도구 호출 수 집계</h2>
 </div>
 </header>
-<p>프레임워크 예제 manual_conversion.py에서는 같은 두 함수를 create_agent에 등록하고 invoke로 질문을 넘깁니다. 도구 요청이 오면 프레임워크가 해당 함수를 부르고 결과를 돌려줍니다. 마지막 문장을 쓸 때도 모델이 한 번 더 응답합니다. 여기서는 기존 대본 모델 실행에서 기록한 순서를 읽습니다.</p>
+<p>먼저 제공된 메시지 유형 목록에서 ai와 tool을 따로 셉니다. 뒤의 셀 06에서는 두 함수를 create_agent에 등록해 실제 ToolMessage의 이름·ID·반환값을 읽습니다.</p>
 <!-- MOTION unpaired-return -->
 
 <!-- END MOTION -->
@@ -86,7 +86,7 @@ print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'lo
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">roles = [<span class="tok-string">"human"</span>, <span class="tok-string">"ai"</span>, <span class="tok-string">"tool"</span>, <span class="tok-string">"ai"</span>, <span class="tok-string">"tool"</span>, <span class="tok-string">"ai"</span>]
 print(roles.count(<span class="tok-string">"tool"</span>), roles.count(<span class="tok-string">"ai"</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 3</pre></div>
-<div class="cell-after"><p>2 3이 보입니다. 두 번의 도구 요청에 응답한 뒤 세 번째 모델 메시지가 최종 문장을 냈습니다. 이 기록은 고정 대본의 호출 횟수를 보여 주며 외부 모델 요금은 측정하지 않았습니다.</p>
+<div class="cell-after"><p>첫 값 2는 도구 결과 메시지 수이고 둘째 값 3은 AI 메시지 수입니다. 이 목록에서는 각 AI 요청이 도구 하나만 부릅니다. 한 AI 메시지가 여러 도구를 요청할 수도 있으므로 메시지 수를 항상 호출 수로 간주할 수는 없습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="comparison"></span><div class="lesson-explanation" id="reading-comparison"><h3>역할별 메시지 세기</h3><p>roles에서 ai는 세 번, tool은 두 번 나타납니다. 마지막 ai는 두 도구의 결과를 받은 뒤 답변만 쓰기 때문에 ToolMessage가 하나 더 생기지 않습니다.</p></div>
@@ -182,8 +182,12 @@ c2 14</pre></div>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>운영 시간 문장 하나를 골라 함수의 반환값과 요청 ID를 거슬러 올라가세요. 56장에서는 이 왕복의 어느 지점에서 잘못된 값을 막을지 정합니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="7" data-task="1"><h3>과제 07 · 도구 결과에서 최종 답변에 쓰인 값 찾기</h3><div class="cell-before"><p>셀 06이 반환한 state에서 호출 ID가 c2인 도구 메시지를 찾아 도구 이름과 반환값을 출력하세요. 메시지의 위치는 실행 경로에 따라 달라질 수 있습니다.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># state["messages"]에서 tool_call_id가 "c2"인 도구 결과를 찾으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">for message in state["messages"]:
+    if message.type == "tool" and message.tool_call_id == "c2":
+        print(message.name, message.content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">get_loan_rule 14</pre></div><div class="cell-after"><p>c2가 가리키는 도구는 대출 규정을 조회했습니다. 마지막 AI 메시지의 문장을 바꾸더라도 이 ToolMessage에는 실행한 함수의 반환값이 남습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

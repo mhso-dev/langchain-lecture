@@ -42,7 +42,7 @@
 <span class="lesson-anchor" id="visual-inspect"></span>
 <!-- /lesson-visual visual-inspect -->
 
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="diagnose"></span><div class="lesson-explanation" id="reading-diagnose"><h3>요청에서 확인할 세 필드</h3><p>get_loan_rule 요청 한 건을 놓고 name과 call_id, arguments를 각각 읽어 보세요. 도구에 인자가 없어도 요청을 식별하는 ID는 필요합니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="diagnose"></span><span class="lesson-anchor" id="reading-diagnose"></span>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · arguments의 빈 JSON 객체</h3>
 <div class="cell-before"><p>겉보기에는 내용이 없어도 문자열을 풀었을 때 어떤 값이 남는지가 중요합니다.</p>
 </div>
@@ -153,7 +153,7 @@ print(allowed)</code></pre></figure>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="peer"></span><div class="lesson-explanation" id="reading-peer"><h3>재현 가능한 실패 로그</h3><div class="prose"><p>동료에게 비밀키나 가상환경 폴더를 주지 않습니다. 이번 기본 실행은 표준 라이브러리만 사용하므로 파일을 복사하고 같은 명령으로 실행할 수 있습니다. 동료의 운영체제에서 실행하지 않았다면 확인하지 않았다고 기록합니다.</p>
+<span class="lesson-anchor" id="peer"></span><div class="lesson-explanation" id="reading-peer"><h3>재현 가능한 실패 로그</h3><div class="prose"><p>실패 기록의 c1은 원래 요청으로 돌아갈 단서입니다. 실패 이유는 허용 목록에 없는 이름입니다. 원래 item을 덮어쓰지 않고 bad를 만들었으므로 두 요청을 나란히 놓고 name을 비교할 수 있습니다.</p>
 </div></div>
 
 </section>
@@ -161,11 +161,24 @@ print(allowed)</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>기본 과제에서 잘못된 요청이 도구 실행 전에 멈췄는지 확인하세요. 더 연습하려면 보충 자료의 검사 중 한 건만 골라 입력, 멈춘 단계, 도구 호출 여부를 적으세요. 보충 자료에 나온 14건은 서로 다른 사례를 찾아볼 때 씁니다.</p>
+<div class="prose"><p>입력 오류를 찾았으면 검증 결과와 실제 도구 호출 횟수를 함께 확인하세요. 아래 실습에서는 허용하지 않은 인자 때문에 실행 함수가 한 번도 불리지 않는 경우를 재현합니다.</p>
 </div>
 
-<span class="lesson-anchor" id="handoff"></span><div class="lesson-explanation" id="reading-handoff"><h3>검사할 데이터의 경계</h3><p>검사 함수는 전달받은 요청을 읽고 True 또는 False를 돌려줍니다. 요청 원본을 그대로 두면 어떤 필드 때문에 실행을 중단했는지 나중에도 같은 입력으로 대조할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 <span class="lesson-anchor" id="sources"></span><span class="lesson-anchor" id="reading-sources"></span>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="transfer-practice">과제 06 · 실행할 요청만 골라내는 입구 함수</h3><div class="cell-before"><p>과제 03의 validate_request를 완성한 뒤, 검증에 통과한 요청만 실행 함수로 넘기는 dispatch를 작성하세요. get_loan_rule에 인자 배열을 보낸 경우 실행 횟수도 확인합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">from unittest.mock import Mock
+lookup = Mock(return_value=14)
+request = {**item, "arguments": "[]"}
+# dispatch(request, lookup)의 반환값과 lookup.call_count를 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">from unittest.mock import Mock
+lookup = Mock(return_value=14)
+request = {**item, "arguments": "[]"}
+
+def dispatch(request, lookup):
+    if not validate_request(request):
+        return "거부"
+    return lookup()
+
+print(dispatch(request, lookup), lookup.call_count)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">거부 0</pre></div><div class="cell-after"><p>[]는 파싱 가능한 JSON이지만 이 도구가 허용하는 빈 객체와 다릅니다. 모의 함수의 호출 횟수 0이 검사 이후 실제로 실행을 건너뛰었다는 증거입니다.</p></div></details></article>
 </section>
 
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>

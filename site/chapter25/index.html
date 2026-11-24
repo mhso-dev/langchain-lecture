@@ -86,7 +86,7 @@ print(hits[<span class="tok-number">0</span>][<span class="tok-string">"text"</s
 <!-- /lesson-visual detail-repair -->
 
 <span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>문맥 생성 함수 구현</h3><div class="prose"><p>prepare_inputs는 질문과 문서 목록을 받아 LCEL 입력을 만듭니다. 질문 양끝 공백을 제거하고, 비어 있거나 문자열이 아니면 ValueError로 멈춥니다. 문서 목록도 검사한 뒤 빈 목록이면 None을 반환합니다. 정상 결과에는 question과 context 두 키만 둡니다.</p>
-<p>문서의 id·text·source는 비어 있지 않은 문자열, page는 1 이상의 정수여야 합니다. bool 페이지·중복 ID·대괄호가 섞인 ID는 거부합니다. team-01:p-01처럼 콜론이 들어간 ID는 허용합니다. 이런 세부 검사는 23장의 제공 validate_request/validate_documents를 재사용할 수 있습니다.</p>
+<p>셀 03에서 정의한 validate_documents를 그대로 사용하세요. page=0인 자료는 쪽 번호 검사에서 멈추고 같은 ID가 두 번 들어오면 중복 검사에서 멈춥니다. 잘못된 문서가 문맥에 들어가는 일을 이 단계에서 막습니다.</p>
 <p>문맥은 format_context와 같은 순서와 줄바꿈을 사용합니다. 임의로 출처를 채우거나 문서 본문을 줄여 다른 근거를 만들지 않습니다. 오늘의 구현 과제는 검증·빈 근거·정상 입력의 흐름을 연결하는 것입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>계약</caption><thead><tr><th scope="col">입력</th><th scope="col">결과</th></tr>
@@ -146,7 +146,7 @@ bad_page = {**hits[<span class="tok-number">0</span>], <span class="tok-string">
 <div class="cell-after"><p>‘페이지는 1 이상의 정수여야 합니다.’라는 문구가 나옵니다. 잘못된 원자료가 빈 검색 결과로 숨지 않았습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>오류 입력 하나로 쪽 번호 검사</h3><p>bad_page는 정상 휴관 문서의 page만 0으로 바꾼 입력입니다. 문서 검사가 ‘페이지는 1 이상의 정수여야 합니다.’를 돌려준다면 검색이나 모델 호출 없이도 잘못된 필드를 찾아낸 것입니다.</p></div>
+<span class="lesson-anchor" id="run"></span><span class="lesson-anchor" id="reading-run"></span>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · prepare_inputs()의 입력 계약</h3>
 <div class="cell-before"><p>질문 바깥 공백을 정리하고 문서 목록을 검사하세요. 유효한 빈 목록은 None으로, 근거가 있으면 question과 context가 있는 사전으로 돌려줍니다.</p>
@@ -182,8 +182,7 @@ print(prepared[<span class="tok-string">"context"</span>])</code></pre></figure>
 
 
 
-<span class="lesson-anchor" id="finish"></span><div class="lesson-explanation" id="reading-finish"><h3>오류 진단과 보충 기준</h3><div class="prose"><p>다음 26장에서는 함수가 값을 읽고 바꾸는 과정을 question·documents·answer 상태로 나타냅니다. 입문 예제는 documents를 문자열 목록으로 줄여 상태 갱신에 집중하고, 30장에서 출처 객체 목록으로 돌아오는 이유를 설명합니다. 지금의 원문과 출처를 지우거나 모든 계약이 곧바로 같다고 가정하는 과제가 아닙니다.</p>
-</div></div>
+<span class="lesson-anchor" id="finish"></span><span class="lesson-anchor" id="reading-finish"></span>
 <figure class="execution-trace" id="workflow-baseline-evidence"><h3>검색 실패와 올바른 문서를 직접 넣은 결과 구분</h3><figcaption id="workflow-baseline-evidence-caption">같은 dev-02 질문에서 첫 검색 후보와 기대 근거를 대조합니다. 올바른 문서를 손으로 넣어 본 성공은 실제 검색기를 고쳤다는 증거와 구별합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기준 질문</strong> · expected_document_ids = [library-2]</li><li><strong>기존 후보</strong> · retrieved[0].id = library-1</li><li><strong>ID 대조</strong> · 기대 ID 포함 여부 = False</li><li><strong>기대 문서</strong> · hits[0]의 ID / 쪽 = library-2 / 2</li><li><strong>기록</strong> · 기대 문서의 본문 = 도서관은 월요일에 휴관합니다.</li></ol></figure>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 고정 입력의 회귀 결과 기록</h3>
 <div class="cell-before"><p>hits에 실제로 들었던 ID와 쪽을 읽어 교정 전 자료의 ID와 함께 출력하세요.</p>
@@ -197,7 +196,7 @@ print(<span class="tok-string">"기대 원문과 대조한 ID:"</span>, hits[<sp
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="peer"></span><div class="lesson-explanation" id="reading-peer"><h3>재현 입력과 실행 안내</h3><div class="prose"><p>동료가 실제로 실행하지 않았다면 문서 검토만 했다고 기록합니다. 자신의 컴퓨터에서 실행된 결과를 다른 운영체제 검증으로 바꾸어 쓰지 않습니다.</p>
+<span class="lesson-anchor" id="peer"></span><div class="lesson-explanation" id="reading-peer"><h3>재현 입력과 실행 안내</h3><div class="prose"><p>dev-02에 남길 값은 질문, 기대 ID인 library-2, 실제 검색 ID, 입력한 문맥입니다. 검색 결과를 library-2로 직접 바꾼 실험은 문제가 검색 뒤에도 남는지 좁혀 볼 때 씁니다.</p>
 </div></div>
 
 </section>
@@ -207,6 +206,12 @@ print(<span class="tok-string">"기대 원문과 대조한 ID:"</span>, hits[<sp
 </header>
 <div class="prose"><p>질문이 비었을 때, 출처가 없을 때, 검색 결과가 비었을 때 중 하나를 골라 진단해 보세요. 다음 장에서 상태에 결과를 담더라도 오류와 빈 목록을 구분하는 원칙은 그대로입니다.</p>
 </div>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="transfer-practice">과제 06 · 빈 결과와 손상된 자료 나누기</h3><div class="cell-before"><p>과제 04에서 작성한 prepare_inputs를 사용합니다. 검색에 성공했지만 후보가 없는 경우와, 후보의 쪽 번호가 잘못된 경우를 나누어 처리하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start"># 빈 목록의 반환값과 page가 0인 문서의 예외 메시지를 각각 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">print(prepare_inputs(case["question"], []))
+try:
+    prepare_inputs(case["question"], [bad_page])
+except DataContractError as error:
+    print(error)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None
+페이지는 1 이상의 정수여야 합니다.</pre></div><div class="cell-after"><p>첫 호출은 생성할 문맥이 없어 끝났습니다. 둘째 호출은 문서를 받았는데 쪽 번호를 쓸 수 없어 멈췄습니다. 두 경우 모두 “검색 결과가 없습니다”라고 기록하면 어느 데이터를 고쳐야 할지 알 수 없습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

@@ -142,19 +142,8 @@ print(context)</code></pre></figure>
 <span class="lesson-anchor" id="connect"></span><div class="lesson-explanation" id="reading-connect"><h3>검색 단계와 생성 단계</h3><div class="prose"><p>RAG는 검색한 근거를 질문과 함께 모델 입력에 넣어 답변을 생성합니다. 검색과 생성을 나누어 관찰하면 어느 단계의 문제인지 찾기 쉽습니다.</p>
 <p>search(question, k)는 23장의 네 필드 문서 목록을 반환합니다. 기본 실행은 같은 교육용 벡터를 계산하는 로컬 검색과 고정 응답 모델입니다. prompt | model | parser는 실제 LCEL 라이브러리로 연결하지만 외부 LLM에 요청하지 않습니다.</p>
 </div>
-<div class="worked-case" id="flow-8"><h3>첫 RAG의 실행 순서</h3>
-<p>검색은 교육용 로컬 계산, 모델은 고정 응답입니다. 연결에는 실제 LCEL을 사용합니다.</p>
-<div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">검색 결과</th><th scope="col">이후 실행</th></tr>
-</thead><tbody><tr><td>[]</td><td>no_evidence 반환 · 생성 0회 · 종료</td></tr>
-<tr><td>library-2</td><td>본문과 ID를 문맥에 넣어 답변 생성</td></tr>
-</tbody></table></div>
-<article id="flow-8-step-0"><small>STEP 01 · Retriever</small><h4>관련 문서 반환</h4>
-<p>id·text·source·page를 유지합니다.</p><pre>휴관 요일은 언제인가요? → library-2</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>빈 검색 결과 판정</h4>
-<p>빈 목록이면 생성하지 않습니다.</p><pre>[] → 여기서 종료
-문서 있음 → 다음 단계</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>출처와 본문 포매팅</h4>
-<p>질문과 근거를 별도로 넣습니다.</p><pre>context + question</pre></article><article id="flow-8-step-3"><small>STEP 04 · LCEL</small><h4>답변 문자열 반환</h4>
-<p>인용 id를 검색 결과와 대조합니다.</p><pre>월요일 휴관 · 출처 [library-2]</pre></article></div></div>
-<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>고정 모델을 이용해 연결 확인하기</h3><p>FakeListChatModel은 준비된 휴관 안내를 돌려줍니다. 질문·문맥·파서를 연결해 최종 문자열이 나오는지 시험할 수 있습니다. 고정 응답을 사용했으므로 다른 질문에 답하는 능력까지 평가한 결과는 아닙니다.</p></div>
+<span class="lesson-anchor" id="flow-8"></span><span class="lesson-anchor" id="flow-8-step-0"></span><span class="lesson-anchor" id="flow-8-step-1"></span><span class="lesson-anchor" id="flow-8-step-2"></span><span class="lesson-anchor" id="flow-8-step-3"></span></div>
+<span class="lesson-anchor" id="run"></span><span class="lesson-anchor" id="reading-run"></span>
 
 </section>
 <section id="nb-citation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -263,15 +252,24 @@ print(unanswered[<span class="tok-string">"status"</span>], unanswered[<span cla
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="empty"></span><div class="lesson-explanation" id="reading-empty"><h3>빈 문서 목록에서 생성 생략</h3><p>answer_question은 문서 검증 직후 docs가 비었는지 확인합니다. 빈 목록이면 no_evidence와 빈 sources를 바로 반환해 generation_calls가 0이 됩니다. 검색 함수가 예외를 낸 상황과는 다른 경로입니다.</p></div>
+<span class="lesson-anchor" id="empty"></span><span class="lesson-anchor" id="reading-empty"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>본문 ‘월요일’을 ‘화요일’로만 바꾼 고정 답변을 넣으면 ID 검사가 무엇을 놓칠까요? 원문과 답 문장을 사람이 대조해야 하는 이유를 이 한 건으로 설명할 수 있습니다.</p>
+<div class="prose"><p>인용된 ID가 검색 목록에 있는지는 코드가 검사합니다. 그 ID의 원문이 실제로 답을 뒷받침하는지는 아래에서 요일 하나만 바꿔 확인하세요.</p>
 </div>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="transfer-practice">과제 06 · 실제 출처를 달고도 틀린 답 찾기</h3><div class="cell-before"><p>월요일 휴관 원문을 검색한 상태에서 “화요일”이라고 답하는 생성 함수를 넣으세요. answer_question이 돌려준 상태와 원문·답변을 차례로 출력합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start"># search_closed와 answer_question을 재사용하세요. 원래 문서의 ID는 유지합니다.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">def wrong_day(question, context):
+    return "도서관은 화요일에 휴관합니다. [library-2]"
+
+result = answer_question(citation_question, search_closed, wrong_day, k=1)
+print(result["status"])
+print(result["sources"][0]["text"])
+print(result["answer"])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">answered
+도서관은 월요일에 휴관합니다.
+도서관은 화요일에 휴관합니다. [library-2]</pre></div><div class="cell-after"><p>ID 검사에는 통과했습니다. 원문과 답의 요일이 다르다는 오류는 답변 문장을 근거 문장과 대조해야 발견됩니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>

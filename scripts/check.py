@@ -13,6 +13,8 @@ class Page(HTMLParser):
     def __init__(self):
         super().__init__()
         self.ids = set()
+        self.duplicate_ids = set()
+        self.copy_targets = set()
         self.links = []
         self.notebooks = []
         self.simulations = []
@@ -28,7 +30,11 @@ class Page(HTMLParser):
         if tag == "details" and not {"notebook-answer", "checkpoint"}.intersection(attrs.get("class", "").split()):
             self.closed_lesson_blocks.append(attrs.get("id", attrs.get("class", "details")))
         if "id" in attrs:
+            if attrs["id"] in self.ids:
+                self.duplicate_ids.add(attrs["id"])
             self.ids.add(attrs["id"])
+        if "data-copy" in attrs:
+            self.copy_targets.add(attrs["data-copy"])
         for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still", "data-sheet", "data-page-image"):
             value = attrs.get(key)
             if not value or value.startswith("data:"):
@@ -64,6 +70,10 @@ def main():
         pages[path] = page
     for path, page in pages.items():
         errors.extend(f"{path.relative_to(ROOT)}: {error}" for error in page.clip_playback_errors)
+        for key in sorted(page.copy_targets - page.ids):
+            errors.append(f"{path.relative_to(ROOT)} 코드 복사 대상 누락: {key}")
+        for key in sorted(page.duplicate_ids):
+            errors.append(f"{path.relative_to(ROOT)} 중복 앵커: {key}")
         for link in page.links:
             url = urlsplit(link)
             if url.scheme or url.netloc:

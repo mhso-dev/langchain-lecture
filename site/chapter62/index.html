@@ -78,7 +78,7 @@ hours = {<span class="tok-string">"weekday"</span>: <span class="tok-string">"09
     result = <span class="tok-keyword">await</span> lookup.ainvoke({<span class="tok-string">"day"</span>: <span class="tok-string">"weekend"</span>})
 print(result)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
-<div class="cell-after"><p>LangChain 도구가 반환한 10:00~16:00은 MCP 서버의 시간표 값입니다. 세션을 닫은 뒤 도구만 보관하면 요청 경로가 끊어집니다. 실제 에이전트는 도구를 등록한 뒤에도 세션이 열린 동안 실행해야 합니다.</p>
+<div class="cell-after"><p>lookup은 생성될 때 전달받은 session으로 get_library_hours를 호출합니다. 따라서 에이전트의 실행까지 async with 블록 안에서 마쳐야 같은 연결로 결과를 받을 수 있습니다.</p>
 </div>
 <p id="example-analysis">주말 시간 문자열이 돌아왔어도 어느 경로에서 얻었는지 구분해야 합니다. 여기서는 LangChain 쪽 도구 호출이 MCP 서버의 함수를 거칩니다. 연결 코드를 수정한 뒤에는 사람이 읽는 시간뿐 아니라 요청한 요일과 응답의 요일도 대조합니다.</p>
 </article>
@@ -118,7 +118,7 @@ requested = <span class="tok-string">'weekend'</span>
 requested = <span class="tok-string">'weekend'</span>
 print(received[<span class="tok-string">'day'</span>] == requested)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>False입니다. 이 값을 정상 운영 시간으로 보여 주기 전에 중단해야 합니다. 이미 닫힌 연결을 사용한 경우와 서버가 오류를 보낸 경우, 응답 내용이 요청과 다른 경우를 구분하세요.</p>
+<div class="cell-after"><p>요일 비교 결과는 False입니다. 서버가 반환한 값 자체는 ‘09:00~18:00’으로 정상처럼 보이지만 주말 요청에는 쓸 수 없습니다. make_lookup에서 이 경우에 해당하는 오류 이름은 result_day_mismatch입니다.</p>
 </div>
 </details>
 </article>
@@ -171,8 +171,26 @@ model = DemoModel(responses=[
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>같은 평일 질문을 Python 함수와 MCP를 연결한 LangChain 도구에 한 번씩 전달해 시간을 비교해 보세요. 속도 비교가 필요하면 네트워크가 있는 실제 주소에서 따로 측정해야 합니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 서버가 다른 요일을 보냈을 때 거절하기</h3><div class="cell-before"><p>주말 조회에 평일 값을 돌려주는 응답을 재현하세요. 아래 대역은 네트워크 없이 그 응답만 전달합니다. make_lookup의 요일 검사에서 어떤 오류가 발생하는지 확인하세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">from types import SimpleNamespace
+
+class WrongDaySession:
+    async def call_tool(self, name, arguments):
+        return SimpleNamespace(isError=False, structuredContent={"day": "weekday", "hours": "09:00~18:00"})
+
+# make_lookup(WrongDaySession())에 주말을 요청하고 ValueError를 확인하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">from types import SimpleNamespace
+
+class WrongDaySession:
+    async def call_tool(self, name, arguments):
+        return SimpleNamespace(isError=False, structuredContent={"day": "weekday", "hours": "09:00~18:00"})
+
+lookup_wrong_day = make_lookup(WrongDaySession())
+try:
+    await lookup_wrong_day.ainvoke({"day": "weekend"})
+except ValueError as error:
+    print(error)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">result_day_mismatch</pre></div><div class="cell-after"><p>응답에는 정상적인 시간 문자열이 들어 있지만 요청은 주말이고 응답은 평일입니다. 이 검사를 빼면 에이전트는 평일 시간을 주말 답으로 받습니다. 이 과제는 어댑터의 오류 분기만 실행하며 MCP 연결은 앞선 셀에서 확인합니다.</p></div></details></article>
 </section>
 
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
