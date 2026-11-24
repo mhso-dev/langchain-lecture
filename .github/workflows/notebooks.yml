@@ -1,0 +1,68 @@
+name: 교재 실행 검증
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/run_chapters.py'
+      - '.github/workflows/notebooks.yml'
+      - 'daily-labs/**'
+permissions:
+  contents: read
+jobs:
+  chapters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [lessons, containers, rerank]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: course
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: course
+      PGDATABASE: postgres
+      HK_COURSE_USE_POSTGRES: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+      ANONYMIZED_TELEMETRY: 'false'
+      LANGSMITH_TRACING: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node scripts/build.mjs
+      - name: 공통 커널과 단원별 환경
+        run: |
+          python -m pip install --quiet pypdf pyyaml jsonschema fastapi httpx
+          case "${{ matrix.group }}" in
+            lessons)
+              python -m pip install --quiet 'langchain>=1,<2' 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
+              psql -v ON_ERROR_STOP=1 -c "CREATE TABLE course_users(id text PRIMARY KEY,display_name text); CREATE TABLE course_turns(id int PRIMARY KEY, owner text); INSERT INTO course_users VALUES ('alice','학습자 A'),('bob','학습자 B'); INSERT INTO course_turns VALUES (1,'alice'),(2,'alice'),(3,'bob');"
+              echo 'DAYS=14 15 16 20 22 23 24 25 30 31 32 35 36 37 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77' >> "$GITHUB_ENV"
+              ;;
+            containers)
+              docker pull python:3.12-slim
+              docker pull pgvector/pgvector:pg16
+              echo 'DAYS=71 72' >> "$GITHUB_ENV"
+              ;;
+            rerank)
+              python -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+              python -m pip install --quiet sentence-transformers
+              python -c "from huggingface_hub import snapshot_download; print('COURSE_MODEL_DIR='+snapshot_download('BAAI/bge-reranker-v2-m3',allow_patterns=['*.json','*.model','*.safetensors','tokenizer*']))" >> "$GITHUB_ENV"
+              echo 'DAYS=38' >> "$GITHUB_ENV"
+              ;;
+          esac
+      - run: python scripts/run_chapters.py --full --out execution $DAYS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-output-${{ matrix.group }}
+          path: execution
