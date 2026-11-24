@@ -1,72 +1,66 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>문제·사용자·범위 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>RAG 프로젝트의 문제 정의와 수용 기준 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 43 / MIDTERM PROJECT</p>
-<span class="sidebar-title">문제·사용자·범위 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-scope-brief"><span>02</span>운영 안내에서 어디까지 답할까요?</a><a href="#nb-roles"><span>03</span>문서를 고른 사람과 답을 검토할 사람 정하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">RAG 프로젝트의 문제 정의와 수용 기준</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-scope-brief"><span>02</span>답변 범위와 예외 질문</a><a href="#nb-roles"><span>03</span>자료 선정과 검토 역할</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 43 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>문제·사용자·범위 · 방향과 예시</h1>
+<h1>RAG 프로젝트의 문제 정의와 수용 기준</h1>
 <p class="hero-description">가상 과정에 처음 온 수강생이 과제를 어디에 내야 하는지 묻습니다. 안내 화면은 과제함 위치와 제출 뒤 확인할 일을 알려 줍니다. 중간 프로젝트의 범위를 이처럼 한 사용자가 겪는 일 한 가지로 줄여 봅니다. 이후 52장까지 같은 course-guide-v1 문서를 씁니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter43.ipynb" download="chapter43.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>43장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-scope-brief" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>운영 안내에서 어디까지 답할까요?</h2>
+<h2>답변 범위와 예외 질문</h2>
 </div>
 </header>
-<p>운영 안내에서 어디까지 답할까요?</p>
+<p class="concept-intro">수용 기준은 서비스가 특정 입력을 받았을 때 어떤 결과를 내면 되는지 적은 조건입니다. 범위 밖의 질문에서 기대하는 동작까지 정합니다.</p><p>운영 안내에서 어디까지 답할까요?</p>
 <!-- MOTION answer-territory -->
-<figure class="motion-study" id="motion-answer-territory" data-sheet="motion/answer-territory.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>운영 안내로 내 점수까지 알 수 있을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/answer-territory-still.webp" width="800" height="272" alt="과제 제출 위치는 안내 문서 안에 있습니다. 개인 점수는 이 자료에 없어 숫자를 만들어 답할 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>과제 제출 위치는 안내 문서 안에 있습니다. 개인 점수는 이 자료에 없어 숫자를 만들어 답할 수 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 <div class="prose"><p>기획서 예시｜대상은 과정에 처음 참여한 수강생입니다. “과제는 어디에 내나요?”라는 질문에 과제함 위치와 제출 뒤 확인할 일을 알려 줍니다. 근거는 교육용 가상 운영 안내의 해당 문단입니다. 실제 제출 처리, 개인 성적 조회, 외부 문서 수집은 범위에서 뺍니다.</p>
 <p>팀은 일정 안내만 다룰 수도 있습니다. 그러면 과제 문의가 들어왔을 때 어디로 안내할지 범위 밖 응답까지 한 쌍으로 정하세요.</p>
 </div>
-<div class="learn-detail"><h4>같은 안내문으로 두 질문의 수용 기준 정하기</h4>
+<div class="learn-detail"><h4>범위 안팎 질문의 수용 기준 비교</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">질문</th><th scope="col">사용자가 받아야 할 안내</th><th scope="col">대조할 원문</th></tr>
 </thead><tbody><tr><td>A1 · 과제는 어디에 내나요?</td><td>학습 관리 페이지의 과제함에 제출하고 파일 이름과 등록 시간을 확인합니다.</td><td>과정 운영 안내 1쪽 · 과제 제출 문단</td></tr>
 <tr><td>A2 · 내 점수는 몇 점인가요?</td><td>제공 안내문으로 점수를 확인할 수 없다고 알립니다.</td><td>수강생 개인별 점수 근거 없음</td></tr>
 </tbody></table></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 수용 기준에서 예외 질문 확인하기</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 수용 기준과 범위 밖 질문</h3>
 <div class="cell-before"><p>제공 기획서에 적힌 A2를 읽어 보세요. 팀이 점수 조회를 구현하지 않아도 사용자가 볼 답은 정의할 수 있습니다.</p>
 <p>A1 · 정상 질문은 ‘과제는 어디에 내나요?’입니다. 운영 안내의 제출 절차 문단을 읽고 ‘학습 관리 페이지의 과제함’이라고 안내하면 됩니다. 이제 A2에서는 점수를 묻는 질문에 어떤 답을 멈춰야 하는지 정해 보세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">criterion = {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;A2&#x27;</span>,
- <span class="tok-string">&#x27;input&#x27;</span>: <span class="tok-string">&#x27;내 점수는 몇 점인가요?&#x27;</span>,
- <span class="tok-string">&#x27;expected&#x27;</span>: <span class="tok-string">&#x27;문서로 확인할 수 없음을 알리며 점수를 만들지 않는다.&#x27;</span>,
- <span class="tok-string">&#x27;evidence&#x27;</span>: <span class="tok-string">&#x27;답변과 검색 결과 기록&#x27;</span>}
-print(criterion[<span class="tok-string">&#x27;input&#x27;</span>], criterion[<span class="tok-string">&#x27;expected&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">criterion = {<span class="tok-string">'id'</span>: <span class="tok-string">'A2'</span>,
+ <span class="tok-string">'input'</span>: <span class="tok-string">'내 점수는 몇 점인가요?'</span>,
+ <span class="tok-string">'expected'</span>: <span class="tok-string">'문서로 확인할 수 없음을 알리며 점수를 만들지 않는다.'</span>,
+ <span class="tok-string">'evidence'</span>: <span class="tok-string">'답변과 검색 결과 기록'</span>}
+print(criterion[<span class="tok-string">'input'</span>], criterion[<span class="tok-string">'expected'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">내 점수는 몇 점인가요? 문서로 확인할 수 없음을 알리며 점수를 만들지 않는다.</pre></div>
 <div class="cell-after"><p>“내 점수는 몇 점인가요?”에 문서로 확인할 수 없다고 답합니다. 이 조건이면 팀은 개인 성적 데이터를 수집할 이유가 없습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-roles" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>문서를 고른 사람과 답을 검토할 사람 정하기</h2>
+<h2>자료 선정과 검토 역할</h2>
 </div>
 </header>
 <p>문서를 고른 사람과 답을 검토할 사람 정하기</p>
@@ -75,7 +69,7 @@ print(criterion[<span class="tok-string">&#x27;input&#x27;</span>], criterion[<s
 </div>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>자기 팀의 사용자가 처음 던질 질문을 적어 보세요. 자료에 답이 없다면 자료를 추가할지, 답변을 유보할지 먼저 결정합니다.</p>

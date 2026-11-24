@@ -1,70 +1,64 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>자료를 활용하고 결과를 검증하는 업무 흐름 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LLM 답변의 주장과 근거 검증 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 10 / VERIFICATION</p>
-<span class="sidebar-title">자료를 활용하고 결과를 검증하는 업무 흐름</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-evidence"><span>02</span>한 문장에 근거 한 곳 붙이기</a><a href="#nb-record"><span>03</span>미정과 근거 없음 구분하기</a><a href="#nb-approval"><span>04</span>게시 전에 담당자가 확인할 내용 정하기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a></nav>
+<span class="sidebar-title">LLM 답변의 주장과 근거 검증</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-evidence"><span>02</span>주장과 출처 문장 대응</a><a href="#nb-record"><span>03</span>근거 부재와 미확정 정보 구분</a><a href="#nb-approval"><span>04</span>게시 전 검토 기준과 인계</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>LLM 답변의 주장과 근거 검증 심화 읽기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 10 / VERIFICATION</span><span class="template-badge">학생용 교재</span></div>
-<h1>자료를 활용하고 결과를 검증하는 업무 흐름</h1>
+<h1>LLM 답변의 주장과 근거 검증</h1>
 <p class="hero-description">시민 도서관 행사를 알릴 문안에 ‘예약은 12월 1일부터’라는 문장이 들어왔습니다. 날짜를 잘못 공지하지 않으려면 초안에서 주장 하나를 꺼내 원문의 어느 줄이 뒷받침하는지 확인해야 합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 010 · 8H</span><span>8~9장 서비스 사용·프롬프트 기록·CSV</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter10.ipynb" download="chapter10.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>10장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-evidence" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>한 문장에 근거 한 곳 붙이기</h2>
+<h2>주장과 출처 문장 대응</h2>
 </div>
 </header>
-<p>가상 원문에 줄 번호를 매겨 두면 다른 사람이 어디를 확인해야 하는지 알 수 있습니다. 자료 이름까지 함께 남겨 같은 번호가 다른 문서를 가리키는 일을 막습니다.</p>
+<p class="concept-intro">답변을 검증할 때는 한 문장을 확인 가능한 주장으로 나누고 각 주장을 뒷받침하는 원문을 찾습니다.</p><p>가상 원문에 줄 번호를 매겨 두면 다른 사람이 어디를 확인해야 하는지 알 수 있습니다. 자료 이름까지 함께 남겨 같은 번호가 다른 문서를 가리키는 일을 막습니다.</p>
 <!-- MOTION seats-and-people -->
-<figure class="motion-study" id="motion-seats-and-people" data-sheet="motion/seats-and-people.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>성인 20명과 30석을 같은 숫자로 읽어도 될까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/seats-and-people-still.webp" width="800" height="272" alt="의자는 시설 자료의 좌석 수이고 점은 행사 안내에서 정한 모집 인원입니다. 같은 방을 가리켜도 두 숫자의 단위와 출처가 다릅니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>의자는 시설 자료의 좌석 수이고 점은 행사 안내에서 정한 모집 인원입니다. 같은 방을 가리켜도 두 숫자의 단위와 출처가 다릅니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 실제 정원 찾기</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 원문에서 정원 근거 추출</h3>
 <div class="cell-before"><p>원문 3행에서 학생이 확인할 수 있는 사실을 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">brief = <span class="tok-string">&quot;&quot;&quot;가상 시민 도서관 행사 안내 초안
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">brief = <span class="tok-string">"""가상 시민 도서관 행사 안내 초안
 독서 체험 행사는 12월 12일 14시에 시작하며 16시에 끝난다.
 참가 대상은 성인 20명이다. 참가비는 없다.
 행사장은 본관 2층 세미나실이다.
 예약 시작일과 신청 링크는 아직 정하지 않았다.
-담당자가 최종 확인하기 전에는 외부에 게시하지 않는다.&quot;&quot;&quot;</span>
+담당자가 최종 확인하기 전에는 외부에 게시하지 않는다."""</span>
 lines = brief.splitlines()
 print(lines[<span class="tok-number">2</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">참가 대상은 성인 20명이다. 참가비는 없다.</pre></div>
 <div class="cell-after"><p>성인 20명과 무료 참가비가 나옵니다. 원문의 줄 번호는 1부터, 리스트 인덱스는 0부터 세므로 3행을 읽을 때는 [2]를 씁니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 예약 날짜가 있다는 주장 대조하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 예약일 주장의 근거 검사</h3>
 <div class="cell-before"><p>초안이 ‘예약은 12월 1일부터’라고 했습니다. 신청 관련 원문을 직접 고릅니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">claim = <span class="tok-string">&quot;예약은 12월 1일부터&quot;</span>
-source_line = next(line <span class="tok-keyword">for</span> line <span class="tok-keyword">in</span> lines <span class="tok-keyword">if</span> <span class="tok-string">&quot;예약 시작일&quot;</span> <span class="tok-keyword">in</span> line)
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">claim = <span class="tok-string">"예약은 12월 1일부터"</span>
+source_line = next(line <span class="tok-keyword">for</span> line <span class="tok-keyword">in</span> lines <span class="tok-keyword">if</span> <span class="tok-string">"예약 시작일"</span> <span class="tok-keyword">in</span> line)
 print(source_line)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">예약 시작일과 신청 링크는 아직 정하지 않았다.</pre></div>
 <div class="cell-after"><p>시작일과 링크는 아직 정하지 않았습니다. 날짜를 지울 때는 예약 제도 자체까지 지우지 말고 확인된 상태를 밝혀 주세요.</p>
@@ -72,46 +66,40 @@ print(source_line)</code></pre></figure>
 </article>
 </section>
 <section id="nb-record" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>미정과 근거 없음 구분하기</h2>
+<h2>근거 부재와 미확정 정보 구분</h2>
 </div>
 </header>
 <p>‘예약 날짜는 미정이다’는 원문 상태를 전달하는 문장입니다. 반면 ‘12월 1일부터 예약 가능’은 이 자료에서 뒷받침할 수 없습니다. 같은 항목이어도 기록할 상태가 다릅니다.</p>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 근거가 확인된 사실 기록하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 검증된 사실과 출처 기록</h3>
 <div class="cell-before"><p>행사장의 위치를 claim, source, location, status로 기록하고 위치가 든 근거를 출력하세요.</p>
 <p>신청 링크 행은 두 칸으로 판단합니다. ‘원문 근거’에는 5행에서 링크 안내를 확인했다고 쓰고, ‘실제 URL’에는 아직 미정이라고 씁니다. 원문에 안내가 있다는 사실만으로 링크 주소를 채울 수는 없습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">row = {}
 <span class="tok-comment"># 행사장 위치 한 건을 기록하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">row = {<span class="tok-string">&quot;claim&quot;</span>: <span class="tok-string">&quot;본관 2층 세미나실&quot;</span>, <span class="tok-string">&quot;source&quot;</span>: <span class="tok-string">&quot;brief.txt&quot;</span>, <span class="tok-string">&quot;location&quot;</span>: <span class="tok-string">&quot;4행&quot;</span>, <span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;confirmed&quot;</span>}
-print(row[<span class="tok-string">&quot;location&quot;</span>], lines[<span class="tok-number">3</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">row = {<span class="tok-string">"claim"</span>: <span class="tok-string">"본관 2층 세미나실"</span>, <span class="tok-string">"source"</span>: <span class="tok-string">"brief.txt"</span>, <span class="tok-string">"location"</span>: <span class="tok-string">"4행"</span>, <span class="tok-string">"status"</span>: <span class="tok-string">"confirmed"</span>}
+print(row[<span class="tok-string">"location"</span>], lines[<span class="tok-number">3</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">4행 행사장은 본관 2층 세미나실이다.</pre></div>
 <div class="cell-after"><p>4행에서 건물, 층, 공간 이름을 모두 확인할 수 있습니다. 초안의 주장을 자료에서 찾지 못하면 그럴듯한 줄 번호를 채우지 않습니다.</p>
 </div>
 </details>
 </article>
-<div class="learn-detail"><h4>안내문과 시설 자료의 숫자 대조</h4>
-<figure class="demo-proof-wrap"><picture><source media="(prefers-reduced-motion:reduce)" srcset="../assets/media/png-74b817815fe939.png"><img class="demo-proof" alt="참가 대상 20명과 시설 좌석 30석은 서로 다른 사실입니다. 숫자가 가리키는 대상을 확인하세요." loading="lazy" src="../assets/media/svg-7b2ce52d77bf5e.svg"></picture><figcaption><div class="motion-note"><div><b>볼 곳</b><p>각 화면에서 ‘가상 행사 안내 · 참가 대상’와 ‘가상 시설 안내 · 본관 2층’에 표시되는 내용을 비교하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>참가 대상 20명과 시설 좌석 30석은 서로 다른 사실입니다. 숫자가 가리키는 대상을 확인하세요.</p>
-</div>
-</div>
-</figcaption>
-</figure>
-<div class="demo-panels"><div><small>가상 행사 안내 · 참가 대상</small><h4>성인 20명</h4>
+<div class="learn-detail"><h4>원문 간 수치의 대상 비교</h4>
+
+<div class="demo-panels"><div><small>가상 행사 안내 · 참가 대상</small><h4>모집 정원의 원문 근거</h4>
 <p>이번 행사에서 신청을 받는 인원</p>
 </div>
-<div><small>가상 시설 안내 · 본관 2층</small><h4>세미나실 30석</h4>
+<div><small>가상 시설 안내 · 본관 2층</small><h4>시설 수용 인원의 원문 근거</h4>
 <p>행사장에 설치된 좌석 수</p>
 </div>
 </div>
 <p>신청 인원을 안내하는 문장에는 어느 자료의 숫자가 들어가는지 짚어 보세요.</p>
 </div>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 다른 문서가 말하는 인원은 같은 숫자인가요?</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 문서 간 수치의 의미 비교</h3>
 <div class="cell-before"><p>아래 시설 카드도 수업용 가상 자료입니다. 세미나실에 30명이 앉을 수 있다는 문장을 읽고, 행사 정원을 30명으로 고칠 근거인지 판단하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">facility = {<span class="tok-string">&quot;자료&quot;</span>: <span class="tok-string">&quot;가상 시설 안내&quot;</span>, <span class="tok-string">&quot;위치&quot;</span>: <span class="tok-string">&quot;세미나실 항목&quot;</span>, <span class="tok-string">&quot;내용&quot;</span>: <span class="tok-string">&quot;본관 2층 세미나실 좌석은 30석이다.&quot;</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">facility = {<span class="tok-string">"자료"</span>: <span class="tok-string">"가상 시설 안내"</span>, <span class="tok-string">"위치"</span>: <span class="tok-string">"세미나실 항목"</span>, <span class="tok-string">"내용"</span>: <span class="tok-string">"본관 2층 세미나실 좌석은 30석이다."</span>}
 print(lines[<span class="tok-number">2</span>])
-print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre></figure>
+print(facility[<span class="tok-string">"내용"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">참가 대상은 성인 20명이다. 참가비는 없다.
 본관 2층 세미나실 좌석은 30석이다.</pre></div>
 <div class="cell-after"><p>20명은 이번 행사에서 받을 인원이고 30석은 방의 좌석 수입니다. 두 숫자를 비교하려면 먼저 항목이 같은지 확인해야 합니다. 출처를 한 건 더 찾았어도 정원을 바꿀 근거는 생기지 않았습니다.</p>
@@ -119,15 +107,15 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 </article>
 </section>
 <section id="nb-approval" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>게시 전에 담당자가 확인할 내용 정하기</h2>
+<h2>게시 전 검토 기준과 인계</h2>
 </div>
 </header>
 <p>초안을 정리한 일과 외부에 게시하기로 결정한 일은 별개입니다. 확인자가 읽을 문안에는 미정 정보, 원문 위치, 필요한 다음 행동을 짧게 담습니다. 개인정보가 있는 원본은 실습 서비스에 붙여넣지 않습니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 사람에게 넘길 문장 쓰기</h3>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 미확인 주장의 검토 요청</h3>
 <div class="cell-before"><p>신청일과 링크를 기다리는 담당자에게 지금 무엇을 확인해야 하는지 한 문장으로 써 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># 확정해야 할 항목과 근거 위치를 쓰세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">print(<span class="tok-string">&quot;brief.txt 5행의 예약 시작일과 신청 링크는 미정입니다. 게시 전 두 값을 담당자에게 확인해 주세요.&quot;</span>)</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">print(<span class="tok-string">"brief.txt 5행의 예약 시작일과 신청 링크는 미정입니다. 게시 전 두 값을 담당자에게 확인해 주세요."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">brief.txt 5행의 예약 시작일과 신청 링크는 미정입니다. 게시 전 두 값을 담당자에게 확인해 주세요.</pre></div>
 <div class="cell-after"><p>일정을 지어내지 않고 확인할 사람과 항목을 정했습니다. 브라우저 대화나 API로 초안을 얻더라도 게시 책임과 원문 확인 절차는 같습니다.</p>
 </div>
@@ -135,17 +123,17 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>‘성인 20명’, ‘12월 1일 예약’, ‘신청 링크 미정’을 다시 읽어 보세요. 확인된 숫자, 근거 없는 숫자, 원문이 밝힌 미정 상태를 각각 설명할 수 있으면 어떤 부분을 담당자에게 넘길지 판단할 수 있습니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>LLM 답변의 주장과 근거 검증 심화 읽기</h2>
 </div>
 </header>
-<span id="scope"></span><details class="reading-topic" id="reading-scope"><summary>자료를 보내기 전에 범위부터 확인하기</summary><div class="prose"><p>업무에서 LLM을 사용할 때 첫 단계는 모델을 고르는 일이 아니라 어떤 자료를 어떤 목적으로 처리할지 정하는 일입니다. 자료를 읽을 권한이 있다고 외부 서비스에 올릴 권한까지 생기는 것은 아닙니다.</p>
+<span id="scope"></span><details class="reading-topic" id="reading-scope"><summary>입력 자료의 공유 범위</summary><div class="prose"><p>업무에서 LLM을 사용할 때 첫 단계는 모델을 고르는 일이 아니라 어떤 자료를 어떤 목적으로 처리할지 정하는 일입니다. 자료를 읽을 권한이 있다고 외부 서비스에 올릴 권한까지 생기는 것은 아닙니다.</p>
 <p>오늘은 제공한 가상 도서관 안내만 사용합니다. 실제 기관 문서, 계약서, 고객 정보, 계정 비밀값은 사용하지 않습니다. 실제 업무에서는 조직의 규칙과 문서의 공개 범위를 확인하고, 불명확하면 업로드하지 않고 담당자에게 확인합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>입력 전 점검</caption><thead><tr><th scope="col">항목</th><th scope="col">이번 실습</th><th scope="col">실제 업무에서 확인할 것</th></tr>
@@ -155,7 +143,7 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 <tr><td>출력</td><td>검토용 문서</td><td>검토자·승인자·공개 대상</td></tr>
 </tbody></table></div>
 </details>
-<span id="claims"></span><details class="reading-topic" id="reading-claims"><summary>문장을 주장 단위로 나누기</summary><div class="prose"><p>“행사는 무료이며 12월 1일부터 예약할 수 있습니다”에는 비용과 예약 시작일이라는 두 주장이 있습니다. 비용에 근거가 있어도 날짜까지 맞는 것은 아닙니다. 문장을 작게 나누어 각각 어느 자료의 어느 위치에서 확인했는지 적습니다.</p>
+<span id="claims"></span><details class="reading-topic" id="reading-claims"><summary>문장 단위 주장 추출</summary><div class="prose"><p>“행사는 무료이며 12월 1일부터 예약할 수 있습니다”에는 비용과 예약 시작일이라는 두 주장이 있습니다. 비용에 근거가 있어도 날짜까지 맞는 것은 아닙니다. 문장을 작게 나누어 각각 어느 자료의 어느 위치에서 확인했는지 적습니다.</p>
 <p>출처 이름만 붙이는 것으로 검증은 끝나지 않습니다. 그 출처가 실제로 해당 주장을 뒷받침하는지 읽어야 합니다. 예를 들어 문서의 행사 날짜를 예약 시작일의 근거로 제시했다면 파일 이름은 맞아도 근거가 잘못 연결된 것입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>근거표의 예</caption><thead><tr><th scope="col">주장</th><th scope="col">근거</th><th scope="col">원문 확인</th><th scope="col">업무 값</th></tr>
@@ -164,12 +152,12 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 <tr><td>신청 링크는 미정</td><td>brief.txt 5행</td><td>5행에서 확인</td><td>실제 URL 미정</td></tr>
 </tbody></table></div>
 </details>
-<span id="image"></span><details class="reading-topic" id="reading-image"><summary>이미지에서 읽은 글자를 원본과 비교하기</summary><div class="prose"><p>이미지는 글자뿐 아니라 위치·색·도형을 함께 보여 줍니다. 작은 글씨, 흐린 사진, 표의 행과 열 때문에 내용이 잘못 읽힐 수 있습니다. 모델이 읽은 문장을 원본의 해당 영역과 나란히 비교하세요.</p>
+<span id="image"></span><details class="reading-topic" id="reading-image"><summary>이미지 판독 결과와 원문 대조</summary><div class="prose"><p>이미지는 글자뿐 아니라 위치·색·도형을 함께 보여 줍니다. 작은 글씨, 흐린 사진, 표의 행과 열 때문에 내용이 잘못 읽힐 수 있습니다. 모델이 읽은 문장을 원본의 해당 영역과 나란히 비교하세요.</p>
 <p>실습에서는 가상 안내문을 본인 컴퓨터에서 화면 캡처하거나 강사가 제공한 가상 포스터 이미지를 사용합니다. 개인정보가 보이는 바탕화면이나 다른 창이 캡처되지 않도록 범위를 먼저 확인합니다.</p>
 <p>첫 요청에서는 이미지를 바탕으로 문서를 새로 꾸미기보다 보이는 항목을 그대로 추출하도록 합니다. 읽을 수 없는 부분을 추측하지 말고 확인 필요라고 표시하도록 요청하세요. 정확한 숫자가 중요한 항목은 사람이 확대해서 다시 읽습니다.</p>
 </div>
 </details>
-<span id="search"></span><details class="reading-topic" id="reading-search"><summary>검색 결과와 실제 출처를 구분하기</summary><div class="prose"><p>검색 결과의 짧은 설명은 원문 전체가 아닙니다. 결과에 표시된 제목·날짜만 보고 사실을 확정하지 말고 연결된 페이지를 열어 해당 내용을 읽습니다. 검색 엔진이 보여 주는 날짜와 정책의 적용 날짜가 다를 수 있으므로 둘을 구분합니다.</p>
+<span id="search"></span><details class="reading-topic" id="reading-search"><summary>검색 결과와 1차 출처</summary><div class="prose"><p>검색 결과의 짧은 설명은 원문 전체가 아닙니다. 결과에 표시된 제목·날짜만 보고 사실을 확정하지 말고 연결된 페이지를 열어 해당 내용을 읽습니다. 검색 엔진이 보여 주는 날짜와 정책의 적용 날짜가 다를 수 있으므로 둘을 구분합니다.</p>
 <p>가상 행사 세부사항은 웹에서 확인할 수 없습니다. 검색 실습은 실제 사용하는 서비스의 공식 도움말에서 지원 파일 형식을 확인하는 별도 과제로 진행합니다. 가상 행사 날짜를 인터넷에서 찾으려 하지 않습니다.</p>
 <p>공식 문서 두 개가 다르게 보이면 최신 문서인지, 제품과 계정 유형이 같은지, 적용 지역이나 플랫폼이 같은지 확인합니다. 해결하지 못하면 어느 조건에서 충돌하는지를 기록하고 확정 표현을 보류합니다.</p>
 </div>
@@ -181,7 +169,7 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 <tr><td>다른 출처와 같나요?</td><td>같은 조건의 공식 안내 비교</td></tr>
 </tbody></table></div>
 </details>
-<span id="ui-api"></span><details class="reading-topic" id="reading-ui-api"><summary>대화 화면과 API는 다르게 준비하기</summary><div class="prose"><p>서비스 UI는 사람이 화면에서 입력하고 결과를 읽는 제품입니다. API는 프로그램이 정해진 요청 형식으로 외부 기능을 호출하는 접점입니다. UI에서 편리하게 제공되는 검색·파일·대화 기록이 API에서도 자동으로 같은 방식으로 제공된다고 가정하지 않습니다.</p>
+<span id="ui-api"></span><details class="reading-topic" id="reading-ui-api"><summary>대화 UI와 API 입력</summary><div class="prose"><p>서비스 UI는 사람이 화면에서 입력하고 결과를 읽는 제품입니다. API는 프로그램이 정해진 요청 형식으로 외부 기능을 호출하는 접점입니다. UI에서 편리하게 제공되는 검색·파일·대화 기록이 API에서도 자동으로 같은 방식으로 제공된다고 가정하지 않습니다.</p>
 <p>예를 들어 UI에서는 사용자가 파일을 선택하고 답변을 읽지만 프로그램에서는 어떤 입력을 보낼지, 응답을 어디에 저장할지, 오류와 사용량을 어떻게 처리할지를 코드로 정해야 합니다. API 사용 조건과 비용도 해당 서비스의 별도 안내를 확인해야 합니다. 오늘은 API 키를 발급하거나 결제하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>업무 단계 비교</caption><thead><tr><th scope="col">단계</th><th scope="col">사람이 쓰는 UI</th><th scope="col">프로그램의 API</th></tr>
@@ -192,24 +180,24 @@ print(facility[<span class="tok-string">&quot;내용&quot;</span>])</code></pre>
 <tr><td>후속 행동</td><td>사람이 승인 후 처리</td><td>명시적인 코드와 승인 조건 필요</td></tr>
 </tbody></table></div>
 </details>
-<span id="workflow"></span><details class="reading-topic" id="reading-workflow"><summary>검토와 전송을 분리한 절차 만들기</summary><div class="prose"><p>문서 작성과 외부 게시를 한 단계로 묶으면 잘못된 내용을 그대로 전송할 수 있습니다. 초안 생성, 근거 검사, 담당자 확인, 게시 여부 결정을 분리하면 누가 무엇을 확인해야 하는지 드러납니다.</p>
+<span id="workflow"></span><details class="reading-topic" id="reading-workflow"><summary>사람의 검토와 외부 전송 절차</summary><div class="prose"><p>문서 작성과 외부 게시를 한 단계로 묶으면 잘못된 내용을 그대로 전송할 수 있습니다. 초안 생성, 근거 검사, 담당자 확인, 게시 여부 결정을 분리하면 누가 무엇을 확인해야 하는지 드러납니다.</p>
 </div>
 <details class="case-reference" id="flow-8"><summary>안내문이 게시되기 전의 확인</summary>
 <p>설명용 흐름입니다. 실제 서비스 전송을 수행하지 않습니다.</p>
-<article id="flow-8-step-0"><small>STEP 01 · 사람</small><h4>자료와 목적 확인</h4>
-<p>업로드 가능한 가상 자료만 선택합니다.</p><pre>brief.txt</pre></article><article id="flow-8-step-1"><small>STEP 02 · 모델</small><h4>자료를 정리합니다</h4>
-<p>확정 정보와 미확정 정보를 구분합니다.</p><pre>draft</pre></article><article id="flow-8-step-2"><small>STEP 03 · 사람</small><h4>주장별 근거를 검사합니다</h4>
-<p>일정·대상·비용·장소를 원문과 비교합니다.</p><pre>evidence.csv · 주장과 근거를 나란히 적는 기록 예시</pre></article><article id="flow-8-step-3"><small>STEP 04 · 담당자</small><h4>미확정 정보를 확인합니다</h4>
+<article id="flow-8-step-0"><small>STEP 01 · 사람</small><h4>수치의 출처와 적용 범위</h4>
+<p>업로드 가능한 가상 자료만 선택합니다.</p><pre>brief.txt</pre></article><article id="flow-8-step-1"><small>STEP 02 · 모델</small><h4>검증할 자료의 선정</h4>
+<p>확정 정보와 미확정 정보를 구분합니다.</p><pre>draft</pre></article><article id="flow-8-step-2"><small>STEP 03 · 사람</small><h4>주장 단위의 근거 대조</h4>
+<p>일정·대상·비용·장소를 원문과 비교합니다.</p><pre>evidence.csv · 주장과 근거를 나란히 적는 기록 예시</pre></article><article id="flow-8-step-3"><small>STEP 04 · 담당자</small><h4>미확정 필드의 처리</h4>
 <p>확인 전에는 게시를 보류합니다.</p><pre>확인 대기: 예약 시작일 · 신청 링크</pre></article></details>
 <div class="prose"><p>이 코드는 사람이 입력한 상태를 읽습니다. confirmed라고 적었다고 실제 사실이 자동 검증된 것은 아닙니다. 원문 대조가 선행되어야 합니다.</p>
 </div>
 <div class="prose"><p>이 실습의 pending은 신청 링크 값이 업무상 미확정이라는 뜻입니다. “링크가 미정이다”라는 문장 자체는 brief.txt로 확인할 수 있습니다. 출처가 있는지와 업무 내용이 확정되었는지는 다른 질문이므로 검토 기록에 둘을 구분해 적으세요.</p>
 </div>
 </details>
-<span id="deliver"></span><details class="reading-topic" id="reading-deliver"><summary>검토 기록과 업무 절차 완성하기</summary><div class="prose"><p>다음 장에서는 이와 같은 입출력 관계를 Python SDK로 직접 관찰합니다. UI 기능을 그대로 복제하려 하지 말고 요청 하나와 응답 하나부터 확인합니다.</p>
+<span id="deliver"></span><details class="reading-topic" id="reading-deliver"><summary>검토 기록과 업무 흐름 문서화</summary><div class="prose"><p>다음 장에서는 이와 같은 입출력 관계를 Python SDK로 직접 관찰합니다. UI 기능을 그대로 복제하려 하지 말고 요청 하나와 응답 하나부터 확인합니다.</p>
 </div>
 </details>
-<span id="sources"></span><details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+<span id="sources"></span><details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
 </div>
 </details>
 </section>

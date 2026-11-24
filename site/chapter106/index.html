@@ -1,49 +1,49 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>전체 기능 연결 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>요청별 실행 추적과 저장 실패 진단 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 106 / FINAL PROJECT</p>
-<span class="sidebar-title">전체 기능 연결 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-trace"><span>02</span>질문 한 건을 저장까지 따라가기</a><a href="#nb-missing"><span>03</span>저장하지 못한 답의 인계</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">요청별 실행 추적과 저장 실패 진단</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-trace"><span>02</span>요청 ID로 처리 기록 연결</a><a href="#nb-missing"><span>03</span>부분 성공과 저장 실패 인계</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 106 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>전체 기능 연결 · 방향과 예시</h1>
+<h1>요청별 실행 추적과 저장 실패 진단</h1>
 <p class="hero-description">사용자는 질문을 한 번 보냈지만 팀원은 화면, 처리 함수, 저장소에서 서로 다른 행을 보고 있을 수 있습니다. 세 곳에서 같은 요청인지 확인한 뒤, 다시 읽은 값이 그 답과 일치하는지 봅니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter106.ipynb" download="chapter106.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>106장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-trace" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>질문 한 건을 저장까지 따라가기</h2>
+<h2>요청 ID로 처리 기록 연결</h2>
 </div>
 </header>
-<p>전 구간 기록 예시　소유자 alice / 세션 eval-v1:Q01 / 요청 eval-v1:Q01 / 질문 장비 A 점검 / 처리 완료 completed / 답 answered와 RULE-A / 저장 committed / 새 저장소 객체로 다시 읽은 현재 응답 일치. 두 ID 문자열이 같은 것은 이 검사 자료에서만 쓴 표기입니다. 제품에서는 한 세션에서 서로 다른 요청을 여러 개 보낼 수 있습니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 요청과 처리 기록 맞춰 읽기</h3>
+<p class="concept-intro">요청 ID를 따라가면 답변 생성과 저장이 각각 어디까지 끝났는지 추적할 수 있습니다. 단계가 일부만 성공한 경우도 같은 기록으로 인계합니다.</p><p>전 구간 기록 예시　소유자 alice / 세션 eval-v1:Q01 / 요청 eval-v1:Q01 / 질문 장비 A 점검 / 처리 완료 completed / 답 answered와 RULE-A / 저장 committed / 새 저장소 객체로 다시 읽은 현재 응답 일치. 두 ID 문자열이 같은 것은 이 검사 자료에서만 쓴 표기입니다. 제품에서는 한 세션에서 서로 다른 요청을 여러 개 보낼 수 있습니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 요청 ID로 처리 이벤트 대조</h3>
 <div class="cell-before"><p>Q01 실행 기록의 대응 필드들입니다. 처리 작업의 run_id를 현재 request_id와 대조해 봅니다.</p>
 <p>fresh_store_current_equal은 제공된 검사 기록의 판정입니다. 팀이 재현할 때는 저장 전 응답과 새 조회 응답에서 같은 턴의 답 문장과 출처 ID를 각각 꺼내 비교하고 그 결과를 적으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">trace = {<span class="tok-string">&#x27;session_id&#x27;</span>: <span class="tok-string">&#x27;eval-v1:Q01&#x27;</span>,
- <span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;eval-v1:Q01&#x27;</span>,
- <span class="tok-string">&#x27;run_id&#x27;</span>: <span class="tok-string">&#x27;eval-v1:Q01&#x27;</span>,
- <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;committed&#x27;</span>,
- <span class="tok-string">&#x27;fresh_store_current_equal&#x27;</span>: <span class="tok-keyword">True</span>}
-print(trace[<span class="tok-string">&quot;request_id&quot;</span>] == trace[<span class="tok-string">&quot;run_id&quot;</span>])
-print(trace[<span class="tok-string">&quot;storage_status&quot;</span>], trace[<span class="tok-string">&quot;fresh_store_current_equal&quot;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">trace = {<span class="tok-string">'session_id'</span>: <span class="tok-string">'eval-v1:Q01'</span>,
+ <span class="tok-string">'request_id'</span>: <span class="tok-string">'eval-v1:Q01'</span>,
+ <span class="tok-string">'run_id'</span>: <span class="tok-string">'eval-v1:Q01'</span>,
+ <span class="tok-string">'storage_status'</span>: <span class="tok-string">'committed'</span>,
+ <span class="tok-string">'fresh_store_current_equal'</span>: <span class="tok-keyword">True</span>}
+print(trace[<span class="tok-string">"request_id"</span>] == trace[<span class="tok-string">"run_id"</span>])
+print(trace[<span class="tok-string">"storage_status"</span>], trace[<span class="tok-string">"fresh_store_current_equal"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True
 committed True</pre></div>
 <div class="cell-after"><p>첫째 줄 True는 요청과 작업이 연결됨을 보여 줍니다. 둘째 줄의 committed와 True는 로컬 저장 성공 및 재조회 일치입니다. 저장 성공 표시만 있고 재조회 결과가 없으면 두 번째 사실은 아직 모릅니다.</p>
@@ -51,35 +51,29 @@ committed True</pre></div>
 </article>
 </section>
 <section id="nb-missing" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>저장하지 못한 답의 인계</h2>
+<h2>부분 성공과 저장 실패 인계</h2>
 </div>
 </header>
 <p>저장 실패 예시　요청 save_failure / 계산은 완료 / storage_status failed / 오류 storage_failure / 새로 읽은 답의 일치 여부 미관측. 화면은 사용자에게 계산한 답이 아직 저장되지 않았다고 알려야 합니다. 요청 ID를 받은 운영 담당자는 같은 시도의 저장 오류부터 확인할 수 있습니다.</p>
 <!-- MOTION two-indicators -->
-<figure class="motion-study" id="motion-two-indicators" data-sheet="motion/two-indicators.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>답은 있는데 저장에 실패한 요청은 어떻게 보일까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/two-indicators-still.webp" width="800" height="272" alt="계산 완료와 저장 완료를 두 표시등으로 봅니다. 저장 실패 사례에서는 답 계산 쪽만 켜지고 저장 완료 쪽은 켜지지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>계산 완료와 저장 완료를 두 표시등으로 봅니다. 저장 실패 사례에서는 답 계산 쪽만 켜지고 저장 완료 쪽은 켜지지 않습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패한 요청의 인계 줄 만들기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패 단계 인계</h3>
 <div class="cell-before"><p>로컬 실패 기록에서 운영 담당자에게 전달할 필드를 골라 보세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">incident = {<span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;save_failure&#x27;</span>,
- <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;failed&#x27;</span>,
- <span class="tok-string">&#x27;error&#x27;</span>: {<span class="tok-string">&#x27;code&#x27;</span>: <span class="tok-string">&#x27;storage_failure&#x27;</span>,
-           <span class="tok-string">&#x27;stage&#x27;</span>: <span class="tok-string">&#x27;session_commit&#x27;</span>,
-           <span class="tok-string">&#x27;error_type&#x27;</span>: <span class="tok-string">&#x27;OSError&#x27;</span>}}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">incident = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'save_failure'</span>,
+ <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
+ <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
+           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
+           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
 <span class="tok-comment"># 어떤 요청의 어느 단계에서 실패했는지 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">incident = {<span class="tok-string">&#x27;request_id&#x27;</span>: <span class="tok-string">&#x27;save_failure&#x27;</span>,
- <span class="tok-string">&#x27;storage_status&#x27;</span>: <span class="tok-string">&#x27;failed&#x27;</span>,
- <span class="tok-string">&#x27;error&#x27;</span>: {<span class="tok-string">&#x27;code&#x27;</span>: <span class="tok-string">&#x27;storage_failure&#x27;</span>,
-           <span class="tok-string">&#x27;stage&#x27;</span>: <span class="tok-string">&#x27;session_commit&#x27;</span>,
-           <span class="tok-string">&#x27;error_type&#x27;</span>: <span class="tok-string">&#x27;OSError&#x27;</span>}}
-print(incident[<span class="tok-string">&quot;request_id&quot;</span>], incident[<span class="tok-string">&quot;error&quot;</span>][<span class="tok-string">&quot;stage&quot;</span>], incident[<span class="tok-string">&quot;error&quot;</span>][<span class="tok-string">&quot;code&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">incident = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'save_failure'</span>,
+ <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
+ <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
+           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
+           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
+print(incident[<span class="tok-string">"request_id"</span>], incident[<span class="tok-string">"error"</span>][<span class="tok-string">"stage"</span>], incident[<span class="tok-string">"error"</span>][<span class="tok-string">"code"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">save_failure session_commit storage_failure</pre></div>
 <div class="cell-after"><p>save_failure, session_commit, storage_failure로 이어집니다. 원문 질문이나 민감한 본문 전체를 복사하지 않아도 해당 저장 시도를 좁혀 갈 수 있습니다. 두 True는 제공된 trace를 만든 실행에서 기록한 값입니다. 팀 DB에서도 확인했다면 새 연결에서 같은 ID로 읽은 값과 조회 시각을 별도로 남기세요.</p>
 </div>
@@ -87,7 +81,7 @@ print(incident[<span class="tok-string">&quot;request_id&quot;</span>], incident
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>베타 점검에는 정상 요청 한 건과 저장 실패 한 건을 가져가세요. 각각 어떤 소유자·세션·요청 ID의 기록인지 적어 둡니다. 이 예시는 교재의 로컬 Python·JSON 기록입니다. 실제 로그인·DB·HTTP·사용자 클릭은 별도 시험이 필요합니다.</p>

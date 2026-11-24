@@ -1,76 +1,70 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>베타 사용자 검증 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>베타 사용성 평가와 과업 성공률 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 107 / FINAL PROJECT</p>
-<span class="sidebar-title">베타 사용자 검증 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-task"><span>02</span>힌트를 주지 않고 한 과업 관찰하기</a><a href="#nb-notes"><span>03</span>관찰·해석·수정안을 세 줄로 건네기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">베타 사용성 평가와 과업 성공률</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-task"><span>02</span>도움 없이 완료한 과업의 판정</a><a href="#nb-notes"><span>03</span>관찰 사실과 수정 가설 기록</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 107 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>베타 사용자 검증 · 방향과 예시</h1>
+<h1>베타 사용성 평가와 과업 성공률</h1>
 <p class="hero-description">알파에서 바꾼 출처 표시가 처음 보는 동료에게도 읽히는지 확인할 차례입니다. 버튼을 눌렀다는 사실만으로는 과업을 끝냈는지 알 수 없습니다. 어느 절을 찾으면 성공인지 관찰 전에 정해 둡니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter107.ipynb" download="chapter107.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>107장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-task" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>힌트를 주지 않고 한 과업 관찰하기</h2>
+<h2>도움 없이 완료한 과업의 판정</h2>
 </div>
 </header>
-<p>가상 베타 기록　과업 “장비 A의 점검 전 확인사항을 찾고, 안내를 만든 원문 절을 알려 주세요.” 성공 조건은 표시등을 확인한다는 답과 2.1절을 스스로 찾는 것입니다. 예시 참여자 나-02는 답까지 읽었으나 “개정일은 어느 자료의 날짜인가요?”라고 물었습니다. 이 문장은 가상 발화입니다. 관찰자는 도움 요청을 적고, ‘출처 제목과 개정일을 한 묶음으로 보이게 한다’를 수정 후보로 남깁니다.</p>
+<p class="concept-intro">사용성 평가의 과업 성공률을 구하려면 관찰한 시도와 도움 없이 완료한 시도를 정의해야 합니다. 관찰하지 못한 값은 결과와 구분합니다.</p><p>가상 베타 기록　과업 “장비 A의 점검 전 확인사항을 찾고, 안내를 만든 원문 절을 알려 주세요.” 성공 조건은 표시등을 확인한다는 답과 2.1절을 스스로 찾는 것입니다. 예시 참여자 나-02는 답까지 읽었으나 “개정일은 어느 자료의 날짜인가요?”라고 물었습니다. 이 문장은 가상 발화입니다. 관찰자는 도움 요청을 적고, ‘출처 제목과 개정일을 한 묶음으로 보이게 한다’를 수정 후보로 남깁니다.</p>
 <!-- MOTION observed-attempts -->
-<figure class="motion-study" id="motion-observed-attempts" data-sheet="motion/observed-attempts.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>과업을 시작한 횟수와 성공한 횟수는 같을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/observed-attempts-still.webp" width="800" height="272" alt="가상 과업은 세 번 시작했고 한 번 성공했습니다. 시작한 세 건을 분모로 두어야 완료한 한 건의 뜻을 읽을 수 있습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>가상 과업은 세 번 시작했고 한 번 성공했습니다. 시작한 세 건을 분모로 두어야 완료한 한 건의 뜻을 읽을 수 있습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 성공률의 분모에 들어갈 시도 찾기</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 과업 성공률의 분모</h3>
 <div class="cell-before"><p>자료에 없는 실제 수강생 통계를 만들지 않도록 제공된 가상 네 시도만 사용합니다. 시작한 뒤 포기한 행은 분모에 남깁니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">attempts = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;SYN-01&#x27;</span>, <span class="tok-string">&#x27;outcome&#x27;</span>: <span class="tok-string">&#x27;success&#x27;</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;SYN-02&#x27;</span>, <span class="tok-string">&#x27;outcome&#x27;</span>: <span class="tok-string">&#x27;failed&#x27;</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;SYN-03&#x27;</span>, <span class="tok-string">&#x27;outcome&#x27;</span>: <span class="tok-string">&#x27;aborted&#x27;</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;SYN-04&#x27;</span>, <span class="tok-string">&#x27;outcome&#x27;</span>: <span class="tok-string">&#x27;not_started&#x27;</span>}]
-started = [row <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> attempts <span class="tok-keyword">if</span> row[<span class="tok-string">&quot;outcome&quot;</span>] != <span class="tok-string">&quot;not_started&quot;</span>]
-successes = sum(row[<span class="tok-string">&quot;outcome&quot;</span>] == <span class="tok-string">&quot;success&quot;</span> <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> started)
-print(f&quot;가상 과업 {len(started)}회 시작, {successes}회 성공&quot;)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">attempts = [{<span class="tok-string">'id'</span>: <span class="tok-string">'SYN-01'</span>, <span class="tok-string">'outcome'</span>: <span class="tok-string">'success'</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'SYN-02'</span>, <span class="tok-string">'outcome'</span>: <span class="tok-string">'failed'</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'SYN-03'</span>, <span class="tok-string">'outcome'</span>: <span class="tok-string">'aborted'</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'SYN-04'</span>, <span class="tok-string">'outcome'</span>: <span class="tok-string">'not_started'</span>}]
+started = [row <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> attempts <span class="tok-keyword">if</span> row[<span class="tok-string">"outcome"</span>] != <span class="tok-string">"not_started"</span>]
+successes = sum(row[<span class="tok-string">"outcome"</span>] == <span class="tok-string">"success"</span> <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> started)
+print(f"가상 과업 {len(started)}회 시작, {successes}회 성공")</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">가상 과업 3회 시작, 1회 성공</pre></div>
 <div class="cell-after"><p>시작 3회, 성공 1회입니다. 시작 전인 SYN-04만 뺐습니다. 가상 기록으로 과업 시도 횟수를 센 결과입니다. 참여자 수나 실제 사용자 성공률로 바꿔 읽으면 안 됩니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-notes" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>관찰·해석·수정안을 세 줄로 건네기</h2>
+<h2>관찰 사실과 수정 가설 기록</h2>
 </div>
 </header>
 <p>완성 메모 예시　관찰 “답을 읽고 개정일과 문서의 관계를 물었다.” 해석 “날짜가 어느 원문에 속하는지 연결하기 어려웠을 수 있다.” 변경 “각 출처 카드 안에 해당 개정일을 배치한다.” 다음 관찰에서는 같은 과업을 주고 개정일과 절을 도움 없이 함께 찾는지 봅니다. 변경 후 기록을 얻기 전에는 개선 여부를 비워 둡니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 관찰하지 못한 값 남기기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 미관찰 값의 표시</h3>
 <div class="cell-before"><p>팀의 실제 관찰표에 아직 참가자가 없다면 성공률을 무엇으로 남길지 작성하세요. 숫자 0은 실제 실패와 혼동될 수 있습니다.</p>
 <p>나-02에서 ‘개정일은 무엇인가요?’라는 질문을 들은 것은 관찰 기록입니다. 이 질문만으로 2.1절 찾기에 성공했다고 판정할 수는 없습니다. 절을 찾았는지 따로 관찰하지 않았다면 과업 결과에 ‘미기록’이라고 적으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 기록 상태와 집계할 수 없는 이유를 한 줄로 적으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">actual = {<span class="tok-string">&quot;started&quot;</span>: <span class="tok-number">0</span>, <span class="tok-string">&quot;success_rate&quot;</span>: <span class="tok-keyword">None</span>, <span class="tok-string">&quot;note&quot;</span>: <span class="tok-string">&quot;실제 과업 관찰 전&quot;</span>}
-print(actual[<span class="tok-string">&quot;success_rate&quot;</span>], actual[<span class="tok-string">&quot;note&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">actual = {<span class="tok-string">"started"</span>: <span class="tok-number">0</span>, <span class="tok-string">"success_rate"</span>: <span class="tok-keyword">None</span>, <span class="tok-string">"note"</span>: <span class="tok-string">"실제 과업 관찰 전"</span>}
+print(actual[<span class="tok-string">"success_rate"</span>], actual[<span class="tok-string">"note"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None 실제 과업 관찰 전</pre></div>
 <div class="cell-after"><p>None은 아직 집계할 관찰이 없다는 뜻입니다. 참가자가 과업을 시작한 뒤 모두 실패한 경우의 0%와 구분됩니다. 나-02의 발화로 확정할 수 있는 것은 개정일을 물었다는 사실입니다. 2.1절을 스스로 찾았는지 관찰하지 못했다면 그 칸에는 ‘미기록’이라고 적으세요.</p>
 </div>
@@ -78,7 +72,7 @@ print(actual[<span class="tok-string">&quot;success_rate&quot;</span>], actual[<
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>108장에는 개발팀이 이미 본 질문과 가상 사용자 자료의 범위를 알려 주세요. 직접 관찰한 자료가 없다면 실제 성공률을 비워 두고 관찰 계획과 가상 연습 결과를 구분합니다.</p>

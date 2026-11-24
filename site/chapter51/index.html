@@ -1,80 +1,74 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>재현·발표 준비 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>실험 재현을 위한 README와 실행 기록 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 051</p>
-<span class="sidebar-title">재현·발표 준비 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-handoff-note"><span>02</span>동료가 처음 읽는 실행 안내</a><a href="#nb-reproduce-boundary"><span>03</span>같은 환경에서 다시 실행한 결과 기록하기</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">실험 재현을 위한 README와 실행 기록</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-handoff-note"><span>02</span>입력·실행 순서·기대 출력 명시</a><a href="#nb-reproduce-boundary"><span>03</span>재실행 기록과 환경 범위</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 051</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>재현·발표 준비 · 방향과 예시</h1>
+<h1>실험 재현을 위한 README와 실행 기록</h1>
 <p class="hero-description">시연을 맡은 동료는 팀의 코드가 어느 질문에 어떤 근거를 보여야 하는지 모릅니다. 실행 안내를 한 문단으로 적고, 동료가 처음 여는 노트북에서 정상 응답과 알려진 한계를 구분할 수 있게 합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter51.ipynb" download="chapter51.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>51장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-handoff-note" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>동료가 처음 읽는 실행 안내</h2>
+<h2>입력·실행 순서·기대 출력 명시</h2>
 </div>
 </header>
-<p>README 실행 예시 · 50장 노트북에서 Q03의 답에 ‘담당 강사에게 문의’와 [course-guide-v1:p3]가 있는지 확인하세요. Q01도 같은 장에서 대조할 수 있습니다. Q02의 점수 질문은 이 노트북의 실행 사례에 포함되지 않으므로, 이를 시연하려면 팀이 별도의 질문과 실행 기록을 준비합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Q03 기대 답변에서 확인 문구 두 개 찾기</h3>
+<p class="concept-intro">재현 기록에는 다른 사람이 같은 입력을 준비하고 기대 출력을 확인할 만큼의 정보가 있어야 합니다.</p><p>README 실행 예시 · 50장 노트북에서 Q03의 답에 ‘담당 강사에게 문의’와 [course-guide-v1:p3]가 있는지 확인하세요. Q01도 같은 장에서 대조할 수 있습니다. Q02의 점수 질문은 이 노트북의 실행 사례에 포함되지 않으므로, 이를 시연하려면 팀이 별도의 질문과 실행 기록을 준비합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기대 답변의 재현 조건</h3>
 <div class="cell-before"><p>README에 적을 기대 답변에서 ‘담당 강사에게 문의’와 [course-guide-v1:p3]를 찾아보세요. 50장 Q03의 실행 결과를 함께 열면 실제 답에도 두 문구가 있는지 따로 대조할 수 있습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">expected_answer = (<span class="tok-string">&#x27;모의 응답: 제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 않습니다. &#x27;</span>
- <span class="tok-string">&#x27;[course-guide-v1:p3]&#x27;</span>)
-print(<span class="tok-string">&#x27;담당 강사에게 문의&#x27;</span> <span class="tok-keyword">in</span> expected_answer <span class="tok-keyword">and</span> <span class="tok-string">&#x27;[course-guide-v1:p3]&#x27;</span> <span class="tok-keyword">in</span> expected_answer)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">expected_answer = (<span class="tok-string">'모의 응답: 제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 않습니다. '</span>
+ <span class="tok-string">'[course-guide-v1:p3]'</span>)
+print(<span class="tok-string">'담당 강사에게 문의'</span> <span class="tok-keyword">in</span> expected_answer <span class="tok-keyword">and</span> <span class="tok-string">'[course-guide-v1:p3]'</span> <span class="tok-keyword">in</span> expected_answer)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True는 이 문장에 두 확인 조건이 있다는 뜻입니다. 사용자한테도 이해되는지는 동료가 직접 답과 원문을 읽어야 알 수 있습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-reproduce-boundary" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>같은 환경에서 다시 실행한 결과 기록하기</h2>
+<h2>재실행 기록과 환경 범위</h2>
 </div>
 </header>
 <p>제공 재현 기록은 같은 컴퓨터의 같은 인터프리터에서 후보 파일을 새 폴더로 복사해 회귀 출력을 비교했습니다. 새로 설치했거나 동료의 Windows에서 성공했다는 뜻으로 기록하면 다음 사람이 실패 지점을 찾기 어렵습니다.</p>
 <!-- MOTION nested-environments -->
-<figure class="motion-study" id="motion-nested-environments" data-sheet="motion/nested-environments.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>새 폴더에서 성공하면 새 컴퓨터에서도 검증됐을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/nested-environments-still.webp" width="800" height="272" alt="재현한 것은 같은 컴퓨터의 새 경로입니다. 새 설치, 다른 운영체제, 동료의 재현은 각각 별도 확인이 필요합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>재현한 것은 같은 컴퓨터의 새 경로입니다. 새 설치, 다른 운영체제, 동료의 재현은 각각 별도 확인이 필요합니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 재현 결과에서 아직 남은 부분 읽기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 동일 환경 재실행의 검증 범위</h3>
 <div class="cell-before"><p>제공 기록의 환경과 비교 결과를 꺼냅니다. 이 셀은 과거 관찰을 읽으며 현재 컴퓨터에 패키지를 설치하지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">record = {<span class="tok-string">&#x27;same_regression_bytes&#x27;</span>: <span class="tok-keyword">True</span>,
- <span class="tok-string">&#x27;clean_install&#x27;</span>: <span class="tok-string">&#x27;not_run&#x27;</span>,
- <span class="tok-string">&#x27;new_os&#x27;</span>: <span class="tok-string">&#x27;not_run&#x27;</span>,
- <span class="tok-string">&#x27;peer_reproduction&#x27;</span>: <span class="tok-string">&#x27;not_run&#x27;</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">record = {<span class="tok-string">'same_regression_bytes'</span>: <span class="tok-keyword">True</span>,
+ <span class="tok-string">'clean_install'</span>: <span class="tok-string">'not_run'</span>,
+ <span class="tok-string">'new_os'</span>: <span class="tok-string">'not_run'</span>,
+ <span class="tok-string">'peer_reproduction'</span>: <span class="tok-string">'not_run'</span>}
 print(record)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;same_regression_bytes&#x27;: True, &#x27;clean_install&#x27;: &#x27;not_run&#x27;, &#x27;new_os&#x27;: &#x27;not_run&#x27;, &#x27;peer_reproduction&#x27;: &#x27;not_run&#x27;}</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{'same_regression_bytes': True, 'clean_install': 'not_run', 'new_os': 'not_run', 'peer_reproduction': 'not_run'}</pre></div>
 <div class="cell-after"><p>회귀 파일은 같고 새 설치·다른 OS·동료 재현은 not_run입니다. 팀 발표에서 실행이 막혔다면 기록을 대신 열어 “제공 결과 분석”이라고 알리고, 실패한 셀과 오류 내용을 남기세요.</p>
 </div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>시연 순서를 Q01 정상 안내, Q02 답변 유보, Q03 수정 근거로 잡을 수 있습니다. 맡은 사람이 안내만 읽고 같은 위치를 찾았는지는 실제 리허설 뒤에 기록하세요.</p>

@@ -1,0 +1,11 @@
+.concept-intro{font-size:1.08rem;line-height:1.75;color:#172c3c;max-width:74ch}
+.practice-space,.lesson-clip{margin:1.6rem 0;padding:clamp(1rem,3vw,1.75rem);border:1px solid #cadad9;border-radius:14px;background:#f5faf8;break-inside:avoid}
+.practice-space h3,.lesson-clip h3{margin:0 0 .5rem;line-height:1.45}
+.practice-space label{font-weight:650;display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
+.practice-space input,.practice-space select{font:inherit;accent-color:#087e76;max-width:100%}
+.practice-space output,.lesson-clip figcaption{display:block;line-height:1.65;margin-top:.8rem;overflow-wrap:anywhere}
+.practice-stage{margin:1rem 0;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#233f58,#11213a 65%);aspect-ratio:2.45}
+.practice-stage canvas{display:block;width:100%;height:100%}.lesson-clip video{display:block;width:min(100%,640px);border-radius:9px;background:#f4ecde}
+.hero h1,.section-heading h2,.sidebar-title,.notebook-cell h3,.card h3{overflow-wrap:anywhere}.lesson-section{min-width:0}
+@media print{.practice-stage,.lesson-clip video,.practice-space label{display:none}}
+.practice-rotate{margin-top:.75rem;padding:.4rem .75rem;border:1px solid #52837d;border-radius:.4rem;background:white;color:#165d54;cursor:pointer}

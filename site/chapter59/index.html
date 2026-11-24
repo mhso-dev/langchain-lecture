@@ -1,69 +1,55 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>기억에서 남긴 것과 빠뜨린 것 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>대화 문맥의 최근 턴과 요약 메모리 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 059</p>
-<span class="sidebar-title">기억에서 남긴 것과 빠뜨린 것</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-window"><span>02</span>최근 두 턴에서 빠진 장소</a><a href="#nb-summary"><span>03</span>요약에 들어간 사실을 다시 확인하기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">대화 문맥의 최근 턴과 요약 메모리</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>슬라이싱으로 최근 발화 선택</a><a href="#nb-summary"><span>03</span>요약과 원문 기록의 정보 손실 대조</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>대화 문맥의 최근 턴과 요약 메모리 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 059</span><span class="template-badge">학생용 교재</span></div>
-<h1>기억에서 남긴 것과 빠뜨린 것</h1>
+<h1>대화 문맥의 최근 턴과 요약 메모리</h1>
 <p class="hero-description">사용자가 ‘발표 장소를 기억하나요?’라고 물었습니다. 대화에는 회의실 B라는 말이 남아 있지만 최근 메시지 두 턴만 꺼내면 장소가 보이지 않습니다. 저장한 대화와 이번 모델 입력의 차이를 살펴봅니다.</p>
 <div class="hero-meta"><span>중간 프로젝트·에이전트 이후</span><span>8H · 전반 4H / 후반 4H</span><span>29 체크포인트 · 55 create_agent · 56 실행 정책</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter59.ipynb" download="chapter59.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>59장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-window" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>최근 두 턴에서 빠진 장소</h2>
+<h2>슬라이싱으로 최근 발화 선택</h2>
 </div>
 </header>
-<!-- MOTION memory-aperture -->
-<figure class="motion-study" id="motion-memory-aperture" data-sheet="motion/memory-aperture.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>최근 두 턴만 남기면 회의실 B를 찾을 수 있을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/memory-aperture-still.webp" width="800" height="272" alt="네 턴을 전부 볼 때는 장소가 있습니다. 최근 두 턴에는 기한과 슬라이드 수만 남으므로 그 두 턴에서 회의실 B를 다시 찾을 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
-<div class="motion-choices" hidden><button type="button" data-frame="0">전체 4턴</button><button type="button" data-frame="19">최근 3턴</button><button type="button" data-frame="39">최근 2턴</button></div>
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>네 턴을 전부 볼 때는 장소가 있습니다. 최근 두 턴에는 기한과 슬라이드 수만 남으므로 그 두 턴에서 회의실 B를 다시 찾을 수 없습니다.</figcaption>
-</figure>
+<p class="concept-intro">최근 턴을 자르는 방법은 오래된 발화를 제외하고, 요약은 여러 발화를 짧게 바꿉니다. 두 방법에서 어떤 사실이 사라지는지 비교합니다.</p><section class="practice-space" id="practice-space" data-practice="memory"><h3>대화에서 유지할 최근 턴</h3><label>남겨 둘 발화 수 <input type="range" min="1" max="4" step="1" value="2"><span class="practice-value">2</span></label><div class="practice-stage" role="img" aria-label="대화에서 유지할 최근 턴"></div><output aria-live="polite">최근 두 발화에는 기한과 분량이 남고 장소와 언어는 빠집니다.</output></section><!-- MOTION memory-aperture -->
+
 <!-- END MOTION -->
 
-<figure class="concept-film"><!-- FIGURE figures/index-01.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>최근 두 턴에서 사라진 장소가 전체 대화에는 남아 있는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>최근 두 턴에 없는 장소도 전체 기록에서는 찾을 수 있습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>한 턴은 한 질문과 그 질문에 대한 응답을 묶은 단위입니다. 여기서는 각 턴의 사용자 발화만 발췌했습니다. 실제 도구를 썼다면 도구 요청과 결과도 같은 턴에 묶어야 합니다.</p>
-</figcaption>
-</figure>
-<details><summary style="padding:16px;cursor:pointer;font-weight:700">직접 실험하기 · 3D 시뮬레이션</summary><iframe loading="lazy" title="조작형 개념 실험" style="width:100%;height:560px;border:0" src="simulation.html"></iframe></details>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 최근 발화 두 개만 선택하기</h3>
+
+
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 리스트 슬라이싱으로 최근 발화 선택</h3>
 <div class="cell-before"><p>기존 수업 대화에서 최근 두 턴을 고릅니다. 장소를 담은 첫 발화가 남을까요?</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">turns = [<span class="tok-string">&quot;발표 장소는 회의실 B입니다.&quot;</span>, <span class="tok-string">&quot;발표 언어는 한국어입니다.&quot;</span>,
-         <span class="tok-string">&quot;최종 제출 기한은 금요일 18시입니다.&quot;</span>, <span class="tok-string">&quot;슬라이드는 5장으로 준비합니다.&quot;</span>]
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">turns = [<span class="tok-string">"발표 장소는 회의실 B입니다."</span>, <span class="tok-string">"발표 언어는 한국어입니다."</span>,
+         <span class="tok-string">"최종 제출 기한은 금요일 18시입니다."</span>, <span class="tok-string">"슬라이드는 5장으로 준비합니다."</span>]
 recent = turns[-<span class="tok-number">2</span>:]
 print(recent)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;최종 제출 기한은 금요일 18시입니다.&#x27;, &#x27;슬라이드는 5장으로 준비합니다.&#x27;]</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['최종 제출 기한은 금요일 18시입니다.', '슬라이드는 5장으로 준비합니다.']</pre></div>
 <div class="cell-after"><p>기한과 분량만 남습니다. 음수 인덱스로 만든 recent는 모델에 넘길 부분을 선택한 값입니다. 원래 turns에는 네 문장이 그대로 있습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 저장 기록에서 장소 재확인</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 저장된 이력에서 사실 복원</h3>
 <div class="cell-before"><p>조금 전 만든 목록 대신 보관한 첫 발화를 읽습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(turns[<span class="tok-number">0</span>])</code></pre></figure>
@@ -73,38 +59,32 @@ print(recent)</code></pre></figure>
 </article>
 </section>
 <section id="nb-summary" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>요약에 들어간 사실을 다시 확인하기</h2>
+<h2>요약과 원문 기록의 정보 손실 대조</h2>
 </div>
 </header>
 <p>수업용 요약은 처음 세 턴을 읽고도 기한을 빠뜨렸습니다. 요약문에 출처 턴이 적혀 있는 것만으로 필요한 사실이 모두 보존됐다고 판단할 수 없습니다.</p>
 <!-- MOTION summary-hole -->
-<figure class="motion-study" id="motion-summary-hole" data-sheet="motion/summary-hole.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>대화를 요약하면 기한도 자동으로 남을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/summary-hole-still.webp" width="800" height="272" alt="원문에는 금요일 18시라는 제출 기한이 있습니다. 요약에서 그 사실을 빼면 요약만 읽는 다음 호출은 기한을 확인할 수 없습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>원문에는 금요일 18시라는 제출 기한이 있습니다. 요약에서 그 사실을 빼면 요약만 읽는 다음 호출은 기한을 확인할 수 없습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
 
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 요약만으로 기한을 알 수 있나요?</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 요약에서 누락된 사실</h3>
 <div class="cell-before"><p>금요일 18시라는 조건이 이 문장에 남았는지 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">summary = <span class="tok-string">&quot;발표 장소는 회의실 B이며 발표 언어는 한국어입니다.&quot;</span>
-print(<span class="tok-string">&quot;금요일 18시&quot;</span> <span class="tok-keyword">in</span> summary)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">summary = <span class="tok-string">"발표 장소는 회의실 B이며 발표 언어는 한국어입니다."</span>
+print(<span class="tok-string">"금요일 18시"</span> <span class="tok-keyword">in</span> summary)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False가 나옵니다. 요약만 가진 모델은 제출 기한을 알 수 없습니다. 사용자가 기한을 물었다면 저장된 T3를 찾아 포함하거나 다시 확인해야 합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 요약과 최근 발화를 함께 보내기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 요약과 최근 발화의 문맥 구성</h3>
 <div class="cell-before"><p>요약 한 줄과 최근 발화 두 줄을 차례로 묶고 연결된 모델 입력을 줄 단위로 출력하세요.</p>
 <p>‘금요일 18시’는 요약문에서 온 값이 아닙니다. 최근 발화 두 개 중 T3가 기한을 되살립니다. 뒤의 summary 비교는 최근 발화로 T4만 붙이므로 같은 요약을 써도 deadline이 비어 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># summary와 recent를 묶어 줄바꿈으로 연결하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">context = [summary, *recent]
-print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre></figure>
+print(<span class="tok-string">'\n'</span>.join(context))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">발표 장소는 회의실 B이며 발표 언어는 한국어입니다.
 최종 제출 기한은 금요일 18시입니다.
 슬라이드는 5장으로 준비합니다.</pre></div>
@@ -114,24 +94,24 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>어떤 사실이 남는지는 대화 길이와 요약 내용에 달렸습니다. 새 주제의 대화에서도 남길 사용자 선호 한 가지를 고르고, 그 정보가 없을 때 무엇을 다시 물어볼지 정하세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>대화 문맥의 최근 턴과 요약 메모리 심화 읽기</h2>
 </div>
 </header>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>대화에서 꼭 남겨야 할 사실 정하기</summary><div class="prose"><p>이 장의 응답기는 네 사실의 문자열이 입력에 있는지만 찾는 제공 코드입니다. 실제 Graph와 create_agent를 실행하지만 외부 LLM이나 자동 요약 모델을 호출하지 않습니다. 결과를 언어 이해 성능으로 해석하지 않습니다.</p>
+<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>대화에서 보존할 사실</summary><div class="prose"><p>이 장의 응답기는 네 사실의 문자열이 입력에 있는지만 찾는 제공 코드입니다. 실제 Graph와 create_agent를 실행하지만 외부 LLM이나 자동 요약 모델을 호출하지 않습니다. 결과를 언어 이해 성능으로 해석하지 않습니다.</p>
 </div>
 </details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>29·55·56장의 경계를 같은 질문으로 확인하기</summary><div class="prose"><p>29장에서는 thread_id로 같은 저장소의 대화를 고릅니다. 제공 관찰을 다시 실행하면 A에 두 번 질문한 뒤 메시지 4개, B에 한 번 질문한 뒤 2개가 남습니다. 아직 시작하지 않은 C와 새 저장소의 A에는 메시지가 없습니다. 이 구분은 사용자 인증을 뜻하지 않습니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>체크포인트와 도구 실행 기록</summary><div class="prose"><p>29장에서는 thread_id로 같은 저장소의 대화를 고릅니다. 제공 관찰을 다시 실행하면 A에 두 번 질문한 뒤 메시지 4개, B에 한 번 질문한 뒤 2개가 남습니다. 아직 시작하지 않은 C와 새 저장소의 A에는 메시지가 없습니다. 이 구분은 사용자 인증을 뜻하지 않습니다.</p>
 <p>55장의 run_framework와 56장의 run_agent_case는 같은 대출 질문에서 실제 인용된 A1 출처를 유지합니다. 56장의 정상 빈 검색은 no_evidence와 생성 0회이고, Timeout은 result=null인 실행 오류입니다. 질문 내용이나 기억 요약이 호출 허용 목록을 바꾸어서는 안 됩니다.</p>
 </div>
 </details>
-<span id="state"></span><details class="reading-topic" id="reading-state"><summary>저장 State와 모델 입력은 다른 목록입니다</summary><div class="prose"><p>State는 현재 실행이 읽고 갱신하는 값입니다. 체크포인터는 같은 thread에서 그 State를 다시 찾을 수 있게 합니다. 이 예제의 turns에는 완료한 과거 턴을 저장하고 question에는 현재 질문을 둡니다. selection은 그중 모델에게 보낼 부분, probe는 이번 관찰 결과입니다.</p>
+<span id="state"></span><details class="reading-topic" id="reading-state"><summary>저장 상태와 모델 입력</summary><div class="prose"><p>State는 현재 실행이 읽고 갱신하는 값입니다. 체크포인터는 같은 thread에서 그 State를 다시 찾을 수 있게 합니다. 이 예제의 turns에는 완료한 과거 턴을 저장하고 question에는 현재 질문을 둡니다. selection은 그중 모델에게 보낼 부분, probe는 이번 관찰 결과입니다.</p>
 <p>turns의 add는 새 목록을 뒤에 붙이는 제공 reducer입니다. 같은 턴 ID를 덮어쓰는 방식이 아니므로 이미 저장한 턴을 다음 요청에 다시 넣지 않습니다. 현재 질문만 다시 확인할 때는 turns=[]를 전달합니다. 모델 입력을 줄여도 원본 4턴은 그대로 남습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>두 종류의 보존</caption><thead><tr><th scope="col">관찰</th><th scope="col">같은 saver/thread</th><th scope="col">새 thread 또는 새 saver</th></tr>
@@ -139,11 +119,11 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <tr><td>recent 입력</td><td>T3/T4만 모델로 전달</td><td>원본을 자동 복원하지 않음</td></tr>
 </tbody></table></div>
 </details>
-<span id="turns"></span><details class="reading-topic" id="reading-turns"><summary>질문부터 도구 응답까지 한 턴으로 묶기</summary><div class="prose"><p>fixture.json의 한 턴은 id와 messages를 가집니다. T1은 발표 장소를 말한 질문과 확인 응답이고, T4는 분량을 말한 질문과 확인 응답입니다. 최근 두 턴을 선택하면 T3와 T4 전체가 들어갑니다.</p>
+<span id="turns"></span><details class="reading-topic" id="reading-turns"><summary>질문·도구 응답의 턴 경계</summary><div class="prose"><p>fixture.json의 한 턴은 id와 messages를 가집니다. T1은 발표 장소를 말한 질문과 확인 응답이고, T4는 분량을 말한 질문과 확인 응답입니다. 최근 두 턴을 선택하면 T3와 T4 전체가 들어갑니다.</p>
 <p>도구를 사용한 대화는 사용자 질문, AI의 도구 요청, 같은 호출 ID의 ToolMessage, 마지막 AI 응답까지 묶습니다. 메시지 수만 맞추려고 중간을 자르면 도구 응답만 남거나 요청의 응답이 없어질 수 있습니다. 제공 validate_turns가 중복 턴 ID와 끊긴 왕복을 거부합니다. 이 장의 기본 fixture는 텍스트 대화이며, 56장의 구조화 응답 전체를 그대로 범용 변환하는 기능은 아닙니다.</p>
 </div>
 </details>
-<span id="recent"></span><details class="reading-topic" id="reading-recent"><summary>최근 두 턴에서 사라지는 정보 찾기</summary><div class="prose"><p>full은 완료한 모든 턴을 전달하고 recent는 끝에서 recent개를 고릅니다. 현재 질문은 두 경우 모두 마지막에 붙습니다. 기본 recent=2이면 T3/T4가 남아 기한과 분량은 전달되지만 장소와 언어는 빠집니다.</p>
+<span id="recent"></span><details class="reading-topic" id="reading-recent"><summary>최근 턴 슬라이스의 정보 손실</summary><div class="prose"><p>full은 완료한 모든 턴을 전달하고 recent는 끝에서 recent개를 고릅니다. 현재 질문은 두 경우 모두 마지막에 붙습니다. 기본 recent=2이면 T3/T4가 남아 기한과 분량은 전달되지만 장소와 언어는 빠집니다.</p>
 <p>최근 대화가 짧다는 사실만으로 잘못된 정책은 아닙니다. 이번 작업에서 장소를 다시 확인해야 한다면 이 선택만으로 부족하다는 뜻입니다. 필요한 정보가 빠졌을 때 사용자에게 다시 묻는 조건까지 정책에 포함합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>예상과 제공 관찰</caption><thead><tr><th scope="col">정책</th><th scope="col">선택한 원문</th><th scope="col">장소</th><th scope="col">언어</th><th scope="col">기한</th><th scope="col">분량</th></tr>
@@ -151,7 +131,7 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <tr><td>recent=2</td><td>T3,T4</td><td>없음</td><td>없음</td><td>있음</td><td>있음</td></tr>
 </tbody></table></div>
 </details>
-<span id="summary"></span><details class="reading-topic" id="reading-summary"><summary>제공 요약을 원문과 대조하기</summary><div class="prose"><p>요약은 과거 내용을 짧은 표현으로 바꿉니다. 이 예제는 T1~T3을 대상으로 만든 수작업 요약과 최근 T4를 붙입니다. 제공 요약에는 회의실 B와 한국어가 있지만 금요일 18시는 없습니다. 요약 범위가 T1~T3이라고 적혀 있어도 모든 사실을 보존했다는 뜻은 아닙니다.</p>
+<span id="summary"></span><details class="reading-topic" id="reading-summary"><summary>요약의 원문 검증</summary><div class="prose"><p>요약은 과거 내용을 짧은 표현으로 바꿉니다. 이 예제는 T1~T3을 대상으로 만든 수작업 요약과 최근 T4를 붙입니다. 제공 요약에는 회의실 B와 한국어가 있지만 금요일 18시는 없습니다. 요약 범위가 T1~T3이라고 적혀 있어도 모든 사실을 보존했다는 뜻은 아닙니다.</p>
 <p>요약 대상 ID 검사는 제외한 과거 턴 ID와 요약에 적힌 대상 ID가 같은지 확인합니다. ID가 같아도 내용의 출처와 의미가 맞는지는 원문 대조가 필요합니다. 요약을 원래 시스템 지시로 올리지 않고 과거 대화 자료로 전달합니다. 문서 속 명령을 실행 권한으로 해석하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>요약 대조</caption><thead><tr><th scope="col">항목</th><th scope="col">제공 내용</th><th scope="col">판단</th></tr>
@@ -161,7 +141,7 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <tr><td>결과</td><td>deadline=null</td><td>원문 T3을 다시 확인할 필요</td></tr>
 </tbody></table></div>
 </details>
-<span id="budget"></span><details class="reading-topic" id="reading-budget"><summary>입력 예산에 현재 질문과 지시도 포함하기</summary><div class="prose"><p>토큰은 모델이 입력을 나누어 처리하는 단위입니다. 글자 수와 같지 않으며 모델별 방식도 다를 수 있습니다. 여기서는 설치된 count_tokens_approximately로 입력 크기만 추정합니다. estimate는 고정 SYSTEM과 선택한 대화, 현재 질문을 모두 셉니다.</p>
+<span id="budget"></span><details class="reading-topic" id="reading-budget"><summary>현재 질문을 포함한 입력 예산</summary><div class="prose"><p>토큰은 모델이 입력을 나누어 처리하는 단위입니다. 글자 수와 같지 않으며 모델별 방식도 다를 수 있습니다. 여기서는 설치된 count_tokens_approximately로 입력 크기만 추정합니다. estimate는 고정 SYSTEM과 선택한 대화, 현재 질문을 모두 셉니다.</p>
 <p>budget=65는 이 가상 입력에서 오래된 완료 턴을 빼기 위한 수업용 기준입니다. 최신 턴부터 묶음 전체를 넣고, 다음 묶음이 예산을 넘으면 멈춥니다. 현재 질문과 지시만으로도 넘으면 ValueError입니다. 질문을 조용히 자르지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>제공 환경의 추정량</caption><thead><tr><th scope="col">정책</th><th scope="col">추정 입력량</th><th scope="col">보존한 사실 수</th></tr>
@@ -171,13 +151,13 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <tr><td>budget=65</td><td>62</td><td>2</td></tr>
 </tbody></table></div>
 </details>
-<span id="probe"></span><details class="reading-topic" id="reading-probe"><summary>모델에 전달한 내용을 로컬 탐침으로 관찰하기</summary><div class="prose"><p>FactProbeModel은 55장의 제공 ScriptedChatModel을 상속합니다. received에는 실제 프레임워크가 넘긴 메시지를 기록하고, 네 사실의 고정 문자열이 있으면 그 값을, 없으면 null을 돌려줍니다. 이 탐침은 의미가 같은 다른 표현을 이해하지 못하고 사실의 참·거짓을 판단하지도 않습니다.</p>
+<span id="probe"></span><details class="reading-topic" id="reading-probe"><summary>모델 입력의 로컬 관찰</summary><div class="prose"><p>FactProbeModel은 55장의 제공 ScriptedChatModel을 상속합니다. received에는 실제 프레임워크가 넘긴 메시지를 기록하고, 네 사실의 고정 문자열이 있으면 그 값을, 없으면 null을 돌려줍니다. 이 탐침은 의미가 같은 다른 표현을 이해하지 못하고 사실의 참·거짓을 판단하지도 않습니다.</p>
 <p>make_memory_graph의 respond는 저장 턴에서 입력을 선택한 뒤 create_agent를 한 번 실행합니다. 56장의 RunContext/BasicPolicy를 그대로 사용하고 허용 도구를 빈 tuple로 두므로 이 관찰에서 도구를 추가 실행하지 않습니다. 각 실행의 정책 객체를 새로 만들어 호출 수가 새지 않게 합니다.</p>
 </div>
 <div class="prose"><p>새 결과는 runs/latest/comparison.json에 저장됩니다. examples/observations.json은 작성자가 제공한 고정 관찰입니다. 관찰의 rows 네 행과 entry29, entry55, entry56을 함께 읽으면 선수 경계와 오늘의 실험 범위를 구분할 수 있습니다.</p>
 </div>
 </details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>기억 누락과 잘못된 입력을 구분하기</summary><div class="prose"><p>입력이 작아져 고정 사실을 찾지 못하는 일은 비교 결과입니다. 반면 공백 질문, bool을 넣은 상한, 중복 턴 ID, 도구 왕복 누락은 실행 전에 고칠 입력 오류입니다. 둘을 모두 기억 없음으로 적으면 어떤 조치가 필요한지 알 수 없습니다.</p>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>기억 누락과 입력 오류</summary><div class="prose"><p>입력이 작아져 고정 사실을 찾지 못하는 일은 비교 결과입니다. 반면 공백 질문, bool을 넣은 상한, 중복 턴 ID, 도구 왕복 누락은 실행 전에 고칠 입력 오류입니다. 둘을 모두 기억 없음으로 적으면 어떤 조치가 필요한지 알 수 없습니다.</p>
 <p>validate_turns는 제공 검사 코드입니다. 전체를 새로 구현하는 것이 기본 과제는 아닙니다. 반복문에서 pending이 요청 ID를 넣고 도구 응답 뒤 지우는 위치를 찾아 읽고, 실패 예시 한 곳을 바꾸어 결과를 설명합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>실패 전후에 볼 값</caption><thead><tr><th scope="col">입력</th><th scope="col">예상</th><th scope="col">다음 행동</th></tr>
@@ -187,17 +167,17 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <tr><td>요청 c1의 ToolMessage 누락</td><td>ValueError</td><td>도구 왕복 전체를 복원</td></tr>
 </tbody></table></div>
 </details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>업무에 필요한 사실로 정책 선택하기</summary><div class="prose"><p>네 정책 중 하나를 외워 고르는 것이 목표가 아닙니다. 이번 가상 발표에서 네 사실을 모두 다시 확인해야 한다면 full을 고를 수 있습니다. 입력 한도가 더 작다면 빠진 정보를 질문으로 재확인하거나 별도 보관 근거를 확인하는 방식을 정해야 합니다.</p>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>업무별 기억 정책</summary><div class="prose"><p>네 정책 중 하나를 외워 고르는 것이 목표가 아닙니다. 이번 가상 발표에서 네 사실을 모두 다시 확인해야 한다면 full을 고를 수 있습니다. 입력 한도가 더 작다면 빠진 정보를 질문으로 재확인하거나 별도 보관 근거를 확인하는 방식을 정해야 합니다.</p>
 <p>기록 양식에는 목표별 근거 위치와 자신의 설명을 씁니다. 제공 정책 예시는 작성자가 가상 자료를 읽은 예시이며 학생의 정책 선택이나 동료 실행을 대신하지 않습니다. 근거가 없으면 미확인으로 남기고 설명과 관찰이 어긋나면 수정합니다.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>60장에 기억 정책과 미확인을 넘기기</summary><div class="prose"><p>60장은 이번 정책으로 모든 정보를 장기 저장해야 한다고 결론내리지 않습니다. 대화가 바뀌어도 다시 쓸 필요가 있는 정보만 명시적으로 저장하는 경우를 비교합니다. 요약 문장이나 모델의 추측을 사용자 선호로 자동 저장하지 않습니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>단기 기억 정책 인계</summary><div class="prose"><p>60장은 이번 정책으로 모든 정보를 장기 저장해야 한다고 결론내리지 않습니다. 대화가 바뀌어도 다시 쓸 필요가 있는 정보만 명시적으로 저장하는 경우를 비교합니다. 요약 문장이나 모델의 추측을 사용자 선호로 자동 저장하지 않습니다.</p>
 <p>넘길 것은 선택 정책, 원문과 비교한 누락, 다시 물을 조건, 실제 실행 범위입니다. 69장의 사용자 인증·소유 대화 선택과 100장의 프로젝트 보관 정책은 별도 검증이 필요합니다. thread_id 하나만으로 사용자 권한을 판단하지 않습니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/short-term-memory" target="_blank" rel="noopener noreferrer">단기 기억 공식 문서 ↗</a><span></span></li>
@@ -209,4 +189,4 @@ print(<span class="tok-string">&#x27;\n&#x27;</span>.join(context))</code></pre>
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

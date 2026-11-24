@@ -1,51 +1,42 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>개발 환경 구성과
-첫 Python 프로그램 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Jupyter 커널과 Python 코드 실행 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<script defer src="../assets/concept-labs.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 01 / PYTHON</p>
-<span class="sidebar-title">개발 환경 구성과
-첫 Python 프로그램</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-first-cell"><span>02</span>첫 줄을 실행해 보기</a><a href="#nb-kernel-state"><span>03</span>이름을 바꿨는데 옛 이름이 나올 때</a><a href="#nb-environment"><span>04</span>내 노트북이 어느 환경에서 도는지 보기</a><a href="#nb-git-snapshot"><span>05</span>첫 커밋에서 실제로 저장한 파일</a><a href="#recap"><span>06</span>다시 풀어 보기</a><a href="#readings"><span>07</span>관련 개념 더 읽기</a><a href="#sources"><span>08</span>참고 자료</a></nav>
+<span class="sidebar-title">Jupyter 커널과 Python 코드 실행</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-first-cell"><span>02</span>print()와 산술식 실행</a><a href="#nb-kernel-state"><span>03</span>변수 대입과 커널의 실행 순서</a><a href="#nb-environment"><span>04</span>sys.executable과 가상 환경 확인</a><a href="#nb-git-snapshot"><span>05</span>git add와 git commit으로 README.md 기록</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#readings"><span>07</span>Jupyter 커널과 Python 코드 실행 심화 읽기</a><a href="#sources"><span>08</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 01 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
-<h1>개발 환경 구성과
-첫 Python 프로그램</h1>
+<h1>Jupyter 커널과 Python 코드 실행</h1>
 <p class="hero-description">노트북을 처음 열면 코드와 결과가 같은 화면에 있습니다. 인사말을 직접 바꿔 보고, 셀에 쓴 내용과 커널이 기억하는 값이 언제 달라지는지 확인해 봅시다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 001 · 8H</span><span>선수 지식 없음</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter01.ipynb" download="chapter01.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>1장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-first-cell" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>첫 줄을 실행해 보기</h2>
+<h2>print()와 산술식 실행</h2>
 </div>
 </header>
-<p>커널은 셀의 파이썬 코드를 실행하는 프로그램입니다. 코드 셀을 선택하고 Shift+Enter를 누르면 그 아래에 결과가 나타납니다. 첫 줄의 괄호 안에 적힌 문장을 읽고 실행하세요.</p>
-<div class="learn-detail"><h4>수업 PC에서 첫 노트북 열기</h4>
-<figure class="demo-proof-wrap"><picture><source media="(prefers-reduced-motion:reduce)" srcset="../assets/media/png-ba72f0572211d0.png"><img class="demo-proof" alt="노트북을 열고 커널을 고른 뒤 셀을 실행하면 그 아래에 출력이 생깁니다." loading="lazy" src="../assets/media/svg-aa3701303cee95.svg"></picture><figcaption><div class="motion-note"><div><b>볼 곳</b><p>각 화면에서 ‘① 파일 목록’와 ‘③ 첫 셀과 출력’에 표시되는 내용을 비교하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>노트북을 열고 커널을 고른 뒤 셀을 실행하면 그 아래에 출력이 생깁니다.</p>
-</div>
-</div>
-</figcaption>
-</figure>
+<p class="concept-intro">Jupyter의 커널은 코드를 실행하면서 변수 값을 기억합니다. 셀에 적힌 코드와 커널이 마지막으로 실행한 코드는 다를 수 있습니다.</p><p>커널은 셀의 파이썬 코드를 실행하는 프로그램입니다. 코드 셀을 선택하고 Shift+Enter를 누르면 그 아래에 결과가 나타납니다. 첫 줄의 괄호 안에 적힌 문장을 읽고 실행하세요.</p>
+<div class="learn-detail"><h4>JupyterLab에서 노트북 열기</h4>
+
 <div class="demo-panels"><div><small>① 파일 목록</small><p>수업용 JupyterLab을 열고 왼쪽 파일 목록의 업로드 버튼(↑)에서 내려받은 chapter01.ipynb를 고르세요. 파일 이름을 두 번 누릅니다.</p>
 </div>
 <div><small>② 열린 노트북</small><p>커널 선택 창이 뜨면 수업용 Python 커널을 고르세요. 오른쪽 위에 커널 이름이 보입니다.</p>
@@ -55,16 +46,16 @@
 </div>
 <p>화면 구성은 JupyterLab을 기준으로 그린 예입니다. 수업 PC에 실행 주소나 커널이 준비되지 않았다면 강사에게 수업용 접속 위치를 확인하세요.</p>
 </div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 인사</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · print()로 문자열 출력</h3>
 <div class="cell-before"><p>따옴표 사이에 적힌 문장 중 어디까지 화면에 나올까요?</p>
 <p>코드 셀은 실행할 내용을 적는 칸입니다. 먼저 아래 줄을 한 번 클릭하고 Shift+Enter를 누르세요. 셀 아래에 ‘안녕하세요, Python!’이 나오면 이 노트북에서 첫 실행을 마친 것입니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">print(<span class="tok-string">&quot;안녕하세요, Python!&quot;</span>)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">print(<span class="tok-string">"안녕하세요, Python!"</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">안녕하세요, Python!</pre></div>
 <div class="cell-after"><p>따옴표는 글의 시작과 끝을 알려 주는 기호입니다. 화면에는 ‘안녕하세요, Python!’만 나타납니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 계산해서 표시하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 산술식의 평가와 출력</h3>
 <div class="cell-before"><p>같은 print에 이번에는 따옴표 없이 식을 넣습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(<span class="tok-number">3</span> + <span class="tok-number">4</span>)</code></pre></figure>
@@ -72,11 +63,11 @@
 <div class="cell-after"><p>7이 나옵니다. 커널이 먼저 3과 4를 더한 다음 계산 결과를 print에 건넸습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 문자와 계산 구분하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 문자열 리터럴과 산술식 구분</h3>
 <div class="cell-before"><p>3 + 4라는 글자 자체를 한 줄로 표시하세요. 사이의 공백도 남깁니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># print 안에 표시할 글자를 넣으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">print(<span class="tok-string">&quot;3 + 4&quot;</span>)</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">print(<span class="tok-string">"3 + 4"</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3 + 4</pre></div>
 <div class="cell-after"><p>따옴표 안에 있는 더하기 기호는 글자의 일부로 남습니다.</p>
 </div>
@@ -84,42 +75,36 @@
 </article>
 </section>
 <section id="nb-kernel-state" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>이름을 바꿨는데 옛 이름이 나올 때</h2>
+<h2>변수 대입과 커널의 실행 순서</h2>
 </div>
 </header>
 <p>코드를 고쳐도 커널 안의 값은 셀을 다시 실행할 때 바뀝니다. 다음 두 셀을 실행하고, 첫 셀에서 이름만 바꾼 뒤 둘째 셀을 먼저 실행해 보세요.</p>
-<!-- MOTION kernel-imprint -->
-<figure class="motion-study" id="motion-kernel-imprint" data-sheet="motion/kernel-imprint.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>고친 이름은 언제 커널에 찍힐까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/kernel-imprint-still.webp" width="800" height="272" alt="셀에서 이름을 고쳐도 커널의 값은 그대로입니다. 이름 셀을 실행한 뒤에야 다음 인사가 새 이름을 사용합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<figure class="lesson-clip" id="concept-clip"><h3>셀 편집과 커널 변수</h3><video controls muted playsinline preload="metadata" aria-label="셀 편집과 커널 변수" src="concept.mp4"></video><figcaption>종이의 파란 네모를 노란 원으로 고쳐도 오른쪽 창은 그대로입니다. 실행 버튼을 누른 뒤에야 커널에 해당하는 창이 바뀝니다.</figcaption></figure><!-- MOTION kernel-imprint -->
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>셀에서 이름을 고쳐도 커널의 값은 그대로입니다. 이름 셀을 실행한 뒤에야 다음 인사가 새 이름을 사용합니다.</figcaption>
-</figure>
 <!-- END MOTION -->
-<section class="concept-lab" id="concept-lab" data-lab="kernel"><h3>이름을 고치면 인사도 바로 바뀔까요?</h3><p>이름을 고친 뒤 인사 셀부터 실행해 보세요. 그다음 이름 셀을 실행하고 인사를 다시 출력해 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>이름 셀</small><label>learner = <input data-input="name" value="학습자" maxlength="20" aria-label="이름 셀의 문자열"></label><button type="button" data-action="assign">이름 셀 실행</button></div><div class="lab-tile"><small>커널이 기억하는 값</small><output data-out="memory">학습자</output></div><div class="lab-tile"><small>인사 셀의 마지막 출력</small><output data-out="greeting">안녕하세요, 학습자님!</output><button type="button" data-action="print">인사 셀 실행</button></div></div></section>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 이름 하나 기억시키기</h3>
+
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 변수에 문자열 대입</h3>
 <div class="cell-before"><p>오른쪽 값을 learner라는 이름으로 저장합니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">learner = <span class="tok-string">&quot;학습자&quot;</span></code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">learner = <span class="tok-string">"학습자"</span></code></pre></figure>
 <div class="cell-after"><p>대입만 하면 화면에 글자가 나오지 않습니다. 다음 셀에서 이 이름을 읽습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 저장한 이름으로 인사하기</h3>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · f-string에 변수 삽입</h3>
 <div class="cell-before"><p>이름을 저장한 셀을 먼저 실행한 상태에서 실행하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6">print(f&quot;안녕하세요, {learner}님!&quot;)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6">print(f"안녕하세요, {learner}님!")</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">안녕하세요, 학습자님!</pre></div>
 <div class="cell-after"><p>‘안녕하세요, 학습자님!’이라는 인사가 나옵니다. 이름을 수정한 뒤에도 옛 이름이 나오면 대입한 셀부터 다시 실행하세요. 커널을 재시작하면 이름 자체를 잊으므로 위에서부터 실행해야 합니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-environment" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>내 노트북이 어느 환경에서 도는지 보기</h2>
+<h2>sys.executable과 가상 환경 확인</h2>
 </div>
 </header>
 <p>같은 컴퓨터에 파이썬을 여럿 설치할 수 있습니다. 패키지가 설치돼 있는데 노트북에서 찾지 못할 때는 노트북 메뉴에 표시된 커널과 실제 실행 파일을 먼저 맞춰 봅니다. 아래 경로는 각자 다릅니다.</p>
-<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · 커널의 파이썬 찾기</h3>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · sys.executable과 커널 경로</h3>
 <div class="cell-before"><p>실행 파일의 경로를 읽고, 이 커널이 venv 가상환경을 쓰는지 확인합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7"><span class="tok-keyword">import</span> sys
@@ -131,20 +116,20 @@ True</pre></div>
 <div class="cell-after"><p>첫 줄은 현재 커널이 쓰는 파이썬의 전체 경로입니다. 실행 파일 이름이 같아도 앞의 폴더가 다르면 다른 환경일 수 있습니다. 둘째 줄의 True는 일반적인 venv 가상환경을 사용한다는 뜻입니다. False이면 기본 파이썬인지, 다른 환경 관리 도구를 쓰는지 커널 선택 메뉴에서 확인하세요.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="7" data-task="0"><h3>셀 07 · 설정이 없을 때의 인사말</h3>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3>셀 07 · dict.get()의 기본값</h3>
 <div class="cell-before"><p>실제 환경변수를 출력하지 않고 빈 설정을 준비합니다. 공개할 기본 이름을 여기서 정합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8">settings = {}
-print(settings.get(<span class="tok-string">&quot;LEARNER_NAME&quot;</span>, <span class="tok-string">&quot;학습자&quot;</span>))</code></pre></figure>
+print(settings.get(<span class="tok-string">"LEARNER_NAME"</span>, <span class="tok-string">"학습자"</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">학습자</pre></div>
 <div class="cell-after"><p>비어 있는 설정에서 이름을 찾지 못해서 기본값인 학습자가 나옵니다. 실제 환경에서는 os.getenv로 같은 이름을 읽을 수 있습니다. 개인 키는 노트북 셀이나 출력에 적지 않습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="8" data-task="1"><h3>과제 08 · 친구가 다시 실행할 수 있는 안내 쓰기</h3>
+<article class="notebook-cell" data-cell="8" data-task="1"><h3>과제 08 · 커널 재시작 후 실행 절차</h3>
 <div class="cell-before"><p>안내 한 줄에 먼저 실행할 셀과 기대하는 첫 출력을 적고 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-9" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-9"><span class="tok-comment"># 친구에게 줄 안내 한 줄을 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-10" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-10">print(<span class="tok-string">&quot;첫 인사 셀을 실행하면 안녕하세요, Python!이 나옵니다.&quot;</span>)</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-10" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-10">print(<span class="tok-string">"첫 인사 셀을 실행하면 안녕하세요, Python!이 나옵니다."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">첫 인사 셀을 실행하면 안녕하세요, Python!이 나옵니다.</pre></div>
 <div class="cell-after"><p>친구가 커널을 새로 시작해도 어디서 실행하고 무엇과 대조할지 알 수 있습니다. 변경을 Git에 기록할 때는 이런 안내와 코드가 함께 들어가는지 확인합니다.</p>
 </div>
@@ -152,30 +137,30 @@ print(settings.get(<span class="tok-string">&quot;LEARNER_NAME&quot;</span>, <sp
 </article>
 </section>
 <section id="nb-git-snapshot" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>첫 커밋에서 실제로 저장한 파일</h2>
+<h2>git add와 git commit으로 README.md 기록</h2>
 </div>
 </header>
 <p>Git은 선택한 파일의 내용과 변경 설명을 커밋에 남깁니다. 아래 제공 셀은 임시 폴더에 연습 저장소를 만들고 첫 인사 셀의 실행 안내를 기록합니다. 현재 프로젝트와 개인 Git 설정은 건드리지 않습니다. 강의용 컴퓨터에서 Git이 준비되어 있으면 그대로 실행하세요.</p>
-<article class="notebook-cell" data-cell="9" data-task="0"><h3>셀 09 · 첫 커밋 읽어 보기</h3>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3>셀 09 · git log로 첫 커밋 조회</h3>
 <div class="cell-before"><p>저장소 만들기(init), 기록할 파일 고르기(add), 기록 남기기(commit)를 거친 뒤 방금 남긴 변경 설명을 읽습니다.</p>
 </div>
 <details class="provided-code"><summary>제공 코드 전체 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 17줄</span><button class="copy-button js-only" data-copy="code-11" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-11"><span class="tok-keyword">import</span> shutil
 <span class="tok-keyword">import</span> subprocess
 <span class="tok-keyword">from</span> tempfile <span class="tok-keyword">import</span> TemporaryDirectory
 
-<span class="tok-keyword">if</span> shutil.which(<span class="tok-string">&quot;git&quot;</span>):
+<span class="tok-keyword">if</span> shutil.which(<span class="tok-string">"git"</span>):
     <span class="tok-keyword">with</span> TemporaryDirectory() <span class="tok-keyword">as</span> folder:
         <span class="tok-keyword">def</span> git(*args):
-            <span class="tok-keyword">return</span> subprocess.run([<span class="tok-string">&quot;git&quot;</span>, <span class="tok-string">&quot;-C&quot;</span>, folder, *args], check=<span class="tok-keyword">True</span>,
+            <span class="tok-keyword">return</span> subprocess.run([<span class="tok-string">"git"</span>, <span class="tok-string">"-C"</span>, folder, *args], check=<span class="tok-keyword">True</span>,
                                   capture_output=<span class="tok-keyword">True</span>, text=<span class="tok-keyword">True</span>).stdout.strip()
-        git(<span class="tok-string">&quot;init&quot;</span>, <span class="tok-string">&quot;-q&quot;</span>)
-        (Path(folder) / <span class="tok-string">&quot;README.md&quot;</span>).write_text(<span class="tok-string">&quot;첫 인사 셀을 실행하세요.&quot;</span>, encoding=<span class="tok-string">&quot;utf-8&quot;</span>)
-        git(<span class="tok-string">&quot;add&quot;</span>, <span class="tok-string">&quot;README.md&quot;</span>)
-        git(<span class="tok-string">&quot;-c&quot;</span>, <span class="tok-string">&quot;user.name=Student&quot;</span>, <span class="tok-string">&quot;-c&quot;</span>, <span class="tok-string">&quot;user.email=student@example.invalid&quot;</span>,
-            <span class="tok-string">&quot;-c&quot;</span>, <span class="tok-string">&quot;commit.gpgsign=false&quot;</span>, <span class="tok-string">&quot;commit&quot;</span>, <span class="tok-string">&quot;-qm&quot;</span>, <span class="tok-string">&quot;첫 인사 실행 안내&quot;</span>)
-        print(git(<span class="tok-string">&quot;log&quot;</span>, <span class="tok-string">&quot;-1&quot;</span>, <span class="tok-string">&quot;--format=%s&quot;</span>))
+        git(<span class="tok-string">"init"</span>, <span class="tok-string">"-q"</span>)
+        (Path(folder) / <span class="tok-string">"README.md"</span>).write_text(<span class="tok-string">"첫 인사 셀을 실행하세요."</span>, encoding=<span class="tok-string">"utf-8"</span>)
+        git(<span class="tok-string">"add"</span>, <span class="tok-string">"README.md"</span>)
+        git(<span class="tok-string">"-c"</span>, <span class="tok-string">"user.name=Student"</span>, <span class="tok-string">"-c"</span>, <span class="tok-string">"user.email=student@example.invalid"</span>,
+            <span class="tok-string">"-c"</span>, <span class="tok-string">"commit.gpgsign=false"</span>, <span class="tok-string">"commit"</span>, <span class="tok-string">"-qm"</span>, <span class="tok-string">"첫 인사 실행 안내"</span>)
+        print(git(<span class="tok-string">"log"</span>, <span class="tok-string">"-1"</span>, <span class="tok-string">"--format=%s"</span>))
 <span class="tok-keyword">else</span>:
-    print(<span class="tok-string">&quot;Git이 설치된 수업 환경에서 첫 커밋을 확인하세요.&quot;</span>)</code></pre></figure>
+    print(<span class="tok-string">"Git이 설치된 수업 환경에서 첫 커밋을 확인하세요."</span>)</code></pre></figure>
 </details>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">첫 인사 실행 안내</pre></div>
 <div class="cell-after"><p>Git을 사용할 수 있는 환경에서는 첫 인사 실행 안내가 나옵니다. 방금 본 문장은 커밋에 붙인 설명입니다. 같은 셀을 다시 실행하면 새 임시 저장소에서 한 번 더 연습합니다.</p>
@@ -183,35 +168,35 @@ print(settings.get(<span class="tok-string">&quot;LEARNER_NAME&quot;</span>, <sp
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>커널을 재시작하고 첫 줄부터 실행해 보세요. 첫 인사, 숫자 7, 이름을 넣은 인사가 다시 보이면 노트북에 남은 옛 출력을 읽은 것과 직접 재현한 결과를 구분할 수 있습니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>Jupyter 커널과 Python 코드 실행 심화 읽기</h2>
 </div>
 </header>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>Windows·WSL과 macOS 준비</summary><div class="prose"><p>학생 실습의 기본 경로는 Windows + WSL Ubuntu입니다. WSL은 Windows에서 Linux 환경을 사용할 수 있게 해 줍니다. 이미 준비된 교육용 PC라면 설치를 반복하지 말고 버전과 실행 위치부터 확인하세요.</p>
+<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>Windows·WSL·macOS의 Jupyter 준비</summary><div class="prose"><p>학생 실습의 기본 경로는 Windows + WSL Ubuntu입니다. WSL은 Windows에서 Linux 환경을 사용할 수 있게 해 줍니다. 이미 준비된 교육용 PC라면 설치를 반복하지 말고 버전과 실행 위치부터 확인하세요.</p>
 <p>개인 Windows PC에서 WSL을 새로 설치할 때는 이 장 끝의 Microsoft · WSL 설치 안내를 사용하세요. 기관 PC에서 설치 권한이 없으면 수업용 Jupyter 접속 위치를 확인하세요. macOS에서는 준비된 Jupyter 환경을 바로 엽니다.</p>
 </div>
 </details>
-<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>프로젝트마다 가상환경 만들기</summary><div class="prose"><p>프로젝트마다 필요한 도구의 버전은 다를 수 있습니다. 가상환경은 프로젝트가 사용할 Python 패키지를 분리하는 공간입니다. 운영체제 전체를 새로 만드는 가상 머신과는 다릅니다.</p>
+<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>프로젝트별 Python 가상 환경</summary><div class="prose"><p>프로젝트마다 필요한 도구의 버전은 다를 수 있습니다. 가상환경은 프로젝트가 사용할 Python 패키지를 분리하는 공간입니다. 운영체제 전체를 새로 만드는 가상 머신과는 다릅니다.</p>
 </div>
 </details>
-<span id="configuration"></span><details class="reading-topic" id="reading-configuration"><summary>설정값을 코드에서 분리하기</summary><div class="prose"><p>프로그램의 동작은 같아도 사용자 이름 같은 설정은 바뀔 수 있습니다. 코드에 직접 적는 대신 .env 파일에 값을 두면 설정과 동작을 구분할 수 있습니다. 오늘은 실제 비밀키를 사용하지 않고 연습용 이름만 저장합니다.</p>
+<span id="configuration"></span><details class="reading-topic" id="reading-configuration"><summary>환경 설정값과 소스 코드 분리</summary><div class="prose"><p>프로그램의 동작은 같아도 사용자 이름 같은 설정은 바뀔 수 있습니다. 코드에 직접 적는 대신 .env 파일에 값을 두면 설정과 동작을 구분할 수 있습니다. 오늘은 실제 비밀키를 사용하지 않고 연습용 이름만 저장합니다.</p>
 </div>
 </details>
-<span id="git"></span><details class="reading-topic" id="reading-git"><summary>변경을 기록하고 첫 커밋 만들기</summary><div class="prose"><p>Git은 프로젝트의 변경 이력을 기록하는 도구입니다. 커밋은 선택한 변경을 설명과 함께 기록하는 단위입니다. 로컬 커밋만으로 인터넷에 공개되는 것은 아닙니다. 오늘은 GitHub 업로드 없이 내 컴퓨터에서 첫 기록을 만듭니다.</p>
+<span id="git"></span><details class="reading-topic" id="reading-git"><summary>Git 스테이징과 첫 커밋</summary><div class="prose"><p>Git은 프로젝트의 변경 이력을 기록하는 도구입니다. 커밋은 선택한 변경을 설명과 함께 기록하는 단위입니다. 로컬 커밋만으로 인터넷에 공개되는 것은 아닙니다. 오늘은 GitHub 업로드 없이 내 컴퓨터에서 첫 기록을 만듭니다.</p>
 </div>
 </details>
-<span id="review"></span><details class="reading-topic" id="reading-review"><summary>복습과 다음 장 연결</summary><div class="prose"><p>오늘은 코드를 어디에 저장하고 어떻게 실행하는지 익혔습니다. 다음 장에서는 변수와 자료형을 배워 이름·숫자·참과 거짓을 직접 다룹니다. 오늘 작성한 print와 설정값 예제가 그 출발점이 됩니다.</p>
+<span id="review"></span><details class="reading-topic" id="reading-review"><summary>커널 실행과 Git 복습</summary><div class="prose"><p>오늘은 코드를 어디에 저장하고 어떻게 실행하는지 익혔습니다. 다음 장에서는 변수와 자료형을 배워 이름·숫자·참과 거짓을 직접 다룹니다. 오늘 작성한 print와 설정값 예제가 그 출발점이 됩니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">08</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.python.org/3/library/venv.html" target="_blank" rel="noopener noreferrer">Python · venv ↗</a><span></span></li>

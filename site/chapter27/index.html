@@ -1,49 +1,49 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>조건 분기와 끝나는 반복 만들기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph 조건부 간선과 재검색 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 27 / LANGGRAPH</p>
-<span class="sidebar-title">조건 분기와 끝나는 반복 만들기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-decision"><span>02</span>다음에 갈 노드는 누가 고를까요?</a><a href="#nb-stop"><span>03</span>검색 횟수는 어디서 올릴까요?</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">LangGraph 조건부 간선과 재검색</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-decision"><span>02</span>add_conditional_edges()와 라우팅 함수</a><a href="#nb-stop"><span>03</span>질의 재작성과 재검색 횟수 제한</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph 조건부 간선과 재검색 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 27 / LANGGRAPH</span><span class="template-badge">학생용 교재</span></div>
-<h1>조건 분기와 끝나는 반복 만들기</h1>
+<h1>LangGraph 조건부 간선과 재검색</h1>
 <p class="hero-description">‘책을 빌리는 기간?’에는 검색 낱말 ‘대출’이 없습니다. 한 번은 질문을 고쳐 다시 찾되 같은 실패가 끝없이 이어지지 않도록 검색 횟수를 상태에 남깁니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 027 · 8H</span><span>26장 Node·Edge·State, Python 조건문과 함수 반환</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter27.ipynb" download="chapter27.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>27장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-decision" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>다음에 갈 노드는 누가 고를까요?</h2>
+<h2>add_conditional_edges()와 라우팅 함수</h2>
 </div>
 </header>
-<p>search가 시도 횟수를 올린 직후 route가 문서 유무와 attempts를 읽습니다. 문서가 있으면 답을 쓰고, 없고 한 번만 찾았다면 검색어를 바꿉니다. 두 번 찾고도 빈 목록이면 멈춥니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 분기 함수를 한 번 부르기</h3>
+<p class="concept-intro">조건부 간선은 상태에 따라 서로 다른 노드로 이어집니다. 빈 검색 결과를 다시 찾게 할 때는 반복을 끝낼 조건도 필요합니다.</p><p>search가 시도 횟수를 올린 직후 route가 문서 유무와 attempts를 읽습니다. 문서가 있으면 답을 쓰고, 없고 한 번만 찾았다면 검색어를 바꿉니다. 두 번 찾고도 빈 목록이면 멈춥니다.</p>
+<figure class="lesson-clip" id="concept-clip"><h3>조건부 간선에서 선택되는 경로</h3><video controls muted playsinline preload="metadata" aria-label="조건부 간선에서 선택되는 경로" src="concept.mp4"></video><figcaption>선로가 갈라지는 지점에서 열차는 한쪽으로만 갑니다. route()의 반환값을 바꾸면 어느 노드가 실행되는지 코드와 대조하세요.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · route()의 분기 반환값</h3>
 <div class="cell-before"><p>검색을 한 번 마쳤고 문서를 못 찾았습니다. 다음에 갈 곳을 고르는 함수만 먼저 실행하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> route(state):
-    <span class="tok-keyword">if</span> state[<span class="tok-string">&quot;documents&quot;</span>]:
-        <span class="tok-keyword">return</span> <span class="tok-string">&quot;answer&quot;</span>
-    <span class="tok-keyword">if</span> state[<span class="tok-string">&quot;attempts&quot;</span>] &lt; <span class="tok-number">2</span>:
-        <span class="tok-keyword">return</span> <span class="tok-string">&quot;retry&quot;</span>
-    <span class="tok-keyword">return</span> <span class="tok-string">&quot;stop&quot;</span>
+    <span class="tok-keyword">if</span> state[<span class="tok-string">"documents"</span>]:
+        <span class="tok-keyword">return</span> <span class="tok-string">"answer"</span>
+    <span class="tok-keyword">if</span> state[<span class="tok-string">"attempts"</span>] &lt; <span class="tok-number">2</span>:
+        <span class="tok-keyword">return</span> <span class="tok-string">"retry"</span>
+    <span class="tok-keyword">return</span> <span class="tok-string">"stop"</span>
 
-after_search = {<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;책을 빌리는 기간?&#x27;</span>, <span class="tok-string">&#x27;documents&#x27;</span>: [], <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;&#x27;</span>, <span class="tok-string">&#x27;attempts&#x27;</span>: <span class="tok-number">1</span>}
+after_search = {<span class="tok-string">'question'</span>: <span class="tok-string">'책을 빌리는 기간?'</span>, <span class="tok-string">'documents'</span>: [], <span class="tok-string">'answer'</span>: <span class="tok-string">''</span>, <span class="tok-string">'attempts'</span>: <span class="tok-number">1</span>}
 print(route(after_search))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">retry</pre></div>
 <div class="cell-after"><p>retry가 나왔습니다. 이 함수는 검색을 실행하지 않고 다음 경로의 이름만 돌려줍니다. 다음 제공 셀에서 retry와 rewrite가 연결되는 줄을 찾아보세요.</p>
@@ -56,29 +56,15 @@ print(route(after_search))</code></pre></figure>
 </tbody></table></div>
 </section>
 <section id="nb-stop" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>검색 횟수는 어디서 올릴까요?</h2>
+<h2>질의 재작성과 재검색 횟수 제한</h2>
 </div>
 </header>
-<!-- MOTION retry-tokens -->
-<figure class="motion-study" id="motion-retry-tokens" data-sheet="motion/retry-tokens.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>검색을 더 할 수 있는 횟수가 얼마나 남았나요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/retry-tokens-still.webp" width="800" height="272" alt="시도할 때마다 표 한 장을 씁니다. 최대 두 번이면 두 장을 모두 쓴 뒤에는 같은 실패가 돌아와도 세 번째 검색을 시작하지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<section class="practice-space" id="practice-space" data-practice="retry"><h3>검색 상태에 따른 다음 노드</h3><label>검색 상태 <select><option value="0,1">빈 결과 · 첫 시도</option><option value="0,2">빈 결과 · 두 번째 시도</option><option value="1,1">근거 발견 · 첫 시도</option></select></label><div class="practice-stage" role="img" aria-label="검색 상태에 따른 다음 노드"></div><output aria-live="polite">첫 검색 결과가 비면 재검색하고 두 번째에도 비면 종료합니다.</output></section><!-- MOTION retry-tokens -->
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>시도할 때마다 표 한 장을 씁니다. 최대 두 번이면 두 장을 모두 쓴 뒤에는 같은 실패가 돌아와도 세 번째 검색을 시작하지 않습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>검색 횟수가 2에 도달했을 때 반복이 계속되는지 확인하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>검색을 실제로 시도한 횟수가 한도에 닿으면 끝냅니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>질문을 고치는 함수가 여러 번 불려도 검색 횟수와 같으리라는 보장은 없습니다. 실제 검색을 실행한 search에서만 attempts를 하나 올립니다. 반복을 제한하는 판단은 이 갱신이 반영된 뒤에 내립니다.</p>
-</figcaption>
-</figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 제공 셀 · 분기를 그래프에 연결하기</h3>
+
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · add_conditional_edges()로 경로 등록</h3>
 <div class="cell-before"><p>이미 실행한 route는 그대로 씁니다. search가 attempts를 올리는 줄과 rewrite 뒤에 다시 search로 돌아가는 엣지를 찾아보세요.</p>
 <p>셀 01에서 나온 retry는 아직 최종 답이 아닙니다. 그래프는 rewrite로 이동한 뒤 search에 다시 들어갑니다. 다음 검색에서도 비었을 때 어떤 조건이 반복을 끝내는지 찾아보세요.</p>
 </div>
@@ -92,57 +78,57 @@ print(route(after_search))</code></pre></figure>
     attempts: int
 
 <span class="tok-keyword">def</span> search(state: State) -&gt; dict:
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> state[<span class="tok-string">&quot;question&quot;</span>].strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;질문을 입력하세요.&quot;</span>)
-    documents = [<span class="tok-string">&quot;도서 대출 기간은 14일입니다.&quot;</span>] <span class="tok-keyword">if</span> <span class="tok-string">&quot;대출&quot;</span> <span class="tok-keyword">in</span> state[<span class="tok-string">&quot;question&quot;</span>] <span class="tok-keyword">else</span> []
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;documents&quot;</span>: documents, <span class="tok-string">&quot;attempts&quot;</span>: state[<span class="tok-string">&quot;attempts&quot;</span>] + <span class="tok-number">1</span>}
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> state[<span class="tok-string">"question"</span>].strip():
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"질문을 입력하세요."</span>)
+    documents = [<span class="tok-string">"도서 대출 기간은 14일입니다."</span>] <span class="tok-keyword">if</span> <span class="tok-string">"대출"</span> <span class="tok-keyword">in</span> state[<span class="tok-string">"question"</span>] <span class="tok-keyword">else</span> []
+    <span class="tok-keyword">return</span> {<span class="tok-string">"documents"</span>: documents, <span class="tok-string">"attempts"</span>: state[<span class="tok-string">"attempts"</span>] + <span class="tok-number">1</span>}
 
 <span class="tok-keyword">def</span> rewrite(state: State) -&gt; dict:
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;question&quot;</span>: state[<span class="tok-string">&quot;question&quot;</span>].replace(<span class="tok-string">&quot;책&quot;</span>, <span class="tok-string">&quot;대출&quot;</span>)}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"question"</span>: state[<span class="tok-string">"question"</span>].replace(<span class="tok-string">"책"</span>, <span class="tok-string">"대출"</span>)}
 
 <span class="tok-keyword">def</span> answer(state: State) -&gt; dict:
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot; / &quot;</span>.join(state[<span class="tok-string">&quot;documents&quot;</span>])}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"answer"</span>: <span class="tok-string">" / "</span>.join(state[<span class="tok-string">"documents"</span>])}
 
 <span class="tok-keyword">def</span> fallback(state: State) -&gt; dict:
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;두 번 검색했지만 근거가 없습니다. 질문을 구체화해 주세요.&quot;</span>}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"answer"</span>: <span class="tok-string">"두 번 검색했지만 근거가 없습니다. 질문을 구체화해 주세요."</span>}
 
 <span class="tok-keyword">def</span> make_graph():
     builder = StateGraph(State)
-    <span class="tok-keyword">for</span> name, node <span class="tok-keyword">in</span> [(<span class="tok-string">&quot;search&quot;</span>, search), (<span class="tok-string">&quot;rewrite&quot;</span>, rewrite),
-                       (<span class="tok-string">&quot;answer_node&quot;</span>, answer), (<span class="tok-string">&quot;fallback&quot;</span>, fallback)]:
+    <span class="tok-keyword">for</span> name, node <span class="tok-keyword">in</span> [(<span class="tok-string">"search"</span>, search), (<span class="tok-string">"rewrite"</span>, rewrite),
+                       (<span class="tok-string">"answer_node"</span>, answer), (<span class="tok-string">"fallback"</span>, fallback)]:
         builder.add_node(name, node)
-    builder.add_edge(START, <span class="tok-string">&quot;search&quot;</span>)
-    builder.add_conditional_edges(<span class="tok-string">&quot;search&quot;</span>, route,
-        {<span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;answer_node&quot;</span>, <span class="tok-string">&quot;retry&quot;</span>: <span class="tok-string">&quot;rewrite&quot;</span>, <span class="tok-string">&quot;stop&quot;</span>: <span class="tok-string">&quot;fallback&quot;</span>})
-    builder.add_edge(<span class="tok-string">&quot;rewrite&quot;</span>, <span class="tok-string">&quot;search&quot;</span>)
-    builder.add_edge(<span class="tok-string">&quot;answer_node&quot;</span>, END)
-    builder.add_edge(<span class="tok-string">&quot;fallback&quot;</span>, END)
+    builder.add_edge(START, <span class="tok-string">"search"</span>)
+    builder.add_conditional_edges(<span class="tok-string">"search"</span>, route,
+        {<span class="tok-string">"answer"</span>: <span class="tok-string">"answer_node"</span>, <span class="tok-string">"retry"</span>: <span class="tok-string">"rewrite"</span>, <span class="tok-string">"stop"</span>: <span class="tok-string">"fallback"</span>})
+    builder.add_edge(<span class="tok-string">"rewrite"</span>, <span class="tok-string">"search"</span>)
+    builder.add_edge(<span class="tok-string">"answer_node"</span>, END)
+    builder.add_edge(<span class="tok-string">"fallback"</span>, END)
     <span class="tok-keyword">return</span> builder.compile()
 
 <span class="tok-keyword">def</span> run(question: str) -&gt; State:
-    initial: State = {<span class="tok-string">&quot;question&quot;</span>: question, <span class="tok-string">&quot;documents&quot;</span>: [], <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;&quot;</span>, <span class="tok-string">&quot;attempts&quot;</span>: <span class="tok-number">0</span>}
-    <span class="tok-keyword">return</span> make_graph().invoke(initial, config={<span class="tok-string">&quot;recursion_limit&quot;</span>: <span class="tok-number">20</span>})
+    initial: State = {<span class="tok-string">"question"</span>: question, <span class="tok-string">"documents"</span>: [], <span class="tok-string">"answer"</span>: <span class="tok-string">""</span>, <span class="tok-string">"attempts"</span>: <span class="tok-number">0</span>}
+    <span class="tok-keyword">return</span> make_graph().invoke(initial, config={<span class="tok-string">"recursion_limit"</span>: <span class="tok-number">20</span>})
 
-print(search(after_search)[<span class="tok-string">&#x27;attempts&#x27;</span>])</code></pre></figure>
+print(search(after_search)[<span class="tok-string">'attempts'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2</pre></div>
 <div class="cell-after"><p>같은 상태에서 검색을 한 번 더 실행해 횟수가 2가 됐습니다. 이 셀의 함수 정의를 다음 셀에서 사용합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 책을 대출로 바꿔 다시 찾기</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · rewrite 노드의 질의 변경</h3>
 <div class="cell-before"><p>질문 한 건의 마지막 상태에서 횟수와 답을 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">result = run(<span class="tok-string">&#x27;책을 빌리는 기간?&#x27;</span>)
-print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span class="tok-string">&#x27;answer&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">result = run(<span class="tok-string">'책을 빌리는 기간?'</span>)
+print(result[<span class="tok-string">'attempts'</span>], result[<span class="tok-string">'answer'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 도서 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>두 번째 검색에서 ‘대출’이 들어 있는 질문으로 문장을 찾았습니다. 첫 번째 빈 결과만 보고 바로 끝냈다면 14일이라는 답까지 가지 못했을 것입니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 두 번 모두 빈 검색 멈추기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 검색 상한과 fallback</h3>
 <div class="cell-before"><p>주차장 질문을 처리한 뒤 몇 번 검색했고 사용자에게 무엇을 안내하는지 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 주차장 질문을 run에 전달하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">result = run(<span class="tok-string">&#x27;주차장은?&#x27;</span>)
-print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span class="tok-string">&#x27;answer&#x27;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">result = run(<span class="tok-string">'주차장은?'</span>)
+print(result[<span class="tok-string">'attempts'</span>], result[<span class="tok-string">'answer'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 두 번 검색했지만 근거가 없습니다. 질문을 구체화해 주세요.</pre></div>
 <div class="cell-after"><p>두 번 모두 문서가 비어 fallback으로 갑니다. attempts가 2일 때도 retry로 보내면 설계한 상한을 넘게 됩니다. 프레임워크의 recursion_limit은 이런 실수를 발견하는 별도 보호 장치입니다.</p>
 </div>
@@ -150,31 +136,31 @@ print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>검색 한 번에 바로 답하는 질문도 골라 보세요. 세 질문 모두 search 다음에 route를 거칩니다. 어떤 상태에서 다음 경로가 갈라졌나요?</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>LangGraph 조건부 간선과 재검색 심화 읽기</h2>
 </div>
 </header>
-<span id="branch"></span><details class="reading-topic" id="reading-branch"><summary>조건 함수는 다음 경로의 이름을 반환합니다</summary><div class="prose"><p>search가 documents를 갱신한 뒤 route가 현재 상태를 읽습니다. route의 역할은 답변을 만드는 것이 아니라 answer·retry·stop 중 한 문자열을 반환하는 것입니다. add_conditional_edges의 대응표가 그 문자열을 등록한 노드 이름과 연결합니다.</p>
+<span id="branch"></span><details class="reading-topic" id="reading-branch"><summary>조건 함수의 경로 이름</summary><div class="prose"><p>search가 documents를 갱신한 뒤 route가 현재 상태를 읽습니다. route의 역할은 답변을 만드는 것이 아니라 answer·retry·stop 중 한 문자열을 반환하는 것입니다. add_conditional_edges의 대응표가 그 문자열을 등록한 노드 이름과 연결합니다.</p>
 <p>직접 성공에서는 한 번 검색하고 종료합니다. 실패라고 무조건 다시 검색하면 같은 입력과 결과를 끝없이 반복할 수 있습니다. 이번 예제는 문서가 없고 attempts가 2보다 작을 때만 재시도합니다.</p>
 </div>
 </details>
-<span id="attempts"></span><details class="reading-topic" id="reading-attempts"><summary>실행 횟수를 상태에 남기기</summary><div class="prose"><p>State에 attempts 정수 필드를 추가합니다. 초기 값 0에서 시작해 search가 실제 실행될 때마다 1을 더합니다. 검색 함수 실행 후 route가 읽는 값은 이미 증가한 값입니다. 첫 번째 실패 뒤에는 1이므로 재시도하고, 두 번째 실패 뒤에는 2이므로 종료합니다.</p>
+<span id="attempts"></span><details class="reading-topic" id="reading-attempts"><summary>상태에 저장하는 시도 횟수</summary><div class="prose"><p>State에 attempts 정수 필드를 추가합니다. 초기 값 0에서 시작해 search가 실제 실행될 때마다 1을 더합니다. 검색 함수 실행 후 route가 읽는 값은 이미 증가한 값입니다. 첫 번째 실패 뒤에는 1이므로 재시도하고, 두 번째 실패 뒤에는 2이므로 종료합니다.</p>
 <p>attempts는 이 예제에서 검색 노드 실행 횟수입니다. 전체 노드 수나 모델 토큰 수가 아닙니다. 답변 노드와 rewrite 실행을 함께 세고 싶다면 별도의 기록을 설계해야 합니다.</p>
 </div>
 </details>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>예제를 준비하고 세 질문 실행하기</summary><div class="prose"><p>공통 환경은 Python 3.12.x입니다. langgraph 1.2.22와 langchain-core 1.8.0으로 로컬 예제를 확인합니다. 이 장은 문서 한 문장을 코드 안에 둡니다. 외부 데이터 파일이나 API 키를 요구하지 않습니다.</p>
+<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>분기별 예제 입력</summary><div class="prose"><p>공통 환경은 Python 3.12.x입니다. langgraph 1.2.22와 langchain-core 1.8.0으로 로컬 예제를 확인합니다. 이 장은 문서 한 문장을 코드 안에 둡니다. 외부 데이터 파일이나 API 키를 요구하지 않습니다.</p>
 </div>
 </details>
-<span id="graph"></span><details class="reading-topic" id="reading-graph"><summary>다시 검색하는 연결 만들기</summary><div class="prose"><p>rewrite 다음에 search로 돌아가는 연결이 반복을 만듭니다. answer_node와 fallback은 END로 연결되어 더 이상 돌아가지 않습니다. 모든 경우를 반복으로 처리하지 않고 성공과 포기 경로를 분리합니다.</p>
+<span id="graph"></span><details class="reading-topic" id="reading-graph"><summary>재검색 순환 간선</summary><div class="prose"><p>rewrite 다음에 search로 돌아가는 연결이 반복을 만듭니다. answer_node와 fallback은 END로 연결되어 더 이상 돌아가지 않습니다. 모든 경우를 반복으로 처리하지 않고 성공과 포기 경로를 분리합니다.</p>
 </div>
 </details>
-<span id="trace"></span><details class="reading-topic" id="reading-trace"><summary>세 경로를 상태표로 확인하기</summary><div class="table-scroll" tabindex="0"><table><caption>관찰할 경로</caption><thead><tr><th scope="col">입력</th><th scope="col">노드 순서</th><th scope="col">검색 횟수</th></tr>
+<span id="trace"></span><details class="reading-topic" id="reading-trace"><summary>상태표의 세 종료 경로</summary><div class="table-scroll" tabindex="0"><table><caption>관찰할 경로</caption><thead><tr><th scope="col">입력</th><th scope="col">노드 순서</th><th scope="col">검색 횟수</th></tr>
 </thead><tbody><tr><td>대출 기간?</td><td>search → answer_node</td><td>1</td></tr>
 <tr><td>책을 빌리는 기간?</td><td>search → rewrite → search → answer_node</td><td>2</td></tr>
 <tr><td>주차장은?</td><td>search → rewrite → search → fallback</td><td>2</td></tr>
@@ -182,7 +168,7 @@ print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span
 <div class="prose"><p>두 번째 입력은 첫 검색에서 대출이라는 글자가 없어 실패합니다. rewrite가 책을 대출로 바꾼 뒤 다시 검색하면 근거가 생깁니다. 세 번째 입력은 rewrite로 바뀌지 않아도 횟수 상한으로 끝납니다. 질문이 달라진 사실과 답변이 좋아진 사실은 따로 확인해야 합니다.</p>
 </div>
 </details>
-<span id="limit"></span><details class="reading-topic" id="reading-limit"><summary>상한과 오류를 구분하기</summary><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
+<span id="limit"></span><details class="reading-topic" id="reading-limit"><summary>반복 상한과 실행 오류</summary><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
 <p>빈 질문은 search에서 ValueError로 중단됩니다. 질문 자체가 없는데 재검색해도 정보가 늘지 않으므로 입력을 고치도록 합니다. 실제 네트워크 오류의 재시도 여부는 오류 종류·시간 제한·중복 실행 위험을 함께 판단해야 하며 이 장의 로컬 예제로 이를 검증했다고 주장하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>오류 점검</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">수정 방향</th></tr>
@@ -193,10 +179,10 @@ print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span
 <tr><td>항상 문서 없음</td><td>키워드 포함 검사</td><td>가상 검색의 정확한 조건 확인</td></tr>
 </tbody></table></div>
 </details>
-<span id="assignment"></span><details class="reading-topic" id="reading-assignment"><summary>직접 고치고 회귀 검사하기</summary><div class="prose"><p>검사는 직접 성공, 재시도 성공, 상한 종료, 분기 경계, 빈 입력을 다룹니다. 학생이 새로 추가한 문서의 결과도 별도 검사로 남깁니다. 제공된 검사만 통과했다는 이유로 새 기능까지 확인했다고 적지 않습니다.</p>
+<span id="assignment"></span><details class="reading-topic" id="reading-assignment"><summary>분기 수정과 회귀 테스트</summary><div class="prose"><p>검사는 직접 성공, 재시도 성공, 상한 종료, 분기 경계, 빈 입력을 다룹니다. 학생이 새로 추가한 문서의 결과도 별도 검사로 남깁니다. 제공된 검사만 통과했다는 이유로 새 기능까지 확인했다고 적지 않습니다.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>관찰을 기록하고 다음 장에 넘기기</summary><div class="prose"><p>templates/graph/termination-cases.json을 작업 폴더의 graph/termination-cases.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>조건부 간선의 실행 기록</summary><div class="prose"><p>templates/graph/termination-cases.json을 작업 폴더의 graph/termination-cases.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">위치</th><th scope="col">기록</th></tr>
 </thead><tbody><tr><td>entry_evidence</td><td>이전 상태표 경로, 실제 사용 여부, 보충 자료와 오늘 비교</td></tr>
@@ -207,7 +193,7 @@ print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://reference.langchain.com/python/langgraph/graph/state/StateGraph" target="_blank" rel="noopener noreferrer">LangGraph StateGraph 공식 API ↗</a><span></span></li>
@@ -219,4 +205,4 @@ print(result[<span class="tok-string">&#x27;attempts&#x27;</span>], result[<span
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

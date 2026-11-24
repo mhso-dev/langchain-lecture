@@ -1,57 +1,57 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>화면 핵심 흐름 · 방향과 예시 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>답변 카드와 요청 대기 상태 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 104 / FINAL PROJECT</p>
-<span class="sidebar-title">화면 핵심 흐름 · 방향과 예시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-screen"><span>02</span>사용자가 볼 결과 카드 만들기</a><a href="#nb-progress"><span>03</span>새 질문을 보낸 직후의 화면</a><a href="#recap"><span>04</span>팀 자료로 이어가기</a></nav>
+<span class="sidebar-title">답변 카드와 요청 대기 상태</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-screen"><span>02</span>본문과 원문 위치의 표시 규칙</a><a href="#nb-progress"><span>03</span>대기 중 이전 답변과 출처 초기화</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 104 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
-<h1>화면 핵심 흐름 · 방향과 예시</h1>
+<h1>답변 카드와 요청 대기 상태</h1>
 <p class="hero-description">알파 점검을 준비하며 답과 출처를 한곳에서 읽을 수 있게 하자는 시안을 만들었습니다. 102장에서 받은 응답을 이용해 장비 A의 질문부터 원문 위치까지 한 화면에 배치합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter104.ipynb" download="chapter104.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>104장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-screen" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>사용자가 볼 결과 카드 만들기</h2>
+<h2>본문과 원문 위치의 표시 규칙</h2>
 </div>
 </header>
-<p>완성 화면 시안　상단에 “장비 A의 점검 전 확인 사항은?”을 두고 그 아래에 “점검 전 전원 표시등을 확인합니다.”라고 씁니다. 바로 아래 ‘근거 문서’ 영역에는 자료명과 페이지·절·개정일·버전을 둡니다. 원문 바로가기 기능을 구현하는 팀은 주소를 문서 목록에서 얻고 해당 절이 열리는지 직접 확인해야 합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 답변과 원문 위치 표시</h3>
+<p class="concept-intro">답변 카드는 현재 질문의 답과 원문 위치를 함께 표시합니다. 새 요청을 보낸 직후에는 이전 카드 중 무엇을 비워야 하는지 정합니다.</p><p>완성 화면 시안　상단에 “장비 A의 점검 전 확인 사항은?”을 두고 그 아래에 “점검 전 전원 표시등을 확인합니다.”라고 씁니다. 바로 아래 ‘근거 문서’ 영역에는 자료명과 페이지·절·개정일·버전을 둡니다. 원문 바로가기 기능을 구현하는 팀은 주소를 문서 목록에서 얻고 해당 절이 열리는지 직접 확인해야 합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 결과 카드의 근거 위치</h3>
 <div class="cell-before"><p>로컬 예제의 Q01 응답에서 현재 답과 첫 출처를 읽어 화면 카드에 들어갈 문장을 만듭니다.</p>
 <p>카드에는 답변과 함께 문서 이름·쪽·절·개정일을 표시합니다. RULE-A는 근거를 다시 찾을 때 쓰는 문서 ID이므로 출처 줄에도 보이게 합니다. model_calls 같은 실행 정보는 개발 기록에 남깁니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">result = {<span class="tok-string">&#x27;status&#x27;</span>: <span class="tok-string">&#x27;answered&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
- <span class="tok-string">&#x27;sources&#x27;</span>: [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;RULE-A&#x27;</span>,
-              <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;점검 전 전원 표시등을 확인합니다.&#x27;</span>,
-              <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 장비실 규정 A&#x27;</span>,
-              <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>,
-              <span class="tok-string">&#x27;section&#x27;</span>: <span class="tok-string">&#x27;2.1&#x27;</span>,
-              <span class="tok-string">&#x27;revised_on&#x27;</span>: <span class="tok-string">&#x27;2026-11-01&#x27;</span>,
-              <span class="tok-string">&#x27;version&#x27;</span>: <span class="tok-string">&#x27;rules-v1&#x27;</span>}],
- <span class="tok-string">&#x27;mode&#x27;</span>: <span class="tok-string">&#x27;local_rule_fixture&#x27;</span>,
- <span class="tok-string">&#x27;model_calls&#x27;</span>: <span class="tok-number">0</span>}
-source = result[<span class="tok-string">&quot;sources&quot;</span>][<span class="tok-number">0</span>]
-print(result[<span class="tok-string">&quot;answer&quot;</span>])
-print(f&#x27;근거 문서 · {source[<span class="tok-string">&quot;id&quot;</span>]} · {source[<span class="tok-string">&quot;source&quot;</span>]} · {source[<span class="tok-string">&quot;page&quot;</span>]}쪽 {source[<span class="tok-string">&quot;section&quot;</span>]}절&#x27;)
-print(f&#x27;개정일 {source[<span class="tok-string">&quot;revised_on&quot;</span>]} · {source[<span class="tok-string">&quot;version&quot;</span>]}&#x27;)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">result = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+ <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
+              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
+              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
+              <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
+              <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
+              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
+              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
+ <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
+ <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
+source = result[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>]
+print(result[<span class="tok-string">"answer"</span>])
+print(f'근거 문서 · {source[<span class="tok-string">"id"</span>]} · {source[<span class="tok-string">"source"</span>]} · {source[<span class="tok-string">"page"</span>]}쪽 {source[<span class="tok-string">"section"</span>]}절')
+print(f'개정일 {source[<span class="tok-string">"revised_on"</span>]} · {source[<span class="tok-string">"version"</span>]}')</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 전원 표시등을 확인합니다.
 근거 문서 · RULE-A · 가상 장비실 규정 A · 1쪽 2.1절
 개정일 2026-11-01 · rules-v1</pre></div>
@@ -60,53 +60,33 @@ print(f&#x27;개정일 {source[<span class="tok-string">&quot;revised_on&quot;</
 </article>
 </section>
 <section id="nb-progress" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>새 질문을 보낸 직후의 화면</h2>
+<h2>대기 중 이전 답변과 출처 초기화</h2>
 </div>
 </header>
 <!-- MOTION clear-on-send -->
-<figure class="motion-study" id="motion-clear-on-send" data-sheet="motion/clear-on-send.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>새 요청이 대기하는 동안 무엇을 지워야 할까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/clear-on-send-still.webp" width="800" height="272" alt="직전 질문의 답과 출처를 함께 비웁니다. 새 요청의 결과가 도착한 뒤에야 그 요청의 답과 근거를 표시합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>직전 질문의 답과 출처를 함께 비웁니다. 새 요청의 결과가 도착한 뒤에야 그 요청의 답과 근거를 표시합니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<figure class="concept-film"><!-- FIGURE figures/index-02.svg --><div class="film-controls"><button type="button" data-toggle>일시 정지</button><button type="button" data-position="0" aria-label="1번째 장면에서 멈추기">처음</button><button type="button" data-position="1" aria-label="2번째 장면에서 멈추기">중간</button><button type="button" data-position="2" aria-label="3번째 장면에서 멈추기">결과</button></div>
-<div class="motion-note"><div><b>볼 곳</b><p>응답 대기 중인 화면에 이전 답의 출처가 남아 있는지 보세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>새 질문이 대기 중이면 이전 출처를 표시하지 않습니다.</p>
-</div>
-</div>
-<figcaption class="film-foot"><p>시안의 상태 변화　보내기 전에는 질문 입력과 전송을 허용합니다. 보낸 직후에는 “응답을 기다리는 중”과 현재 요청 표식을 보여 주고 이전 답은 과거 대화에 둡니다. 새 응답을 받고 나서야 현재 답과 출처를 넣습니다. 지난 문장을 그대로 둔다면 사용자가 기다리는 중에 그 답을 새 결과로 읽을 수 있습니다.</p>
-</figcaption>
-</figure>
-<div class="learn-detail"><h4>같은 카드가 달라지는 두 시점</h4>
-<figure class="demo-proof-wrap"><picture><source media="(prefers-reduced-motion:reduce)" srcset="../assets/media/png-e3e41156165d9b.png"><img class="demo-proof" alt="새 질문이 대기 중일 때는 출처가 비어 있고, 응답이 도착해야 현재 질문의 출처를 표시합니다." loading="lazy" src="../assets/media/svg-8324703ecadbd5.svg"></picture><figcaption><div class="motion-note"><div><b>볼 곳</b><p>각 화면에서 ‘① 전송 직후 · next-01’와 ‘② 현재 요청의 응답 도착’에 표시되는 내용을 비교하세요.</p>
-</div>
-<div><b>애니메이션의 의미</b><p>새 질문이 대기 중일 때는 출처가 비어 있고, 응답이 도착해야 현재 질문의 출처를 표시합니다.</p>
-</div>
-</div>
-</figcaption>
-</figure>
-<div class="demo-panels"><div><small>① 전송 직후 · next-01</small><h4>장비 A 점검 전에는?</h4>
+
+<div class="learn-detail"><h4>요청 대기와 완료 화면의 차이</h4>
+
+<div class="demo-panels"><div><small>① 전송 직후 · next-01</small><h4>질문 제출 직후의 대기 카드</h4>
 <p>질문을 보냈습니다. 응답을 기다리는 중입니다.</p>
 <p>출처 0건</p>
 </div>
-<div><small>② 현재 요청의 응답 도착</small><h4>장비 A 점검 전에는?</h4>
+<div><small>② 현재 요청의 응답 도착</small><h4>응답을 받은 뒤의 결과 카드</h4>
 <p>점검 전 전원 표시등을 확인합니다.</p>
 <p><b>근거</b>　RULE-A · 가상 장비실 규정 A · 1쪽 2.1절<br>개정일 2026-11-01 · rules-v1</p>
 </div>
 </div>
 <p>화면 시안입니다. 왼쪽에는 이전 답의 출처가 없고 오른쪽에는 지금 읽은 절이 답 바로 아래에 나타납니다.</p>
 </div>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 대기 화면 문안</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 대기 상태 표시</h3>
 <div class="cell-before"><p>현재 답을 아직 받지 못한 경우를 담아 대기 문구를 만들어 보세요. 앞 질문의 출처를 새 카드에 복사하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 현재 요청 ID, 대기 문구, 비어 있는 새 출처 목록을 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">view = {<span class="tok-string">&quot;request_id&quot;</span>: <span class="tok-string">&quot;next-01&quot;</span>, <span class="tok-string">&quot;message&quot;</span>: <span class="tok-string">&quot;질문을 보냈습니다. 응답을 기다리는 중입니다.&quot;</span>, <span class="tok-string">&quot;sources&quot;</span>: []}
-print(view[<span class="tok-string">&quot;message&quot;</span>], view[<span class="tok-string">&quot;sources&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">view = {<span class="tok-string">"request_id"</span>: <span class="tok-string">"next-01"</span>, <span class="tok-string">"message"</span>: <span class="tok-string">"질문을 보냈습니다. 응답을 기다리는 중입니다."</span>, <span class="tok-string">"sources"</span>: []}
+print(view[<span class="tok-string">"message"</span>], view[<span class="tok-string">"sources"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">질문을 보냈습니다. 응답을 기다리는 중입니다. []</pre></div>
 <div class="cell-after"><p>지금은 진행 안내와 빈 출처만 보입니다. 팀 화면에서는 이 안내를 어디에 둘지, 단축키나 읽기 도구로도 상태를 알 수 있을지 정할 수 있습니다.</p>
 </div>
@@ -114,7 +94,7 @@ print(view[<span class="tok-string">&quot;message&quot;</span>], view[<span clas
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>팀 자료로 이어가기</h2>
+<h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
 <div class="prose"><p>105장에는 완성된 답변 화면과, 보내는 중에는 어떤 항목이 비어 있어야 하는지 넘기세요. 노트북 출력은 화면 문안의 미리보기이며 브라우저에서 버튼을 누른 관찰 기록은 아닙니다.</p>
@@ -127,4 +107,4 @@ print(view[<span class="tok-string">&quot;message&quot;</span>], view[<span clas
 <noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script><script src="../assets/concept-playback.js"></script></body></html>
+<script src="../assets/menu-focus.js"></script></body></html>

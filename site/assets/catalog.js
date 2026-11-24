@@ -20,6 +20,6 @@ filterChapters();
 // Preserve bookmarks created by the portable textbook reader.
 const route = /^#(chapter\d{2,3})(-figures)?(?:\/([\w-]+))?$/.exec(location.hash);
 if (route && document.querySelector('a[href="' + route[1] + '/index.html"]')) {
-  const page = route[2] && route[1] === 'chapter12' ? 'figures.html' : 'index.html';
+  const page = 'index.html';
   location.replace(route[1] + '/' + page + (route[3] ? '#' + route[3] : ''));
 }

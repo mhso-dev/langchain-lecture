@@ -1,53 +1,47 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>사용자별 대화와 스트림을 구분하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>FastAPI StreamingResponse와 줄 단위 JSON · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<script defer src="../assets/concept-labs.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 69 / HTTP API</p>
-<span class="sidebar-title">사용자별 대화와 스트림을 구분하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-stream"><span>02</span>한 줄에 이벤트 하나 보내기</a><a href="#nb-partial"><span>03</span>보이는 답과 완료 상태 나누기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">FastAPI StreamingResponse와 줄 단위 JSON</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-stream"><span>02</span>StreamingResponse의 이벤트 직렬화</a><a href="#nb-partial"><span>03</span>수신한 본문과 완료 이벤트 구분</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>FastAPI StreamingResponse와 줄 단위 JSON 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 69 / HTTP API</span><span class="template-badge">학생용 교재</span></div>
-<h1>사용자별 대화와 스트림을 구분하기</h1>
+<h1>FastAPI StreamingResponse와 줄 단위 JSON</h1>
 <p class="hero-description">답이 화면에 한 조각 보인 뒤 연결이 끊겼습니다. 사용자는 답을 다 받은 것일까요? 전체 서비스는 검증을 마친 답을 NDJSON으로 나누어 보냅니다. 노트북에서는 고정한 답을 사용해 일부만 받았을 때와 저장 뒤 완료 이벤트를 받았을 때를 구분합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 069 · 8H</span><span>59일 대화 상태, 60일 사용자별 기억, 68일 HTTP 경계</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter69.ipynb" download="chapter69.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>69장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0입니다.</p>
 </div>
 </section>
 <section id="nb-stream" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>한 줄에 이벤트 하나 보내기</h2>
+<h2>StreamingResponse의 이벤트 직렬화</h2>
 </div>
 </header>
-<p>NDJSON에서는 JSON 객체 하나 뒤에 줄바꿈을 둡니다. 실제 네트워크 조각의 끝이 줄의 끝과 일치하지 않을 수 있으므로, 클라이언트는 완성된 줄부터 읽습니다. 아래는 /conversations/{cid}/stream 경로의 줄 단위 전송과 소유자 검사를 축약한 로컬 앱입니다.</p>
-<!-- MOTION newline-framer -->
-<figure class="motion-study" id="motion-newline-framer" data-sheet="motion/newline-framer.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>받은 조각의 끝이 이벤트의 끝일까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/newline-framer-still.webp" width="800" height="272" alt="NDJSON은 줄바꿈을 만났을 때 한 줄을 읽습니다. 네트워크가 JSON 중간에서 나눠 보내면 뒷조각이 올 때까지 그 줄을 버퍼에 둡니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
+<p class="concept-intro">스트리밍 응답은 본문을 여러 조각으로 전달합니다. 이 예제는 줄바꿈으로 JSON 이벤트를 나누고 완료 이벤트를 따로 보냅니다.</p><p>NDJSON에서는 JSON 객체 하나 뒤에 줄바꿈을 둡니다. 실제 네트워크 조각의 끝이 줄의 끝과 일치하지 않을 수 있으므로, 클라이언트는 완성된 줄부터 읽습니다. 아래는 /conversations/{cid}/stream 경로의 줄 단위 전송과 소유자 검사를 축약한 로컬 앱입니다.</p>
+<figure class="lesson-clip" id="concept-clip"><h3>전송 조각과 이벤트 경계</h3><video controls muted playsinline preload="metadata" aria-label="전송 조각과 이벤트 경계" src="concept.mp4"></video><figcaption>긴 띠를 나눈 전송 조각과 수신기가 구분하는 메시지를 비교하세요. 이 실습에서 이벤트 하나가 끝나는 위치는 JSON 한 줄의 줄바꿈입니다.</figcaption></figure><!-- MOTION newline-framer -->
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>NDJSON은 줄바꿈을 만났을 때 한 줄을 읽습니다. 네트워크가 JSON 중간에서 나눠 보내면 뒷조각이 올 때까지 그 줄을 버퍼에 둡니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<details><summary style="padding:16px;cursor:pointer;font-weight:700">직접 실험하기 · 3D 시뮬레이션</summary><iframe loading="lazy" title="조작형 개념 실험" style="width:100%;height:560px;border:0" src="simulation.html"></iframe></details>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 대화 소유자와 스트림 경로</h3>
+
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · StreamingResponse 경로와 소유자 검사</h3>
 <div class="cell-before"><p>start가 보낸 요청 ID를 보관합니다. 이 예제의 delta는 이미 만든 답을 나눈 조각입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
@@ -56,37 +50,37 @@
 <span class="tok-keyword">from</span> fastapi.testclient <span class="tok-keyword">import</span> TestClient
 
 app = FastAPI()
-owners = {<span class="tok-string">&quot;chat-a&quot;</span>: <span class="tok-string">&quot;course-alice&quot;</span>}
-history = {<span class="tok-string">&quot;chat-a&quot;</span>: []}
+owners = {<span class="tok-string">"chat-a"</span>: <span class="tok-string">"course-alice"</span>}
+history = {<span class="tok-string">"chat-a"</span>: []}
 <span class="tok-keyword">def</span> line(kind, **fields):
-    <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">&quot;type&quot;</span>: kind, **fields}, ensure_ascii=<span class="tok-keyword">False</span>) + <span class="tok-string">&quot;\n&quot;</span>
+    <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">"type"</span>: kind, **fields}, ensure_ascii=<span class="tok-keyword">False</span>) + <span class="tok-string">"\n"</span>
 
-@app.post(<span class="tok-string">&quot;/conversations/{cid}/stream&quot;</span>)
+@app.post(<span class="tok-string">"/conversations/{cid}/stream"</span>)
 <span class="tok-keyword">def</span> stream(cid: str, body: dict, x_course_token: str = Header()):
     <span class="tok-keyword">if</span> owners.get(cid) != x_course_token:
         <span class="tok-keyword">raise</span> HTTPException(<span class="tok-number">404</span>)
     <span class="tok-keyword">def</span> events():
-        <span class="tok-keyword">yield</span> line(<span class="tok-string">&quot;start&quot;</span>, request_id=<span class="tok-string">&quot;demo-1&quot;</span>, llm_token_stream=<span class="tok-keyword">False</span>)
-        answer = <span class="tok-string">&quot;과제함에 제출하세요.&quot;</span>
-        <span class="tok-keyword">yield</span> line(<span class="tok-string">&quot;delta&quot;</span>, text=answer)
-        history[cid].append((body[<span class="tok-string">&quot;question&quot;</span>], answer))
-        <span class="tok-keyword">yield</span> line(<span class="tok-string">&quot;done&quot;</span>, answer=answer)
-    <span class="tok-keyword">return</span> StreamingResponse(events(), media_type=<span class="tok-string">&quot;application/x-ndjson&quot;</span>)
+        <span class="tok-keyword">yield</span> line(<span class="tok-string">"start"</span>, request_id=<span class="tok-string">"demo-1"</span>, llm_token_stream=<span class="tok-keyword">False</span>)
+        answer = <span class="tok-string">"과제함에 제출하세요."</span>
+        <span class="tok-keyword">yield</span> line(<span class="tok-string">"delta"</span>, text=answer)
+        history[cid].append((body[<span class="tok-string">"question"</span>], answer))
+        <span class="tok-keyword">yield</span> line(<span class="tok-string">"done"</span>, answer=answer)
+    <span class="tok-keyword">return</span> StreamingResponse(events(), media_type=<span class="tok-string">"application/x-ndjson"</span>)
 
 client = TestClient(app)</code></pre></figure>
 <div class="cell-after"><p>여기서는 공개 수업용 토큰을 소유자 구분에만 씁니다. 실제 로그인, 외부 모델 토큰 스트리밍, 네트워크 재접속은 구현하지 않았습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 완료 이벤트까지 줄별로 읽기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 줄 단위 JSON과 완료 이벤트</h3>
 <div class="cell-before"><p>질문 한 건을 보내고 이벤트 종류를 받은 순서대로 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">with</span> client.stream(<span class="tok-string">&quot;POST&quot;</span>, <span class="tok-string">&quot;/conversations/chat-a/stream&quot;</span>,
-                   headers={<span class="tok-string">&quot;X-Course-Token&quot;</span>: <span class="tok-string">&quot;course-alice&quot;</span>},
-                   json={<span class="tok-string">&quot;question&quot;</span>: <span class="tok-string">&quot;과제는 어디에 내나요?&quot;</span>}) <span class="tok-keyword">as</span> response:
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">with</span> client.stream(<span class="tok-string">"POST"</span>, <span class="tok-string">"/conversations/chat-a/stream"</span>,
+                   headers={<span class="tok-string">"X-Course-Token"</span>: <span class="tok-string">"course-alice"</span>},
+                   json={<span class="tok-string">"question"</span>: <span class="tok-string">"과제는 어디에 내나요?"</span>}) <span class="tok-keyword">as</span> response:
     events = [json.loads(record) <span class="tok-keyword">for</span> record <span class="tok-keyword">in</span> response.iter_lines()]
-print([event[<span class="tok-string">&quot;type&quot;</span>] <span class="tok-keyword">for</span> event <span class="tok-keyword">in</span> events])
-print(len(history[<span class="tok-string">&quot;chat-a&quot;</span>]))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;start&#x27;, &#x27;delta&#x27;, &#x27;done&#x27;]
+print([event[<span class="tok-string">"type"</span>] <span class="tok-keyword">for</span> event <span class="tok-keyword">in</span> events])
+print(len(history[<span class="tok-string">"chat-a"</span>]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['start', 'delta', 'done']
 1</pre></div>
 <div class="cell-after"><p>start, delta, done 뒤에 이력 수 1이 보입니다. done을 내보내기 직전에 이력을 저장했습니다. TestClient에서는 실제 휴대폰의 전송 간격이나 중단 동작을 측정하지 않습니다.</p>
 </div>
@@ -98,34 +92,34 @@ print(len(history[<span class="tok-string">&quot;chat-a&quot;</span>]))</code></
 <tr><td>수신 목록 [start, delta]</td><td>과제에서 끝을 잘라낸 목록 · 완료를 확인할 수 없음</td></tr>
 <tr><td>수신 목록 [start, delta, done]</td><td>클라이언트가 완료 이벤트까지 받음</td></tr>
 </tbody></table></div>
-<article id="flow-3-step-0"><small>STEP 01 · start</small><h4>스트림을 열었습니다.</h4>
-<p>시작 이벤트에는 답변이 끝났다는 정보가 없습니다.</p><pre>받은 이벤트: start</pre></article><article id="flow-3-step-1"><small>STEP 02 · delta</small><h4>이 예에서는 답 한 문장이 한 번에 옵니다.</h4>
-<p>화면에 문장이 다 보여도 done을 받기 전에는 수신 측에서 저장 여부와 완료 여부를 확인할 수 없습니다.</p><pre>받은 이벤트: start, delta</pre></article><article id="flow-3-step-2"><small>STEP 03 · done</small><h4>완료 이벤트를 받았습니다.</h4>
+<article id="flow-3-step-0"><small>STEP 01 · start</small><h4>스트림 시작 이벤트</h4>
+<p>시작 이벤트에는 답변이 끝났다는 정보가 없습니다.</p><pre>받은 이벤트: start</pre></article><article id="flow-3-step-1"><small>STEP 02 · delta</small><h4>본문 조각 이벤트</h4>
+<p>화면에 문장이 다 보여도 done을 받기 전에는 수신 측에서 저장 여부와 완료 여부를 확인할 수 없습니다.</p><pre>받은 이벤트: start, delta</pre></article><article id="flow-3-step-2"><small>STEP 03 · done</small><h4>완료 이벤트</h4>
 <p>노트북이 정상 응답을 마지막 줄까지 읽었을 때 확인한 순서입니다. 서버의 대화 기록에 저장된 항목 수도 셀에서 따로 확인합니다.</p><pre>받은 이벤트: start, delta, done</pre></article></details>
 </section>
 <section id="nb-partial" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>보이는 답과 완료 상태 나누기</h2>
+<h2>수신한 본문과 완료 이벤트 구분</h2>
 </div>
 </header>
-<p>저장 뒤 발송한 완료 신호를 클라이언트가 받지 못할 수도 있습니다. 문장이 마침표로 끝났다는 이유만으로 저장 여부를 확정하면 안 됩니다.</p><section class="concept-lab" id="concept-lab" data-lab="stream"><h3>문장이 끝나면 완료됐다고 말할 수 있을까요?</h3><p>같은 답이 화면에 모두 보이는 두 순간을 비교하세요. 클라이언트가 받은 마지막 이벤트로 무엇을 확인할 수 있을까요?</p><div class="lab-actions"><button type="button" data-action="delta">마지막 글자까지 도착</button><button type="button" data-action="done">완료 신호 도착</button></div><div class="lab-landscape"><div class="lab-tile"><small>화면에 보이는 답</small><output data-out="answer">과제함에 제출하세요.</output></div><div class="lab-tile"><small>마지막 이벤트</small><output data-out="event">delta</output></div><div class="lab-tile"><small>클라이언트가 아는 상태</small><output data-out="count">완료 미확인 · 저장 여부는 다시 조회</output></div></div></section>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 일부 이벤트만 받은 화면</h3>
+<p>저장 뒤 발송한 완료 신호를 클라이언트가 받지 못할 수도 있습니다. 문장이 마침표로 끝났다는 이유만으로 저장 여부를 확정하면 안 됩니다.</p>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 부분 스트림의 화면 상태</h3>
 <div class="cell-before"><p>수신 기록의 마지막 done이 빠졌습니다. 화면이 완료를 확인할 수 있는지 검사하세요.</p>
 <p>먼저 끝까지 받은 events에서 마지막을 잘라 수신자가 본 앞부분만 재현합니다. 여기서 완료 신호를 못 봤다고 해서 서버 저장도 실패했다고 결론 내릴 수는 없습니다. 이 노트북에서는 history의 저장 기록을 따로 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">partial = events[:<span class="tok-number">2</span>]
 <span class="tok-comment"># 이벤트 목록에 done이 있는지 검사하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">partial = events[:<span class="tok-number">2</span>]
-print(any(item[<span class="tok-string">&#x27;type&#x27;</span>] == <span class="tok-string">&#x27;done&#x27;</span> <span class="tok-keyword">for</span> item <span class="tok-keyword">in</span> partial))</code></pre></figure>
+print(any(item[<span class="tok-string">'type'</span>] == <span class="tok-string">'done'</span> <span class="tok-keyword">for</span> item <span class="tok-keyword">in</span> partial))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False입니다. 이는 클라이언트가 완료 신호를 보지 못했다는 뜻입니다. 서버 이력의 저장 여부는 대화를 다시 조회해야 확인할 수 있습니다.</p>
 </div>
 </details>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 다른 사용자 대화 보기</h3>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 다른 소유자의 조회 제한</h3>
 <div class="cell-before"><p>같은 경로에 course-bob으로 요청하고 HTTP 코드를 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># chat-a 경로에 bob의 수업용 토큰으로 요청하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">other = client.post(<span class="tok-string">&#x27;/conversations/chat-a/stream&#x27;</span>, headers={<span class="tok-string">&#x27;X-Course-Token&#x27;</span>: <span class="tok-string">&#x27;course-bob&#x27;</span>}, json={<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;제출 위치&#x27;</span>})
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">other = client.post(<span class="tok-string">'/conversations/chat-a/stream'</span>, headers={<span class="tok-string">'X-Course-Token'</span>: <span class="tok-string">'course-bob'</span>}, json={<span class="tok-string">'question'</span>: <span class="tok-string">'제출 위치'</span>})
 print(other.status_code)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">404</pre></div>
 <div class="cell-after"><p>404입니다. 다른 사용자의 대화 존재 여부나 내용을 응답에 포함하지 않았습니다.</p>
@@ -134,17 +128,17 @@ print(other.status_code)</code></pre></figure>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>스트림에 출력된 답, 서버에 저장된 턴, 화면이 확인한 완료 신호를 따로 기록하세요. 70장에서는 같은 저장 규칙을 문서와 데이터베이스로 이어갑니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>FastAPI StreamingResponse와 줄 단위 JSON 심화 읽기</h2>
 </div>
 </header>
-<span id="identity"></span><details class="reading-topic" id="reading-identity"><summary>공개 신원 대역의 한계를 먼저 알기</summary><div class="prose"><p>X-Course-Token 헤더에 course-alice 또는 course-bob을 넣으면 서버의 고정 표에서 사용자를 찾습니다. 이 값은 교재에 공개되어 있어 누구나 따라 쓸 수 있습니다. 실제 비밀 토큰, 로그인, 인증 서비스를 구현한 예제가 아닙니다.</p>
+<span id="identity"></span><details class="reading-topic" id="reading-identity"><summary>수업용 사용자 식별의 한계</summary><div class="prose"><p>X-Course-Token 헤더에 course-alice 또는 course-bob을 넣으면 서버의 고정 표에서 사용자를 찾습니다. 이 값은 교재에 공개되어 있어 누구나 따라 쓸 수 있습니다. 실제 비밀 토큰, 로그인, 인증 서비스를 구현한 예제가 아닙니다.</p>
 <p>본문에 user_id를 넣어 소유자를 바꾸는 것은 허용하지 않습니다. 애플리케이션이 정한 문맥을 함수에 전달하고 그 문맥으로 대화를 조회합니다. 401은 이 공개 대역을 선택하지 않은 요청이고, 404는 없거나 다른 소유자의 대화입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>혼동하기 쉬운 값</caption><thead><tr><th scope="col">값</th><th scope="col">역할</th><th scope="col">권한 증명인가</th></tr>
@@ -153,15 +147,15 @@ print(other.status_code)</code></pre></figure>
 <tr><td>TrustedContext</td><td>앱 내부의 호출 문맥</td><td>객체 생성 자체는 인증 아님</td></tr>
 </tbody></table></div>
 </details>
-<span id="ownership"></span><details class="reading-topic" id="reading-ownership"><summary>대화 생성과 소유 조회를 같은 흐름에 놓기</summary><div class="prose"><p>POST /conversations는 새 UUID를 만들고 owner와 빈 turns 목록을 저장합니다. GET /conversations/{id}는 같은 owner일 때만 이력을 돌려줍니다. 아직 데이터베이스가 아니므로 프로그램이 끝나면 목록도 없어집니다.</p>
+<span id="ownership"></span><details class="reading-topic" id="reading-ownership"><summary>대화 생성과 소유자 조회</summary><div class="prose"><p>POST /conversations는 새 UUID를 만들고 owner와 빈 turns 목록을 저장합니다. GET /conversations/{id}는 같은 owner일 때만 이력을 돌려줍니다. 아직 데이터베이스가 아니므로 프로그램이 끝나면 목록도 없어집니다.</p>
 <p>질문 전에 소유 조회를 합니다. 타인 대화를 먼저 S1에 전달한 뒤 응답만 숨기는 방식이면 불필요한 검색·생성이 이미 일어날 수 있습니다. 제공 검사에서는 타인 접근 시 서비스 호출 목록이 빈지 확인합니다.</p>
 </div>
 </details>
-<span id="canonical"></span><details class="reading-topic" id="reading-canonical"><summary>같은 UUID에 같은 내부 키를 사용하기</summary><div class="prose"><p>UUID는 대문자나 하이픈 없는 문자열로 입력될 수 있습니다. 소유 조회만 UUID로 바꾸고 서비스 호출에는 원문 문자열을 쓰면 같은 대화가 서로 다른 내부 키로 보일 수 있습니다. canonical_id는 표준 문자열을 만들고 그 값을 이후 경로에 계속 사용합니다.</p>
+<span id="canonical"></span><details class="reading-topic" id="reading-canonical"><summary>대화 UUID와 내부 키</summary><div class="prose"><p>UUID는 대문자나 하이픈 없는 문자열로 입력될 수 있습니다. 소유 조회만 UUID로 바꾸고 서비스 호출에는 원문 문자열을 쓰면 같은 대화가 서로 다른 내부 키로 보일 수 있습니다. canonical_id는 표준 문자열을 만들고 그 값을 이후 경로에 계속 사용합니다.</p>
 <p>thread_key는 사용자 문자열의 길이와 사용자, 표준 대화 ID로 구성한 내부 식별값입니다. 인증 토큰이 아니며 클라이언트에게 권한으로 전달하지 않습니다. 소유 조회를 통과한 다음에만 만듭니다.</p>
 </div>
 </details>
-<span id="ask"></span><details class="reading-topic" id="reading-ask"><summary>먼저 비스트리밍 질문과 이력을 확인하기</summary><div class="prose"><p>기본 UI는 POST /conversations/{id}/ask를 사용합니다. 질문을 확인하고 S1의 전체 완료 외피를 받은 뒤 이력에 복사합니다. 응답에는 persistence.status=stored_in_memory와 durable=false를 추가합니다. S1의 result와 metadata는 바꾸지 않습니다.</p>
+<span id="ask"></span><details class="reading-topic" id="reading-ask"><summary>비스트리밍 질문과 대화 이력</summary><div class="prose"><p>기본 UI는 POST /conversations/{id}/ask를 사용합니다. 질문을 확인하고 S1의 전체 완료 외피를 받은 뒤 이력에 복사합니다. 응답에는 persistence.status=stored_in_memory와 durable=false를 추가합니다. S1의 result와 metadata는 바꾸지 않습니다.</p>
 <p>이력을 저장했다고 S1이 과거 대화를 모델 입력으로 읽는 것은 아닙니다. 이 예제는 매 요청 소유 대화 한 개로 새 읽기 서비스를 구성하며 과거 turns를 자동 프롬프트에 넣지 않습니다. 기억 기능을 채택하지 않은 이유를 설명할 수 있어야 합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>기본 요청 순서</caption><thead><tr><th scope="col">순서</th><th scope="col">요청</th><th scope="col">확인</th></tr>
@@ -171,11 +165,11 @@ print(other.status_code)</code></pre></figure>
 <tr><td>4</td><td>다른 공개 사용자로 같은 ID 조회</td><td>404; 이전 내용 미노출</td></tr>
 </tbody></table></div>
 </details>
-<span id="preflight"></span><details class="reading-topic" id="reading-preflight"><summary>스트림을 시작하기 전에 확인할 것</summary><div class="prose"><p>스트림은 한 번 응답 헤더를 보낸 뒤에는 일반 JSON 오류 응답으로 되돌리기 어렵습니다. 그래서 prepare_stream이 소유권, 입력, S1 결과, 전체 JSON을 먼저 검사합니다. 실패하면 이벤트를 하나도 내보내지 않고 정상 HTTP 오류 경로로 돌아갑니다.</p>
+<span id="preflight"></span><details class="reading-topic" id="reading-preflight"><summary>스트리밍 전 입력 검증</summary><div class="prose"><p>스트림은 한 번 응답 헤더를 보낸 뒤에는 일반 JSON 오류 응답으로 되돌리기 어렵습니다. 그래서 prepare_stream이 소유권, 입력, S1 결과, 전체 JSON을 먼저 검사합니다. 실패하면 이벤트를 하나도 내보내지 않고 정상 HTTP 오류 경로로 돌아갑니다.</p>
 <p>읽기 서비스는 completed 또는 error만 지원합니다. 승인 대기 상태를 받아 임의의 “대기 중” A1으로 바꾸거나 이력에 답변으로 넣지 않습니다. 이번 스트림은 완료된 A1만 분할합니다. 오류의 안전한 코드와 위치는 그대로 남깁니다.</p>
 </div>
 </details>
-<span id="events"></span><details class="reading-topic" id="reading-events"><summary>NDJSON의 시작·조각·완료·오류 읽기</summary><div class="prose"><p>NDJSON은 JSON 객체 하나를 한 줄에 놓는 전송 표현입니다. 줄을 문자열 덩어리로 합친 뒤 JSON 한 번으로 읽으면 안 됩니다. 각 줄을 하나씩 파싱하고 type을 봅니다. 브라우저가 받는 네트워크 청크와 JSON 한 줄의 경계가 같다는 보장도 없습니다.</p>
+<span id="events"></span><details class="reading-topic" id="reading-events"><summary>NDJSON의 시작·조각·완료·오류</summary><div class="prose"><p>NDJSON은 JSON 객체 하나를 한 줄에 놓는 전송 표현입니다. 줄을 문자열 덩어리로 합친 뒤 JSON 한 번으로 읽으면 안 됩니다. 각 줄을 하나씩 파싱하고 type을 봅니다. 브라우저가 받는 네트워크 청크와 JSON 한 줄의 경계가 같다는 보장도 없습니다.</p>
 <p>start는 요청 식별자와 대화, validated_answer_chunks 모드를 알립니다. delta는 답의 일부 문자열입니다. done에는 저장 후 전체 envelope가 들어 있습니다. error는 완료 저장으로 판정할 수 없는 상황입니다. 중간 delta만 보고 출처 검증을 다시 생략하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>이벤트 계약</caption><thead><tr><th scope="col">type</th><th scope="col">주요 값</th><th scope="col">클라이언트 해석</th></tr>
@@ -185,11 +179,11 @@ print(other.status_code)</code></pre></figure>
 <tr><td>error</td><td>error_type,failure_stage,envelope</td><td>저장 실패 등; done으로 바꾸지 않음</td></tr>
 </tbody></table></div>
 </details>
-<span id="cancellation"></span><details class="reading-topic" id="reading-cancellation"><summary>중단과 저장 시점의 차이 관찰하기</summary><div class="prose"><p>stream_events는 start 뒤에 답을 나누어 내보내고, 청크 사이 await에서 취소를 전달받을 수 있습니다. 모든 조각을 보낸 다음 이력을 저장하고 done을 만듭니다. 중간에 generator를 닫는 로컬 검사는 완료 이력이 추가되지 않는지 확인합니다.</p>
+<span id="cancellation"></span><details class="reading-topic" id="reading-cancellation"><summary>스트림 중단과 저장 시점</summary><div class="prose"><p>stream_events는 start 뒤에 답을 나누어 내보내고, 청크 사이 await에서 취소를 전달받을 수 있습니다. 모든 조각을 보낸 다음 이력을 저장하고 done을 만듭니다. 중간에 generator를 닫는 로컬 검사는 완료 이력이 추가되지 않는지 확인합니다.</p>
 <p>반대로 저장 직후 클라이언트 연결이 끊기면 서버에는 이력이 있지만 사용자는 done을 못 볼 수 있습니다. 이 예제는 정확히 한 번 전달, 중복 제거, 자동 재시도를 보장하지 않습니다. “완료 표시를 못 봤으니 다시 보내도 안전하다”는 결론을 내리지 않습니다.</p>
 </div>
 </details>
-<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>저장 실패에서도 생성 결과 보존하기</summary><div class="prose"><p>비스트리밍 저장이 실패하면 응답의 HTTP 설계값은 503입니다. run_status=completed와 생성된 A1은 그대로 남고 persistence에 실패가 기록됩니다. 서비스 완료를 저장 완료로 오해하지 않도록 필드를 나눈 것입니다.</p>
+<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>저장 실패 시 생성 결과 유지</summary><div class="prose"><p>비스트리밍 저장이 실패하면 응답의 HTTP 설계값은 503입니다. run_status=completed와 생성된 A1은 그대로 남고 persistence에 실패가 기록됩니다. 서비스 완료를 저장 완료로 오해하지 않도록 필드를 나눈 것입니다.</p>
 <p>스트림에서는 저장 실패 시 error 이벤트를 내고 done을 내지 않습니다. error 안의 envelope는 이미 검증한 답을 보존합니다. 원시 예외 문자열을 노출하지 않으며 다음 요청은 새 실험으로 분리합니다. 실패했다고 과거 정상 이력을 지우지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>학생 기록의 판단</caption><thead><tr><th scope="col">관측</th><th scope="col">기록할 결과</th></tr>
@@ -199,11 +193,11 @@ print(other.status_code)</code></pre></figure>
 <tr><td>done 이벤트</td><td>전체 envelope 확인; 실제 사용자 수신 보장은 별도</td></tr>
 </tbody></table></div>
 </details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>학생 과제: 이벤트의 최종 상태 판정하기</summary><div class="prose"><p>student_task.py의 summarize(events)를 구현합니다. done으로 끝나면 delivery=done과 최종 answer를, error로 끝나면 delivery=error와 answer=null을, 조각만 받고 끝나면 interrupted와 answer=null을 반환합니다. 아무 이벤트도 없으면 not_started입니다.</p>
+<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>이벤트의 최종 상태 판정</summary><div class="prose"><p>student_task.py의 summarize(events)를 구현합니다. done으로 끝나면 delivery=done과 최종 answer를, error로 끝나면 delivery=error와 answer=null을, 조각만 받고 끝나면 interrupted와 answer=null을 반환합니다. 아무 이벤트도 없으면 not_started입니다.</p>
 <p>이 요약 함수는 화면의 완료 표시를 판단하는 과제입니다. error 안의 보존 envelope를 삭제하거나 원본 이벤트를 바꾸는 함수가 아닙니다. 별도 전체 기록은 그대로 보관합니다.</p>
 </div>
 </details>
-<span id="http-check"></span><details class="reading-topic" id="reading-http-check"><summary>준비된 앱 검사를 실제 관측과 구분하기</summary><div class="prose"><p>check_http_prepared.py는 공개 헤더 누락, 타인 대화, 잘못된 요청, 비스트리밍 이력, NDJSON 완료를 TestClient로 확인하도록 준비되어 있습니다. 설치되지 않은 환경에서 파일을 읽는 것은 TestClient 실행 통과가 아닙니다.</p>
+<span id="http-check"></span><details class="reading-topic" id="reading-http-check"><summary>테스트 설계와 관측 결과</summary><div class="prose"><p>check_http_prepared.py는 공개 헤더 누락, 타인 대화, 잘못된 요청, 비스트리밍 이력, NDJSON 완료를 TestClient로 확인하도록 준비되어 있습니다. 설치되지 않은 환경에서 파일을 읽는 것은 TestClient 실행 통과가 아닙니다.</p>
 <p>CORS는 서버가 신뢰하는 allowed_origins 목록으로 구성합니다. 개발 UI 예의 http://localhost:5173은 선택한 정확한 origin이며 모든 주소를 허용하지 않습니다. CORS가 허용됐다는 사실도 공개 토큰의 사용자를 인증해 주지는 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>현재 확인 범위</caption><thead><tr><th scope="col">대상</th><th scope="col">상태</th></tr>
@@ -213,12 +207,12 @@ print(other.status_code)</code></pre></figure>
 <tr><td>실제 인증·모델 토큰 스트리밍</td><td>구현 범위 아님</td></tr>
 </tbody></table></div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>70일 저장 경계로 넘기기</summary><div class="prose"><p>70일에는 소유 대화와 문서를 B1에서 조회하고 전체 A1을 저장합니다. 이 장의 메모리 이력을 데이터베이스 저장이라고 기록하지 않습니다. done 전에 저장한다는 순서, 취소 시 완료 이력을 남기지 않는 조건, 저장 실패에서도 답을 보존하는 외피를 인계합니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>대화 저장 계약</summary><div class="prose"><p>70일에는 소유 대화와 문서를 B1에서 조회하고 전체 A1을 저장합니다. 이 장의 메모리 이력을 데이터베이스 저장이라고 기록하지 않습니다. done 전에 저장한다는 순서, 취소 시 완료 이력을 남기지 않는 조건, 저장 실패에서도 답을 보존하는 외피를 인계합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://fastapi.tiangolo.com/tutorial/body/" target="_blank" rel="noopener noreferrer">FastAPI 요청 본문 ↗</a><span></span></li>

@@ -1,65 +1,65 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>SQL 변경을 확정하고 Python 함수로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-4.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>SQL 매개변수 바인딩과 트랜잭션 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-4.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<script defer src="../assets/concept-labs.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 54 / SQL</p>
-<span class="sidebar-title">SQL 변경을 확정하고 Python 함수로 연결하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-bound-values"><span>02</span>문서와 소유자를 함께 지정하기</a><a href="#nb-tx"><span>03</span>변경한 제목을 되돌릴 수 있을까요?</a><a href="#nb-psycopg"><span>04</span>수업용 PostgreSQL에서 값 바인딩 확인하기</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<span class="sidebar-title">SQL 매개변수 바인딩과 트랜잭션</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-bound-values"><span>02</span>WHERE에 문서 ID와 소유자 조건 결합</a><a href="#nb-tx"><span>03</span>UPDATE와 rollback()</a><a href="#nb-psycopg"><span>04</span>선택 실습 · PostgreSQL 값 바인딩</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>SQL 매개변수 바인딩과 트랜잭션 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 54 / SQL</span><span class="template-badge">학생용 교재</span></div>
-<h1>SQL 변경을 확정하고 Python 함수로 연결하기</h1>
+<h1>SQL 매개변수 바인딩과 트랜잭션</h1>
 <p class="hero-description">alice가 초안의 제목을 바꿨습니다. 바뀐 값을 읽은 직후라도 아직 확정하지 않았다면 되돌릴 수 있습니다. 이번에는 행을 넣고 값을 묶어서 보내는 방법과 변경을 확정하는 시점을 각각 살펴봅니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 054 · 8H</span><span>53일 SELECT·WHERE·키·JOIN / Python 함수·예외·with·환경변수 복습</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter54.ipynb" download="chapter54.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>54장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-bound-values" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>문서와 소유자를 함께 지정하기</h2>
+<h2>WHERE에 문서 ID와 소유자 조건 결합</h2>
 </div>
 </header>
-<p>강의 원자료와 같은 문서 ID로 작은 SQLite 메모리 표를 준비합니다. 쿼리 문자열의 ?는 SQLite용 값 자리입니다. 입력값을 SQL 문장에 직접 이어 붙이지 않고 별도 튜플로 넘깁니다. PostgreSQL의 psycopg에서는 이 자리를 %s로 씁니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 초안 한 행 저장하기</h3>
+<p class="concept-intro">SQL 매개변수는 쿼리의 자리표시자에 값을 별도로 전달합니다. 트랜잭션에서는 변경을 확정하기 전에 되돌릴 수 있습니다.</p><p>강의 원자료와 같은 문서 ID로 작은 SQLite 메모리 표를 준비합니다. 쿼리 문자열의 ?는 SQLite용 값 자리입니다. 입력값을 SQL 문장에 직접 이어 붙이지 않고 별도 튜플로 넘깁니다. PostgreSQL의 psycopg에서는 이 자리를 %s로 씁니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · INSERT로 초안 저장</h3>
 <div class="cell-before"><p>초기 자료는 커밋합니다. 이 셀을 다시 실행하면 모든 실습 값이 처음으로 돌아갑니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> sqlite3
-db = sqlite3.connect(<span class="tok-string">&quot;:memory:&quot;</span>)
-db.execute(<span class="tok-string">&quot;CREATE TABLE course_documents (id TEXT PRIMARY KEY, owner TEXT NOT NULL, title TEXT NOT NULL, content TEXT)&quot;</span>)
-doc_id = <span class="tok-string">&quot;54000000-0000-4000-8000-000000000001&quot;</span>
-owner = <span class="tok-string">&quot;alice&quot;</span>
-db.execute(<span class="tok-string">&quot;INSERT INTO course_documents VALUES (?, ?, ?, ?)&quot;</span>, (doc_id, owner, <span class="tok-string">&quot;초안&quot;</span>, <span class="tok-string">&quot;SQL 변경 연습입니다.&quot;</span>))
+db = sqlite3.connect(<span class="tok-string">":memory:"</span>)
+db.execute(<span class="tok-string">"CREATE TABLE course_documents (id TEXT PRIMARY KEY, owner TEXT NOT NULL, title TEXT NOT NULL, content TEXT)"</span>)
+doc_id = <span class="tok-string">"54000000-0000-4000-8000-000000000001"</span>
+owner = <span class="tok-string">"alice"</span>
+db.execute(<span class="tok-string">"INSERT INTO course_documents VALUES (?, ?, ?, ?)"</span>, (doc_id, owner, <span class="tok-string">"초안"</span>, <span class="tok-string">"SQL 변경 연습입니다."</span>))
 db.commit()
 
 <span class="tok-keyword">def</span> get_title(user, document_id):
-    row = db.execute(<span class="tok-string">&quot;SELECT title FROM course_documents WHERE id = ? AND owner = ?&quot;</span>, (document_id, user)).fetchone()
+    row = db.execute(<span class="tok-string">"SELECT title FROM course_documents WHERE id = ? AND owner = ?"</span>, (document_id, user)).fetchone()
     <span class="tok-keyword">return</span> row[<span class="tok-number">0</span>] <span class="tok-keyword">if</span> row <span class="tok-keyword">else</span> <span class="tok-keyword">None</span>
 
-print(get_title(<span class="tok-string">&#x27;alice&#x27;</span>, doc_id))</code></pre></figure>
+print(get_title(<span class="tok-string">'alice'</span>, doc_id))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">초안</pre></div>
 <div class="cell-after"><p>초안이 보입니다. 문서 ID가 같아도 WHERE 조건의 owner가 다르면 같은 행을 읽을 수 없습니다. 실제 서비스의 owner는 인증을 마친 요청에서 정해야 합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 다른 소유자에서 조회 결과 확인하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · WHERE로 소유자 범위 제한</h3>
 <div class="cell-before"><p>같은 문서 ID를 bob의 범위로 조회하세요. 행이 없을 때 함수가 반환하는 값을 표시합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># get_title에 다른 사용자 ID를 전달하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(get_title(<span class="tok-string">&#x27;bob&#x27;</span>, doc_id))</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(get_title(<span class="tok-string">'bob'</span>, doc_id))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None</pre></div>
 <div class="cell-after"><p>None입니다. 누락된 행을 정상적인 빈 결과로 다뤘습니다. 화면의 이름만 바꿔 다른 사용자의 문서를 보여 주지 않도록 조회 조건을 확인하세요.</p>
 </div>
@@ -67,30 +67,24 @@ print(get_title(<span class="tok-string">&#x27;alice&#x27;</span>, doc_id))</cod
 </article>
 </section>
 <section id="nb-tx" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>변경한 제목을 되돌릴 수 있을까요?</h2>
+<h2>UPDATE와 rollback()</h2>
 </div>
 </header>
 <p>트랜잭션은 함께 확정하거나 되돌리는 변경의 단위입니다. UPDATE 직후 같은 연결에서는 바뀐 제목을 읽을 수 있습니다. 커밋 전에 롤백하면 앞서 커밋한 초안으로 돌아갑니다.</p>
 <!-- MOTION carbon-rollback -->
-<figure class="motion-study" id="motion-carbon-rollback" data-sheet="motion/carbon-rollback.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>취소할 수 있는 수정은 어느 종이에 적혀 있을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/carbon-rollback-still.webp" width="800" height="272" alt="확정된 제목은 초안입니다. 같은 연결에서 수정한 제목을 읽어도 commit 전이라면 rollback이 임시 수정을 걷어내 원래 제목이 다시 보입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>확정된 제목은 초안입니다. 같은 연결에서 수정한 제목을 읽어도 commit 전이라면 rollback이 임시 수정을 걷어내 원래 제목이 다시 보입니다.</figcaption>
-</figure>
 <!-- END MOTION -->
-<section class="concept-lab" id="concept-lab" data-lab="transaction"><h3>되돌리면 어느 제목이 남을까요?</h3><p>이 연결에서 제목을 고치고 rollback을 눌러 보세요. 이번에는 수정 뒤 commit을 먼저 누르고 같은 실험을 해 보세요.</p><div class="lab-landscape"><div class="lab-tile"><small>이 연결에서 읽은 제목</small><output data-out="working">초안</output></div><div class="lab-tile"><small>마지막으로 확정한 제목</small><output data-out="committed">초안</output></div></div><div class="lab-actions"><button type="button" data-action="edit">제목 수정</button><button type="button" data-action="commit">commit · 확정</button><button type="button" data-action="rollback">rollback · 취소</button><button type="button" data-action="reset">처음 값 복원</button></div></section>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 제목을 고친 뒤 같은 연결에서 읽기</h3>
+
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · UPDATE 직후 행 조회</h3>
 <div class="cell-before"><p>아직 commit을 호출하지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">db.execute(<span class="tok-string">&quot;UPDATE course_documents SET title = ? WHERE id = ? AND owner = ?&quot;</span>, (<span class="tok-string">&quot;수정한 초안&quot;</span>, doc_id, owner))
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">db.execute(<span class="tok-string">"UPDATE course_documents SET title = ? WHERE id = ? AND owner = ?"</span>, (<span class="tok-string">"수정한 초안"</span>, doc_id, owner))
 print(get_title(owner, doc_id))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">수정한 초안</pre></div>
 <div class="cell-after"><p>수정한 초안입니다. 이 출력은 같은 연결에서 새 값을 읽었다는 증거이며 변경이 영구 저장됐다는 증거는 아닙니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 확정 전 변경 되돌리기</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · rollback()으로 변경 취소</h3>
 <div class="cell-before"><p>위 셀 직후 rollback을 호출해 처음의 행을 다시 조회합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">db.rollback()
@@ -99,12 +93,12 @@ print(get_title(owner, doc_id))</code></pre></figure>
 <div class="cell-after"><p>초안이 복구됩니다. UPDATE 직후에 commit을 넣으면 이어지는 rollback은 이미 확정한 변경을 되돌리지 못합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 지울 행의 범위 확인하기</h3>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · DELETE의 조건 범위</h3>
 <div class="cell-before"><p>alice가 가진 이 문서 한 건만 지운 뒤 조회하고, 연습이 끝나면 rollback으로 복원하세요.</p>
 <p>삭제한 같은 행을 두 번 조회하세요. 첫 조회는 DELETE 직후, 두 번째는 rollback() 직후입니다. 문서 제목이 돌아왔는지는 두 번째 출력에서 확인합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># DELETE에서 id와 owner를 모두 검사하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">db.execute(<span class="tok-string">&quot;DELETE FROM course_documents WHERE id = ? AND owner = ?&quot;</span>, (doc_id, owner))
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">db.execute(<span class="tok-string">"DELETE FROM course_documents WHERE id = ? AND owner = ?"</span>, (doc_id, owner))
 print(get_title(owner, doc_id))
 db.rollback()
 print(get_title(owner, doc_id))</code></pre></figure>
@@ -116,59 +110,59 @@ print(get_title(owner, doc_id))</code></pre></figure>
 </article>
 </section>
 <section id="nb-psycopg" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>수업용 PostgreSQL에서 값 바인딩 확인하기</h2>
+<h2>선택 실습 · PostgreSQL 값 바인딩</h2>
 </div>
 </header>
 <p>준비한 커널에서는 psycopg로 PostgreSQL의 임시 연습 표를 만듭니다. 실행 중 만든 표와 행은 트랜잭션 끝에 롤백합니다. 기본 연결은 53장에서 강사가 설정한 수업용 DB를 사용합니다.</p>
-<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · PostgreSQL 값 두 개를 별도 인자로 넘기기</h3>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · 선택 실습 · 매개변수 바인딩</h3>
 <div class="cell-before"><p>HK_COURSE_USE_POSTGRES=1과 수업용 연결이 준비되면 아래 블록이 실행됩니다. 저장소의 영구 테이블에는 쓰지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
 <span class="tok-keyword">import</span> os
-pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> os.getenv(<span class="tok-string">&quot;HK_COURSE_USE_POSTGRES&quot;</span>) == <span class="tok-string">&quot;1&quot;</span>
+pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> os.getenv(<span class="tok-string">"HK_COURSE_USE_POSTGRES"</span>) == <span class="tok-string">"1"</span>
 <span class="tok-keyword">if</span> pg_ready:
     <span class="tok-keyword">import</span> psycopg
     <span class="tok-keyword">with</span> psycopg.connect(connect_timeout=<span class="tok-number">3</span>) <span class="tok-keyword">as</span> conn:
-        conn.execute(<span class="tok-string">&quot;CREATE TEMP TABLE hk_note (id integer PRIMARY KEY, title text NOT NULL)&quot;</span>)
-        conn.execute(<span class="tok-string">&quot;INSERT INTO hk_note VALUES (%s, %s)&quot;</span>, (<span class="tok-number">1</span>, <span class="tok-string">&quot;조회문 복습&quot;</span>))
-        value = conn.execute(<span class="tok-string">&quot;SELECT title FROM hk_note WHERE id = %s&quot;</span>, (<span class="tok-number">1</span>,)).fetchone()
+        conn.execute(<span class="tok-string">"CREATE TEMP TABLE hk_note (id integer PRIMARY KEY, title text NOT NULL)"</span>)
+        conn.execute(<span class="tok-string">"INSERT INTO hk_note VALUES (%s, %s)"</span>, (<span class="tok-number">1</span>, <span class="tok-string">"조회문 복습"</span>))
+        value = conn.execute(<span class="tok-string">"SELECT title FROM hk_note WHERE id = %s"</span>, (<span class="tok-number">1</span>,)).fetchone()
         print(value[<span class="tok-number">0</span>])
         conn.rollback()
 <span class="tok-keyword">else</span>:
-    print(<span class="tok-string">&quot;PostgreSQL 변경은 준비된 수업 커널에서 확인하세요.&quot;</span>)</code></pre></figure>
+    print(<span class="tok-string">"PostgreSQL 변경은 준비된 수업 커널에서 확인하세요."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">PostgreSQL 변경은 준비된 수업 커널에서 확인하세요.</pre></div>
 <div class="cell-after"><p>실행한 PostgreSQL에서는 “조회문 복습”이 나와야 합니다. 접속 준비 안내는 PostgreSQL에서 변경이 성공했다는 뜻이 아닙니다. 앞에서 실행한 메모리 실습은 SQL 변경 순서를 확인한 결과입니다. 서버 실습에는 psycopg, 수업용 PostgreSQL 연결, 임시 테이블 생성 권한이 필요합니다. HK_COURSE_USE_POSTGRES=1인 수업 커널에서 실행한 뒤 바인딩한 제목과 다시 읽은 값을 비교하세요.</p>
 </div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>문서 등록과 질문 기록을 한 동작으로 묶을 때 두 번째 변경이 실패하면 첫 번째 변경도 되돌려야 할지 정하세요. 두 SQL문을 어느 트랜잭션에 넣을지 판단하는 근거가 됩니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>SQL 매개변수 바인딩과 트랜잭션 심화 읽기</h2>
 </div>
 </header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>53일의 같은 DB에서 시작하기</summary><div class="prose"><p>먼저 query-results.sql의 WHERE가 어떤 행을 남기는지 말해 보세요. 오늘 UPDATE와 DELETE에서도 같은 조건을 사용합니다. 조회 대상을 정확히 고르지 못하면 바꾸거나 지울 대상도 정확히 정하기 어렵습니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>기존 DB와 테이블 구조</summary><div class="prose"><p>먼저 query-results.sql의 WHERE가 어떤 행을 남기는지 말해 보세요. 오늘 UPDATE와 DELETE에서도 같은 조건을 사용합니다. 조회 대상을 정확히 고르지 못하면 바꾸거나 지울 대상도 정확히 정하기 어렵습니다.</p>
 <p>53일에 만든 course-b1 DB와 가상 자료를 이어 씁니다. 자기 실행 환경이 없으면 이 장에 같은 초기화 파일이 들어 있습니다. examples/README.md의 시작 절차를 따라 DB를 켜고, SQL창에서 alice 문서 제목을 읽습니다. 이미 다른 실습으로 행을 추가했다면 초기 예상 행 수와 자기 관찰값이 다를 수 있습니다.</p>
 </div>
 </details>
-<span id="create"></span><details class="reading-topic" id="reading-create"><summary>CREATE TABLE로 열과 규칙을 정하기</summary><div class="prose"><p>53일에는 제공된 표를 읽었습니다. CREATE TABLE은 새 표의 이름, 열 이름, 자료형과 제약을 정합니다. integer는 정수, text는 문자열입니다. PRIMARY KEY는 행 식별자, NOT NULL은 값이 빠지는 것을 금지하는 제약입니다. CHECK는 행의 값이 만족해야 할 조건을 적습니다.</p>
+<span id="create"></span><details class="reading-topic" id="reading-create"><summary>CREATE TABLE과 제약 조건</summary><div class="prose"><p>53일에는 제공된 표를 읽었습니다. CREATE TABLE은 새 표의 이름, 열 이름, 자료형과 제약을 정합니다. integer는 정수, text는 문자열입니다. PRIMARY KEY는 행 식별자, NOT NULL은 값이 빠지는 것을 금지하는 제약입니다. CHECK는 행의 값이 만족해야 할 조건을 적습니다.</p>
 <p>다음 실험 표는 문서 서비스의 네 표를 대체하지 않습니다. 테이블 정의를 읽기 위한 작은 연습입니다. minutes &gt; 0은 시간 값이 양수여야 한다는 이 연습의 규칙입니다. title이 NULL인 경우와 빈 문자열인 경우는 다르므로 NOT NULL만으로 공백 제목까지 막았다고 생각하지 않습니다.</p>
 </div>
 <div class="prose"><p>BEGIN과 ROLLBACK은 잠시 실행한 변경을 되돌리기 위한 경계입니다. 바로 뒤 절에서 자세히 다룹니다. 지금은 파일 전체를 실행해 중간 SELECT를 보고, 실제 서비스 테이블은 그대로 있는지 확인하세요. 이 파일을 실행한 결과는 아직 제작 환경에서 검증하지 못했습니다.</p>
 </div>
 </details>
-<span id="change"></span><details class="reading-topic" id="reading-change"><summary>행을 넣고 같은 행의 제목 바꾸기</summary><div class="prose"><p>INSERT INTO 다음에 대상 테이블과 열 목록을 쓰고 VALUES에 같은 순서의 값을 적습니다. 문서 ID는 미리 정한 UUID 문자열, owner는 이미 있는 alice입니다. ID를 바꾸지 않고 같은 행의 title만 바꾸려면 UPDATE를 씁니다.</p>
+<span id="change"></span><details class="reading-topic" id="reading-change"><summary>INSERT와 UPDATE</summary><div class="prose"><p>INSERT INTO 다음에 대상 테이블과 열 목록을 쓰고 VALUES에 같은 순서의 값을 적습니다. 문서 ID는 미리 정한 UUID 문자열, owner는 이미 있는 alice입니다. ID를 바꾸지 않고 같은 행의 title만 바꾸려면 UPDATE를 씁니다.</p>
 <p>UPDATE의 SET은 새 값, WHERE는 바꿀 행의 조건입니다. 실행 전에 동일한 WHERE로 SELECT를 해 보세요. 이 습관은 수정 대상이 예상과 다를 때 변경을 멈출 수 있게 합니다. RETURNING title은 이번 명령이 바꾼 행의 제목을 바로 돌려주는 PostgreSQL 구문입니다.</p>
 </div>
 <div class="prose"><p>문서 id와 owner를 모두 조건에 남깁니다. 타인 문서에 자기 user_id를 붙여 요청하면 조건에 맞는 행이 없어 변경 수가 0입니다. 실제 서비스에서 이 사용자 ID를 누가 결정하는지는 인증 계층의 역할이며, 오늘은 가상 사용자 값으로 저장 함수의 경계를 확인합니다.</p>
 </div>
 </details>
-<span id="delete"></span><details class="reading-topic" id="reading-delete"><summary>DELETE의 범위를 확인하고 행 지우기</summary><div class="prose"><p>DELETE는 조건에 맞는 행을 지웁니다. 열 하나를 비우는 UPDATE와 다릅니다. 아래 문장은 오늘 만든 새 실습 문서 한 행만 대상으로 삼습니다. WHERE가 빠진 DELETE는 테이블의 모든 행을 대상으로 하므로 그대로 실행하지 않습니다.</p>
+<span id="delete"></span><details class="reading-topic" id="reading-delete"><summary>DELETE와 대상 행 검사</summary><div class="prose"><p>DELETE는 조건에 맞는 행을 지웁니다. 열 하나를 비우는 UPDATE와 다릅니다. 아래 문장은 오늘 만든 새 실습 문서 한 행만 대상으로 삼습니다. WHERE가 빠진 DELETE는 테이블의 모든 행을 대상으로 하므로 그대로 실행하지 않습니다.</p>
 <p>sql/054_changes.sql은 BEGIN부터 COMMIT까지 한 묶음으로 제공합니다. 삽입한 제목은 초안, 수정 후 제목은 수정한 초안, 삭제 뒤 조회는 0행이 예상됩니다. 마지막에 행이 없는 이유는 오류로 되돌렸기 때문이 아니라, 묶음 안에서 그 행을 삭제하고 확정했기 때문입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>세 명령 비교</caption><thead><tr><th scope="col">명령</th><th scope="col">바뀌는 것</th><th scope="col">실행 뒤 확인</th></tr>
@@ -177,7 +171,7 @@ pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span 
 <tr><td>DELETE</td><td>조건에 맞는 행 제거</td><td>같은 ID 조회가 0행인지</td></tr>
 </tbody></table></div>
 </details>
-<span id="transaction"></span><details class="reading-topic" id="reading-transaction"><summary>COMMIT과 ROLLBACK으로 묶음의 결과 정하기</summary><div class="prose"><p>트랜잭션은 함께 확정하거나 함께 되돌릴 변경의 묶음입니다. BEGIN으로 시작하고 COMMIT으로 확정합니다. ROLLBACK은 아직 확정하지 않은 묶음의 변경을 취소합니다. 이미 COMMIT한 이전 작업을 ROLLBACK 하나로 되돌리는 것은 아닙니다.</p>
+<span id="transaction"></span><details class="reading-topic" id="reading-transaction"><summary>COMMIT과 ROLLBACK</summary><div class="prose"><p>트랜잭션은 함께 확정하거나 함께 되돌릴 변경의 묶음입니다. BEGIN으로 시작하고 COMMIT으로 확정합니다. ROLLBACK은 아직 확정하지 않은 묶음의 변경을 취소합니다. 이미 COMMIT한 이전 작업을 ROLLBACK 하나로 되돌리는 것은 아닙니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>변경 묶음의 두 끝</caption><thead><tr><th scope="col">시점</th><th scope="col">COMMIT 경로</th><th scope="col">ROLLBACK 경로</th></tr>
 </thead><tbody><tr><td>BEGIN 전</td><td>기존 제목</td><td>기존 제목</td></tr>
@@ -187,7 +181,7 @@ pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span 
 <div class="prose"><p>psql에서 명시적으로 BEGIN하지 않고 일반 변경문을 실행하면 그 문장이 성공할 때 보통 바로 확정됩니다. 오늘 연습 파일에 BEGIN과 종료문을 적은 이유는 묶음의 경계를 직접 확인하기 위해서입니다. Python 연결의 기본 트랜잭션 동작은 뒤에서 따로 확인합니다.</p>
 </div>
 </details>
-<span id="constraints"></span><details class="reading-topic" id="reading-constraints"><summary>규칙을 어긴 변경이 실패하는 이유</summary><div class="prose"><p>잘못된 데이터를 함수에서 먼저 거를 수 있지만 DB에도 규칙을 남깁니다. 이미 쓰는 기본키를 다시 넣으면 중복 키 오류, 없는 owner를 넣으면 외래키 오류가 납니다. 오류를 무시해 성공 메시지를 출력하면 저장되지 않은 기록을 사용자에게 저장됐다고 알리게 됩니다.</p>
+<span id="constraints"></span><details class="reading-topic" id="reading-constraints"><summary>무결성 제약과 변경 실패</summary><div class="prose"><p>잘못된 데이터를 함수에서 먼저 거를 수 있지만 DB에도 규칙을 남깁니다. 이미 쓰는 기본키를 다시 넣으면 중복 키 오류, 없는 owner를 넣으면 외래키 오류가 납니다. 오류를 무시해 성공 메시지를 출력하면 저장되지 않은 기록을 사용자에게 저장됐다고 알리게 됩니다.</p>
 <p>트랜잭션 중 SQL 오류가 발생하면 그 연결의 묶음은 실패 상태가 됩니다. 계속 다른 SQL을 보내기 전에 ROLLBACK으로 정리해야 합니다. Python 예제에서는 예외가 연결의 with 블록 밖으로 나가게 하여 정리하도록 합니다. 오류를 블록 안에서 잡고 성공한 것처럼 계속 진행하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>실패 조건과 기록할 증거</caption><thead><tr><th scope="col">조건</th><th scope="col">예상 결과</th><th scope="col">확인</th></tr>
@@ -199,37 +193,37 @@ pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span 
 <div class="prose"><p>오류의 실제 문장에는 표·제약 이름과 버전 정보가 포함되어 환경마다 달라질 수 있습니다. 오류명과 원인을 기록하고 비밀번호를 포함한 접속 설정 전체를 복사하지 않습니다.</p>
 </div>
 </details>
-<span id="connect"></span><details class="reading-topic" id="reading-connect"><summary>Python에서 PostgreSQL에 연결하기</summary><div class="prose"><p>Psycopg는 Python 코드와 PostgreSQL 사이에서 SQL과 값을 전달하고 결과를 읽는 드라이버입니다. 가상환경에 패키지를 설치한 뒤 같은 셸의 PGHOST·PGPORT·PGDATABASE·PGUSER·PGPASSWORD를 읽습니다. .env.example 파일은 변수 이름을 보여 주는 참고 자료이며 Python이 자동으로 읽지 않습니다.</p>
+<span id="connect"></span><details class="reading-topic" id="reading-connect"><summary>Python의 PostgreSQL 연결</summary><div class="prose"><p>Psycopg는 Python 코드와 PostgreSQL 사이에서 SQL과 값을 전달하고 결과를 읽는 드라이버입니다. 가상환경에 패키지를 설치한 뒤 같은 셸의 PGHOST·PGPORT·PGDATABASE·PGUSER·PGPASSWORD를 읽습니다. .env.example 파일은 변수 이름을 보여 주는 참고 자료이며 Python이 자동으로 읽지 않습니다.</p>
 <p>이 장은 Python 3.12와 B1의 psycopg 3.3.9 후보를 사용합니다. 제작 환경에서는 드라이버와 실제 DB를 실행하지 못했으므로 설치 성공을 보장한 잠금 목록으로 보지 않습니다. 설치·접속에 실패하면 오류를 기록하고 강사 환경에서 먼저 확인합니다.</p>
 </div>
 <div class="prose"><p>connection()은 DB 연결을 만듭니다. with connection() as conn 안에서 conn.execute(...)를 실행합니다. 이 Psycopg 연결 문맥은 정상 종료하면 commit, 예외로 나가면 rollback하고 연결을 닫습니다. Python의 모든 with가 DB를 commit한다는 뜻은 아닙니다. 이 연결 객체가 정한 동작입니다.</p>
 </div>
 </details>
-<span id="binding"></span><details class="reading-topic" id="reading-binding"><summary>문자열에 값을 붙이지 않고 별도 인수로 전달하기</summary><div class="prose"><p>제목에 작은따옴표가 들어갈 수 있습니다. SQL 문자열을 더하거나 f-string으로 제목을 끼워 넣으면 SQL 문법과 사용자 값이 섞입니다. Psycopg에서는 SQL에 %s 자리를 두고 값은 execute의 두 번째 인수로 전달합니다.</p>
-<p>%s는 Python의 % 문자열 치환을 하라는 뜻이 아닙니다. 자리표시자 주변에 작은따옴표를 추가하지도 않습니다. 드라이버가 값의 형식과 전달을 처리합니다. 값 하나의 튜플은 (&#x27;alice&#x27;,)처럼 쉼표가 필요합니다. 테이블·열 이름을 사용자 입력으로 받는 동적 SQL은 오늘 범위에 넣지 않습니다.</p>
+<span id="binding"></span><details class="reading-topic" id="reading-binding"><summary>SQL 값 바인딩</summary><div class="prose"><p>제목에 작은따옴표가 들어갈 수 있습니다. SQL 문자열을 더하거나 f-string으로 제목을 끼워 넣으면 SQL 문법과 사용자 값이 섞입니다. Psycopg에서는 SQL에 %s 자리를 두고 값은 execute의 두 번째 인수로 전달합니다.</p>
+<p>%s는 Python의 % 문자열 치환을 하라는 뜻이 아닙니다. 자리표시자 주변에 작은따옴표를 추가하지도 않습니다. 드라이버가 값의 형식과 전달을 처리합니다. 값 하나의 튜플은 ('alice',)처럼 쉼표가 필요합니다. 테이블·열 이름을 사용자 입력으로 받는 동적 SQL은 오늘 범위에 넣지 않습니다.</p>
 </div>
 <div class="prose"><p>문서 ID가 같아도 owner가 맞지 않으면 결과가 없습니다. 값 바인딩은 SQL과 값을 분리하는 방법이고, owner 조건은 접근할 행을 제한하는 규칙입니다. 두 가지를 함께 확인해야 합니다. 드라이버 사용만으로 사용자 인증까지 완성되는 것은 아닙니다.</p>
 </div>
 </details>
-<span id="repository"></span><details class="reading-topic" id="reading-repository"><summary>저장·조회 함수를 호출하고 결과 읽기</summary><div class="prose"><p>repository.py에는 같은 SQL을 여러 곳에서 다시 쓰지 않도록 문서 저장·조회, 대화 생성, 질문 저장 함수를 모았습니다. create_document는 제목과 본문이 공백이면 DB를 호출하기 전에 ValueError를 냅니다. get_document는 소유 문서가 없으면 None을 돌려줍니다.</p>
+<span id="repository"></span><details class="reading-topic" id="reading-repository"><summary>저장 함수와 조회 함수</summary><div class="prose"><p>repository.py에는 같은 SQL을 여러 곳에서 다시 쓰지 않도록 문서 저장·조회, 대화 생성, 질문 저장 함수를 모았습니다. create_document는 제목과 본문이 공백이면 DB를 호출하기 전에 ValueError를 냅니다. get_document는 소유 문서가 없으면 None을 돌려줍니다.</p>
 <p>다음 전체 demo.py는 문서와 대화를 하나씩 만들고 질문 한 개를 저장합니다. uuid4()는 새 식별자를 만드는 표준 라이브러리 함수입니다. 출력 ID는 실행할 때마다 달라지므로 특정 UUID와 비교하지 않습니다. 제목, 타인 조회 결과, 해당 대화의 질문 수를 비교하세요.</p>
 </div>
 <div class="prose"><p>demo.py는 호출마다 새 기록을 남깁니다. 53일의 전체 질문 수를 다시 세면 이전보다 늘어나는 것이 정상입니다. 저장 함수 하나의 with가 종료된 뒤 다음 함수가 새 연결에서 값을 읽으므로, 실제 실행에 성공하면 commit된 값이 다른 연결에서도 보이는지를 확인할 수 있습니다.</p>
 <p>제공 파일의 _insert_turn과 FOR KEY SHARE는 대화·문서의 소유 관계를 확인하고 동시 접근 중 관계가 바뀌는 상황을 다루기 위한 코드입니다. 오늘 직접 구현하는 목표는 문서 저장·조회와 제목 변경입니다. 잠금 설계를 암기하거나 미래 기능을 만들 필요는 없습니다.</p>
 </div>
 </details>
-<span id="python-rollback"></span><details class="reading-topic" id="reading-python-rollback"><summary>두 번째 INSERT가 실패하면 첫 변경도 남지 않게 하기</summary><div class="prose"><p>별도 함수 두 개를 차례로 호출하면 각 함수가 따로 commit할 수 있습니다. ‘함수 두 개를 불렀으니 자동으로 한 트랜잭션’이라고 생각하면 안 됩니다. transaction_demo.py는 두 INSERT를 같은 connection의 with 안에서 실행합니다.</p>
+<span id="python-rollback"></span><details class="reading-topic" id="reading-python-rollback"><summary>여러 INSERT의 원자성</summary><div class="prose"><p>별도 함수 두 개를 차례로 호출하면 각 함수가 따로 commit할 수 있습니다. ‘함수 두 개를 불렀으니 자동으로 한 트랜잭션’이라고 생각하면 안 됩니다. transaction_demo.py는 두 INSERT를 같은 connection의 with 안에서 실행합니다.</p>
 <p>첫 문서는 alice 소유로 정상 입력하고, 두 번째는 존재하지 않는 missing-user를 owner로 넣습니다. 외래키 오류가 with 밖으로 전달되면 같은 묶음의 첫 문서도 rollback되어야 합니다. 그 뒤 새로운 연결로 첫 문서를 조회해 None인지 검사합니다.</p>
 </div>
 <div class="prose"><p>이 출력은 실제 실행 전에 기대하는 결과입니다. 드라이버가 없거나 DB에 접속할 수 없다면 이 검사 결과를 얻은 것이 아닙니다. 오류가 나지 않거나 첫 문서가 남으면 프로그램은 AssertionError로 끝나도록 작성했습니다. 성공 문장만 출력하는 데모와 구분해서 읽으세요.</p>
 </div>
 </details>
-<span id="assignment"></span><details class="reading-topic" id="reading-assignment"><summary>A54-3 · 소유 문서의 제목 변경 함수 만들기</summary><div class="prose"><p>먼저 끝난 학생은 문서와 대화 생성이 모두 성공했을 때만 확정하는 별도 함수를 설계해 보세요. 두 함수를 단순히 호출하는 것과 같은 연결을 전달하는 것의 차이를 그림으로 설명하는 선택 활동입니다. 기본 과제의 세 경계 사례를 먼저 확인합니다.</p>
+<span id="assignment"></span><details class="reading-topic" id="reading-assignment"><summary>소유자 범위의 제목 수정 실습</summary><div class="prose"><p>먼저 끝난 학생은 문서와 대화 생성이 모두 성공했을 때만 확정하는 별도 함수를 설계해 보세요. 두 함수를 단순히 호출하는 것과 같은 연결을 전달하는 것의 차이를 그림으로 설명하는 선택 활동입니다. 기본 과제의 세 경계 사례를 먼저 확인합니다.</p>
 </div>
 <div class="prose"><p>정상 예상 출력은 ‘자기 문서·타인 문서·빈 제목 검사 통과’입니다. 시작 파일 그대로이면 NotImplementedError가 나며, 실제 DB가 없으면 연결 단계에서 중단됩니다. 전체 검사 코드는 아래 개별 파일 링크로 열 수 있습니다.</p>
 </div>
 </details>
-<span id="checks"></span><details class="reading-topic" id="reading-checks"><summary>단위 검사와 실제 DB 검사를 나누어 기록하기</summary><div class="prose"><p>test_unit.py는 가짜 연결 객체로 SQL과 값이 분리됐는지, owner 조건을 사용하는지, 잘못된 입력을 DB 호출 전에 거부하는지 확인합니다. 가짜 객체는 PostgreSQL의 SQL 문법·외래키·commit을 실행하지 않습니다. 이 검사가 통과해도 실제 저장 성공으로 적지 않습니다.</p>
+<span id="checks"></span><details class="reading-topic" id="reading-checks"><summary>단위 테스트와 DB 통합 검사</summary><div class="prose"><p>test_unit.py는 가짜 연결 객체로 SQL과 값이 분리됐는지, owner 조건을 사용하는지, 잘못된 입력을 DB 호출 전에 거부하는지 확인합니다. 가짜 객체는 PostgreSQL의 SQL 문법·외래키·commit을 실행하지 않습니다. 이 검사가 통과해도 실제 저장 성공으로 적지 않습니다.</p>
 <p>test_postgres.py는 B1_TEST_DATABASE=1을 명시할 때만 실제 DB에 임시 스키마를 만들고 저장·조회·rollback·복합 FK를 확인합니다. 그 임시 스키마만 정리하며 기존 수업 테이블은 지우지 않습니다. 기본 명령에서 SKIP된 네 검사는 통과 수에 넣지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">검사</th><th scope="col">확인 대상</th><th scope="col">현재 제작 상태</th></tr>
@@ -238,15 +232,15 @@ pg_ready = find_spec(<span class="tok-string">&quot;psycopg&quot;</span>) <span 
 <tr><td>학생 Windows/WSL</td><td>같은 절차의 재현</td><td>미실행</td></tr>
 </tbody></table></div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>저장 함수와 실패 기록을 후속 장에 넘기기</summary><div class="prose"><p>고정 user_id=&#x27;alice&#x27;는 수업용 입력입니다. 실제 서비스는 인증 결과에서 사용자 ID를 얻어 저장 함수에 전달해야 합니다. 문서 UUID를 알거나 thread_id라는 대화 실행 키를 알고 있다는 사실만으로 다른 사용자의 데이터를 읽을 권한이 생기지 않습니다. 오늘은 저장 함수가 받은 소유자 조건을 지키는 범위를 확인했습니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>저장·실패 기록 인계</summary><div class="prose"><p>고정 user_id='alice'는 수업용 입력입니다. 실제 서비스는 인증 결과에서 사용자 ID를 얻어 저장 함수에 전달해야 합니다. 문서 UUID를 알거나 thread_id라는 대화 실행 키를 알고 있다는 사실만으로 다른 사용자의 데이터를 읽을 권한이 생기지 않습니다. 오늘은 저장 함수가 받은 소유자 조건을 지키는 범위를 확인했습니다.</p>
 </div>
 </details>
-<details class="reading-topic" id="reading-sources"><summary>공식 자료와 다음 학습</summary><div class="prose"><p>이 원고는 실제 PostgreSQL 실행 검증을 기다리는 검토용 교재입니다. 본문의 SQL 출력은 제공 데이터로 계산한 예상 결과이며 제작 환경에서 관찰한 DB 실행 결과가 아닙니다. 검증 범위는 VALIDATION.md에서 확인합니다.</p>
+<details class="reading-topic" id="reading-sources"><summary>공식 문서와 연계 단원</summary><div class="prose"><p>이 원고는 실제 PostgreSQL 실행 검증을 기다리는 검토용 교재입니다. 본문의 SQL 출력은 제공 데이터로 계산한 예상 결과이며 제작 환경에서 관찰한 DB 실행 결과가 아닙니다. 검증 범위는 VALIDATION.md에서 확인합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://www.postgresql.org/docs/16/tutorial-transactions.html" target="_blank" rel="noopener noreferrer">PostgreSQL 16 트랜잭션 ↗</a><span></span></li>

@@ -1,86 +1,80 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>검색 함수를 필수 Retriever Node로 연결하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangGraph의 검색 노드와 답변 노드 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 30 / RETRIEVER NODE</p>
-<span class="sidebar-title">검색 함수를 필수 Retriever Node로 연결하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-records"><span>02</span>문장 하나를 출처가 있는 검색 결과로 받기</a><a href="#nb-required"><span>03</span>답변 전에 검색을 한 번 거치기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">LangGraph의 검색 노드와 답변 노드</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-records"><span>02</span>retrieve()의 문서와 출처 반환</a><a href="#nb-required"><span>03</span>StateGraph에 검색·답변 노드 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph의 검색 노드와 답변 노드 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 30 / RETRIEVER NODE</span><span class="template-badge">학생용 교재</span></div>
-<h1>검색 함수를 필수 Retriever Node로 연결하기</h1>
+<h1>LangGraph의 검색 노드와 답변 노드</h1>
 <p class="hero-description">검색 문장을 화면에 그대로 띄우면 어느 쪽의 안내인지 찾기 어렵습니다. 26장에서 문자열로 담았던 검색 결과에 문서 ID, 원문 제목, 쪽수를 함께 싣고 같은 검색 함수를 그래프 안에서 호출합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 030 · 8H</span><span>23~24장 검색·근거 답변, 26~27장 State·노드·분기</span></div>
 </header>
 <span id="setup"></span><section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter30.ipynb" download="chapter30.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>30장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-records" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>문장 하나를 출처가 있는 검색 결과로 받기</h2>
+<h2>retrieve()의 문서와 출처 반환</h2>
 </div>
 </header>
-<p>노트북의 자료는 앞서 사용한 가상 도서관 안내 세 쪽입니다. 읽는 법에 집중하려고 로컬 검색 함수는 세 낱말의 유무를 거리로 바꾸며 k개를 고릅니다. Chroma 서버나 외부 임베딩을 호출하는 셀은 없습니다.</p>
+<p class="concept-intro">검색 노드는 질문에서 관련 문서를 찾고, 답변 노드는 그 문서를 읽습니다. 두 노드가 공유할 상태에 본문과 출처를 함께 담습니다.</p><p>노트북의 자료는 앞서 사용한 가상 도서관 안내 세 쪽입니다. 읽는 법에 집중하려고 로컬 검색 함수는 세 낱말의 유무를 거리로 바꾸며 k개를 고릅니다. Chroma 서버나 외부 임베딩을 호출하는 셀은 없습니다.</p>
 <!-- MOTION evidence-luggage -->
-<figure class="motion-study" id="motion-evidence-luggage" data-sheet="motion/evidence-luggage.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>문장을 건넬 때 출처 꼬리표는 따라갈까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/evidence-luggage-still.webp" width="800" height="272" alt="검색 결과에는 문장과 문서 ID·쪽 번호가 함께 들어 있습니다. 답변 노드가 근거 위치를 읽으려면 꼬리표까지 전달해야 합니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>검색 결과에는 문장과 문서 ID·쪽 번호가 함께 들어 있습니다. 답변 노드가 근거 위치를 읽으려면 꼬리표까지 전달해야 합니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 검색된 한 쪽 펼치기</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · retrieve()의 문서 메타데이터</h3>
 <div class="cell-before"><p>대출 질문을 넣고 목록의 첫 번째 레코드를 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-3&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">&quot;대출&quot;</span>, <span class="tok-string">&quot;휴관&quot;</span>, <span class="tok-string">&quot;반납&quot;</span>)
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
+terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
 
 <span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
     query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
         <span class="tok-keyword">return</span> []
     <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">&quot;text&quot;</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">&quot;id&quot;</span>]
+        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
     <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
 
-print(retrieve(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>, <span class="tok-number">1</span>)[<span class="tok-number">0</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;id&#x27;: &#x27;library-1&#x27;, &#x27;text&#x27;: &#x27;도서 대출 기간은 14일입니다.&#x27;, &#x27;source&#x27;: &#x27;가상 도서관 이용 안내&#x27;, &#x27;page&#x27;: 1}</pre></div>
+print(retrieve(<span class="tok-string">'대출 기간은?'</span>, <span class="tok-number">1</span>)[<span class="tok-number">0</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{'id': 'library-1', 'text': '도서 대출 기간은 14일입니다.', 'source': '가상 도서관 이용 안내', 'page': 1}</pre></div>
 <div class="cell-after"><p>library-1에 14일이라는 문장, 가상 도서관 이용 안내, 1쪽이 함께 있습니다. text만 남기면 다음 노드에서 출처를 복원할 수 없습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-required" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>답변 전에 검색을 한 번 거치기</h2>
+<h2>StateGraph에 검색·답변 노드 연결</h2>
 </div>
 </header>
 <p>검색 결과를 상태에 넣을 때는 documents 키에 목록을 그대로 반환합니다. 다음 노드는 같은 목록에서 답을 꺼냅니다. 별도로 다시 검색하면 처음 확인한 근거와 다른 문서를 답에 쓰게 될 수 있습니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색과 답변 노드 연결하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색·답변 노드를 간선으로 연결</h3>
 <div class="cell-before"><p>아래 그래프에서 START 다음에 연결한 노드를 찾고 휴관 질문을 실행하세요.</p>
 <p>이 노트북의 retrieve는 공백 질문에서 []를 반환하고 답변은 상태의 answer에서 읽습니다. 뒤의 R1/A1 참고 구현은 공백을 ValueError로 처리하며 result 안에 답을 넣습니다. 두 구현의 키를 섞으면 값을 찾을 수 없습니다.</p>
 </div>
@@ -92,33 +86,33 @@ print(retrieve(<span class="tok-string">&#x27;대출 기간은?&#x27;</span>, <s
     answer: str
 
 <span class="tok-keyword">def</span> search_node(state):
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;documents&quot;</span>: retrieve(state[<span class="tok-string">&quot;question&quot;</span>], k=<span class="tok-number">1</span>)}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"documents"</span>: retrieve(state[<span class="tok-string">"question"</span>], k=<span class="tok-number">1</span>)}
 
 <span class="tok-keyword">def</span> answer_node(state):
-    docs = state[<span class="tok-string">&quot;documents&quot;</span>]
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;answer&quot;</span>: docs[<span class="tok-number">0</span>][<span class="tok-string">&quot;text&quot;</span>] <span class="tok-keyword">if</span> docs <span class="tok-keyword">else</span> <span class="tok-string">&quot;제공된 자료에서 확인할 수 없습니다.&quot;</span>}
+    docs = state[<span class="tok-string">"documents"</span>]
+    <span class="tok-keyword">return</span> {<span class="tok-string">"answer"</span>: docs[<span class="tok-number">0</span>][<span class="tok-string">"text"</span>] <span class="tok-keyword">if</span> docs <span class="tok-keyword">else</span> <span class="tok-string">"제공된 자료에서 확인할 수 없습니다."</span>}
 
 builder = StateGraph(State)
-builder.add_node(<span class="tok-string">&quot;search&quot;</span>, search_node)
-builder.add_node(<span class="tok-string">&quot;compose&quot;</span>, answer_node)
-builder.add_edge(START, <span class="tok-string">&quot;search&quot;</span>)
-builder.add_edge(<span class="tok-string">&quot;search&quot;</span>, <span class="tok-string">&quot;compose&quot;</span>)
-builder.add_edge(<span class="tok-string">&quot;compose&quot;</span>, END)
+builder.add_node(<span class="tok-string">"search"</span>, search_node)
+builder.add_node(<span class="tok-string">"compose"</span>, answer_node)
+builder.add_edge(START, <span class="tok-string">"search"</span>)
+builder.add_edge(<span class="tok-string">"search"</span>, <span class="tok-string">"compose"</span>)
+builder.add_edge(<span class="tok-string">"compose"</span>, END)
 graph = builder.compile()
 
-request = {<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;휴관 요일은 언제인가요?&#x27;</span>, <span class="tok-string">&#x27;documents&#x27;</span>: [], <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;&#x27;</span>}
+request = {<span class="tok-string">'question'</span>: <span class="tok-string">'휴관 요일은 언제인가요?'</span>, <span class="tok-string">'documents'</span>: [], <span class="tok-string">'answer'</span>: <span class="tok-string">''</span>}
 result = graph.invoke(request)
-print(result[<span class="tok-string">&#x27;answer&#x27;</span>], result[<span class="tok-string">&#x27;documents&#x27;</span>][<span class="tok-number">0</span>][<span class="tok-string">&#x27;page&#x27;</span>])</code></pre></figure>
+print(result[<span class="tok-string">'answer'</span>], result[<span class="tok-string">'documents'</span>][<span class="tok-number">0</span>][<span class="tok-string">'page'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서관은 월요일에 휴관합니다. 2</pre></div>
-<div class="cell-after"><p>월요일이라는 답 뒤에 2가 붙습니다. 검색 함수가 고른 2쪽을 compose가 그대로 읽었습니다. 답 옆의 숫자는 결과 순위가 아닌 원문의 쪽수입니다. result는 실행 결과 전체의 변수 이름입니다. 답은 result[&quot;answer&quot;], 원문 쪽수는 result[&quot;documents&quot;][0][&quot;page&quot;]에서 읽습니다.</p>
+<div class="cell-after"><p>월요일이라는 답 뒤에 2가 붙습니다. 검색 함수가 고른 2쪽을 compose가 그대로 읽었습니다. 답 옆의 숫자는 결과 순위가 아닌 원문의 쪽수입니다. result는 실행 결과 전체의 변수 이름입니다. 답은 result["answer"], 원문 쪽수는 result["documents"][0]["page"]에서 읽습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 문서를 찾지 못한 질문 처리하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 빈 검색 결과의 응답 분기</h3>
 <div class="cell-before"><p>‘주차 요금은?’을 넣고 documents와 answer를 차례로 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 초기 상태의 질문을 바꾸어 그래프를 실행하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">empty = graph.invoke({**request, <span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;주차 요금은?&#x27;</span>})
-print(empty[<span class="tok-string">&#x27;documents&#x27;</span>], empty[<span class="tok-string">&#x27;answer&#x27;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">empty = graph.invoke({**request, <span class="tok-string">'question'</span>: <span class="tok-string">'주차 요금은?'</span>})
+print(empty[<span class="tok-string">'documents'</span>], empty[<span class="tok-string">'answer'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[] 제공된 자료에서 확인할 수 없습니다.</pre></div>
 <div class="cell-after"><p>빈 목록과 확인할 수 없다는 안내가 나옵니다. 세 낱말 모두 질문에 없어 검색 함수가 빈 목록을 돌려준 경우입니다. 연결 오류에 같은 안내를 쓰면 장애가 가려집니다.</p>
 </div>
@@ -126,17 +120,17 @@ print(empty[<span class="tok-string">&#x27;documents&#x27;</span>], empty[<span 
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>Chroma에서 같은 결과를 받을 때도 id, text, source, page 네 칸이 필요합니다. 여러 열로 나뉜 반환값을 합칠 때 목록 길이와 쪽수 단위를 확인하세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>LangGraph의 검색 노드와 답변 노드 심화 읽기</h2>
 </div>
 </header>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>검색 함수를 하나의 계약으로 맞추기</summary><div class="prose"><p>R1은 retrieve(question, k=2)가 id·text·source·page를 가진 문서 객체 목록을 반환하는 규칙입니다. 공백 질문, 양의 정수가 아닌 k, bool인 k는 ValueError입니다. True는 Python에서 정수처럼 취급될 수 있지만 검색 개수를 뜻하는 입력으로 허용하지 않습니다.</p>
+<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>검색 함수의 반환 계약</summary><div class="prose"><p>R1은 retrieve(question, k=2)가 id·text·source·page를 가진 문서 객체 목록을 반환하는 규칙입니다. 공백 질문, 양의 정수가 아닌 k, bool인 k는 ValueError입니다. True는 Python에서 정수처럼 취급될 수 있지만 검색 개수를 뜻하는 입력으로 허용하지 않습니다.</p>
 <p>출처가 빠진 문서는 정상 빈 검색과 다릅니다. DataContractError로 중단해 원본 데이터와 변환 코드를 확인합니다. 누락된 출처를 “출처 미등록” 같은 문장으로 채우면 어디에서 잘못됐는지 감춰집니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>함수와 상태의 대응 · 확장 R1/A1 구현</caption><thead><tr><th scope="col">대상</th><th scope="col">입력</th><th scope="col">출력/갱신</th></tr>
@@ -146,26 +140,26 @@ print(empty[<span class="tok-string">&#x27;documents&#x27;</span>], empty[<span 
 <tr><td>A1 result</td><td>검색된 문맥과 생성 문자열</td><td>status, answer, sources, generation_calls</td></tr>
 </tbody></table></div>
 </details>
-<span id="state-bridge"></span><details class="reading-topic" id="reading-state-bridge"><summary>26장의 문자열 목록에서 출처 객체 목록으로</summary><div class="prose"><p>26장 입문 예제의 documents: list[str]에는 문장만 들어 있었습니다. 문자열만 보고 원문 제목과 페이지를 확실히 복원할 수는 없습니다. 오늘은 23장의 검색 결과가 이미 제공하는 출처 객체를 그대로 저장합니다. 기존 문자열에 임의의 ID나 페이지를 붙이는 변환은 하지 않습니다.</p>
+<span id="state-bridge"></span><details class="reading-topic" id="reading-state-bridge"><summary>문자열 목록과 출처 객체</summary><div class="prose"><p>26장 입문 예제의 documents: list[str]에는 문장만 들어 있었습니다. 문자열만 보고 원문 제목과 페이지를 확실히 복원할 수는 없습니다. 오늘은 23장의 검색 결과가 이미 제공하는 출처 객체를 그대로 저장합니다. 기존 문자열에 임의의 ID나 페이지를 붙이는 변환은 하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>답은 어느 키에서 읽을까요?</caption><thead><tr><th scope="col">확인할 값</th><th scope="col">26장 입문 예</th><th scope="col">30장 셀 02</th><th scope="col">R1/A1 확장 구현</th></tr>
 </thead><tbody><tr><td>검색 결과 한 건</td><td>문장 문자열</td><td>documents[0]의 id·text·source·page</td><td>같은 네 필드를 가진 객체</td></tr>
-<tr><td>답을 읽는 위치</td><td>상태의 answer</td><td>result = graph.invoke(request) 뒤 result[&quot;answer&quot;]</td><td>상태의 result 안에 있는 answer와 sources</td></tr>
+<tr><td>답을 읽는 위치</td><td>상태의 answer</td><td>result = graph.invoke(request) 뒤 result["answer"]</td><td>상태의 result 안에 있는 answer와 sources</td></tr>
 <tr><td>검색 개수</td><td>예제 내부 규칙</td><td>search_node에서 k=1</td><td>입력 k를 검사한 뒤 전달</td></tr>
 </tbody></table></div>
 <div class="prose"><p>셀 02의 result는 graph.invoke가 돌려준 상태 전체에 붙인 변수 이름입니다. 아래 R1/A1 확장에서는 상태 안에 result라는 키를 따로 만들어 답과 출처를 함께 보관합니다.</p>
 </div>
 </details>
-<span id="nodes"></span><details class="reading-topic" id="reading-nodes"><summary>R1/A1 확장 구현에서 노드가 갱신하는 값</summary><div class="prose"><p>retrieve_node는 R1 함수를 한 번 호출하고 문서를 검증합니다. answer_node는 같은 목록을 A1에 넘깁니다. lambda는 이미 찾은 문서를 반환하므로 여기서 저장소를 다시 조회하지 않습니다. 검색을 두 번 하면 중간에 바뀐 자료나 순서 때문에 답변과 표시 출처가 달라질 수 있습니다.</p>
+<span id="nodes"></span><details class="reading-topic" id="reading-nodes"><summary>검색·답변 노드의 상태 변경 필드</summary><div class="prose"><p>retrieve_node는 R1 함수를 한 번 호출하고 문서를 검증합니다. answer_node는 같은 목록을 A1에 넘깁니다. lambda는 이미 찾은 문서를 반환하므로 여기서 저장소를 다시 조회하지 않습니다. 검색을 두 번 하면 중간에 바뀐 자료나 순서 때문에 답변과 표시 출처가 달라질 수 있습니다.</p>
 </div>
 <div class="prose"><p>START에서 answer_node로 바로 가는 연결은 없습니다. 빈 검색에서도 answer_node는 실행되지만, A1은 생성기를 호출하지 않고 no_evidence를 반환합니다. 노드 실행 수와 생성 함수 호출 수는 다른 값입니다. 이 생성 함수는 고정 규칙이므로 generation_calls=1을 외부 모델 호출 1회로 해석하지 않습니다.</p>
 </div>
 </details>
-<span id="chroma"></span><details class="reading-topic" id="reading-chroma"><summary>기존 Chroma 검색 결과를 같은 계약으로 바꾸기</summary><div class="prose"><p>expected_embedding은 인덱스 생성과 질문 벡터 생성에 사용한 E1 기록입니다. provider·model·dimension·normalization·distance와 문서/원문/청킹 정책 해시가 일치해야 합니다. 차원만 같다고 다른 모델의 벡터를 섞지 않습니다. 어댑터를 만들 때 이 기록부터 확인하고, 질의할 때 실제 벡터 길이도 검사합니다.</p>
+<span id="chroma"></span><details class="reading-topic" id="reading-chroma"><summary>Chroma 결과의 형식 변환</summary><div class="prose"><p>expected_embedding은 인덱스 생성과 질문 벡터 생성에 사용한 E1 기록입니다. provider·model·dimension·normalization·distance와 문서/원문/청킹 정책 해시가 일치해야 합니다. 차원만 같다고 다른 모델의 벡터를 섞지 않습니다. 어댑터를 만들 때 이 기록부터 확인하고, 질의할 때 실제 벡터 길이도 검사합니다.</p>
 <p>Chroma의 한 질의 결과는 ids[0], documents[0], metadatas[0]에 나뉘어 있습니다. [0]은 첫 질의 묶음입니다. 공통 변환 코드는 세 열의 길이와 출처 필드를 검사한 뒤 문서 객체를 만듭니다. 빈 컬렉션은 []이고 잘못된 열이나 출처는 DataContractError입니다. 통신 예외는 그대로 전달합니다.</p>
 </div>
 </details>
-<span id="failures"></span><details class="reading-topic" id="reading-failures"><summary>빈 결과와 검색 예외를 구분하기</summary><div class="table-scroll" tabindex="0"><table><caption>실패를 나누는 기준 · 확장 R1/A1 구현</caption><thead><tr><th scope="col">상황</th><th scope="col">관찰할 결과</th><th scope="col">다음 행동</th></tr>
+<span id="failures"></span><details class="reading-topic" id="reading-failures"><summary>빈 문서 목록과 검색 예외</summary><div class="table-scroll" tabindex="0"><table><caption>실패를 나누는 기준 · 확장 R1/A1 구현</caption><thead><tr><th scope="col">상황</th><th scope="col">관찰할 결과</th><th scope="col">다음 행동</th></tr>
 </thead><tbody><tr><td>문서 존재</td><td>A1 answered 또는 invalid_citation</td><td>답변과 실제 인용 원문 대조</td></tr>
 <tr><td>정상 빈 검색</td><td>no_evidence, 생성 호출 0</td><td>자료·질문 범위 확인</td></tr>
 <tr><td>공백 질문/bool k</td><td>ValueError</td><td>사용자 입력 수정</td></tr>
@@ -177,7 +171,7 @@ print(empty[<span class="tok-string">&#x27;documents&#x27;</span>], empty[<span 
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langgraph/graph-api" target="_blank" rel="noopener noreferrer">LangGraph StateGraph ↗</a><span></span></li>

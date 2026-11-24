@@ -1,60 +1,60 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>분류 결과에 따라 다른 워크플로우 실행하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>분류 함수와 조건부 라우팅 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 14 / ROUTING</p>
-<span class="sidebar-title">분류 결과에 따라 다른 워크플로우 실행하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-classify"><span>02</span>분류 결과 한 단어 읽기</a><a href="#nb-route"><span>03</span>실제로 어느 단계가 호출됐나요?</a><a href="#nb-policy"><span>04</span>사용자에게 무엇을 다시 물을까요?</a><a href="#recap"><span>05</span>다시 풀어 보기</a><a href="#readings"><span>06</span>관련 개념 더 읽기</a><a href="#sources"><span>07</span>참고 자료</a></nav>
+<span class="sidebar-title">분류 함수와 조건부 라우팅</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-classify"><span>02</span>분류 레이블과 복합 의도</a><a href="#nb-route"><span>03</span>route_request()의 분기와 실패 처리</a><a href="#nb-policy"><span>04</span>clarify 경로와 추가 질문</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>분류 함수와 조건부 라우팅 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 14 / ROUTING</span><span class="template-badge">학생용 교재</span></div>
-<h1>분류 결과에 따라 다른 워크플로우 실행하기</h1>
+<h1>분류 함수와 조건부 라우팅</h1>
 <p class="hero-description">영수증 위치와 인증 오류는 서로 다른 안내가 필요합니다. 먼저 분류 결과 한 단어를 얻고, 그 값을 받아 어느 작성 규칙을 적용할지는 파이썬 코드가 결정합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 014 · 8H</span><span>13장 순차 워크플로우·딕셔너리·예외</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter14.ipynb" download="chapter14.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>14장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-classify" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>분류 결과 한 단어 읽기</h2>
+<h2>분류 레이블과 복합 의도</h2>
 </div>
 </header>
-<p>재현을 위해 단어가 있는지 검사하는 작은 대역을 씁니다. 실제 분류 모델이 질문을 이해하는 과정을 흉내 내는 함수는 아닙니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 영수증 질문 분류하기</h3>
+<p class="concept-intro">라우팅 함수는 입력의 분류 결과에 따라 다음에 실행할 함수를 선택합니다. 분류가 모호하거나 실패했을 때 갈 경로도 정해야 합니다.</p><p>재현을 위해 단어가 있는지 검사하는 작은 대역을 씁니다. 실제 분류 모델이 질문을 이해하는 과정을 흉내 내는 함수는 아닙니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · mock_classify()의 단일 의도 판정</h3>
 <div class="cell-before"><p>키워드 영수증이 있고 오류는 없는 입력입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> mock_classify(question):
     <span class="tok-comment"># 설명용 규칙입니다. 모델 판단을 재현하지 않습니다.</span>
-    billing = <span class="tok-string">&quot;영수증&quot;</span> <span class="tok-keyword">in</span> question
-    technical = <span class="tok-string">&quot;오류&quot;</span> <span class="tok-keyword">in</span> question
+    billing = <span class="tok-string">"영수증"</span> <span class="tok-keyword">in</span> question
+    technical = <span class="tok-string">"오류"</span> <span class="tok-keyword">in</span> question
     <span class="tok-keyword">if</span> billing == technical:
-        <span class="tok-keyword">return</span> <span class="tok-string">&quot;clarify&quot;</span>
-    <span class="tok-keyword">return</span> <span class="tok-string">&quot;billing&quot;</span> <span class="tok-keyword">if</span> billing <span class="tok-keyword">else</span> <span class="tok-string">&quot;technical&quot;</span>
+        <span class="tok-keyword">return</span> <span class="tok-string">"clarify"</span>
+    <span class="tok-keyword">return</span> <span class="tok-string">"billing"</span> <span class="tok-keyword">if</span> billing <span class="tok-keyword">else</span> <span class="tok-string">"technical"</span>
 
-print(mock_classify(<span class="tok-string">&quot;영수증이 필요합니다&quot;</span>))</code></pre></figure>
+print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">billing</pre></div>
 <div class="cell-after"><p>billing이 나옵니다. 두 단어가 모두 있거나 모두 없으면 이 함수는 분류를 확정하지 않고 clarify를 반환합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 복합 문의의 경로 예측하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 복합 의도의 clarify 분기</h3>
 <div class="cell-before"><p>영수증과 오류가 모두 있는 한 문장을 만들어 분류값을 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 복합 문의 하나를 mock_classify에 넣으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(mock_classify(<span class="tok-string">&quot;영수증 출력 중 오류가 났어요&quot;</span>))</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(mock_classify(<span class="tok-string">"영수증 출력 중 오류가 났어요"</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">clarify</pre></div>
 <div class="cell-after"><p>두 조건이 모두 참이라 결과는 clarify입니다. 어떤 분야인지 더 물은 뒤에 작성할 수 있습니다.</p>
 </div>
@@ -62,80 +62,74 @@ print(mock_classify(<span class="tok-string">&quot;영수증이 필요합니다&
 </article>
 </section>
 <section id="nb-route" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>실제로 어느 단계가 호출됐나요?</h2>
+<h2>route_request()의 분기와 실패 처리</h2>
 </div>
 </header>
 <p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. 아래의 write는 문구 생성 과정을 대신하는 모의 함수입니다.</p>
 <!-- MOTION route-rail -->
-<figure class="motion-study" id="motion-route-rail" data-sheet="motion/route-rail.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>분류가 불분명하면 어떤 호출이 남을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/route-rail-still.webp" width="800" height="272" alt="technical은 기술 문의 단계로 갑니다. 분류 오류 사례에서는 후속 호출 수가 0이므로 임의의 담당자에게 보내지 않습니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>technical은 기술 문의 단계로 갑니다. 분류 오류 사례에서는 후속 호출 수가 0이므로 임의의 담당자에게 보내지 않습니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 경로 선택 함수 준비하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · route_request()로 실행 경로 선택</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 27줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">WRITING_RULES = {<span class="tok-string">&quot;billing&quot;</span>: <span class="tok-string">&quot;결제 문의의 접수 안내를 작성하세요.&quot;</span>, <span class="tok-string">&quot;technical&quot;</span>: <span class="tok-string">&quot;기술 문의의 확인 항목을 작성하세요.&quot;</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 27줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">WRITING_RULES = {<span class="tok-string">"billing"</span>: <span class="tok-string">"결제 문의의 접수 안내를 작성하세요."</span>, <span class="tok-string">"technical"</span>: <span class="tok-string">"기술 문의의 확인 항목을 작성하세요."</span>}
 
 <span class="tok-keyword">class</span> ClassificationRefusalError(ValueError):
-    <span class="tok-string">&quot;&quot;&quot;명시적 거절을 정상적인 추가 질문과 구분하는 예외입니다.&quot;&quot;&quot;</span>
+    <span class="tok-string">"""명시적 거절을 정상적인 추가 질문과 구분하는 예외입니다."""</span>
 
 <span class="tok-keyword">def</span> route_request(classify, write, question):
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question.strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;빈 질문&quot;</span>)
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"빈 질문"</span>)
     <span class="tok-keyword">try</span>:
         route = classify(question)
     <span class="tok-keyword">except</span> ClassificationRefusalError <span class="tok-keyword">as</span> exc:
-        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;route&quot;</span>: <span class="tok-string">&quot;clarify&quot;</span>, <span class="tok-string">&quot;reason&quot;</span>: <span class="tok-string">&quot;classification_refusal&quot;</span>,
-                <span class="tok-string">&quot;error_type&quot;</span>: type(exc).__name__, <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;분류 요청이 거절되었습니다. 요청 내용을 확인하세요.&quot;</span>, <span class="tok-string">&quot;writes&quot;</span>: <span class="tok-number">0</span>}
+        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"classification_refusal"</span>,
+                <span class="tok-string">"error_type"</span>: type(exc).__name__, <span class="tok-string">"answer"</span>: <span class="tok-string">"분류 요청이 거절되었습니다. 요청 내용을 확인하세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
     <span class="tok-keyword">except</span> Exception <span class="tok-keyword">as</span> exc:
-        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;route&quot;</span>: <span class="tok-string">&quot;clarify&quot;</span>, <span class="tok-string">&quot;reason&quot;</span>: <span class="tok-string">&quot;classification_error&quot;</span>,
-                <span class="tok-string">&quot;error_type&quot;</span>: type(exc).__name__, <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;분류에 실패했습니다. 잠시 뒤 다시 확인하세요.&quot;</span>, <span class="tok-string">&quot;writes&quot;</span>: <span class="tok-number">0</span>}
+        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"classification_error"</span>,
+                <span class="tok-string">"error_type"</span>: type(exc).__name__, <span class="tok-string">"answer"</span>: <span class="tok-string">"분류에 실패했습니다. 잠시 뒤 다시 확인하세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
     <span class="tok-keyword">if</span> route <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> WRITING_RULES:
-        <span class="tok-keyword">return</span> {<span class="tok-string">&quot;route&quot;</span>: <span class="tok-string">&quot;clarify&quot;</span>, <span class="tok-string">&quot;reason&quot;</span>: <span class="tok-string">&quot;needs_clarification&quot;</span>,
-                <span class="tok-string">&quot;answer&quot;</span>: <span class="tok-string">&quot;결제 문의인지 기술 문제인지 구체적으로 알려 주세요.&quot;</span>, <span class="tok-string">&quot;writes&quot;</span>: <span class="tok-number">0</span>}
+        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"needs_clarification"</span>,
+                <span class="tok-string">"answer"</span>: <span class="tok-string">"결제 문의인지 기술 문제인지 구체적으로 알려 주세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
     answer = write(WRITING_RULES[route], question)
-    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;route&quot;</span>: route, <span class="tok-string">&quot;reason&quot;</span>: <span class="tok-string">&quot;classified&quot;</span>, <span class="tok-string">&quot;answer&quot;</span>: answer, <span class="tok-string">&quot;writes&quot;</span>: <span class="tok-number">1</span>}
+    <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: route, <span class="tok-string">"reason"</span>: <span class="tok-string">"classified"</span>, <span class="tok-string">"answer"</span>: answer, <span class="tok-string">"writes"</span>: <span class="tok-number">1</span>}
 
 <span class="tok-keyword">def</span> mock_write(instruction, question):
-    <span class="tok-keyword">return</span> <span class="tok-string">&quot;[모의 안내] &quot;</span> + instruction
+    <span class="tok-keyword">return</span> <span class="tok-string">"[모의 안내] "</span> + instruction
 
-result = route_request(mock_classify, mock_write, <span class="tok-string">&quot;인증 오류입니다&quot;</span>)
-print(result[<span class="tok-string">&quot;route&quot;</span>], result[<span class="tok-string">&quot;writes&quot;</span>])</code></pre></figure>
+result = route_request(mock_classify, mock_write, <span class="tok-string">"인증 오류입니다"</span>)
+print(result[<span class="tok-string">"route"</span>], result[<span class="tok-string">"writes"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">technical 1</pre></div>
 <div class="cell-after"><p>technical 1은 기술 문의 규칙으로 작성 함수를 한 번 실행했다는 뜻입니다. 분류 호출은 writes에 들어가지 않습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 분류 요청 자체가 실패한 경우</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 분류 시간 초과 처리</h3>
 <div class="cell-before"><p>분류기가 답을 돌려주기 전에 시간 초과가 났다고 가정합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">def</span> timed_out(question):
-    <span class="tok-keyword">raise</span> TimeoutError(<span class="tok-string">&quot;분류 대기 시간 초과&quot;</span>)
+    <span class="tok-keyword">raise</span> TimeoutError(<span class="tok-string">"분류 대기 시간 초과"</span>)
 
-failed = route_request(timed_out, mock_write, <span class="tok-string">&quot;영수증이 필요합니다&quot;</span>)
-print(failed[<span class="tok-string">&quot;reason&quot;</span>], failed[<span class="tok-string">&quot;writes&quot;</span>])</code></pre></figure>
+failed = route_request(timed_out, mock_write, <span class="tok-string">"영수증이 필요합니다"</span>)
+print(failed[<span class="tok-string">"reason"</span>], failed[<span class="tok-string">"writes"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">classification_error 0</pre></div>
 <div class="cell-after"><p>classification_error 0입니다. 문의가 모호했기 때문이 아니라 분류 과정에서 실패해 작성까지 가지 못했습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-policy" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>사용자에게 무엇을 다시 물을까요?</h2>
+<h2>clarify 경로와 추가 질문</h2>
 </div>
 </header>
 <p>복합 문의와 시스템 오류의 화면 문구가 같으면 사용자가 올바른 다음 행동을 고르기 어렵습니다. 한 건의 분류 기록에서 이유와 안내를 함께 읽습니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 모호한 요청의 다음 안내</h3>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · clarify 분기의 응답값</h3>
 <div class="cell-before"><p>‘도와주세요’를 route_request에 넣고 기록에서 사용자에게 보여 줄 답변을 꺼내세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># 요청을 처리한 뒤 answer를 출력하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">ambiguous = route_request(mock_classify, mock_write, <span class="tok-string">&quot;도와주세요&quot;</span>)
-print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">ambiguous = route_request(mock_classify, mock_write, <span class="tok-string">"도와주세요"</span>)
+print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">결제 문의인지 기술 문제인지 구체적으로 알려 주세요.</pre></div>
 <div class="cell-after"><p>결제 문의인지 기술 문제인지 구체적으로 알려 달라는 안내입니다. 분류 실패의 ‘잠시 뒤 다시 확인’과는 다음 행동이 다릅니다.</p>
 </div>
@@ -143,20 +137,20 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>정상 분류, 복합 문의, 분류 시간 초과 중 한 건을 골라 어디서 분기하는지 설명해 보세요. reason으로 분기 이유를, writes로 작성 함수를 몇 번 불렀는지 확인할 수 있습니다.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>분류 함수와 조건부 라우팅 심화 읽기</h2>
 </div>
 </header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>13일의 고정 순서와 선택 분기 대조</summary><div class="prose"><p>첫 1H 중 15분에 본인의 sequential-workflow/trace.json에서 요약→분류→작성 순서를 찾습니다. 개인 기록이 없으면 13일 examples/workflow.py의 제공 모의 실행을 재현하고 제공 예제 재현이라고 표시합니다. 오늘은 분류 결과에 따라 작성 1회 또는 0회가 되는 이유를 비교합니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>순차 호출과 선택 분기</summary><div class="prose"><p>첫 1H 중 15분에 본인의 sequential-workflow/trace.json에서 요약→분류→작성 순서를 찾습니다. 개인 기록이 없으면 13일 examples/workflow.py의 제공 모의 실행을 재현하고 제공 예제 재현이라고 표시합니다. 오늘은 분류 결과에 따라 작성 1회 또는 0회가 되는 이유를 비교합니다.</p>
 </div>
 </details>
-<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>판단과 실행 결정의 역할</summary><div class="prose"><p>분류 모델은 입력이 어느 분야인지 문자열을 제안합니다. 그 문자열로 어떤 작업을 수행할지는 Python 코드가 결정합니다. 모델이 billing이라고 썼다는 이유만으로 결제나 환불이 실제 실행된 것은 아닙니다.</p>
+<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>분류 함수와 실행 함수</summary><div class="prose"><p>분류 모델은 입력이 어느 분야인지 문자열을 제안합니다. 그 문자열로 어떤 작업을 수행할지는 Python 코드가 결정합니다. 모델이 billing이라고 썼다는 이유만으로 결제나 환불이 실제 실행된 것은 아닙니다.</p>
 <p>이번 예제는 접수 안내 문장만 만듭니다. 외부 계정 조회·환불·데이터 변경은 하지 않습니다. 경로 분류는 사용자 권한이나 작업 승인도 대신하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>순차 흐름과 분기</caption><thead><tr><th scope="col">구분</th><th scope="col">실행 방식</th><th scope="col">확인점</th></tr>
@@ -165,7 +159,7 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 <tr><td>추가 질문</td><td>분류 후 고정 질문 반환</td><td>작성 모델 호출 없음</td></tr>
 </tbody></table></div>
 </details>
-<span id="routes"></span><details class="reading-topic" id="reading-routes"><summary>허용한 경로만 선택하기</summary><div class="prose"><p>WRITING_RULES의 키가 허용 목록입니다. 분류 결과가 딕셔너리에 없으면 코드가 추가 질문 경로를 선택합니다. 모델이 반환한 문자열을 eval로 실행하거나 같은 이름의 임의 함수를 찾지 않습니다.</p>
+<span id="routes"></span><details class="reading-topic" id="reading-routes"><summary>허용 경로 검증</summary><div class="prose"><p>WRITING_RULES의 키가 허용 목록입니다. 분류 결과가 딕셔너리에 없으면 코드가 추가 질문 경로를 선택합니다. 모델이 반환한 문자열을 eval로 실행하거나 같은 이름의 임의 함수를 찾지 않습니다.</p>
 </div>
 <details class="case-reference" id="flow-8"><summary>분류 뒤의 실행 결정</summary>
 <p>정확한 흐름을 설명하는 시각화이며 실제 모델 호출이 아닙니다.</p>
@@ -173,17 +167,17 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 </thead><tbody><tr><td>clarify</td><td>추가 질문을 반환하고 종료 · 작성 호출 0회</td></tr>
 <tr><td>등록된 작성 경로</td><td>해당 규칙을 꺼내 안내문 작성</td></tr>
 </tbody></table></div>
-<article id="flow-8-step-0"><small>STEP 01 · Python</small><h4>질문 검사</h4>
-<p>빈 질문을 먼저 거부합니다.</p><pre>question</pre></article><article id="flow-8-step-1"><small>STEP 02 · 모델 또는 모의 함수</small><h4>후보 경로 반환</h4>
-<p>billing / technical / clarify를 제안합니다.</p><pre>route</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>등록된 규칙 확인</h4>
-<p>목록에 없으면 추가 질문을 반환합니다.</p><pre>route in WRITING_RULES</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python → 모델</small><h4>해당 규칙으로 안내</h4>
+<article id="flow-8-step-0"><small>STEP 01 · Python</small><h4>분류 전 입력 검사</h4>
+<p>빈 질문을 먼저 거부합니다.</p><pre>question</pre></article><article id="flow-8-step-1"><small>STEP 02 · 모델 또는 모의 함수</small><h4>라우팅 후보 반환</h4>
+<p>billing / technical / clarify를 제안합니다.</p><pre>route</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>허용 경로 대조</h4>
+<p>목록에 없으면 추가 질문을 반환합니다.</p><pre>route in WRITING_RULES</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python → 모델</small><h4>선택한 응답 규칙 실행</h4>
 <p>결제 또는 기술 규칙 하나만 사용합니다.</p><pre>작성 경로에서만 answer 생성</pre></article></details>
 </details>
-<span id="code"></span><details class="reading-topic" id="reading-code"><summary>분기 함수의 정상·실패 경로</summary><div class="prose"><p>분류 함수의 예외, 명시적 거절, 정상적인 모호 입력은 서로 다른 원인입니다. 빈 분류 텍스트와 미완료·통신 오류는 classification_error, 명시적 거절은 classification_refusal, 의도적인 clarify나 공백이 아닌 허용 목록 밖 문자열은 needs_clarification으로 남깁니다. 세 경우 모두 작성 함수는 호출하지 않습니다.</p>
+<span id="code"></span><details class="reading-topic" id="reading-code"><summary>정상·예외 분기</summary><div class="prose"><p>분류 함수의 예외, 명시적 거절, 정상적인 모호 입력은 서로 다른 원인입니다. 빈 분류 텍스트와 미완료·통신 오류는 classification_error, 명시적 거절은 classification_refusal, 의도적인 clarify나 공백이 아닌 허용 목록 밖 문자열은 needs_clarification으로 남깁니다. 세 경우 모두 작성 함수는 호출하지 않습니다.</p>
 <p>이 함수는 분류 실패를 결과에 담지만 작성 단계의 예외는 호출자에게 전달합니다. 모든 오류를 잡아 정상 답변처럼 반환하지 않습니다. 서비스 화면과 연결할 때는 작성 실패도 별도 표시하도록 확장해야 합니다.</p>
 </div>
 </details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>네 가지 입력으로 동작 확인하기</summary><div class="table-scroll" tabindex="0"><table><caption>기본 모의 결과</caption><thead><tr><th scope="col">질문</th><th scope="col">경로</th><th scope="col">작성 횟수</th></tr>
+<span id="run"></span><details class="reading-topic" id="reading-run"><summary>입력 유형별 라우팅 테스트</summary><div class="table-scroll" tabindex="0"><table><caption>기본 모의 결과</caption><thead><tr><th scope="col">질문</th><th scope="col">경로</th><th scope="col">작성 횟수</th></tr>
 </thead><tbody><tr><td>영수증이 필요합니다</td><td>billing</td><td>1</td></tr>
 <tr><td>인증 오류입니다</td><td>technical</td><td>1</td></tr>
 <tr><td>영수증과 오류</td><td>clarify</td><td>0</td></tr>
@@ -192,7 +186,7 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 <div class="prose"><p>기본 모의 분류는 “영수증”과 “오류”가 있는지만 검사하는 Python 규칙입니다. 실제 LLM의 의미 이해를 흉내 낸 결과로 평가하지 않습니다. “결제 내역을 받고 싶어요”처럼 같은 의도를 다른 표현으로 쓰면 이 규칙은 추가 질문으로 보냅니다.</p>
 </div>
 </details>
-<span id="sdk"></span><details class="reading-topic" id="reading-sdk"><summary>SDK 분류와 작성 연결하기</summary><div class="prose"><p>ClassificationRefusalError는 ValueError를 바탕으로 만든 작은 예외 종류입니다. 같은 분류 실패 중 명시적 거절을 알아볼 수 있도록 이름을 붙였고 route_request가 이 종류를 먼저 처리합니다. 거절 내용을 정상적인 추가 질문으로 바꾸지 않습니다.</p>
+<span id="sdk"></span><details class="reading-topic" id="reading-sdk"><summary>SDK 분류·작성 호출 연결</summary><div class="prose"><p>ClassificationRefusalError는 ValueError를 바탕으로 만든 작은 예외 종류입니다. 같은 분류 실패 중 명시적 거절을 알아볼 수 있도록 이름을 붙였고 route_request가 이 종류를 먼저 처리합니다. 거절 내용을 정상적인 추가 질문으로 바꾸지 않습니다.</p>
 </div>
 <div class="prose"><p>sdk_classifier는 먼저 completed인지 확인하고 assistant 메시지의 명시적 거절과 분류 텍스트를 읽습니다. completed여도 빈 output이나 공백 텍스트라면 실패입니다. 쓸 수 있는 문자열만 strip으로 정리해 돌려주며, 허용값 밖의 문장을 억지로 잘라 경로로 만들지 않습니다.</p>
 <p>sdk_writer는 선택된 규칙과 원본 질문을 모델에 보냅니다. 실제 연결에서는 11장에서 준비한 클라이언트·모델을 두 함수에 전달합니다. 기본 실행은 연결하지 않으며 실제 API 성공은 미검증입니다.</p>
@@ -211,19 +205,19 @@ print(ambiguous[<span class="tok-string">&quot;answer&quot;</span>])</code></pre
 <tr><td>assistant의 명시적 거절</td><td>classification_refusal</td><td>0</td></tr>
 </tbody></table></div>
 </details>
-<span id="edges"></span><details class="reading-topic" id="reading-edges"><summary>경계 입력과 원인별 기록</summary><div class="prose"><p>분류는 쉬운 질문보다 모호·복합·범위 밖 입력에서 설계 차이가 드러납니다. 두 분야를 동시에 묻는 질문에 하나만 골라 답하면 나머지 요청이 사라질 수 있습니다. 이번 수업에서는 복합 입력을 추가 질문으로 돌려 범위를 좁힙니다.</p>
+<span id="edges"></span><details class="reading-topic" id="reading-edges"><summary>경계 입력과 원인별 로그</summary><div class="prose"><p>분류는 쉬운 질문보다 모호·복합·범위 밖 입력에서 설계 차이가 드러납니다. 두 분야를 동시에 묻는 질문에 하나만 골라 답하면 나머지 요청이 사라질 수 있습니다. 이번 수업에서는 복합 입력을 추가 질문으로 돌려 범위를 좁힙니다.</p>
 <p>분류 함수가 예상하지 않은 delete_all을 반환하는 테스트는 악의적인 실제 작업을 실행하지 않습니다. 그런 문자열이 와도 허용 목록 밖이면 작성 호출이 없다는 경계를 검사합니다.</p>
 </div>
 </details>
-<span id="task"></span><details class="reading-topic" id="reading-task"><summary>분기 정책을 바꾸고 결과 비교하기</summary><div class="prose"><p>다음 장에서는 모델이 함수 이름과 인자를 요청하는 Function Calling을 배웁니다. 오늘의 분류 문자열과 도구 호출 요청은 서로 다른 자료구조입니다.</p>
+<span id="task"></span><details class="reading-topic" id="reading-task"><summary>분기 정책 비교 실습</summary><div class="prose"><p>다음 장에서는 모델이 함수 이름과 인자를 요청하는 Function Calling을 배웁니다. 오늘의 분류 문자열과 도구 호출 요청은 서로 다른 자료구조입니다.</p>
 </div>
 </details>
-<details class="reading-topic" id="reading-sources"><summary>출처와 다음 학습</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
+<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://developers.openai.com/api/docs/guides/text" target="_blank" rel="noopener noreferrer">OpenAI 텍스트 생성 ↗</a><span></span></li>

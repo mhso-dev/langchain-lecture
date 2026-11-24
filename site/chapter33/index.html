@@ -1,63 +1,63 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>같은 검색 함수를 Tool로 포장하기 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>LangChain 검색 도구와 ToolMessage · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reader-extension-3.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/concept-labs.css">
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 33 / RAG TOOLS</p>
-<span class="sidebar-title">같은 검색 함수를 Tool로 포장하기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-tool-request"><span>02</span>도구 명세와 호출 요청 읽기</a><a href="#nb-send-back"><span>03</span>요청 ID를 붙여 검색 결과 돌려주기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">LangChain 검색 도구와 ToolMessage</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 인자 스키마와 호출 요청</a><a href="#nb-send-back"><span>03</span>tool_call_id로 ToolMessage 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangChain 검색 도구와 ToolMessage 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 33 / RAG TOOLS</span><span class="template-badge">학생용 교재</span></div>
-<h1>같은 검색 함수를 Tool로 포장하기</h1>
+<h1>LangChain 검색 도구와 ToolMessage</h1>
 <p class="hero-description">모델이 ‘도서관 자료를 찾아 달라’고 요청해도 검색은 아직 실행되지 않았습니다. 도구 요청의 이름과 인자를 읽고, 검색을 실행한 뒤 요청 ID가 붙은 결과를 돌려보냅니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 033 · 8H</span><span>16·17일 도구 요청과 실행, 23일 검색 결과, 32일 R1/A1·LCEL/Graph 비교</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter33.ipynb" download="chapter33.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>33장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12, pydantic 2.14.1입니다.</p>
 </div>
 </section>
 <section id="nb-tool-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>도구 명세와 호출 요청 읽기</h2>
+<h2>도구 인자 스키마와 호출 요청</h2>
 </div>
 </header>
-<p>같은 retrieve를 수업용 검색 도구로 감쌉니다. 이름과 인자 규칙은 모델이 검색 요청을 작성할 때 읽습니다. 이 노트북에서는 모델이 보낼 법한 요청 한 건을 직접 만들어 네트워크 없이 실제 LangChain 도구에 전달합니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 제공 셀 · 검색 도구 등록하기</h3>
+<p class="concept-intro">검색 함수를 도구로 등록하면 모델이 정해진 인자 형식으로 검색을 요청할 수 있습니다. ToolMessage에는 어느 요청의 결과인지 나타내는 ID가 들어갑니다.</p><p>같은 retrieve를 수업용 검색 도구로 감쌉니다. 이름과 인자 규칙은 모델이 검색 요청을 작성할 때 읽습니다. 이 노트북에서는 모델이 보낼 법한 요청 한 건을 직접 만들어 네트워크 없이 실제 LangChain 도구에 전달합니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 도구 인자 스키마와 @tool</h3>
 <div class="cell-before"><p>자료와 검색 함수는 30장과 같습니다. 맨 아래 search_documents의 이름과 k 인자 규칙만 찾아보세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 41줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-1&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-2&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;도서관은 월요일에 휴관합니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;library-3&#x27;</span>,
-  <span class="tok-string">&#x27;text&#x27;</span>: <span class="tok-string">&#x27;무인 반납함은 24시간 이용할 수 있습니다.&#x27;</span>,
-  <span class="tok-string">&#x27;source&#x27;</span>: <span class="tok-string">&#x27;가상 도서관 이용 안내&#x27;</span>,
-  <span class="tok-string">&#x27;page&#x27;</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">&quot;대출&quot;</span>, <span class="tok-string">&quot;휴관&quot;</span>, <span class="tok-string">&quot;반납&quot;</span>)
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 41줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
+ {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
+  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
+  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
+  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
+terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
 
 <span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
     query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
         <span class="tok-keyword">return</span> []
     <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">&quot;text&quot;</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">&quot;id&quot;</span>]
+        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
     <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
 
 <span class="tok-keyword">from</span> langchain_core.tools <span class="tok-keyword">import</span> tool
@@ -65,56 +65,50 @@ terms = (<span class="tok-string">&quot;대출&quot;</span>, <span class="tok-st
 <span class="tok-keyword">from</span> pydantic <span class="tok-keyword">import</span> BaseModel, ConfigDict, StrictInt, StrictStr, Field
 
 <span class="tok-keyword">class</span> SearchArgs(BaseModel):
-    model_config = ConfigDict(extra=<span class="tok-string">&quot;forbid&quot;</span>)
+    model_config = ConfigDict(extra=<span class="tok-string">"forbid"</span>)
     question: StrictStr
     k: StrictInt = Field(default=<span class="tok-number">2</span>, ge=<span class="tok-number">1</span>)
 
-@tool(<span class="tok-string">&quot;search_documents&quot;</span>, args_schema=SearchArgs, response_format=<span class="tok-string">&quot;content_and_artifact&quot;</span>)
+@tool(<span class="tok-string">"search_documents"</span>, args_schema=SearchArgs, response_format=<span class="tok-string">"content_and_artifact"</span>)
 <span class="tok-keyword">def</span> search_documents(question: str, k: int = <span class="tok-number">2</span>):
-    <span class="tok-string">&quot;&quot;&quot;가상 도서관의 대출·휴관·반납 안내를 찾습니다.&quot;&quot;&quot;</span>
+    <span class="tok-string">"""가상 도서관의 대출·휴관·반납 안내를 찾습니다."""</span>
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question.strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;질문을 입력하세요.&quot;</span>)
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"질문을 입력하세요."</span>)
     found = retrieve(question, k)
-    <span class="tok-keyword">return</span> <span class="tok-string">&quot;\n&quot;</span>.join(row[<span class="tok-string">&quot;text&quot;</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> found), found
+    <span class="tok-keyword">return</span> <span class="tok-string">"\n"</span>.join(row[<span class="tok-string">"text"</span>] <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> found), found
 
 print(search_documents.name)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search_documents</pre></div>
 <div class="cell-after"><p>등록된 이름은 search_documents입니다. 이 이름을 찍은 것만으로는 검색을 한 번도 실행하지 않았습니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 요청 한 건 만들기</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 도구 호출 메시지 구성</h3>
 <div class="cell-before"><p>질문과 k가 담긴 도구 호출을 AIMessage에서 꺼내세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">request = AIMessage(content=<span class="tok-string">&#x27;&#x27;</span>, tool_calls=[{<span class="tok-string">&#x27;id&#x27;</span>: <span class="tok-string">&#x27;search-1&#x27;</span>, <span class="tok-string">&#x27;name&#x27;</span>: <span class="tok-string">&#x27;search_documents&#x27;</span>, <span class="tok-string">&#x27;args&#x27;</span>: {<span class="tok-string">&#x27;question&#x27;</span>: <span class="tok-string">&#x27;대출 기간은?&#x27;</span>, <span class="tok-string">&#x27;k&#x27;</span>: <span class="tok-number">1</span>}, <span class="tok-string">&#x27;type&#x27;</span>: <span class="tok-string">&#x27;tool_call&#x27;</span>}])
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">request = AIMessage(content=<span class="tok-string">''</span>, tool_calls=[{<span class="tok-string">'id'</span>: <span class="tok-string">'search-1'</span>, <span class="tok-string">'name'</span>: <span class="tok-string">'search_documents'</span>, <span class="tok-string">'args'</span>: {<span class="tok-string">'question'</span>: <span class="tok-string">'대출 기간은?'</span>, <span class="tok-string">'k'</span>: <span class="tok-number">1</span>}, <span class="tok-string">'type'</span>: <span class="tok-string">'tool_call'</span>}])
 call = request.tool_calls[<span class="tok-number">0</span>]
-print(call[<span class="tok-string">&#x27;args&#x27;</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;대출 기간은?&#x27;, &#x27;k&#x27;: 1}</pre></div>
+print(call[<span class="tok-string">'args'</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{'question': '대출 기간은?', 'k': 1}</pre></div>
 <div class="cell-after"><p>대출 질문과 검색 상한 1이 나옵니다. 이 시점에는 문서가 없습니다.</p>
 </div>
 </article>
 </section>
 <section id="nb-send-back" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>요청 ID를 붙여 검색 결과 돌려주기</h2>
+<h2>tool_call_id로 ToolMessage 연결</h2>
 </div>
 </header>
 <p>invoke에 인자만 넘길 때와 달리 호출 ID까지 포함한 요청을 건네면 ToolMessage에서 어느 요청의 결과인지 읽을 수 있습니다. 화면에는 실제 검색 자료를 싣고 메시지에는 다음 판단에 필요한 내용을 담습니다.</p>
 <!-- MOTION reply-envelope -->
-<figure class="motion-study" id="motion-reply-envelope" data-sheet="motion/reply-envelope.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>search-1과 library-1은 각각 무엇을 가리킬까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/reply-envelope-still.webp" width="800" height="272" alt="답장 봉투의 search-1은 도구 호출 ID입니다. 봉투 안에서 꺼낸 library-1은 검색한 문서 ID입니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>답장 봉투의 search-1은 도구 호출 ID입니다. 봉투 안에서 꺼낸 library-1은 검색한 문서 ID입니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 답을 기다리는 요청과 결과 연결하기</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · ToolMessage와 요청 ID</h3>
 <div class="cell-before"><p>call을 도구로 실행한 뒤 tool_call_id와 첫 문서의 id를 표시하세요.</p>
 <p>이 셀의 content에는 검색한 문서의 본문이 일반 문자열로 들어갑니다. artifact에는 id·text·source·page를 보관합니다. 참고 구현은 content를 JSON 문자열로 만들지만 여기서는 도서관 안내 문장을 그대로 읽으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># call 전체를 search_documents.invoke에 넘기세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">reply = search_documents.invoke(call)
-print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<span class="tok-string">&#x27;id&#x27;</span>])</code></pre></figure>
+print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<span class="tok-string">'id'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search-1 library-1</pre></div>
 <div class="cell-after"><p>search-1은 요청 식별자, library-1은 근거 문서 식별자입니다. 이 둘을 바꿔 쓰면 다음 판단에서 어떤 요청에 답이 왔는지 찾기 어렵습니다.</p>
 </div>
@@ -122,23 +116,23 @@ print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<spa
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>도구 응답이 빈 목록이면 호출 자체는 끝난 상태입니다. 검색 호출을 건너뛴 경우와 구별할 수 있도록 요청 ID, 실행 여부, 자료 목록을 함께 읽으세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>LangChain 검색 도구와 ToolMessage 심화 읽기</h2>
 </div>
 </header>
-<span id="request"></span><details class="reading-topic" id="reading-request"><summary>요청에 이름만 있는데 도구는 언제 실행될까요?</summary><div class="prose"><p>도구를 사용하겠다는 요청은 AIMessage.tool_calls에 들어갑니다. 아래는 모델이 요청했다고 가정해 직접 만든 메시지입니다. name은 실행할 도구 이름, args는 인자, id는 이번 요청의 식별자입니다. type=&quot;tool_call&quot;은 일반 인자 dict와 구분해 프레임워크에 전달하는 표시입니다.</p>
+<span id="request"></span><details class="reading-topic" id="reading-request"><summary>도구 호출 요청과 실행 시점</summary><div class="prose"><p>도구를 사용하겠다는 요청은 AIMessage.tool_calls에 들어갑니다. 아래는 모델이 요청했다고 가정해 직접 만든 메시지입니다. name은 실행할 도구 이름, args는 인자, id는 이번 요청의 식별자입니다. type="tool_call"은 일반 인자 dict와 구분해 프레임워크에 전달하는 표시입니다.</p>
 <p>AIMessage를 만들기만 해서는 Python 함수가 실행되지 않습니다. 프로그램이 요청을 읽고 허용한 도구인지 확인한 뒤 invoke를 호출해야 검색이 일어납니다. 이 교재는 한 응답에 한 도구만 요청하는 범위를 사용합니다. 복수 요청을 받으면 임의로 첫 번째만 실행하지 않고 오류로 멈춥니다.</p>
 </div>
 <div class="prose"><p>일반 args만 invoke에 넘기면 반환 표현이 달라질 수 있습니다. 여기서는 id와 type이 있는 전체 도구 요청을 넘겨 ToolMessage가 만들어지는 경로를 확인합니다. 실행 가능한 전체 흐름은 roundtrip.py에 있습니다.</p>
 </div>
 </details>
-<span id="message"></span><details class="reading-topic" id="reading-message"><summary>어느 요청의 응답인지 어떻게 알까요?</summary><div class="prose"><p>ToolMessage는 도구를 실행한 결과 메시지입니다. tool_call_id가 앞선 요청의 id와 같아야 모델이 어느 요청에 대한 결과인지 알 수 있습니다. name만 같아서는 같은 도구를 여러 번 부른 결과를 구별할 수 없습니다.</p>
+<span id="message"></span><details class="reading-topic" id="reading-message"><summary>tool_call_id로 요청·응답 대응</summary><div class="prose"><p>ToolMessage는 도구를 실행한 결과 메시지입니다. tool_call_id가 앞선 요청의 id와 같아야 모델이 어느 요청에 대한 결과인지 알 수 있습니다. name만 같아서는 같은 도구를 여러 번 부른 결과를 구별할 수 없습니다.</p>
 <p>content에는 JSON 문자열이 있고 artifact에는 같은 문서 dict 목록이 있습니다. sources에 무엇을 인용할지는 아직 정하지 않았습니다. 검색된 문서와 최종 답변에서 실제로 인용한 문서는 나중에 A1이 나누어 기록합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>요청에서 결과로 이어지는 값</caption><thead><tr><th scope="col">위치</th><th scope="col">실제 예</th><th scope="col">역할</th></tr>
@@ -150,17 +144,17 @@ print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<spa
 </tbody></table></div>
 <details class="case-reference" id="flow-5"><summary>검색 요청과 결과의 한 차례 왕복</summary>
 <p>아래 예시에는 검색 요청과 도구 응답이 함께 들어 있습니다. 기본 과제에서는 검색 요청과 반환 메시지의 search-1을 대조하세요. library-1은 찾아낸 문서 번호입니다.</p>
-<article id="flow-5-step-0"><small>STEP 01 · HumanMessage</small><h4>사용자가 질문한다</h4>
-<p>질문 문자열을 메시지로 보관합니다.</p><pre>대출 기간은?</pre></article><article id="flow-5-step-1"><small>STEP 02 · AIMessage</small><h4>검색을 요청한다</h4>
+<article id="flow-5-step-0"><small>STEP 01 · HumanMessage</small><h4>사용자 메시지</h4>
+<p>질문 문자열을 메시지로 보관합니다.</p><pre>대출 기간은?</pre></article><article id="flow-5-step-1"><small>STEP 02 · AIMessage</small><h4>검색 도구 호출 요청</h4>
 <p>아직 검색은 실행되지 않았습니다.</p><pre>name=search_documents
 id=search-1
-args={question: 대출 기간은?, k: 1}</pre></article><article id="flow-5-step-2"><small>STEP 03 · Python Tool</small><h4>같은 retrieve를 부른다</h4>
+args={question: 대출 기간은?, k: 1}</pre></article><article id="flow-5-step-2"><small>STEP 03 · Python Tool</small><h4>retrieve() 실행</h4>
 <p>실행 후 검증한 근거를 ToolMessage로 돌려줍니다.</p><pre>tool_call_id=search-1
 status=success
-artifact=[library-1]</pre></article><article id="flow-5-step-3"><small>STEP 04 · AIMessage</small><h4>결과를 읽고 검색 선택을 마친다</h4>
+artifact=[library-1]</pre></article><article id="flow-5-step-3"><small>STEP 04 · AIMessage</small><h4>ToolMessage 수신 후 종료</h4>
 <p>이 fixture는 추가 도구를 요청하지 않습니다. A1 답변 생성은 별도 단계입니다.</p><pre>tool_calls=[]</pre></article></details>
 </details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>32일의 입력과 검색 결과를 그대로 가져오기</summary><div class="prose"><p>이전에는 흐름을 실행하면 검색 노드를 반드시 거쳤습니다. 오늘은 같은 검색을 도구로 제공하고, 요청이 있을 때 실행하는 연결을 살펴봅니다. 검색 알고리즘과 문서를 함께 바꾸면 결과가 달라진 이유를 구분하기 어려우므로 세 가상 문서와 retrieve(question, k)를 유지합니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>검색 도구의 선행 입력</summary><div class="prose"><p>이전에는 흐름을 실행하면 검색 노드를 반드시 거쳤습니다. 오늘은 같은 검색을 도구로 제공하고, 요청이 있을 때 실행하는 연결을 살펴봅니다. 검색 알고리즘과 문서를 함께 바꾸면 결과가 달라진 이유를 구분하기 어려우므로 세 가상 문서와 retrieve(question, k)를 유지합니다.</p>
 <p>32일 결과 파일이 없어도 examples에 같은 자료와 공통 함수가 있습니다. 먼저 질문 하나와 k=1을 정하고 id·text·source·page가 있는 문서 목록을 읽으세요. R1은 이 목록을 반환하는 약속이며, A1은 그 목록으로 답변을 만들고 인용을 검사하는 약속입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>그대로 사용하는 가상 자료</caption><thead><tr><th scope="col">문서·청크 ID</th><th scope="col">본문</th><th scope="col">출처·페이지</th></tr>
@@ -169,39 +163,39 @@ artifact=[library-1]</pre></article><article id="flow-5-step-3"><small>STEP 04 �
 <tr><td>library-3</td><td>무인 반납함은 24시간 이용할 수 있습니다.</td><td>가상 도서관 이용 안내 · 3</td></tr>
 </tbody></table></div>
 </details>
-<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>전체 파일을 열고 첫 결과 확인하기</summary><div class="prose"><p>이 출력은 Python 3.12.15와 설치된 langchain-core 1.8.0에서 확인한 로컬 결과입니다. trace.json에 입력·도구 요청·메시지·실제 인용이 저장됩니다. 파일을 읽으려고 같은 질문을 다시 실행할 필요는 없습니다. ModuleNotFoundError가 나면 가상환경과 설치 경로를 먼저 확인하세요.</p>
+<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>검색 도구 예제 실행</summary><div class="prose"><p>이 출력은 Python 3.12.15와 설치된 langchain-core 1.8.0에서 확인한 로컬 결과입니다. trace.json에 입력·도구 요청·메시지·실제 인용이 저장됩니다. 파일을 읽으려고 같은 질문을 다시 실행할 필요는 없습니다. ModuleNotFoundError가 나면 가상환경과 설치 경로를 먼저 확인하세요.</p>
 <p>ScriptedRouter는 질문에 대출·휴관·반납이 있으면 검색을 요청하도록 만든 조건문입니다. 모델의 판단 능력을 검사하는 코드가 아닙니다. 실제 AIMessage와 ToolMessage를 만들기 때문에 프레임워크의 메시지 연결을 연습할 수 있습니다. 고정 생성기는 검색한 첫 문서를 옮겨 답하므로 일반 답변 모델도 아닙니다.</p>
 </div>
 </details>
-<span id="spec"></span><details class="reading-topic" id="reading-spec"><summary>도구의 이름·설명·입력 약속 읽기</summary><div class="prose"><p>도구 명세에는 이름, 사용할 상황을 알려 주는 설명, 받을 인자의 구조가 들어갑니다. 이름 search_documents는 실행할 함수를 찾는 기준입니다. 설명은 가상 도서관의 대출·휴관·반납 자료를 검색한다는 범위를 알립니다. 짧아도 자료의 범위와 반환 목적이 드러나야 합니다.</p>
+<span id="spec"></span><details class="reading-topic" id="reading-spec"><summary>도구 이름·설명·인자 스키마</summary><div class="prose"><p>도구 명세에는 이름, 사용할 상황을 알려 주는 설명, 받을 인자의 구조가 들어갑니다. 이름 search_documents는 실행할 함수를 찾는 기준입니다. 설명은 가상 도서관의 대출·휴관·반납 자료를 검색한다는 범위를 알립니다. 짧아도 자료의 범위와 반환 목적이 드러나야 합니다.</p>
 <p>question은 무엇을 찾을지, k는 문서를 최대 몇 개 받을지를 나타냅니다. 기본값 2는 생략할 수 있다는 뜻이며 반드시 두 문서가 나온다는 뜻은 아닙니다. Tool의 설명이 있어도 실제 모델이 항상 필요한 검색을 선택한다고 보장할 수는 없습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>입력 규칙을 예상해 보기</caption><thead><tr><th scope="col">입력</th><th scope="col">처리</th><th scope="col">이유</th></tr>
-</thead><tbody><tr><td>question=&quot;대출 기간은?&quot;, k=1</td><td>검색 실행</td><td>문자열 질문과 양의 정수</td></tr>
-<tr><td>question=&quot; &quot;</td><td>검색 전 거부</td><td>공백뿐인 질문</td></tr>
-<tr><td>k=True 또는 k=&quot;2&quot;</td><td>검색 전 거부</td><td>엄격한 정수 규칙</td></tr>
+</thead><tbody><tr><td>question="대출 기간은?", k=1</td><td>검색 실행</td><td>문자열 질문과 양의 정수</td></tr>
+<tr><td>question=" "</td><td>검색 전 거부</td><td>공백뿐인 질문</td></tr>
+<tr><td>k=True 또는 k="2"</td><td>검색 전 거부</td><td>엄격한 정수 규칙</td></tr>
 <tr><td>k=0 또는 extra=1</td><td>검색 전 거부</td><td>양수 조건 또는 모르는 인자</td></tr>
 </tbody></table></div>
 <div class="prose"><p>BaseModel·Field·StrictInt는 이 장에서 제공하는 검사 코드입니다. 이름의 뜻과 입력 결과만 읽고 클래스 내부를 새로 구현할 필요는 없습니다. Python에서는 True가 정수처럼 쓰일 수 있으므로 엄격한 검사를 두어 기존 R1의 규칙을 유지합니다. 추가 인자를 거부하면 오타를 조용히 무시하지 않습니다.</p>
 </div>
 </details>
-<span id="wrap"></span><details class="reading-topic" id="reading-wrap"><summary>retrieve를 바꾸지 않고 도구로 감싸기</summary><div class="prose"><p>make_search_tool은 검색 함수를 받아 도구 객체를 만듭니다. @tool은 아래 함수를 도구로 포장하는 표시입니다. 함수 안에서는 입력을 확인하고, 기존 검색 함수를 한 번 호출한 뒤, 검색 결과의 네 필드를 확인합니다. 반환하기 전에 내용을 임의로 줄이거나 source·page를 없애지 않습니다.</p>
-<p>response_format=&quot;content_and_artifact&quot;는 두 값을 돌려주는 설정입니다. 첫 값 content는 메시지로 보낼 JSON 문자열입니다. 둘째 값 artifact는 프로그램이 보관할 원래 문서 목록입니다. artifact가 자동으로 모델에게 전달된다고 생각하면 안 됩니다. 예제는 같은 근거를 content와 artifact 양쪽에 담아 메시지 읽기와 A1 검사를 연결합니다.</p>
+<span id="wrap"></span><details class="reading-topic" id="reading-wrap"><summary>retrieve()의 도구 래퍼</summary><div class="prose"><p>make_search_tool은 검색 함수를 받아 도구 객체를 만듭니다. @tool은 아래 함수를 도구로 포장하는 표시입니다. 함수 안에서는 입력을 확인하고, 기존 검색 함수를 한 번 호출한 뒤, 검색 결과의 네 필드를 확인합니다. 반환하기 전에 내용을 임의로 줄이거나 source·page를 없애지 않습니다.</p>
+<p>response_format="content_and_artifact"는 두 값을 돌려주는 설정입니다. 첫 값 content는 메시지로 보낼 JSON 문자열입니다. 둘째 값 artifact는 프로그램이 보관할 원래 문서 목록입니다. artifact가 자동으로 모델에게 전달된다고 생각하면 안 됩니다. 예제는 같은 근거를 content와 artifact 양쪽에 담아 메시지 읽기와 A1 검사를 연결합니다.</p>
 </div>
 <div class="prose"><p>counter는 검색 실행 시도를 세기 위한 제공 장치입니다. 유효한 인자가 들어온 뒤 실제 search를 부르기 직전에 1을 더합니다. 그래서 검색이 TimeoutError로 실패해도 시도는 1회이고, 입력이 잘못되어 search까지 가지 못하면 0회입니다. 함수 안쪽에서 같은 검색을 다시 부르지 않습니다.</p>
 </div>
 </details>
-<span id="roundtrip"></span><details class="reading-topic" id="reading-roundtrip"><summary>결과 메시지를 다음 판단에 다시 전달하기</summary><div class="prose"><p>roundtrip.py의 messages는 질문에서 시작합니다. 첫 판단 결과를 붙이고, 도구를 실행했다면 ToolMessage를 붙입니다. 이 목록 전체를 다음 판단의 입력으로 보내야 검색 결과를 볼 수 있습니다. 결과를 화면에 출력만 하고 messages에 넣지 않으면 다음 판단에는 검색 근거가 전달되지 않습니다.</p>
+<span id="roundtrip"></span><details class="reading-topic" id="reading-roundtrip"><summary>결과 메시지와 후속 판단</summary><div class="prose"><p>roundtrip.py의 messages는 질문에서 시작합니다. 첫 판단 결과를 붙이고, 도구를 실행했다면 ToolMessage를 붙입니다. 이 목록 전체를 다음 판단의 입력으로 보내야 검색 결과를 볼 수 있습니다. 결과를 화면에 출력만 하고 messages에 넣지 않으면 다음 판단에는 검색 근거가 전달되지 않습니다.</p>
 <p>실제 도구 호출을 지원하는 모델에서는 모델 객체에 도구 명세를 연결한 뒤 invoke(messages)를 사용합니다. 이 장은 그 인터페이스 자리에 ScriptedRouter를 넣습니다. 아래 실제 모델 연결 형태는 개념 설명이며 이 파일에서 실행하거나 실제 API 성공으로 기록하지 않습니다.</p>
 </div>
 <div class="prose"><p>검색 선택을 마친 AIMessage의 content를 바로 최종 답변으로 표시하지 않습니다. 오늘의 판단 함수는 검색 여부만 정합니다. 답변은 같은 A1과 고정 생성기를 거쳐 만들어야 32일의 인용 규칙과 비교할 수 있습니다. 두 번째 판단이 다시 도구를 요청하면 needs_next_round로 멈춥니다. 이를 반복하는 구조는 34일에 만듭니다.</p>
 </div>
 </details>
-<span id="empty"></span><details class="reading-topic" id="reading-empty"><summary>검색 생략과 빈 검색을 따로 기록하기</summary><div class="prose"><p>‘주차 요금은?’에는 교육용 키워드가 없습니다. keywords 정책은 도구를 요청하지 않으므로 검색 0회입니다. always_search 정책은 요청을 보냅니다. 같은 retrieve는 빈 목록을 반환하므로 검색 1회이며 search_status=&quot;empty&quot;입니다. 두 경로 모두 최종 근거가 없어 no_evidence가 되지만 실행 과정은 다릅니다.</p>
+<span id="empty"></span><details class="reading-topic" id="reading-empty"><summary>검색 생략과 빈 결과 구분</summary><div class="prose"><p>‘주차 요금은?’에는 교육용 키워드가 없습니다. keywords 정책은 도구를 요청하지 않으므로 검색 0회입니다. always_search 정책은 요청을 보냅니다. 같은 retrieve는 빈 목록을 반환하므로 검색 1회이며 search_status="empty"입니다. 두 경로 모두 최종 근거가 없어 no_evidence가 되지만 실행 과정은 다릅니다.</p>
 <p>A1은 문서가 없으면 생성기를 부르지 않습니다. 없던 근거를 만들어 답하지 않고 정해 둔 안내와 빈 sources를 반환합니다. 검색 생략을 곧바로 좋은 선택이라고 판단하지 마세요. 답할 수 있는 질문에서도 잘못 생략할 수 있습니다.</p>
 </div>
 </details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>운영 오류를 자료 없음으로 바꾸지 않기</summary><div class="prose"><p>TimeoutError는 검색을 시도했지만 제시간에 결과를 받지 못했다는 오류입니다. 정상 빈 목록과 원인이 다릅니다. dispatch는 알려진 오류 종류를 ToolMessage.status=&quot;error&quot;로 기록하고, 이 학습 흐름은 그 자리에서 종료합니다. A1에 []를 넘겨 자료가 없다고 안내하는 경로와 섞지 않습니다.</p>
+<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>검색 예외의 전파</summary><div class="prose"><p>TimeoutError는 검색을 시도했지만 제시간에 결과를 받지 못했다는 오류입니다. 정상 빈 목록과 원인이 다릅니다. dispatch는 알려진 오류 종류를 ToolMessage.status="error"로 기록하고, 이 학습 흐름은 그 자리에서 종료합니다. A1에 []를 넘겨 자료가 없다고 안내하는 경로와 섞지 않습니다.</p>
 <p>인자 오류는 검색 전에, 메타데이터 오류는 검색 결과를 받은 뒤 발견됩니다. 오류 메시지에는 분류용 코드만 남겨 내부 서버 정보가 그대로 출력되지 않게 합니다. 예상하지 않은 프로그래밍 오류까지 모두 정상 결과로 감추지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>실패 위치와 다음 처리</caption><thead><tr><th scope="col">관찰</th><th scope="col">검색/생성 시도</th><th scope="col">최종 상태</th></tr>
@@ -212,11 +206,11 @@ artifact=[library-1]</pre></article><article id="flow-5-step-3"><small>STEP 04 �
 <tr><td>답변에 없는 출처 ID</td><td>1 / 1</td><td>invalid_citation</td></tr>
 </tbody></table></div>
 </details>
-<span id="citations"></span><details class="reading-topic" id="reading-citations"><summary>도구 결과에도 같은 인용 검사를 적용하기</summary><div class="prose"><p>도구가 문서를 반환했다고 답변의 출처가 자동으로 정확해지는 것은 아닙니다. A1은 답변에 [library-1]처럼 인용 ID가 있는지, 모두 이번 검색 문서에 포함된 ID인지 확인합니다. 아무 인용이 없거나 [unknown]이 섞이면 invalid_citation이며 sources를 비웁니다.</p>
+<span id="citations"></span><details class="reading-topic" id="reading-citations"><summary>도구 결과의 인용 검증</summary><div class="prose"><p>도구가 문서를 반환했다고 답변의 출처가 자동으로 정확해지는 것은 아닙니다. A1은 답변에 [library-1]처럼 인용 ID가 있는지, 모두 이번 검색 문서에 포함된 ID인지 확인합니다. 아무 인용이 없거나 [unknown]이 섞이면 invalid_citation이며 sources를 비웁니다.</p>
 <p>고정 생성기는 k=2로 두 문서를 받아도 첫 문서만 답변에 인용합니다. 검색 문서 수와 sources 수를 같은 값으로 채우면 실제로 인용하지 않은 문서를 출처로 제시하게 됩니다. sources에는 인용한 문서의 id·text·source·page 객체를 보관합니다.</p>
 </div>
 </details>
-<span id="counts"></span><details class="reading-topic" id="reading-counts"><summary>판단·검색·생성 횟수를 각각 세기</summary><div class="prose"><p>이 실습의 decision_calls는 ScriptedRouter.invoke를 시도한 횟수입니다. retrieval_calls는 R1 search 실행 시도이고 generation_calls는 A1 답변 생성 함수 시도입니다. 실제 LLM을 호출하지 않았으므로 이 숫자를 API 요금이나 토큰 수로 읽을 수 없습니다.</p>
+<span id="counts"></span><details class="reading-topic" id="reading-counts"><summary>판단·검색·생성 호출 수</summary><div class="prose"><p>이 실습의 decision_calls는 ScriptedRouter.invoke를 시도한 횟수입니다. retrieval_calls는 R1 search 실행 시도이고 generation_calls는 A1 답변 생성 함수 시도입니다. 실제 LLM을 호출하지 않았으므로 이 숫자를 API 요금이나 토큰 수로 읽을 수 없습니다.</p>
 <p>기본 함수만 사용할 때 external_llm_calls=0을 기록합니다. 다른 함수를 주입하면 그 내부에서 외부 모델을 호출할 수 있으므로 null로 바뀝니다. 이는 숫자 0을 뜻하지 않고 이 코드만으로 확인할 수 없다는 뜻입니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>한 차례 왕복의 로컬 예상·관찰값</caption><thead><tr><th scope="col">사례</th><th scope="col">판단</th><th scope="col">검색</th><th scope="col">생성</th><th scope="col">결과</th></tr>
@@ -229,16 +223,16 @@ artifact=[library-1]</pre></article><article id="flow-5-step-3"><small>STEP 04 �
 <div class="prose"><p>repeat는 결과를 받은 뒤에도 다시 요청하는 오류 상황을 재현하는 정책입니다. 33일 코드는 두 번째 검색을 몰래 실행하지 않고 미완료 사유를 남깁니다. 다음 장에서 그 요청을 어디까지 허용할지 조건으로 정합니다.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>34일에 넘길 요청·메시지·관찰 기록</summary><div class="prose"><p>trace.json, 학생 요청 함수, observation.md를 보관합니다. 같은 자료 버전과 k를 기록해야 다음 장에서 흐름 차이만 비교할 수 있습니다. 검색 결과가 정상이어도 반복 요청이 남아 있으면 최종 답변을 만들지 않았다는 사실을 함께 적습니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>도구 요청과 메시지의 인계 기록</summary><div class="prose"><p>trace.json, 학생 요청 함수, observation.md를 보관합니다. 같은 자료 버전과 k를 기록해야 다음 장에서 흐름 차이만 비교할 수 있습니다. 검색 결과가 정상이어도 반복 요청이 남아 있으면 최종 답변을 만들지 않았다는 사실을 함께 적습니다.</p>
 <p>34일에는 지금의 판단→도구→판단을 StateGraph로 연결하고 다시 요청할 때 도는 조건 간선을 만듭니다. 도구 회차 상한과 오류 종료를 둔 뒤, 필수 검색 Node와 선택 검색 Tool을 같은 질문으로 비교합니다.</p>
 </div>
 </details>
-<details class="reading-topic" id="reading-sources"><summary>공식 자료와 다음 학습</summary><div class="prose"><p>이 원고는 설치된 LangChain·LangGraph와 가상 자료로 실행했습니다. 검색 선택은 코드로 정한 모의 판단이고 답변은 고정 생성기입니다. 실제 LLM의 도구 선택·Chroma 통합·Windows/WSL·최종 화면은 별도 확인 대상입니다. 생성한 결과가 실제 모델 성능이나 검색 품질을 증명하지 않습니다.</p>
+<details class="reading-topic" id="reading-sources"><summary>공식 문서와 연계 단원</summary><div class="prose"><p>이 원고는 설치된 LangChain·LangGraph와 가상 자료로 실행했습니다. 검색 선택은 코드로 정한 모의 판단이고 답변은 고정 생성기입니다. 실제 LLM의 도구 선택·Chroma 통합·Windows/WSL·최종 화면은 별도 확인 대상입니다. 생성한 결과가 실제 모델 성능이나 검색 품질을 증명하지 않습니다.</p>
 </div>
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/tools" target="_blank" rel="noopener noreferrer">LangChain 도구 ↗</a><span></span></li>

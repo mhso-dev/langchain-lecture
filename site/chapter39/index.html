@@ -1,60 +1,60 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>평가·개선 통합 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/concept-film.css"><link rel="stylesheet" href="../assets/concept-film-2.css"><link rel="stylesheet" href="../assets/concept-film-3.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>RAG 개선안의 품질과 비용 비교 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
 <script defer src="../assets/deep-link.js"></script>
-<link rel="stylesheet" href="../assets/motion-study.css">
-<script defer src="../assets/motion-study.js"></script>
-</head>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
 <header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 039</p>
-<span class="sidebar-title">평가·개선 통합</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>수업 노트북</a><a href="#nb-pair"><span>02</span>같은 문항의 두 기록 비교하기</a><a href="#nb-adopt"><span>03</span>선택한 개선 후보와 현재 쓰는 방법 구별하기</a><a href="#recap"><span>04</span>다시 풀어 보기</a><a href="#readings"><span>05</span>관련 개념 더 읽기</a><a href="#sources"><span>06</span>참고 자료</a></nav>
+<span class="sidebar-title">RAG 개선안의 품질과 비용 비교</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pair"><span>02</span>기준선과 후보의 답변·출처 비교</a><a href="#nb-adopt"><span>03</span>작업량과 적용 기준 기록</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>RAG 개선안의 품질과 비용 비교 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 039</span><span class="template-badge">학생용 교재</span></div>
-<h1>평가·개선 통합</h1>
+<h1>RAG 개선안의 품질과 비용 비교</h1>
 <p class="hero-description">재순위화를 사용하자 처리 단계가 하나 늘었습니다. 같은 질문에서 근거와 답도 바뀌었을까요? 38장의 고정 평가 자료를 재실행해 저장했던 기록을 읽고, 현재 화면에서 쓸 방법을 결정합니다.</p>
 <div class="hero-meta"><span>Python·RAG 평가 이후</span><span>8H · 전반 4H / 후반 4H</span><span>38일 기법별 비교 결과 · Q1/R1/A1</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>수업 노트북</h2>
+<h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
 <a class="download" href="chapter39.ipynb" download="chapter39.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>39장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-pair" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>같은 문항의 두 기록 비교하기</h2>
+<h2>기준선과 후보의 답변·출처 비교</h2>
 </div>
 </header>
-<p>아래 값은 제공 실험 기록의 dev-01에서 읽은 항목입니다. 자료와 질문, 후보 수 2, 최종 문서 수 1을 고정했습니다. 이 셀은 저장 기록을 대조하며 외부 모델의 응답시간을 측정하지 않습니다.</p>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 대출 답변과 출처가 같은지 확인하기</h3>
+<p class="concept-intro">개선안을 판단하려면 같은 평가 문항에 대한 기존 방식과 후보 방식의 결과를 나란히 놓습니다. 답이 좋아졌는지와 작업량이 늘었는지를 따로 기록합니다.</p><p>아래 값은 제공 실험 기록의 dev-01에서 읽은 항목입니다. 자료와 질문, 후보 수 2, 최종 문서 수 1을 고정했습니다. 이 셀은 저장 기록을 대조하며 외부 모델의 응답시간을 측정하지 않습니다.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기준선·후보의 답변 대조</h3>
 <div class="cell-before"><p>baseline과 rerank의 문항 ID가 일치하는지 먼저 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">baseline = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;dev-01&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다 [library-1:0]&#x27;</span>,
- <span class="tok-string">&#x27;source_ids&#x27;</span>: [<span class="tok-string">&#x27;library-1:0&#x27;</span>],
- <span class="tok-string">&#x27;rerank_calls&#x27;</span>: <span class="tok-number">0</span>}
-candidate = {<span class="tok-string">&#x27;question_id&#x27;</span>: <span class="tok-string">&#x27;dev-01&#x27;</span>,
- <span class="tok-string">&#x27;answer&#x27;</span>: <span class="tok-string">&#x27;도서 대출 기간은 14일입니다 [library-1:0]&#x27;</span>,
- <span class="tok-string">&#x27;source_ids&#x27;</span>: [<span class="tok-string">&#x27;library-1:0&#x27;</span>],
- <span class="tok-string">&#x27;rerank_calls&#x27;</span>: <span class="tok-number">1</span>}
-<span class="tok-keyword">assert</span> baseline[<span class="tok-string">&#x27;question_id&#x27;</span>] == candidate[<span class="tok-string">&#x27;question_id&#x27;</span>]
-print(baseline[<span class="tok-string">&#x27;answer&#x27;</span>] == candidate[<span class="tok-string">&#x27;answer&#x27;</span>], baseline[<span class="tok-string">&#x27;source_ids&#x27;</span>] == candidate[<span class="tok-string">&#x27;source_ids&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">baseline = {<span class="tok-string">'question_id'</span>: <span class="tok-string">'dev-01'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다 [library-1:0]'</span>,
+ <span class="tok-string">'source_ids'</span>: [<span class="tok-string">'library-1:0'</span>],
+ <span class="tok-string">'rerank_calls'</span>: <span class="tok-number">0</span>}
+candidate = {<span class="tok-string">'question_id'</span>: <span class="tok-string">'dev-01'</span>,
+ <span class="tok-string">'answer'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다 [library-1:0]'</span>,
+ <span class="tok-string">'source_ids'</span>: [<span class="tok-string">'library-1:0'</span>],
+ <span class="tok-string">'rerank_calls'</span>: <span class="tok-number">1</span>}
+<span class="tok-keyword">assert</span> baseline[<span class="tok-string">'question_id'</span>] == candidate[<span class="tok-string">'question_id'</span>]
+print(baseline[<span class="tok-string">'answer'</span>] == candidate[<span class="tok-string">'answer'</span>], baseline[<span class="tok-string">'source_ids'</span>] == candidate[<span class="tok-string">'source_ids'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True True</pre></div>
 <div class="cell-after"><p>True가 두 개 나옵니다. 이 문항에서 답과 인용은 바뀌지 않았습니다. 다른 질문에도 동일하다고 단정하려면 문항별 기록이 필요합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 늘어난 작업량 계산하기</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 추가 작업량 계산</h3>
 <div class="cell-before"><p>동일 문항에서 재순위 함수 호출이 몇 번 추가됐는지 계산하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 두 행의 rerank_calls 차이를 구하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(candidate[<span class="tok-string">&#x27;rerank_calls&#x27;</span>] - baseline[<span class="tok-string">&#x27;rerank_calls&#x27;</span>])</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(candidate[<span class="tok-string">'rerank_calls'</span>] - baseline[<span class="tok-string">'rerank_calls'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1</pre></div>
 <div class="cell-after"><p>한 번 더 호출했습니다. 이 값은 로컬 함수 실행 횟수여서 유료 모델 호출 횟수나 금액으로 바꿔 읽을 수 없습니다.</p>
 </div>
@@ -62,48 +62,42 @@ print(baseline[<span class="tok-string">&#x27;answer&#x27;</span>] == candidate[
 </article>
 </section>
 <section id="nb-adopt" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>선택한 개선 후보와 현재 쓰는 방법 구별하기</h2>
+<h2>작업량과 적용 기준 기록</h2>
 </div>
 </header>
 <p>저장된 결정은 개발 질문 세 건에서 이득을 찾지 못해 기준선을 유지하는 것입니다. 확인 질문에선 반납함 24시간이라는 숫자를 찾았지만 문장이 잘렸습니다. 의미가 온전한지 확인하는 작업이 남습니다.</p>
 <!-- MOTION clipped-answer -->
-<figure class="motion-study" id="motion-clipped-answer" data-sheet="motion/clipped-answer.webp" data-frames="40" data-cols="5" data-duration="5000">
-<h3>24라는 숫자가 남으면 문장 전체도 남았을까요?</h3>
-<div class="motion-viewport"><div class="motion-stage"><img loading="lazy" src="motion/clipped-answer-still.webp" width="800" height="272" alt="반납함 사례는 24시간이라는 숫자를 찾았지만 문장이 잘렸습니다. 숫자 일치와 근거 문장을 온전히 읽을 수 있는지를 따로 봅니다."><canvas hidden width="800" height="272" aria-hidden="true"></canvas></div></div>
 
-<div class="motion-tools" hidden><button type="button">재생</button><label>장면 위치 <input type="range" min="0" max="39" value="0"></label><button type="button" class="motion-zoom" aria-pressed="false">크게 보기</button></div>
-<figcaption>반납함 사례는 24시간이라는 숫자를 찾았지만 문장이 잘렸습니다. 숫자 일치와 근거 문장을 온전히 읽을 수 있는지를 따로 봅니다.</figcaption>
-</figure>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 결정 기록에서 실제 사용 방식 찾기</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 실험 후보와 적용 설정 구분</h3>
 <div class="cell-before"><p>기록에서 두 가지 이름을 뽑으세요.</p>
 <p>셀 01에서 직접 읽은 것은 dev-01 한 건입니다. 후보 선택은 뒤의 개발 세 문항 기록을 함께 사용합니다. 후보명을 rerank로 적는 것과 실제 서비스 방식을 baseline으로 유지하는 것은 별개입니다. 반납함 24시간 질문은 선택 후의 확인 사례입니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">decision = {<span class="tok-string">&#x27;selected_candidate&#x27;</span>: <span class="tok-string">&#x27;rerank&#x27;</span>, <span class="tok-string">&#x27;adopted_method&#x27;</span>: <span class="tok-string">&#x27;baseline&#x27;</span>, <span class="tok-string">&#x27;final_k&#x27;</span>: <span class="tok-number">1</span>}
-print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], decision[<span class="tok-string">&#x27;adopted_method&#x27;</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">decision = {<span class="tok-string">'selected_candidate'</span>: <span class="tok-string">'rerank'</span>, <span class="tok-string">'adopted_method'</span>: <span class="tok-string">'baseline'</span>, <span class="tok-string">'final_k'</span>: <span class="tok-number">1</span>}
+print(decision[<span class="tok-string">'selected_candidate'</span>], decision[<span class="tok-string">'adopted_method'</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">rerank baseline</pre></div>
 <div class="cell-after"><p>검토 후보는 rerank이고 현재 유지한 방식은 baseline입니다. 다음 화면의 엔진에는 두 번째 값을 넘깁니다. 잘린 문장을 더 길게 읽는 Parent–Child, 어휘 검색과 벡터 검색을 합치는 Hybrid는 서로 다른 다음 실험 후보입니다.</p>
 </div>
 </article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>다시 풀어 보기</h2>
+<h2>복습과 실습 점검</h2>
 </div>
 </header>
 <div class="prose"><p>‘대출 질문 한 건에서 같다’와 ‘개발 세 건을 확인해 이번엔 보류한다’는 근거 범위가 다릅니다. 팀의 실험 기록에도 판단에 사용한 문항을 적어 두세요.</p>
 </div>
 </section>
 <section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>관련 개념 더 읽기</h2>
+<h2>RAG 개선안의 품질과 비용 비교 심화 읽기</h2>
 </div>
 </header>
-<span id="paired"></span><details class="reading-topic" id="reading-paired"><summary>같은 질문의 수정 전후를 어떻게 짝지을까요?</summary><div class="prose"><p>질문 한 개에 방법이 여러 개 있으므로 question_id만으로 행을 덮어쓰면 결과를 잃습니다. case_id는 dev-01:baseline처럼 질문과 방법을 함께 나타냅니다. 질문 문장과 기대 원문은 question_id로 Q1에 연결하고, 실제 실행 결과는 case_id로 구분합니다.</p>
+<span id="paired"></span><details class="reading-topic" id="reading-paired"><summary>문항 ID별 변경 전후 비교</summary><div class="prose"><p>질문 한 개에 방법이 여러 개 있으므로 question_id만으로 행을 덮어쓰면 결과를 잃습니다. case_id는 dev-01:baseline처럼 질문과 방법을 함께 나타냅니다. 질문 문장과 기대 원문은 question_id로 Q1에 연결하고, 실제 실행 결과는 case_id로 구분합니다.</p>
 <p>paired 비교는 같은 질문의 기준선과 변경 결과를 나란히 읽는 방식입니다. 먼저 실패 여부와 관측 가능성을 확인하고, 그다음 반환 문서·답변·추가 작업을 비교합니다. 실패한 질문을 빼면 좋아 보이는 평균이 생길 수 있습니다.</p>
 </div>
 </details>
-<span id="parent"></span><details class="reading-topic" id="reading-parent"><summary>찾은 조각보다 넓은 문맥을 언제 읽을까요?</summary><div class="prose"><p>작은 청크는 한 주제를 좁게 담을 수 있지만 답변에 필요한 앞뒤 조건이 잘릴 수 있습니다. Parent–Child 방식은 작은 자식 청크로 검색한 뒤 연결된 더 큰 부모 문서나 큰 청크를 반환합니다. 부모가 항상 전체 파일인 것은 아닙니다.</p>
+<span id="parent"></span><details class="reading-topic" id="reading-parent"><summary>인접 문맥의 추가 조회</summary><div class="prose"><p>작은 청크는 한 주제를 좁게 담을 수 있지만 답변에 필요한 앞뒤 조건이 잘릴 수 있습니다. Parent–Child 방식은 작은 자식 청크로 검색한 뒤 연결된 더 큰 부모 문서나 큰 청크를 반환합니다. 부모가 항상 전체 파일인 것은 아닙니다.</p>
 <p>앞 장의 source-map은 청크와 원문을 연결하는 표입니다. 이 표가 있다고 Parent–Child 검색을 이미 구현한 것은 아닙니다. 반환 단위, 중복 부모 처리, 문맥 길이 제한, 출처 표시를 새로 정하고 실행해야 합니다. 지금은 선택 조건을 설명하며 실제 런타임은 만들지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>현재 예제에서 읽을 점</caption><thead><tr><th scope="col">관찰</th><th scope="col">검토 후보</th><th scope="col">오늘의 결정</th></tr>
@@ -112,10 +106,10 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>같은 원문의 여러 청크</td><td>부모 중복과 출처 연결</td><td>원문 ID/청크 ID를 별도 기록</td></tr>
 </tbody></table></div>
 </details>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>개선 결과를 읽고 채택 여부를 결정하기</summary><div class="prose"><p>검색 점수는 그대로인데 추가 호출만 늘었다면 새 기법을 계속 써야 할까요? 답변에 올바른 문서 ID가 있어도 숫자가 틀릴 수 있습니다. 오늘은 앞 장의 같은 결과를 다시 실행하고, 원문·답변·실패·추가 작업을 함께 읽어 적용 또는 보류 이유를 남깁니다.</p>
+<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>개선안 채택 조건</summary><div class="prose"><p>검색 점수는 그대로인데 추가 호출만 늘었다면 새 기법을 계속 써야 할까요? 답변에 올바른 문서 ID가 있어도 숫자가 틀릴 수 있습니다. 오늘은 앞 장의 같은 결과를 다시 실행하고, 원문·답변·실패·추가 작업을 함께 읽어 적용 또는 보류 이유를 남깁니다.</p>
 </div>
 </details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>38일 결과와 고정 조건을 다시 읽기</summary><div class="prose"><p>38일의 CSV와 JSON은 같은 사례를 다른 깊이로 보여 줍니다. CSV에서 질문 ID와 방법을 찾고 JSON에서 후보·반환 청크·A1 답변을 확인합니다. 비교할 두 행은 질문뿐 아니라 문서·벡터·후보 상한·최종 k도 같아야 합니다.</p>
+<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>질의 확장 실험의 통제값</summary><div class="prose"><p>38일의 CSV와 JSON은 같은 사례를 다른 깊이로 보여 줍니다. CSV에서 질문 ID와 방법을 찾고 JSON에서 후보·반환 청크·A1 답변을 확인합니다. 비교할 두 행은 질문뿐 아니라 문서·벡터·후보 상한·최종 k도 같아야 합니다.</p>
 <p>예제는 input-comparison에 앞 장 결과를 그대로 보관합니다. 현재 examples의 optimization.py도 같은 구현입니다. 해시 확인이 실패했다면 어느 입력이 달라졌는지 조사하고 실험을 새로 시작할지 결정합니다. 옛 답변을 새 설정의 결과처럼 사용하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>오늘 바꾸는 것과 유지하는 것</caption><thead><tr><th scope="col">항목</th><th scope="col">값/역할</th></tr>
@@ -128,10 +122,10 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>진단</td><td>잘못된 순위/검색 오류/틀린 숫자를 각각 별도 실행</td></tr>
 </tbody></table></div>
 </details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>재실행 파일과 제공 판정 기록을 분리하기</summary><div class="prose"><p>완성 예제 검사는 고정 입력과 인계 결과를 다시 대조합니다. integrate.py는 개발 비교 9행, 선택 후 공개 확인 4행, 별도 진단 9행을 만듭니다. generated 결과가 바뀌면 과거의 직접 대조 기록이 계속 유효한지 answer_sha256으로 확인해야 합니다.</p>
+<span id="run"></span><details class="reading-topic" id="reading-run"><summary>재실행과 제공 기록 구분</summary><div class="prose"><p>완성 예제 검사는 고정 입력과 인계 결과를 다시 대조합니다. integrate.py는 개발 비교 9행, 선택 후 공개 확인 4행, 별도 진단 9행을 만듭니다. generated 결과가 바뀌면 과거의 직접 대조 기록이 계속 유효한지 answer_sha256으로 확인해야 합니다.</p>
 </div>
 </details>
-<span id="hybrid"></span><details class="reading-topic" id="reading-hybrid"><summary>Hybrid 검색은 다른 종류의 검색 결과를 결합한다</summary><div class="prose"><p>제품 코드처럼 정확히 같은 문구를 찾아야 하는 경우와 비슷한 뜻의 표현을 찾아야 하는 경우는 검색 신호가 다를 수 있습니다. Hybrid 검색은 흔히 키워드 검색과 벡터 검색처럼 다른 검색 방식의 결과를 결합합니다. 질의 표현을 여러 개 만드는 MultiQuery와는 변경 지점이 다릅니다.</p>
+<span id="hybrid"></span><details class="reading-topic" id="reading-hybrid"><summary>하이브리드 검색 결과 결합</summary><div class="prose"><p>제품 코드처럼 정확히 같은 문구를 찾아야 하는 경우와 비슷한 뜻의 표현을 찾아야 하는 경우는 검색 신호가 다를 수 있습니다. Hybrid 검색은 흔히 키워드 검색과 벡터 검색처럼 다른 검색 방식의 결과를 결합합니다. 질의 표현을 여러 개 만드는 MultiQuery와는 변경 지점이 다릅니다.</p>
 <p>두 검색기의 원점수를 그대로 더하면 척도가 다른 문제가 생길 수 있습니다. 순위를 이용해 결합하거나 점수를 조정하는 정책을 별도로 정해야 합니다. 이 수업에서는 결합 API를 구현하지 않고, 현재 실패 원인에 그 구성이 필요한지 설명하는 데 집중합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>무엇을 바꾸는가</caption><thead><tr><th scope="col">방법</th><th scope="col">변경 위치</th><th scope="col">먼저 확인할 실패</th></tr>
@@ -141,7 +135,7 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>Parent–Child</td><td>찾는 단위와 돌려주는 문맥 단위</td><td>짧은 청크로 찾았지만 답할 문맥이 부족함</td></tr>
 </tbody></table></div>
 </details>
-<span id="manual"></span><details class="reading-topic" id="reading-manual"><summary>출처·원문·답변을 직접 읽는 다섯 단계</summary><div class="prose"><p>자동 인용 검사는 답변의 [ID]가 검색 근거 안에 있는지 확인합니다. ID가 연결되어도 답변의 숫자가 틀리거나 질문에 필요한 조건이 빠질 수 있습니다. 직접 대조에서는 질문이 요구한 사실, 반환 청크, 연결된 원문, 실제 답변을 함께 읽습니다.</p>
+<span id="manual"></span><details class="reading-topic" id="reading-manual"><summary>원문·출처·답변 대조 절차</summary><div class="prose"><p>자동 인용 검사는 답변의 [ID]가 검색 근거 안에 있는지 확인합니다. ID가 연결되어도 답변의 숫자가 틀리거나 질문에 필요한 조건이 빠질 수 있습니다. 직접 대조에서는 질문이 요구한 사실, 반환 청크, 연결된 원문, 실제 답변을 함께 읽습니다.</p>
 <p>판정은 supported, unsupported, incomplete, no_evidence_appropriate, not_observable로 나눕니다. 이는 수료 점수가 아니라 관찰 내용을 구별하는 말입니다. 자료를 읽지 못했거나 실행이 실패했다면 판단할 수 없다고 남기고 다음 확인을 적습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>직접 대조 예시</caption><thead><tr><th scope="col">사례</th><th scope="col">자동 관찰</th><th scope="col">읽기 판정과 이유</th></tr>
@@ -151,15 +145,15 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>dev-02:search_timeout</td><td>Recall NA / result None</td><td>not_observable: 검색 오류로 답변 관측 불가</td></tr>
 </tbody></table></div>
 </details>
-<span id="meaning"></span><details class="reading-topic" id="reading-meaning"><summary>의미 오류를 자동 성공에서 분리하기</summary><div class="prose"><p>틀린 숫자를 넣은 진단은 생성 함수만 바꿨습니다. 검색 결과와 원문 매핑은 유지되므로 Recall은 1입니다. 답변에 library-1:0을 넣으면 인용 형식도 통과합니다. 그래도 999일은 원문의 14일과 다릅니다.</p>
+<span id="meaning"></span><details class="reading-topic" id="reading-meaning"><summary>형식 통과와 의미 오류</summary><div class="prose"><p>틀린 숫자를 넣은 진단은 생성 함수만 바꿨습니다. 검색 결과와 원문 매핑은 유지되므로 Recall은 1입니다. 답변에 library-1:0을 넣으면 인용 형식도 통과합니다. 그래도 999일은 원문의 14일과 다릅니다.</p>
 <p>판정 이유에는 단순히 틀림이라고 쓰지 말고 어느 숫자·조건·질문 적합성이 다른지 적습니다. 예제의 휴관 질문에 대출 999일로 답한 행은 주제도 맞지 않습니다. 평가자는 답변이 그럴듯한 문장인지보다 질문과 근거를 보존했는지 봅니다.</p>
 </div>
 </details>
-<span id="regression"></span><details class="reading-topic" id="reading-regression"><summary>회귀는 이전에 되던 동작이 나빠진 경우다</summary><div class="prose"><p>bad_order는 후보를 역순으로 바꾸는 의도적인 진단입니다. 대출 질문의 원문 ID는 맞지만 마침표가 앞에 와서 기간 답변을 잃습니다. 휴관 질문은 다른 원문 청크가 반환되어 Recall도 0입니다. 작은 변경이라도 질문별로 결과가 다르게 나빠질 수 있습니다.</p>
+<span id="regression"></span><details class="reading-topic" id="reading-regression"><summary>기존 기능의 회귀</summary><div class="prose"><p>bad_order는 후보를 역순으로 바꾸는 의도적인 진단입니다. 대출 질문의 원문 ID는 맞지만 마침표가 앞에 와서 기간 답변을 잃습니다. 휴관 질문은 다른 원문 청크가 반환되어 Recall도 0입니다. 작은 변경이라도 질문별로 결과가 다르게 나빠질 수 있습니다.</p>
 <p>회귀를 발견하면 새 방법을 무조건 고치면서 다른 값까지 바꾸지 않습니다. 먼저 해당 변경을 되돌려 기준선이 다시 재현되는지 확인합니다. 이후 실패 원인을 좁힌 새로운 한 변수 실험을 설계합니다.</p>
 </div>
 </details>
-<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>실패한 질문을 분모에 남기기</summary><div class="prose"><p>검색 Timeout 진단에서는 휴관 질문만 결과를 관측하지 못했습니다. 대출은 Recall 1, 주차는 empty_gold NA입니다. 답변 가능 질문은 여전히 2개이고 관측된 것은 1개입니다. 관측된 1개 평균은 1이지만 답변 가능 2개 전체 평균은 null로 남습니다.</p>
+<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>실패를 포함한 평가 분모</summary><div class="prose"><p>검색 Timeout 진단에서는 휴관 질문만 결과를 관측하지 못했습니다. 대출은 Recall 1, 주차는 empty_gold NA입니다. 답변 가능 질문은 여전히 2개이고 관측된 것은 1개입니다. 관측된 1개 평균은 1이지만 답변 가능 2개 전체 평균은 null로 남습니다.</p>
 <p>전체 평균을 1로 적으면 실패한 휴관 질문을 조용히 제외한 셈이 됩니다. 오류가 해결되었다면 같은 질문을 다시 실행하고 새 결과를 기록합니다. 실패를 근거 없음으로 바꿔 정상 거절처럼 처리하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>NA를 읽는 방법</caption><thead><tr><th scope="col">이유</th><th scope="col">해석</th><th scope="col">평가 기록</th></tr>
@@ -168,11 +162,11 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>mapping_error</td><td>청크→원문 연결 불가</td><td>검색 목록과 매핑 수정 후 재평가</td></tr>
 </tbody></table></div>
 </details>
-<span id="public"></span><details class="reading-topic" id="reading-public"><summary>공개 확인 질문으로 일반 성능을 주장하지 않기</summary><div class="prose"><p>선택 후보를 정한 뒤 공개 확인 2문항을 기준선과 rerank에 적용했습니다. 이름에 holdout이 남아 있지만 이미 공개된 교육용 질문입니다. 문항을 알고 규칙을 만들 수 있으므로 비공개 평가나 배포 성능의 근거로 표현하지 않습니다.</p>
+<span id="public"></span><details class="reading-topic" id="reading-public"><summary>확인 문항의 일반화 한계</summary><div class="prose"><p>선택 후보를 정한 뒤 공개 확인 2문항을 기준선과 rerank에 적용했습니다. 이름에 holdout이 남아 있지만 이미 공개된 교육용 질문입니다. 문항을 알고 규칙을 만들 수 있으므로 비공개 평가나 배포 성능의 근거로 표현하지 않습니다.</p>
 <p>반납함 질문의 답변은 24시간을 포함하지만 “이용할”에서 문장이 끊깁니다. 제공 대조는 문장 완결성을 incomplete로 기록했습니다. 수치가 맞는다는 관찰과 답변을 더 다듬을 필요가 있다는 판단을 함께 남깁니다. 이 결과를 보고 현재 실험 안에서 청크 크기까지 바꾸지 않았습니다.</p>
 </div>
 </details>
-<span id="time"></span><details class="reading-topic" id="reading-time"><summary>시간·호출 수·비용은 같은 숫자가 아니다</summary><div class="prose"><p>timing-observation.json은 각 개발 사례를 한 번 실행하며 측정한 로컬 경과 시간입니다. 입력 해시 검증과 파일 읽기도 포함합니다. 워밍업이나 반복 측정이 없으므로 방법의 우열, 실제 Chroma 지연, 실제 모델 비용을 증명하지 않습니다.</p>
+<span id="time"></span><details class="reading-topic" id="reading-time"><summary>시간·호출 횟수·비용</summary><div class="prose"><p>timing-observation.json은 각 개발 사례를 한 번 실행하며 측정한 로컬 경과 시간입니다. 입력 해시 검증과 파일 읽기도 포함합니다. 워밍업이나 반복 측정이 없으므로 방법의 우열, 실제 Chroma 지연, 실제 모델 비용을 증명하지 않습니다.</p>
 <p>실제 환경의 비교를 설계할 때는 같은 질문·입력량·환경·측정 구간을 정하고 반복 횟수, 오류, 실제 모델 사용량을 함께 기록해야 합니다. 오늘은 관측한 시간을 읽는 연습과 추가 작업의 종류를 구분하는 데 사용합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>추가 작업의 해석</caption><thead><tr><th scope="col">관찰</th><th scope="col">말할 수 있는 것</th><th scope="col">아직 말할 수 없는 것</th></tr>
@@ -182,7 +176,7 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>로컬 시간 1회</td><td>그 환경에서의 실행 경과 시간</td><td>일반적인 속도 우열</td></tr>
 </tbody></table></div>
 </details>
-<span id="decision"></span><details class="reading-topic" id="reading-decision"><summary>채택·보류·되돌리기를 근거로 작성하기</summary><div class="prose"><p>판정은 새로운 기술을 썼는지보다 어떤 실패가 줄었고 무엇이 늘었는지를 설명해야 합니다. 추가 이익이 관측되지 않았다면 보류할 수 있습니다. 실패가 남아 있으면 결과를 더 확인해야 하고, 이전 동작을 깨뜨렸다면 변경을 되돌리는 것이 먼저입니다.</p>
+<span id="decision"></span><details class="reading-topic" id="reading-decision"><summary>채택·보류·롤백 기준</summary><div class="prose"><p>판정은 새로운 기술을 썼는지보다 어떤 실패가 줄었고 무엇이 늘었는지를 설명해야 합니다. 추가 이익이 관측되지 않았다면 보류할 수 있습니다. 실패가 남아 있으면 결과를 더 확인해야 하고, 이전 동작을 깨뜨렸다면 변경을 되돌리는 것이 먼저입니다.</p>
 <p>예제에서는 baseline을 현재 로컬 기준으로 유지하고 rerank와 multiquery를 보류했습니다. 이는 완성 서비스 승인도, 이 기법들이 항상 불필요하다는 뜻도 아닙니다. 다른 실패 유형·문서·질문에서는 새 근거를 수집해야 합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>결정문 최소 내용</caption><thead><tr><th scope="col">필드</th><th scope="col">작성할 내용</th></tr>
@@ -194,11 +188,11 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 <tr><td>unverified</td><td>실제 모델/저장소/학습자/화면의 미확인 범위</td></tr>
 </tbody></table></div>
 </details>
-<span id="student"></span><details class="reading-topic" id="reading-student"><summary>검토 순서를 작은 함수로 연습하기</summary><div class="prose"><p>student_decision.py의 함수는 사람이 확인한 failure·regression·benefit_evidence를 받아 다음 검토 상태를 고릅니다. 실패를 먼저 확인하고, 회귀가 있으면 되돌리기 대상으로 분류합니다. 이익 근거가 있을 때도 consider_adoption을 반환할 뿐 실제 배포나 서비스 채택을 승인하지 않습니다.</p>
+<span id="student"></span><details class="reading-topic" id="reading-student"><summary>판정 절차의 함수 구현</summary><div class="prose"><p>student_decision.py의 함수는 사람이 확인한 failure·regression·benefit_evidence를 받아 다음 검토 상태를 고릅니다. 실패를 먼저 확인하고, 회귀가 있으면 되돌리기 대상으로 분류합니다. 이익 근거가 있을 때도 consider_adoption을 반환할 뿐 실제 배포나 서비스 채택을 승인하지 않습니다.</p>
 <p>이 함수는 답변 의미를 자동 판단하지 않습니다. 앞서 읽기 대조와 실험 비교를 통해 만든 bool 값을 처리하는 연습입니다. 잘못된 문자열 False를 bool False처럼 받아들이지 않도록 자료형도 검사하세요.</p>
 </div>
 </details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>40·46일에 넘길 결정과 실행 함수</summary><div class="prose"><p>40일 화면에서는 유지한 baseline의 A1 답변·출처를 보여 주고 실제 실행 모드를 함께 설명합니다. service.answer(question)는 같은 청크와 고정 생성기를 연결한 함수이며 실제 모델이나 Chroma 서비스가 아닙니다. 운영 예외는 정상 no_evidence 응답으로 숨기지 않습니다.</p>
+<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>선택한 검색 설정과 실행 함수</summary><div class="prose"><p>40일 화면에서는 유지한 baseline의 A1 답변·출처를 보여 주고 실제 실행 모드를 함께 설명합니다. service.answer(question)는 같은 청크와 고정 생성기를 연결한 함수이며 실제 모델이나 Chroma 서비스가 아닙니다. 운영 예외는 정상 no_evidence 응답으로 숨기지 않습니다.</p>
 <p>46일 팀 실험은 같은 판단 양식을 재사용하되 자신의 문서·질문·기준선으로 다시 평가합니다. 이 가상 도서관에서 보류한 결정을 팀 자료에 자동 적용하지 않습니다. 개선 기술을 모두 채택할 의무도 없습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>전달 파일</caption><thead><tr><th scope="col">파일</th><th scope="col">역할</th></tr>
@@ -213,7 +207,7 @@ print(decision[<span class="tok-string">&#x27;selected_candidate&#x27;</span>], 
 </details>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>참고 자료</h2>
+<h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://www.elastic.co/docs/solutions/search/hybrid-search" target="_blank" rel="noopener noreferrer">Elastic Hybrid search ↗</a><span></span></li>
