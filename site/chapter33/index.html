@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 33 / RAG TOOLS</span><span class="template-badge">학생용 교재</span></div>
 <h1>LangChain 검색 도구와 ToolMessage</h1>
-<p class="hero-description">모델이 ‘도서관 자료를 찾아 달라’고 요청해도 검색은 아직 실행되지 않았습니다. 도구 요청의 이름과 인자를 읽고, 검색을 실행한 뒤 요청 ID가 붙은 결과를 돌려보냅니다.</p>
+<p class="hero-description">검색 함수를 도구로 등록하고 AIMessage의 호출 요청을 실제 검색과 연결합니다. 반환한 ToolMessage 안에서 도구 호출 ID와 검색된 문서의 ID를 구분합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 033 · 8H</span><span>16·17일 도구 요청과 실행, 23일 검색 결과, 32일 R1/A1·LCEL/Graph 비교</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -79,10 +79,11 @@ terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴
 
 print(search_documents.name)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search_documents</pre></div>
-<div class="cell-after"><p>등록된 이름은 search_documents입니다. 이 이름을 찍은 것만으로는 검색을 한 번도 실행하지 않았습니다.</p>
+<div class="cell-after"><p>출력된 search_documents는 등록한 도구의 이름입니다. 검색은 아직 실행되지 않았습니다.</p>
 </div>
+<p id="example-analysis">도구에 질문을 건네야 검색 결과가 생깁니다. 다음 셀에서 AIMessage에 미리 넣은 인자를 읽고, 실제 도구를 호출한 뒤에야 원문과 출처를 확인할 수 있습니다.</p>
 </article>
-<span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>필수 검색에서 호출 가능한 도구로</h3><p>앞 장의 검색 함수는 고정된 순서에서 실행됐습니다. 여기서는 같은 retrieve를 이름이 있는 도구로 감쌉니다. 등록하고 요청을 만드는 셀까지는 검색 결과가 아직 없습니다.</p></div>
+<span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
 <span class="lesson-anchor" id="spec"></span><div class="lesson-explanation" id="reading-spec"><h3>도구 이름·설명·인자 스키마</h3><div class="prose"><p>도구 명세에는 이름, 사용할 상황을 알려 주는 설명, 받을 인자의 구조가 들어갑니다. 이름 search_documents는 실행할 함수를 찾는 기준입니다. 설명은 가상 도서관의 대출·휴관·반납 자료를 검색한다는 범위를 알립니다. 짧아도 자료의 범위와 반환 목적이 드러나야 합니다.</p>
 <p>question은 무엇을 찾을지, k는 문서를 최대 몇 개 받을지를 나타냅니다. 기본값 2는 생략할 수 있다는 뜻이며 반드시 두 문서가 나온다는 뜻은 아닙니다. Tool의 설명이 있어도 실제 모델이 항상 필요한 검색을 선택한다고 보장할 수는 없습니다.</p>
@@ -93,13 +94,13 @@ print(search_documents.name)</code></pre></figure>
 <tr><td>k=True 또는 k="2"</td><td>검색 전 거부</td><td>엄격한 정수 규칙</td></tr>
 <tr><td>k=0 또는 extra=1</td><td>검색 전 거부</td><td>양수 조건 또는 모르는 인자</td></tr>
 </tbody></table></div>
-<div class="prose"><p>BaseModel·Field·StrictInt는 이 장에서 제공하는 검사 코드입니다. 이름의 뜻과 입력 결과만 읽고 클래스 내부를 새로 구현할 필요는 없습니다. Python에서는 True가 정수처럼 쓰일 수 있으므로 엄격한 검사를 두어 기존 R1의 규칙을 유지합니다. 추가 인자를 거부하면 오타를 조용히 무시하지 않습니다.</p>
+<div class="prose"><p>BaseModel·Field·StrictInt는 이 장에서 제공하는 검사 코드입니다. 이름의 뜻과 입력 결과만 읽고 클래스 내부를 새로 구현할 필요는 없습니다. Python에서는 True가 정수처럼 쓰일 수 있으므로 엄격한 검사를 두어 정수가 필요한 자리에 참·거짓 값이 들어오는 것을 막습니다. 추가 인자를 거부하면 오타를 조용히 무시하지 않습니다.</p>
 </div></div>
 <span class="lesson-anchor" id="wrap"></span><div class="lesson-explanation" id="reading-wrap"><h3>content_and_artifact의 두 반환값</h3><p>도구 함수는 검색 문장들을 줄바꿈으로 이은 문자열과 원래 레코드 리스트를 쌍으로 돌려줍니다. 첫 값은 읽을 내용, 둘째 값은 id와 page까지 갖춘 구조화된 근거입니다.</p></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-tool-call-is-a-request"><h3>AIMessage를 만들어도 검색은 아직 0회입니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-tool-call-is-a-request.mp4" aria-label="AIMessage를 만들어도 검색은 아직 0회입니다" aria-describedby="workflow-tool-call-is-a-request-caption"></video><figcaption id="workflow-tool-call-is-a-request-caption">셀 02의 흐름은 요청을 만드는 데서 끝납니다. 모델 API나 retrieve를 호출하지 않고도 요청의 이름·인자·ID를 검사할 수 있습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>AIMessage</strong> · content = 빈 문자열</li><li><strong>tool_calls[0]</strong> · 요청 ID = search-1</li><li><strong>args 출력</strong> · question · k = 대출 기간은? · 1</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 도구 호출 메시지 구성</h3>
+<span class="lesson-anchor" id="workflow-tool-call-is-a-request"></span><span class="lesson-anchor" id="workflow-tool-call-is-a-request-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 도구 호출 메시지 구성</h3>
 <div class="cell-before"><p>질문과 k가 담긴 도구 호출을 AIMessage에서 꺼내세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">request = AIMessage(content=<span class="tok-string">''</span>, tool_calls=[{<span class="tok-string">'id'</span>: <span class="tok-string">'search-1'</span>, <span class="tok-string">'name'</span>: <span class="tok-string">'search_documents'</span>, <span class="tok-string">'args'</span>: {<span class="tok-string">'question'</span>: <span class="tok-string">'대출 기간은?'</span>, <span class="tok-string">'k'</span>: <span class="tok-number">1</span>}, <span class="tok-string">'type'</span>: <span class="tok-string">'tool_call'</span>}])
@@ -109,7 +110,7 @@ print(call[<span class="tok-string">'args'</span>])</code></pre></figure>
 <div class="cell-after"><p>대출 질문과 검색 상한 1이 나옵니다. 이 시점에는 문서가 없습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="request"></span><div class="lesson-explanation" id="reading-request"><h3>AIMessage.tool_calls에서 요청 읽기</h3><p>이 예제는 AIMessage를 코드에서 직접 만듭니다. tool_calls[0]에는 도구 이름·인자·요청 ID가 들어 있습니다. args를 출력하는 줄까지 실행해도 search_documents의 본문은 호출되지 않습니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="request"></span><span class="lesson-anchor" id="reading-request"></span>
 <span class="lesson-anchor" id="counts"></span><span class="lesson-anchor" id="reading-counts"></span>
 
 </section>
@@ -123,13 +124,11 @@ print(call[<span class="tok-string">'args'</span>])</code></pre></figure>
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-send-back -->
-<figure class="lesson-clip" id="visual-send-back"><h3>ToolMessage가 모델에게 돌아가는 길</h3>
-<video autoplay loop muted playsinline aria-label="ToolMessage가 모델에게 돌아가는 길" src="visual-send-back.mp4"></video>
-<figcaption>검색 도구의 출력에 원래 요청의 ID를 붙입니다. 모델은 tool_call_id로 어느 요청에서 온 결과인지 연결할 수 있습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-send-back"></span>
 <!-- /lesson-visual visual-send-back -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · ToolMessage와 요청 ID</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · ToolMessage와 요청 ID</h3>
 <div class="cell-before"><p>call을 도구로 실행한 뒤 tool_call_id와 첫 문서의 id를 표시하세요.</p>
-<p>이 셀의 content에는 검색한 문서의 본문이 일반 문자열로 들어갑니다. artifact에는 id·text·source·page를 보관합니다. 참고 구현은 content를 JSON 문자열로 만들지만 여기서는 도서관 안내 문장을 그대로 읽으세요.</p>
+<p>content에서 읽을 수 있는 값은 검색한 안내 문장입니다. id, source, page가 필요하면 같은 응답의 artifact를 읽으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># call 전체를 search_documents.invoke에 넘기세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">reply = search_documents.invoke(call)
@@ -139,20 +138,24 @@ print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<spa
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="message"></span><div class="lesson-explanation" id="reading-message"><h3>요청 ID와 근거 문서 ID</h3><p>ToolMessage의 tool_call_id는 어떤 요청의 응답인지 식별합니다. artifact 안의 id는 어느 문서를 찾았는지 식별합니다. 요청이 search-1이고 문서가 library-1인 두 값은 용도가 다릅니다.</p><div class="worked-case" id="flow-5"><h3>요청을 보낸 뒤 학생 셀이 멈추는 위치</h3><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span><p>셀 03은 ToolMessage에서 tool_call_id와 artifact의 첫 문서 ID를 읽습니다. 도구 결과를 LLM에 다시 보내거나 새 답을 생성하는 호출은 이 셀에 없습니다.</p></div></div>
-<span class="lesson-anchor" id="roundtrip"></span><div class="lesson-explanation" id="reading-roundtrip"><h3>호출 정보를 통째로 invoke()에 넘기는 이유</h3><p>call에는 type=&quot;tool_call&quot;과 id가 들어 있습니다. call 전체를 넘기면 프레임워크가 도구 결과를 ToolMessage로 감싸고 요청의 ID를 연결합니다. args만 따로 출력한 직전 셀과 비교해 보세요.</p></div>
-<span class="lesson-anchor" id="empty"></span><div class="lesson-explanation" id="reading-empty"><h3>빈 결과를 돌려준 호출</h3><p>대출·휴관·반납이 없는 질문이면 이 검색 함수는 빈 리스트를 돌려줍니다. 그때도 도구를 호출했다면 요청 ID가 있는 결과를 받을 수 있습니다. 호출하기 전에는 결과 메시지 자체가 없습니다.</p></div>
+<span class="lesson-anchor" id="message"></span><div class="lesson-explanation" id="reading-message"><h3>요청 하나에 붙는 ID와 문서 여러 건에 붙는 ID</h3><p>search-1은 요청을 보낼 때 정한 값입니다. 검색 상한을 2로 바꿔 문서가 두 건 돌아와도 요청 ID는 하나입니다. 두 문서의 id는 artifact의 서로 다른 행에서 읽습니다.</p></div><span class="lesson-anchor" id="flow-5"></span><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span>
+<span class="lesson-anchor" id="roundtrip"></span><span class="lesson-anchor" id="reading-roundtrip"></span>
+<span class="lesson-anchor" id="empty"></span><div class="lesson-explanation" id="reading-empty"><h3>빈 artifact 처리</h3><p>주차 요금을 찾으면 요청 ID가 붙은 ToolMessage 안에서 artifact가 비어 있습니다. 화면 코드가 문서를 표시하기 전에 빈 목록을 확인할 자리입니다.</p></div>
 <span class="lesson-anchor" id="errors"></span><div class="lesson-explanation" id="reading-errors"><h3>잘못된 인자가 검색에 도달하기 전</h3><p>SearchArgs에서 k는 1 이상의 StrictInt입니다. 문자열 &quot;1&quot;이나 정수 0을 k로 넣으면 인자 검증에서 멈춥니다. 자료가 없어 빈 목록을 반환한 정상 검색과 발생 지점이 다릅니다.</p></div>
 <span class="lesson-anchor" id="citations"></span><span class="lesson-anchor" id="reading-citations"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 <span class="lesson-anchor" id="reading-sources"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-invoke-to-tool-message"><h3>도구를 실제로 실행하면 두 종류의 ID가 만납니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-invoke-to-tool-message.mp4" aria-label="도구를 실제로 실행하면 두 종류의 ID가 만납니다" aria-describedby="workflow-invoke-to-tool-message-caption"></video><figcaption id="workflow-invoke-to-tool-message-caption">프레임워크가 요청의 id를 결과 메시지에 연결합니다. artifact 안의 문서 id는 검색 레코드로부터 옵니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>invoke(call)</strong> · 요청 ID = search-1</li><li><strong>retrieve</strong> · 찾은 문서 = library-1</li><li><strong>도구 반환</strong> · content = 도서 대출 기간은 14일입니다.</li><li><strong>ToolMessage</strong> · tool_call_id · artifact[0].id = search-1 · library-1</li></ol></figure>
+<span class="lesson-anchor" id="workflow-invoke-to-tool-message"></span><span class="lesson-anchor" id="workflow-invoke-to-tool-message-caption"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="transfer-practice">과제 04 · 도구가 정상 실행됐지만 자료가 없는 요청</h3><div class="cell-before"><p>새 호출 ID를 search-parking으로 정하고 주차 요금을 물으세요. 도구 응답에서 요청 ID와 artifact를 출력하세요. 빈 목록에서 첫 행을 꺼내는 코드가 왜 실패하는지도 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-code" type="button" aria-label="노트북에서 직접 작성 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-code">parking_call = {**call, &#x27;id&#x27;: &#x27;search-parking&#x27;, &#x27;args&#x27;: {&#x27;question&#x27;: &#x27;주차 요금은?&#x27;, &#x27;k&#x27;: 1}}
+# 호출 전체를 넘기고 응답을 확인하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-solution" type="button" aria-label="풀이 예시 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-solution">parking_call = {**call, &#x27;id&#x27;: &#x27;search-parking&#x27;, &#x27;args&#x27;: {&#x27;question&#x27;: &#x27;주차 요금은?&#x27;, &#x27;k&#x27;: 1}}
+reply = search_documents.invoke(parking_call)
+print(reply.tool_call_id, reply.artifact)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search-parking []</pre></div><div class="cell-after"><p>search-parking을 돌려받았으므로 해당 요청의 도구 실행은 끝났습니다. 빈 artifact에서 [0]을 읽으면 IndexError가 납니다. 먼저 목록이 비었는지 확인하면 자료 없음 안내를 표시하면서도 요청 기록을 지킬 수 있습니다.</p></div></details></article>
 <div class="prose"><p>도구 응답이 빈 목록이면 호출 자체는 끝난 상태입니다. 검색 호출을 건너뛴 경우와 구별할 수 있도록 요청 ID, 실행 여부, 자료 목록을 함께 읽으세요.</p>
 </div>
 </section>
@@ -170,7 +173,7 @@ print(reply.tool_call_id, reply.artifact[<span class="tok-number">0</span>][<spa
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

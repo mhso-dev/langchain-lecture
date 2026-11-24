@@ -31,11 +31,18 @@ from operator import add
 
 class Chat(TypedDict):
     question: str
+    note: dict | None
     sources: list[dict]
     history: Annotated[list[str], add]
 
 def process(state):
-    return {"sources": retrieve(state["question"], 1), "history": [state["question"]]}
+    question = state["question"]
+    note = state["note"]
+    if note and note["keyword"] in question:
+        sources = [note]
+    else:
+        sources = retrieve(question, 1)
+    return {"sources": sources, "history": [question]}
 
 @st.cache_resource
 def prepare_engine():
@@ -52,16 +59,25 @@ if "thread" not in st.session_state or new_chat:
 engine = prepare_engine()
 with st.form("ask"):
     question = st.text_input("질문")
+    keyword = st.text_input("추가 문서 검색어 (선택)").strip()
+    notice = st.text_area("추가 안내문 (선택)").strip()
     submit = st.form_submit_button("질문 보내기")
 if submit and question.strip():
     config = {"configurable": {"thread_id": st.session_state.thread}}
-    st.session_state.current = engine.invoke({"question": question}, config)
+    if bool(keyword) != bool(notice) or (keyword and keyword not in notice):
+        st.session_state.current = None
+        st.warning("추가 안내문과 그 안에 들어 있는 검색어를 함께 입력하세요.")
+    else:
+        note = {"id": "session-note", "keyword": keyword, "text": notice} if notice else None
+        with st.spinner("안내문 검색 중"):
+            st.session_state.current = engine.invoke({"question": question, "note": note}, config)
 if st.session_state.current:
     state = st.session_state.current
     st.text("지난 질문: " + " / ".join(state["history"]))
     if state["sources"]:
         current = state["sources"][0]
         st.write(current["text"])
-        st.caption(f"근거 [{current['id']}] {current['page']}쪽")
+        location = f"{current['page']}쪽" if "page" in current else "직접 입력한 안내문"
+        st.caption(f"근거 [{current['id']}] {location}")
     else:
         st.info("제공된 자료에서 확인할 수 없습니다.")

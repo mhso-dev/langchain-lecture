@@ -17,8 +17,10 @@ cpSync(source, output, { recursive: true, filter: path => basename(path) !== '.D
 function courseNav(day) {
   const link = (n, text) => '<a href="../' + chapterName(n) + '/index.html">' + text + '</a>';
   const links = ['<a href="../index.html">전체 목차</a>', '<span>' + day + '장</span>'];
-  if (day > 1) links.push(link(day - 1, '이전 장'));
-  if (day < chapters.length) links.push(link(day + 1, '다음 장'));
+  const previous = day === 53 ? 42 : day - 1;
+  const next = day === 42 ? 53 : day + 1;
+  if (day > 1) links.push(link(previous, '이전 장'));
+  if (day !== 85 && day < chapters.length) links.push(link(next, '다음 장'));
   return '<nav class="course-nav" aria-label="교재 탐색">' + links.join(' ') + '</nav>';
 }
 for (const [index, chapter] of chapters.entries()) {

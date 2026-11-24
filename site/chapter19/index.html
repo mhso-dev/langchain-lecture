@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 19 / LCEL</span><span class="template-badge">학생용 교재</span></div>
 <h1>LCEL 체인과 출력 파서</h1>
-<p class="hero-description">도서관 안내 문장과 질문을 넣으면 체인은 무엇을 모델에 보낼까요? 프롬프트를 완성한 순간의 값부터 읽은 다음 모델 메시지가 화면에 표시할 문자열이 되기까지 따라가 봅니다.</p>
+<p class="hero-description">도서관 안내 문장과 질문을 LCEL 프롬프트에 전달합니다. 이어지는 모델과 출력 파서의 입력·반환 타입을 확인하고, 스트리밍 조각에서 전체 문자열을 복원합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 019 · 8H</span><span>Python 함수·딕셔너리·11~18장 요청과 응답</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -38,17 +38,18 @@
 </thead><tbody><tr><td>context 키 오류</td><td>템플릿의 변수 이름과 입력 키</td></tr>
 <tr><td>AIMessage를 문자열처럼 처리</td><td>파서 연결 여부와 반환 타입</td></tr>
 <tr><td>질문을 바꿔도 같은 답</td><td>FakeListChatModel의 고정 응답</td></tr>
-<tr><td>모듈을 찾을 수 없음</td><td>현재 가상환경과 requirements</td></tr>
+<tr><td>모듈을 찾을 수 없음</td><td>현재 노트북 커널의 langchain-core 설치 여부</td></tr>
 <tr><td>stream이 한꺼번에 보임</td><td>구성 요소의 스트리밍 지원·출력 처리</td></tr>
 </tbody></table></div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 프롬프트 입력 딕셔너리</h3>
-<div class="cell-before"><p>context와 question이 다른 역할을 한다는 점을 보세요.</p>
+<div class="cell-before"><p>context에는 근거 문장, question에는 사용자 질문을 전달합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">inputs = {<span class="tok-string">"context"</span>: <span class="tok-string">"수업용 가상 도서관의 대출 기간은 14일이다."</span>, <span class="tok-string">"question"</span>: <span class="tok-string">"대출은 며칠인가요?"</span>}
 print(inputs[<span class="tok-string">"context"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">수업용 가상 도서관의 대출 기간은 14일이다.</pre></div>
-<div class="cell-after"><p>대출 기간을 뒷받침하는 문장입니다. 딕셔너리에서 빈칸과 같은 이름의 값을 찾아야 하므로 context를 contents로 적으면 약속한 칸을 찾지 못합니다.</p>
+<div class="cell-after"><p>프롬프트의 변수명 context는 입력 사전의 키와 일치해야 합니다.</p>
 </div>
+<p id="example-analysis">여기서 질문만 ‘휴관일은 언제인가요?’로 고쳐 보세요. 질문 칸은 바뀌지만 context에는 여전히 대출 기간이 들어 있습니다. 템플릿에 값을 잘 채우는 것과 질문에 맞는 근거를 찾는 것은 서로 다른 작업입니다. 23장에서 질문에 맞는 문서를 찾고 24장에서 그 결과를 체인의 문맥으로 넘깁니다.</p>
 </article>
 <span class="lesson-anchor" id="prompt"></span><div class="lesson-explanation" id="reading-prompt"><h3>프롬프트 변수와 입력 키</h3><div class="prose"><p>context는 모델에게 제공할 사실이고 question은 사용자의 질문입니다. 템플릿에 {context}와 {question}을 사용했으므로 invoke 입력에도 두 키가 있어야 합니다. 이름이 다르거나 빠지면 모델을 호출하기 전에 오류가 날 수 있습니다.</p>
 <p>system 메시지에 넣는 자료도 자동으로 사실이 되는 것은 아닙니다. 이 예제는 명시된 가상 자료만 사용합니다. 이후 문서 검색 수업에서 context를 직접 작성하는 대신 검색한 문서로 만들 것입니다.</p>
@@ -66,8 +67,7 @@ print(template.format(**inputs))</code></pre></figure>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>프롬프트 입력 치환 실습</h3><div class="prose"><p>다음 장부터는 모델에 제공할 근거 문서를 준비합니다. LCEL 문법을 더 늘리기보다 문서·검색·근거 답변의 흐름에 집중합니다.</p>
-</div></div>
+<span class="lesson-anchor" id="task"></span><span class="lesson-anchor" id="reading-task"></span>
 
 </section>
 <section id="nb-chain" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -75,7 +75,7 @@ print(template.format(**inputs))</code></pre></figure>
 </div>
 </header>
 <p>LangChain Expression Language(LCEL)의 |는 앞 구성 요소가 돌려준 값을 다음 요소에 건넵니다. 수업 환경에 langchain-core가 설치되어 있으면 아래 셀로 실제 체인을 만듭니다. FakeListChatModel은 고정 답변을 내는 수업용 모델입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>LCEL의 연속 변환</h3><video autoplay loop muted playsinline aria-label="LCEL의 연속 변환" src="concept.mp4"></video><figcaption>카드가 첫 필터를 통과한 뒤 두 번째 필터로 들어갑니다. 코드에서 각 단계가 반환하는 메시지와 문자열을 차례로 확인하세요.</figcaption></figure>
+<span class="lesson-anchor" id="concept-clip"></span>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>LCEL 구성 요소의 입출력</h3><div class="prose"><p>LCEL은 LangChain 구성 요소의 입출력을 연결하는 표현 방식입니다. Runnable은 invoke 같은 공통 실행 방법으로 사용할 수 있는 구성 요소입니다. 이번 장에서는 복잡한 추상화보다 프롬프트, 모델, 출력 파서 세 개만 연결합니다.</p>
 <p>prompt | model | parser에서 |는 문자열을 합치는 기호가 아니라 구성 요소를 순서대로 연결하는 연산입니다. 한 요소의 출력이 다음 요소의 입력으로 들어갑니다. 13장에서 Python 함수로 만든 순차 흐름과 같은 입출력 관점으로 읽으세요.</p>
 </div>
@@ -84,7 +84,7 @@ print(template.format(**inputs))</code></pre></figure>
 <tr><td>채팅 모델</td><td>메시지 프롬프트</td><td>AI 메시지</td></tr>
 <tr><td>StrOutputParser</td><td>AI 메시지</td><td>문자열</td></tr>
 </tbody></table></div></div>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · to_messages()의 content</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · to_messages()의 content</h3>
 <div class="cell-before"><p>모델을 부르기 전에 ChatPromptTemplate이 만든 값에서 질문을 먼저 꺼내 봅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
@@ -102,7 +102,7 @@ has_lcel = find_spec(<span class="tok-string">"langchain_core"</span>) <span cla
 <div class="cell-after"><p>마지막 메시지에는 ‘대출은 며칠인가요?’라는 질문이 들어 있습니다. prompt의 반환값 안에는 system 메시지도 들어 있습니다. 둘을 합친 메시지 묶음이 모델 입력입니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="types"></span><div class="lesson-explanation" id="reading-types"><h3>구성 요소별 중간 반환값</h3><div class="prose"><p>ChatPromptValue는 메시지를 담은 프롬프트 값이며 to_messages()로 system과 human 메시지를 볼 수 있습니다. 채팅 모델의 AIMessage에는 content가 있습니다. StrOutputParser를 거친 뒤에는 문자열 자체를 사용합니다. 설치한 1.8.0에서 표시되는 타입명은 TextAccessor이지만 str의 하위 타입이므로 isinstance(parsed, str)는 True이고 문자열처럼 사용합니다.</p>
+<span class="lesson-anchor" id="types"></span><div class="lesson-explanation" id="reading-types"><h3>구성 요소별 중간 반환값</h3><div class="prose"><p>ChatPromptValue는 메시지를 담은 프롬프트 값이며 to_messages()로 system과 human 메시지를 볼 수 있습니다. 채팅 모델의 AIMessage에는 content가 있습니다. StrOutputParser를 거친 뒤에는 문자열 자체를 사용합니다. 파서를 거친 값은 문자열처럼 쓸 수 있으므로 메시지 객체의 content를 다시 꺼낼 필요가 없습니다.</p>
 <p>이 문자열 파서는 12일에 배운 JSON 스키마 검사나 내용 검증을 수행하지 않습니다. 18일의 입력 검사 책임도 사라지지 않습니다. 모델이 돌려준 문장이 사실인지 확인하려면 별도 근거와 평가가 필요합니다.</p>
 </div></div>
 
@@ -121,10 +121,9 @@ has_lcel = find_spec(<span class="tok-string">"langchain_core"</span>) <span cla
 </div>
 </article>
 <span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>고정 모델을 이용한 체인 검증</h3><div class="prose"><p>FakeListChatModel은 지정한 응답을 반환하는 테스트용 모델입니다. 여기서는 실제 LLM 서버나 API 키 없이 체인과 파서가 연결되는지 확인하기 위해 사용합니다. 질문을 바꿔도 준비된 답이 나올 수 있으므로 답변 정확도 평가에는 사용할 수 없습니다.</p>
-<p>실제 모델을 연결할 때는 같은 채팅 모델 인터페이스를 지원하는 구성 요소로 바꿉니다. 계정 모델·지원 옵션·버전·비용을 확인하고 응답 결과를 별도로 검증해야 합니다.</p>
+<p>주어진 사실을 바꿨는데 답변에서 이전 숫자가 계속 나온다면 모델 앞의 메시지를 먼저 열어 보세요. 입력에 새 숫자가 있고 응답만 그대로면 템플릿 치환과 고정 응답을 구분할 수 있습니다.</p>
 </div></div>
-<span class="lesson-anchor" id="invoke"></span><div class="lesson-explanation" id="reading-invoke"><h3>invoke() 단일 호출</h3><div class="prose"><p>invoke의 결과는 StrOutputParser를 거친 문자열입니다. 파서를 빼고 모델까지만 연결하면 메시지 객체를 받습니다. 문자열과 메시지 객체의 차이를 출력 타입으로 확인하면 뒤 단계에서 잘못된 필드를 읽는 실수를 줄일 수 있습니다.</p>
-</div></div>
+<span class="lesson-anchor" id="invoke"></span><span class="lesson-anchor" id="reading-invoke"></span>
 
 </section>
 <section id="nb-stream" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -138,11 +137,9 @@ has_lcel = find_spec(<span class="tok-string">"langchain_core"</span>) <span cla
 
 
 <!-- lesson-visual detail-stream -->
-<figure class="lesson-clip" id="detail-stream"><h3>두 출력 조각이 한 문자열이 되는 과정</h3>
-<video autoplay loop muted playsinline aria-label="두 출력 조각이 한 문자열이 되는 과정" src="detail-stream.mp4"></video>
-<figcaption>제공된 두 조각 &quot;가상 &quot;과 &quot;안내&quot;는 도착 순서로 이어집니다. 빈 문자열로 join해도 첫 조각 끝의 공백이 남아서 &quot;가상 안내&quot;가 됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-stream"></span>
 <!-- /lesson-visual detail-stream -->
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 스트림 문자열 결합</h3>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3 id="example-cell-5">과제 05 · 스트림 문자열 결합</h3>
 <div class="cell-before"><p>LCEL 환경에서는 chain.stream의 조각을 이어 전체 답을 출력하세요. 라이브러리가 없는 경우 제공 조각으로 결합 연산만 연습합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6">pieces = [<span class="tok-string">"가상 "</span>, <span class="tok-string">"안내"</span>]
@@ -166,6 +163,16 @@ print(<span class="tok-string">""</span>.join(pieces))</code></pre></figure>
 </header>
 <div class="prose"><p>입력 사전, 모델에 보낼 메시지 묶음, 마지막 문자열을 순서대로 가리켜 보세요. 다음 장에서는 context를 손으로 쓰는 대신 어느 문서에서 가져올지 정합니다.</p>
 </div>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="transfer-practice">과제 06 · 프롬프트가 받은 문맥 확인</h3><div class="cell-before"><p>질문은 유지하고 대출 규정만 7일로 바꿉니다. 채팅 모델에 넘겨질 실제 메시지를 출력한 다음 체인의 답도 확인하세요. langchain-core를 설치한 커널에서 실행합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">revised = {**inputs, "context": "이번 달 대출 기간은 7일입니다."}
+# 시스템 메시지에서 revised의 문장이 보이는지 확인하고 체인의 답을 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">revised = {**inputs, "context": "이번 달 대출 기간은 7일입니다."}
+
+if has_lcel:
+    messages = prompt.invoke(revised).to_messages()
+    print(messages[0].content)
+    print(chain.invoke(revised))
+else:
+    print("langchain-core가 설치된 수업 커널에서 실행하세요.")</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">주어진 사실만 사용하세요. 사실: 이번 달 대출 기간은 7일입니다.
+가상 도서관의 대출 기간은 14일입니다.</pre></div><div class="cell-after"><p>프롬프트에는 7일이 들어갔지만 테스트용 모델은 등록된 14일 문장을 반환합니다. 이 차이가 보이면 입력 치환과 답변 생성 중 어느 쪽을 점검할지 구별할 수 있습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
@@ -180,7 +187,7 @@ print(<span class="tok-string">""</span>.join(pieces))</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

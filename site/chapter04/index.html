@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 04 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>Python 클래스와 모듈</h1>
-<p class="hero-description">‘Python 기초’와 ‘Git 연습’을 각각 한 건씩 기록했습니다. 한 건만 완료로 바꿨을 때 다른 기록에도 표시가 붙으면 안 됩니다. 각 기록이 자기 상태를 어디에 담는지 따라가 봅시다.</p>
+<p class="hero-description">StudyRecord로 ‘Python 기초’와 ‘Git 연습’ 두 기록을 만듭니다. 첫 번째 기록을 완료로 표시했을 때 어느 인스턴스의 done 속성이 바뀌는지 확인하고, 생성과 검증 코드를 모듈로 분리합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 004 · 8H</span><span>3장: 함수·반환·예외·타입</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,11 +34,11 @@
 </div>
 </header>
 <p class="concept-intro">클래스는 객체가 가질 속성과 메서드를 정의합니다. 같은 클래스로 만든 두 객체에도 각자의 상태가 있습니다.</p><p>클래스는 새 기록에 어떤 값을 담고 어떤 일을 시킬지 정합니다. StudyRecord를 두 번 부르면 같은 규칙을 따르는 별개의 객체가 생깁니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>클래스 하나에서 만든 두 인스턴스</h3><video autoplay loop muted playsinline aria-label="클래스 하나에서 만든 두 인스턴스" src="concept.mp4"></video><figcaption>같은 틀로 찍은 두 카드 중 왼쪽 스위치만 켜집니다. first.mark_done()을 호출한 뒤 second.done의 값이 무엇일지 예상해 보세요.</figcaption></figure><!-- MOTION independent-switches -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION independent-switches -->
 
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · __init__과 인스턴스 생성</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · __init__과 인스턴스 생성</h3>
 <div class="cell-before"><p>생성 시 받은 값과 기본 완료 표시가 어떻게 저장되는지 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 14줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">class</span> StudyRecord:
@@ -68,20 +68,13 @@ print(second.done)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False가 나옵니다. first.mark_done()의 self는 first를 가리키므로 second.done은 처음 값 그대로입니다.</p>
 </div>
+<p id="example-analysis">second를 만들 때 StudyRecord를 다시 호출한 줄을 보세요. 그 줄을 second = first로 바꾸면 두 이름이 한 기록을 가리킵니다. 이때 first.mark_done()을 실행하면 second.done으로 읽어도 True입니다. 별도의 기록이 필요할 때 객체를 한 번 더 만드는 이유입니다.</p><div class="example-table"><table><caption>인스턴스 참조와 완료 상태</caption><thead><tr><th scope="col">second에 대입한 값</th><th scope="col">first.mark_done() 이후 second.done</th></tr></thead><tbody><tr><td>새 StudyRecord 인스턴스</td><td>False</td></tr><tr><td>first와 같은 객체</td><td>True</td></tr></tbody></table></div>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="objects"></span><div class="lesson-explanation" id="reading-objects"><h3>속성과 인스턴스 메서드</h3><div class="prose"><p>객체는 값을 담고 그 값에 관련된 동작을 제공할 수 있습니다. 클래스는 그런 객체를 만드는 정의입니다. StudyRecord("Python", 30)을 호출하면 기록 객체 하나가 만들어집니다. 다른 인자로 다시 호출하면 별도 객체가 생깁니다.</p>
 <p>__init__은 새 인스턴스의 초기 상태를 정하는 메서드입니다. self는 그 메서드가 다루는 객체 자신을 가리키는 관례적 이름입니다. self.title처럼 적으면 해당 객체의 속성에 저장합니다. 메서드는 클래스 안에 정의한 함수입니다.</p>
 <p>first.mark_done()을 호출할 때 Python이 first를 self로 전달합니다. second.done은 바꾸지 않았으므로 False로 남습니다. 이 예제의 생성자는 정리된 문자열과 정수를 받는다고 가정하며 입력 검증은 뒤의 함수가 맡습니다.</p>
 </div>
-<div class="worked-case" id="flow-10"><h3>객체 두 개의 상태</h3>
-<p>한 객체를 바꿨을 때 다른 객체의 값이 유지되는지 살펴봅니다.</p>
-<article id="flow-10-step-0"><small>STEP 01 · first</small><h4>첫 인스턴스 생성</h4>
-<p>first는 자체 title·minutes·done을 갖습니다.</p><pre>first.done  = False
-second      = 아직 생성 전</pre></article><article id="flow-10-step-1"><small>STEP 02 · second</small><h4>별도 속성을 가진 두 번째 인스턴스</h4>
-<p>second는 별도 인스턴스입니다.</p><pre>first.done  = False
-second.done = False</pre></article><article id="flow-10-step-2"><small>STEP 03 · first.mark_done</small><h4>첫 객체의 완료 상태 변경</h4>
-<p>self가 first이므로 first.done만 바뀝니다.</p><pre>first.done = True
-second.done = False</pre></article></div></div>
+<div class="table-scroll" tabindex="0" id="flow-10"><table><caption>인스턴스와 사전의 상태</caption><thead><tr><th scope="col">실행한 문장</th><th scope="col">조회할 값</th><th scope="col">결과</th></tr></thead><tbody><tr id="flow-10-step-0"><td>새 기록을 만든 직후 snapshot = first.to_dict()</td><td>snapshot[&quot;done&quot;]</td><td>False</td></tr><tr id="flow-10-step-1"><td>first.mark_done()</td><td>first.done</td><td>True</td></tr><tr id="flow-10-step-2"><td>mark_done() 뒤에도 처음 사전 사용</td><td>snapshot[&quot;done&quot;]</td><td>False</td></tr></tbody></table></div></div>
 
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 인스턴스 메서드의 상태 변경</h3>
 <div class="cell-before"><p>첫 기록에서 사전을 꺼내 완료 칸만 출력하세요.</p>
@@ -102,8 +95,8 @@ second.done = False</pre></article></div></div>
 </header>
 <p>한 번의 계산으로 끝나는 제목 정리와 숫자 변환은 함수에 맡깁니다. 유효한 값이 준비되었을 때만 객체를 만들어 호출한 곳으로 돌려줍니다.</p>
 
-<span class="lesson-anchor" id="choice"></span><div class="lesson-explanation" id="reading-choice"><h3>함수와 상태 객체의 역할</h3><div class="prose"><p>입력 문자열을 정리하는 작업은 함수 하나로 충분합니다. 완료 여부처럼 같은 대상의 상태가 여러 동작을 거쳐 바뀐다면 객체로 묶는 것이 도움이 됩니다. 단지 코드가 길다는 이유만으로 모든 함수를 클래스로 바꾸지는 않습니다.</p>
-<p>여기서는 텍스트 검증은 함수, 기록의 제목·시간·완료 상태는 StudyRecord에 둡니다. 상속·추상 클래스·설계 패턴은 이번 기본 과제에 필요하지 않습니다.</p>
+<span class="lesson-anchor" id="choice"></span><div class="lesson-explanation" id="reading-choice"><h3>함수와 상태 객체의 역할</h3><div class="prose"><p>create_record는 문자열에서 제목과 분을 읽어 유효한 기록을 한 건 만듭니다. 기록을 만든 뒤에는 mark_done을 호출해 같은 객체의 done 값을 바꿀 수 있습니다.</p>
+<p>StudyRecord를 직접 호출하면 create_record의 검사를 거치지 않습니다. 사용자에게서 받은 공백뿐인 제목은 create_record에 전달해야 과제 05의 오류를 재현할 수 있습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>이 과제의 역할 선택</caption><thead><tr><th scope="col">작업</th><th scope="col">형태</th><th scope="col">이유</th></tr>
 </thead><tbody><tr><td>공백 정리·분 검증</td><td>함수</td><td>입력에서 결과를 계산</td></tr>
@@ -156,12 +149,12 @@ print(entry.to_dict())</code></pre></figure>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8"><span class="tok-keyword">import</span> math
 print(math.isqrt(<span class="tok-number">25</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">5</pre></div>
-<div class="cell-after"><p>5가 나옵니다. import math 뒤에는 math.isqrt라고 씁니다. 원본의 from studylog.models import StudyRecord처럼 이름을 골라 가져오면 호출할 때는 StudyRecord(...)만 적습니다.</p>
+<div class="cell-after"><p>isqrt(25)의 결과는 정수 5입니다. import math로 가져온 이름은 모듈이므로 math.isqrt라고 적습니다. 다음 셀의 from .models import StudyRecord는 클래스 이름을 직접 가져옵니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="modules"></span><div class="lesson-explanation" id="reading-modules"><h3>모듈 경계와 import</h3><div class="prose"><p>from studylog.models import StudyRecord는 studylog 패키지의 models 모듈에서 클래스를 가져옵니다. import된 모듈의 최상위 문장은 처음 불러올 때 실행될 수 있습니다. 입력 요청이나 예제 실행을 아무 곳에나 두면 다른 모듈에서 가져올 때도 실행되어 불편합니다.</p>
 </div>
-<div class="prose"><p>to_dict는 객체 값을 새 딕셔너리로 만드는 메서드입니다. JSON 변환 전에 사용할 수 있는 평범한 Python 딕셔너리를 반환합니다. 이 장에서는 타입 힌트가 모델 검증을 대신하지 않으므로 create_record에서 먼저 값의 규칙을 확인합니다.</p>
+<div class="prose"><p>to_dict()는 호출한 시점의 title·minutes·done으로 새 사전을 만듭니다. 먼저 사전을 얻고 나서 객체에 mark_done()을 호출해도 앞서 얻은 사전의 done은 그대로입니다. 최신 상태를 내보내려면 변경 뒤에 메서드를 다시 호출합니다.</p>
 </div></div>
 
 <div class="learn-detail"><h4>모듈 분리와 파일별 역할</h4>
@@ -232,7 +225,7 @@ def make_record(title):
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

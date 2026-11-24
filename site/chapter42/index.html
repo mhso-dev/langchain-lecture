@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 042</span><span class="template-badge">학생용 교재</span></div>
 <h1>RAG 화면의 출처 추적과 회귀 검사</h1>
-<p class="hero-description">동료가 ‘답은 14일이라고 나오는데 화면 근거는 휴관 안내예요’라고 보고했습니다. 프로젝트에 들어가기 전, 질문 한 건을 따라가 어디부터 다시 확인할지 정합니다.</p>
+<p class="hero-description">‘답은 14일인데 근거는 휴관 안내’라는 결함을 진단합니다. 검색 직후의 문서 ID, 답변에 붙은 인용, 화면에 표시된 쪽 번호를 한 요청에서 대조합니다.</p>
 <div class="hero-meta"><span>Python·RAG·Graph 이후</span><span>8H · 전반 4H / 후반 4H</span><span>18 도구 왕복 ·25 RAG 재현 ·39 채택 판단 ·41 대화 상태</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -32,7 +32,7 @@
 <h2>검색 결과와 표시 출처 대조</h2>
 </div>
 </header>
-<p class="concept-intro">검색은 올바른 문서를 찾고도 화면에 지난 질문의 출처가 남을 수 있습니다. 같은 질문의 도구 결과와 최종 표시값을 이어서 확인합니다.</p><p>정상 응답을 한꺼번에 다시 만들면 증상을 찾기 어렵습니다. 질문을 고정한 뒤 검색기가 돌려준 ID, 답이 인용한 ID, 화면이 실제로 띄운 출처를 순서대로 읽습니다. 아래는 불일치를 재현한 수업용 화면 기록입니다.</p>
+<p class="concept-intro">검색은 올바른 문서를 찾고도 화면에 지난 질문의 출처가 남을 수 있습니다. 같은 질문의 도구 결과와 최종 표시값을 이어서 확인합니다.</p><p>결함을 재현할 때는 입력과 답변을 고정합니다. 질문을 고정한 뒤 검색기가 돌려준 ID, 답이 인용한 ID, 화면이 실제로 띄운 출처를 순서대로 읽습니다. 아래는 불일치를 재현한 수업용 화면 기록입니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 검색 직후 문서 ID 확인</h3>
 <div class="cell-before"><p>자료 세 쪽에서 질문 한 건을 다시 실행해 처음 찾은 문서를 읽습니다.</p>
 <p>화면에 보여 줄 출처는 이번 질문에서 받은 문서만 사용하세요. 검색 결과가 비었거나 답에 붙은 인용 ID가 검색 문서와 다르면 현재 출처를 비우고 확인을 요청합니다. 지난 질문의 출처를 대신 붙이지 않습니다.</p>
@@ -69,10 +69,11 @@ found = retrieve(question, <span class="tok-number">1</span>)
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1 도서 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>검색 직후에는 library-1과 14일이 맞아떨어집니다. 검색 입력을 바꾸기 전에 답과 화면 사이를 살펴볼 차례입니다.</p>
 </div>
+<p id="example-analysis">답이 이상할 때는 먼저 질문과 검색 ID를 한 쌍으로 적어 두세요. library-1의 본문이 14일을 말하는데 화면에는 다른 쪽이 표시된다면 검색을 다시 조정하기 전에 현재 응답과 출처 패널을 잇는 코드를 볼 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="loop"></span><span class="lesson-anchor" id="reading-loop"></span>
-<span class="lesson-anchor" id="rag"></span><div class="lesson-explanation" id="reading-rag"><h3>검색 직후에 고정할 증거</h3><p>found[0]의 id와 text를 함께 읽습니다. 이번 질문에서 찾아낸 것은 library-1의 14일 문장입니다. 이제 화면이 어느 문서를 가리키는지 같은 ID를 기준으로 비교할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="rag"></span><span class="lesson-anchor" id="reading-rag"></span>
 <span class="lesson-anchor" id="decision"></span><span class="lesson-anchor" id="reading-decision"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 이전 응답의 출처 잔존 검사</h3>
@@ -86,24 +87,22 @@ print(screen[<span class="tok-string">'source'</span>][<span class="tok-string">
 </article>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="session"></span><span class="lesson-anchor" id="reading-session"></span>
-<span class="lesson-anchor" id="diagnosis"></span><div class="lesson-explanation" id="reading-diagnosis"><h3>답변과 출처가 갈라지는 지점</h3><p>답변 끝에는 [library-1]이 있지만 화면의 source는 records[1]입니다. 목록의 두 번째 원소는 library-2이므로 2쪽이 표시됩니다. 이 두 값을 비교하면 검색과 화면 구성 중 어디를 고쳐야 하는지 좁힐 수 있습니다.</p></div>
+<span class="lesson-anchor" id="diagnosis"></span><div class="lesson-explanation" id="reading-diagnosis"><h3>같은 요청에서 처음 달라진 값</h3><p>검색 결과와 답의 인용은 모두 library-1인데 화면의 source만 library-2입니다. 화면에 남아 있는 records[1]을 새 검색 결과와 대조하세요. 여기서 질의나 검색 설정까지 바꾸면 출처를 고친 뒤 같은 조건으로 비교하기 어렵습니다.</p></div>
 
 </section>
 <section id="nb-repair-view" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>동일 질의로 출처 수정 검증</h2>
 </div>
 </header>
-<p>검색 방식을 바꾸거나 모델에 다시 요청할 필요가 있는지 고르세요. 현재 실행 결과의 출처를 표시하는 흐름만 고치면 같은 입력으로 증상을 확인할 수 있습니다.</p>
+<p>검색은 같은 대출 문서를 반환합니다. 화면에서 출처를 고르는 코드만 수정하고 같은 질문으로 다시 확인하세요.</p>
 <!-- MOTION stale-page-tab -->
 
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-repair-view -->
-<figure class="lesson-clip" id="visual-repair-view"><h3>같은 질문의 화면 출처만 바꿔 다시 대조하기</h3>
-<video autoplay loop muted playsinline aria-label="같은 질문의 화면 출처만 바꿔 다시 대조하기" src="visual-repair-view.mp4"></video>
-<figcaption>대출 질문과 검색 결과 library-1은 그대로 둡니다. records[1]에서 가져온 휴관 문서가 화면에 붙어 있던 오류를 찾고, 실제 검색 결과에서 출처를 꺼내면 세 ID가 일치합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-repair-view"></span>
 <!-- /lesson-visual visual-repair-view -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 현재 검색 결과로 출처 갱신</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 현재 검색 결과로 출처 갱신</h3>
 <div class="cell-before"><p>답에서 인용을 읽고 모두 이번 검색 결과에 있는지 확인하세요. 맞으면 이 예제의 첫 인용을 화면에 연결하세요. 문서가 없거나 인용이 빠지거나 틀리면 출처를 비우고 답 자리에는 안내를 표시하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 답변에 현재 문서의 ID가 실제로 인용됐는지 확인한 뒤 교체하세요.</span></code></pre></figure>
@@ -128,7 +127,7 @@ source = match_source(screen[<span class="tok-string">"answer"</span>], found)
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="remediation"></span><div class="lesson-explanation" id="reading-remediation"><h3>같은 대출 질문으로 수정 결과 확인하기</h3><p>질문과 답변을 고정한 뒤 현재 검색한 문서 ID가 답변에 있는지 확인하고 출처만 교체합니다. 수정 후에는 답변의 인용, 화면 ID, 원문 쪽 번호가 모두 library-1의 자료와 맞아야 합니다.</p></div>
+<span class="lesson-anchor" id="remediation"></span><span class="lesson-anchor" id="reading-remediation"></span>
 <span class="lesson-anchor" id="peer"></span><span class="lesson-anchor" id="reading-peer"></span>
 <span class="lesson-anchor" id="scope"></span><span class="lesson-anchor" id="reading-scope"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
@@ -138,6 +137,12 @@ source = match_source(screen[<span class="tok-string">"answer"</span>], found)
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="transfer-practice">과제 04 · 잘못된 인용이 섞인 응답의 회귀 검사</h3><div class="cell-before"><p>과제 03에서 작성한 match_source를 사용하세요. 대출·휴관 두 문서를 함께 인용한 응답을 대출 문서 한 건만 있는 검색 결과와 대조하세요. 첫 인용이 유효해도 잘못된 출처를 표시하지 않는지 검사하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-code" type="button" aria-label="노트북에서 직접 작성 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-code">answer = &#x27;기간은 14일입니다. [library-1] [library-2]&#x27;
+# 직접 작성한 match_source에 현재 검색 목록과 답변을 전달하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><button class="copy-button js-only" data-copy="transfer-solution" type="button" aria-label="풀이 예시 복사">복사</button></span></figcaption><pre tabindex="0"><code id="transfer-solution">answer = &#x27;기간은 14일입니다. [library-1] [library-2]&#x27;
+current_docs = retrieve(&#x27;대출 기간은?&#x27;, 1)
+source = match_source(answer, current_docs)
+assert source is None
+print(source)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None</pre></div><div class="cell-after"><p>library-1은 맞지만 library-2는 이번 검색 결과에 없습니다. 인용 하나만 확인하고 1쪽을 표시하는 구현은 이 회귀 검사를 통과하지 못합니다. 모든 인용이 유효한지 검사한 뒤에야 표시할 출처를 고릅니다.</p></div></details></article>
 <div class="prose"><p>동료에게 재현 질문, 처음 어긋난 값, 같은 입력으로 확인한 수정 결과를 전달하세요. 이 기록이 있으면 프로젝트 팀은 검색과 화면 중 어디를 고칠지 합의할 수 있습니다.</p>
 </div>
 </section>
@@ -146,7 +151,7 @@ source = match_source(screen[<span class="tok-string">"answer"</span>], found)
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

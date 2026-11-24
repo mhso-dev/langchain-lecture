@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,8 +18,8 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 083</span><span class="template-badge">학생용 교재</span></div>
 <h1>멱등적인 완료 상태 갱신</h1>
-<p class="hero-description">이미 체크된 할 일에 다시 완료 요청을 보냈더니 체크 표시가 풀렸습니다. 첫 클릭만 확인하면 숨어 버리는 오류입니다. 82장의 API가 받는 명시적 completed 값을 유지한 채 같은 요청을 두 번 보내 결함을 재현합니다.</p>
-<div class="hero-meta"><span>기초 · 프로젝트 연결</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>7일 · 82일</span></div>
+<p class="hero-description">완료 요청을 두 번 보냈을 때 체크 표시가 풀리는 오류를 재현합니다. 현재 상태를 뒤집는 구현과 요청의 completed 값을 대입하는 구현을 같은 입력으로 비교합니다.</p>
+<div class="hero-meta"><span>교육일 83 · 8시간</span><span>선수 수업 · 7장 테스트 · 82장 완료 상태 저장</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -32,7 +32,7 @@
 <h2>토글 방식과 중복 요청 재현</h2>
 </div>
 </header>
-<p class="concept-intro">멱등성은 같은 요청을 여러 번 적용해도 최종 상태가 같다는 성질입니다. 완료 여부를 뒤집는 함수와 원하는 값을 지정하는 함수를 비교합니다.</p><section class="practice-space" id="practice-space" data-practice="switches"><h3>같은 완료 요청의 반복과 멱등성</h3><label>요청 횟수 <input type="range" min="0" max="4" step="1" value="2"><span class="practice-value">2</span></label><div class="practice-stage" role="img" aria-label="같은 완료 요청의 반복과 멱등성"></div><output aria-live="polite">완료 요청을 두 번 보냈을 때 토글 구현의 최종값은 False, 목표값을 대입한 구현은 True입니다.</output></section><!-- MOTION toggle-rocker -->
+<p class="concept-intro">멱등성은 같은 요청을 여러 번 적용해도 최종 상태가 같다는 성질입니다. 완료 여부를 뒤집는 함수와 원하는 값을 지정하는 함수를 비교합니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="switches"><h3>같은 완료 요청의 반복과 멱등성</h3><p>같은 목표 상태를 반복 전송했을 때 두 구현의 최종 completed 값을 비교합니다.</p><label>요청 횟수 <input type="range" min="0" max="4" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">완료 요청을 두 번 보냈을 때 토글 구현의 최종값은 False, 목표값을 대입한 구현은 True입니다.</output></section><!-- MOTION toggle-rocker -->
 
 <!-- END MOTION -->
 
@@ -40,8 +40,8 @@
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="section-01"></span><span class="lesson-anchor" id="reading-section-01"></span>
 <span class="lesson-anchor" id="section-02"></span><div class="lesson-explanation" id="reading-section-02"><h3>동일한 요청을 두 번 보내기</h3><p>결함을 보려면 같은 딕셔너리에 목표 True를 두 번 전달해야 합니다. 호출할 때마다 새 딕셔너리를 만들면 첫 번째 요청만 반복하는 셈이어서 두 번째 호출의 문제를 발견할 수 없습니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-toggle-twice"><h3>같은 완료 요청이 두 번째에 미완료를 만드는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-toggle-twice.mp4" aria-label="같은 완료 요청이 두 번째에 미완료를 만드는 경로" aria-describedby="workflow-toggle-twice-caption"></video><figcaption id="workflow-toggle-twice-caption">faulty_update는 전달받은 목표 값 대신 현재 값을 뒤집습니다. 요청이 두 번 들어왔을 때의 실제 출력을 읽어 보세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>완료 요청</strong> · 목표 상태 = True</li><li><strong>상태 반전</strong> · not False = True</li><li><strong>완료</strong> · 첫 번째 출력 = True</li><li><strong>완료 요청</strong> · 재전송한 목표 = True</li><li><strong>상태 반전</strong> · not True = False</li><li><strong>미완료</strong> · 두 번째 출력 = False</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 반복 요청으로 토글 오류 재현</h3>
+<span class="lesson-anchor" id="workflow-toggle-twice"></span><span class="lesson-anchor" id="workflow-toggle-twice-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 반복 요청으로 토글 오류 재현</h3>
 <div class="cell-before"><p>아래 결함은 수업용으로 의도해 넣었습니다. 두 번째 결과를 첫 번째와 비교하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> faulty_update(item, completed):
@@ -53,8 +53,7 @@ print(faulty_update(item, <span class="tok-keyword">True</span>))
 print(faulty_update(item, <span class="tok-keyword">True</span>))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True
 False</pre></div>
-<div class="cell-after"><p>True 다음에 False가 나옵니다. 두 번 모두 보낸 값은 True였는데 함수는 인자를 읽지 않고 현재 상태만 뒤집었습니다. Codex에 보낼 오류 보고에는 요청 두 건과 두 번째 실제 결과를 함께 적으세요.</p>
-</div>
+<div class="cell-after"><p id="example-analysis">같은 행에 True를 두 번 전달했는데 두 번째 호출 뒤에 False가 남습니다. 첫 번째 응답을 받지 못해 같은 요청을 다시 보낸 상황에서도 이 문제가 생길 수 있습니다.</p></div><div class="example-table"><table><caption>동일한 완료 요청을 두 번 보낸 결과</caption><thead><tr><th scope="col">수정 방식</th><th scope="col">초기 상태</th><th scope="col">첫 요청</th><th scope="col">재전송</th></tr></thead><tbody><tr><td>현재 값 반전</td><td>False</td><td>True</td><td>False</td></tr><tr><td>목표값 대입</td><td>False</td><td>True</td><td>True</td></tr></tbody></table></div>
 </article>
 <span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>호출 횟수에 따라 바뀌는 토글</h3><p>faulty_update는 전달된 completed 인자를 사용하지 않습니다. 현재 값에 not을 적용하므로 이미 완료된 행도 같은 요청을 한 번 더 받으면 미완료가 됩니다.</p></div>
 <span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
@@ -69,29 +68,26 @@ False</pre></div>
 
 <span class="lesson-anchor" id="section-06"></span><span class="lesson-anchor" id="reading-section-06"></span>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 목표 상태 대입의 멱등성</h3>
-<div class="cell-before"><p>원래 함수에서 받은 completed 값을 그대로 대입하고 같은 입력 두 번의 결과를 출력하세요.</p>
+<div class="cell-before"><p>completed에 요청값을 저장하는 함수를 작성하세요. 같은 행에 True를 두 번 전달하고 두 번째 호출 뒤에 반환값과 실제 저장값을 함께 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-keyword">def</span> update(item, completed):
-    <span class="tok-comment"># 요청에 담긴 completed를 반영하세요.</span>
-    <span class="tok-keyword">pass</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3"><span class="tok-keyword">def</span> update(item, completed):
-    item[<span class="tok-string">'completed'</span>] = completed
-    <span class="tok-keyword">return</span> item[<span class="tok-string">'completed'</span>]
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">def update(item, completed):
+    # 호출자가 넘긴 딕셔너리에 목표 상태를 반영하고 저장값을 반환하세요.
+    pass</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">def update(item, completed):
+    item["completed"] = completed
+    return item["completed"]
 
-row = {<span class="tok-string">'id'</span>: <span class="tok-number">1</span>, <span class="tok-string">'title'</span>: <span class="tok-string">'복습'</span>, <span class="tok-string">'completed'</span>: <span class="tok-keyword">False</span>}
-print(update(row, <span class="tok-keyword">True</span>), update(row, <span class="tok-keyword">True</span>))</code></pre></figure>
+item = {"id": 1, "title": "복습", "completed": False}
+update(item, True)
+print(update(item, True), item["completed"])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True True</pre></div>
-<div class="cell-after"><p>True True가 나옵니다. 두 번째 요청을 삭제해서 문제를 숨기지 않고 입력을 동일하게 유지했습니다.</p>
+<div class="cell-after"><p>첫 번째 True는 두 번째 호출의 반환값이고, 그 옆의 True는 딕셔너리에서 다시 읽은 값입니다. 반환만 하고 행을 수정하지 않은 함수라면 두 값이 다릅니다.</p>
 </div>
 </details>
 </article>
 <span class="lesson-anchor" id="section-07"></span><div class="lesson-explanation" id="reading-section-07"><h3>목표 상태의 직접 대입</h3><p>수정한 함수는 호출자가 원하는 값을 item[&quot;completed&quot;]에 대입해야 합니다. 같은 True를 여러 번 대입해도 저장값은 True로 유지되고, False를 전달한 경우에만 완료가 해제됩니다.</p></div>
 
-<div class="learn-detail"><h4>동일 입력 반복에 따른 최종 상태</h4>
-<table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">구현</th><th scope="col">첫 요청 True</th><th scope="col">둘째 요청 True</th></tr>
-</thead><tbody><tr><td>셀 01 · 현재 값을 뒤집음</td><td>True</td><td>False</td></tr>
-<tr><td>과제 02 · 요청 값을 저장</td><td>True</td><td>True</td></tr>
-</tbody></table></div>
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 완료 해제의 회귀 테스트</h3>
 <div class="cell-before"><p>과제 02에서 완성한 update에 True, True, False를 보내고 매번 반환값과 같은 행의 저장값을 확인합니다.</p>
 <p>과제 02에서 작성한 update를 실행한 뒤 이 셀로 오세요. 같은 True 요청을 두 번 보내고 이어 False로 되돌립니다. 셀을 고쳤다면 함수 정의 셀부터 다시 실행하세요.</p>
@@ -112,7 +108,7 @@ last = update(row, <span class="tok-keyword">False</span>)
     <span class="tok-keyword">assert</span> row == {<span class="tok-string">"id"</span>: <span class="tok-number">5</span>, <span class="tok-string">"title"</span>: <span class="tok-string">"복습"</span>, <span class="tok-string">"completed"</span>: <span class="tok-keyword">False</span>}, <span class="tok-string">"같은 행의 ID·제목·완료 값을 확인하세요."</span>
     print(<span class="tok-string">"검사 통과"</span>, row)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제 02의 update를 완성하고 정의 셀부터 다시 실행하세요.</pre></div>
-<div class="cell-after"><p>시작본에서 과제 02를 비워 두면 update를 완성하라는 안내가 나옵니다. 정답을 넣고 과제 02와 이 셀을 다시 실행했을 때의 마지막 줄은 다음과 같습니다.</p>
+<div class="cell-after"><p>시작본의 pass는 None을 반환합니다. 세 번 모두 None이면 검사를 통과 처리하지 않고 과제 02를 완성하라는 안내를 출력합니다. 정답을 넣고 과제 02와 이 셀을 다시 실행했을 때의 마지막 줄은 다음과 같습니다.</p>
 <p>검사 통과 {'id': 5, 'title': '복습', 'completed': False}</p>
 <p>완료 요청을 두 번 보낸 뒤 해제했으므로 마지막 값은 False입니다. 요청할 때마다 상태를 뒤집는 구현은 두 번째 True 검사에서 멈춥니다.</p>
 </div>
@@ -125,7 +121,7 @@ last = update(row, <span class="tok-keyword">False</span>)
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>수정 요청의 입력·기대·실제를 다른 팀원에게 보여 주고 초기 상태부터 재현하게 해 보세요. 같은 결과를 보지 못한다면 게시된 코드를 더 바꾸기 전에 사용한 저장소와 초기 데이터를 비교하세요.</p>
+<div class="prose"><p>수정한 함수에 False를 보내면 이미 완료된 행의 체크가 풀려야 합니다. 항상 True를 반환하는 구현은 완료 요청 두 번만으로는 걸러지지 않으므로 다음 셀에서 해제 후 값도 확인합니다.</p>
 </div>
 
 <span class="lesson-anchor" id="section-09"></span><span class="lesson-anchor" id="reading-section-09"></span>
@@ -137,7 +133,7 @@ last = update(row, <span class="tok-keyword">False</span>)
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

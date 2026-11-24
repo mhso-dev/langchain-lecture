@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 16 / TOOL EXECUTION</span><span class="template-badge">학생용 교재</span></div>
 <h1>Function Calling의 실행과 결과 반환</h1>
-<p class="hero-description">15장에서 받은 주말 운영 시간 요청에 실제 조회 결과를 붙입니다. 하나의 호출 요청, 프로그램이 실행한 함수, 모델에 돌려줄 결과를 같은 call_id로 따라가 봅시다.</p>
+<p class="hero-description">15장의 호출 요청을 검증한 뒤 도서관 시간표 함수를 실행합니다. 요청과 결과의 call_id를 대조하고, 허용 범위를 벗어난 요일의 처리 결과를 확인합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 016 · 8H</span><span>15장 함수 명세·호출 요청·JSON</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -35,7 +35,7 @@
 </header>
 <p class="concept-intro">도구 실행을 맡은 프로그램은 인자를 검사하고 함수를 호출한 뒤 결과에 원래 호출 ID를 붙입니다. 모델은 이 ID로 요청과 결과를 짝짓습니다.</p><p>명세만 본 모델은 운영 시간을 알 수 없습니다. 읽기 전용 조회 함수 안의 표에서 시간을 꺼내면 비로소 답에 쓸 값이 생깁니다.</p>
 
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>호출 요청을 실행 함수로 넘기기</h3><p>이 장의 call에는 get_library_hours, 문자열 인자, call_1이 있습니다. 이름과 인자를 검사해 주말 시간표를 조회하고, 결과에는 바로 이 call_1을 붙여 원래 요청과 연결합니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · get_library_hours()의 반환값</h3>
 <div class="cell-before"><p>이번 셀에서는 모델 없이 파이썬 함수를 직접 부릅니다.</p>
 </div>
@@ -47,8 +47,9 @@ print(get_library_hours(<span class="tok-string">"weekend"</span>)[<span class="
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>10:00~16:00은 주말 표에서 꺼낸 값입니다. 이 함수는 실제 도서관에 접속하지 않습니다. 허용되지 않은 인자가 들어오는지는 함수를 부르기 전에 검사합니다.</p>
 </div>
+<p id="example-analysis">같은 weekend 조회를 두 번 보내면 두 함수 결과의 시간은 같을 수 있습니다. 이때 10:00~16:00만으로는 어느 요청의 답인지 가릴 수 없습니다. 호출자가 보낸 call_id를 결과에 함께 돌려줘야 각각의 요청과 짝을 지을 수 있습니다.</p>
 </article>
-<span class="lesson-anchor" id="function"></span><div class="lesson-explanation" id="reading-function"><h3>읽기 전용 함수 연결</h3><div class="prose"><p>함수는 day를 받아 정해진 시간표에서 값을 읽습니다. 데이터는 가상의 수업 자료입니다. 이 함수를 실행했다는 사실과 실제 기관 운영 시간이 맞는다는 주장은 구분해야 합니다.</p>
+<span class="lesson-anchor" id="function"></span><div class="lesson-explanation" id="reading-function"><h3>읽기 전용 함수 연결</h3><div class="prose"><p>weekday와 weekend는 시간표의 키입니다. get_library_hours에 Friday를 직접 넘기면 조회할 키가 없어 예외가 납니다. 아래 execute_call은 허용한 요일인지부터 확인합니다.</p>
 </div></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · execute_call()과 결과 직렬화</h3>
@@ -94,13 +95,11 @@ print(json.loads(reply[<span class="tok-string">"output"</span>])[<span class="t
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-id-match -->
-<figure class="lesson-clip" id="visual-id-match"><h3>결과를 원래 호출과 짝짓는 값</h3>
-<video autoplay loop muted playsinline aria-label="결과를 원래 호출과 짝짓는 값" src="visual-id-match.mp4"></video>
-<figcaption>도구의 이름이나 반환 순서 대신 요청과 결과에 공통으로 있는 call_id를 따라갑니다. 두 호출의 결과 순서를 뒤집은 비교 예시입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-id-match"></span>
 <!-- /lesson-visual visual-id-match -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-invalid-day"><h3>허용하지 않은 요일에도 요청 ID가 남는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-invalid-day.mp4" aria-label="허용하지 않은 요일에도 요청 ID가 남는 이유" aria-describedby="workflow-invalid-day-caption"></video><figcaption id="workflow-invalid-day-caption">day가 Friday인 요청은 조회 함수를 실행하기 전에 걸러집니다. 결과의 ok는 False이지만 바깥 call_id에는 원래 요청 ID가 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청</strong> · call_id = call_1</li><li><strong>day 검사</strong> · day = Friday</li><li><strong>오류 구성</strong> · error = invalid_tool_request</li><li><strong>결과 연결</strong> · call_id = call_1</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · call_id 일치 여부</h3>
+<figure class="execution-trace" id="workflow-invalid-day"><h3>허용하지 않은 요일에도 요청 ID가 남는 이유</h3><figcaption id="workflow-invalid-day-caption">day가 Friday인 요청은 조회 함수를 실행하기 전에 걸러집니다. 결과의 ok는 False이지만 바깥 call_id에는 원래 요청 ID가 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청</strong> · call_id = call_1</li><li><strong>day 검사</strong> · day = Friday</li><li><strong>오류 구성</strong> · error = invalid_tool_request</li><li><strong>결과 연결</strong> · call_id = call_1</li></ol></figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · call_id 일치 여부</h3>
 <div class="cell-before"><p>원본 call과 결과 reply의 ID가 같은지 확인하고, 같으면 그 ID를 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 두 ID가 같은지 검사하세요.</span></code></pre></figure>
@@ -129,7 +128,7 @@ print(json.loads(rejected[<span class="tok-string">"output"</span>]))</code></pr
 <tr><td>JSON으로 읽히지 않는 인자</td><td>오류 결과</td></tr>
 <tr><td>불필요한 extra 필드</td><td>오류 결과</td></tr>
 <tr><td>call_id 누락·공백·문자열 아님</td><td>연결 불가 예외, 도구 실행 없음</td></tr>
-<tr><td>완료되지 않은 최종 응답</td><td>성공 반환 대신 예외</td></tr>
+
 </tbody></table></div></div>
 
 </section>
@@ -151,17 +150,10 @@ print(history[-<span class="tok-number">1</span>][<span class="tok-string">"type
 <div class="cell-after"><p>function_call_output이 나옵니다. 모델의 최종 메시지는 아직 없습니다. 다음 과제에서는 조회 값으로 안내 문장을 직접 만듭니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="flow"></span><div class="lesson-explanation" id="reading-flow"><h3>도구 왕복의 모델·프로그램 역할</h3><div class="prose"><p>모델이 get_library_hours와 day=weekend를 요청하면 Python 코드가 이름과 인자를 검사합니다. 조건에 맞으면 Python 함수가 실제로 실행되고 결과를 JSON 문자열로 바꿉니다. 이후 모델이 그 결과를 받아 답변을 작성합니다.</p>
-<p>여기서 실제로 실행되는 함수는 교육용 정적 시간표를 반환합니다. 실제 도서관 서버나 예약 시스템에 접속하지 않습니다. 기본 모델 응답은 모의 자료지만 도구 함수 실행과 메시지 연결 코드는 실제로 실행합니다.</p>
+<span class="lesson-anchor" id="flow"></span><div class="lesson-explanation" id="reading-flow"><h3>도구 왕복의 모델·프로그램 역할</h3><div class="prose"><p>history의 마지막 항목은 프로그램이 만든 조회 결과입니다. 모델을 다시 호출하는 API 코드는 이 노트북에 없으므로, 과제 06에서는 그 항목을 읽어 안내 문장을 직접 조립합니다.</p>
+<p>표의 시간은 실습용입니다. 실제로 실행한 부분은 입력 검사와 시간표 조회, JSON 직렬화입니다.</p>
 </div>
-<div class="worked-case" id="flow-10"><h3>실행하기 전에 걸러지는 요청</h3>
-<p>함수 호출 전에 이름과 요일을 확인합니다. 허용된 요청만 3단계로 계속합니다.</p>
-<article id="flow-10-step-0"><small>STEP 01 · 모델</small><h4>함수 이름과 인자 제안</h4>
-<p>호출 ID와 함께 도구를 요청합니다.</p><pre>function_call</pre></article><article id="flow-10-step-1"><small>STEP 02 · Python</small><h4>도구 허용 목록과 인자 검사</h4>
-<p>조건이 틀리면 오류 결과를 만듭니다.</p><pre>weekday 또는 weekend → 조회로 이동
-그 밖의 값 → 검사 실패, 조회 0회</pre></article><article id="flow-10-step-2"><small>STEP 03 · Python 함수</small><h4>시간표 함수 실행</h4>
-<p>읽기 전용 딕셔너리를 조회합니다.</p><pre>hours</pre></article><article id="flow-10-step-3"><small>STEP 04 · Python → 모델</small><h4>호출 ID별 결과 반환</h4>
-<p>도구 결과를 받은 뒤 최종 답변을 요청합니다.</p><pre>function_call_output</pre></article></div></div>
+<span class="lesson-anchor" id="flow-10"></span><span class="lesson-anchor" id="flow-10-step-0"></span><span class="lesson-anchor" id="flow-10-step-1"></span><span class="lesson-anchor" id="flow-10-step-2"></span><span class="lesson-anchor" id="flow-10-step-3"></span></div>
 
 <article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 도구 출력에서 최종 답변 조립</h3>
 <div class="cell-before"><p>현재 대화의 마지막 항목을 읽어 성공한 결과일 때만 시간을 넣어 안내하세요. 이 문장은 실제 모델 답변 대신 쓰는 연습용 문구입니다.</p>
@@ -177,28 +169,28 @@ print(history[-<span class="tok-number">1</span>][<span class="tok-string">"type
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>파이썬 함수의 실제 반환값 확인</h3><p>get_library_hours(&#x27;weekend&#x27;)는 이 노트북의 가상 시간표를 조회합니다. 10:00~16:00은 함수가 읽어 낸 값입니다. 마지막 셀에서는 이 값을 사용해 한국어 문장을 조립합니다.</p></div>
+<span class="lesson-anchor" id="run"></span><span class="lesson-anchor" id="reading-run"></span>
 
-<div class="worked-case" id="flow-9"><h3>호출 요청 한 건이 답변에 쓰이기까지</h3>
-<p>단계를 넘기며 call_1이 어디에 남고 운영 시간이 어느 단계에서 처음 생기는지 보세요.</p>
-<article id="flow-9-step-0"><small>STEP 01 · 모델 응답 예시</small><h4>요일 인자의 도구 요청</h4>
-<p>이 시점에는 조회할 함수와 요일만 정해졌습니다.</p><pre>call_id = call_1
-get_library_hours(day="weekend")</pre></article><article id="flow-9-step-1"><small>STEP 02 · 파이썬 함수</small><h4>요일별 시간표 조회</h4>
-<p>함수를 호출한 프로그램이 결과를 받았습니다. 요청을 받기만 한 상태에서는 이 값을 알 수 없습니다.</p><pre>hours = 10:00~16:00</pre></article><article id="flow-9-step-2"><small>STEP 03 · 대화 기록</small><h4>call_id를 보존한 도구 결과</h4>
-<p>function_call_output과 원래 요청이 call_1로 이어집니다. 대화 목록에서 서로 이웃하는지만 보고 연결하면 호출 두 개의 결과가 뒤바뀔 수 있습니다.</p><pre>type = function_call_output
-call_id = call_1
-운영 시간 = 10:00~16:00</pre></article><article id="flow-9-step-3"><small>STEP 04 · 수업 예시</small><h4>도구 결과에서 답변 조립</h4>
-<p>이 장의 풀이에서는 저장한 결과로 안내 문장을 만듭니다.</p><pre>가상 주말 운영 시간: 10:00~16:00</pre></article></div>
+<span class="lesson-anchor" id="flow-9"></span><span class="lesson-anchor" id="flow-9-step-0"></span><span class="lesson-anchor" id="flow-9-step-1"></span><span class="lesson-anchor" id="flow-9-step-2"></span><span class="lesson-anchor" id="flow-9-step-3"></span>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>요청 ID, 도구 반환값, 사용자에게 보여 줄 문장 중 하나가 비어 있는 대화를 상상해 보세요. 어느 단계에서 멈춰야 하는지 설명할 수 있으면 다음 장의 여러 번 왕복도 한 번씩 읽을 수 있습니다.</p>
+<div class="prose"><p>호출 ID가 빠지면 어느 요청의 결과인지 정할 수 없습니다. 두 요청이 동시에 대기 중인 아래 예제로 결과의 도착 순서와 ID를 대조해 보세요.</p>
 </div>
 
-<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>단일 도구 왕복 구현</h3><div class="prose"><p>다음 장에서는 이 왕복을 반복하되 호출 상한과 종료 조건을 둡니다.</p>
-</div></div>
+<span class="lesson-anchor" id="task"></span><span class="lesson-anchor" id="reading-task"></span>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="transfer-practice">과제 07 · 응답 순서가 뒤집힌 두 요청</h3><div class="cell-before"><p>주말 요청 뒤에 평일 요청을 보냈는데 평일 결과가 먼저 도착했습니다. 아래 셀에서 두 결과를 call_id로 찾아 요청 순서대로 운영 시간을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">weekday = {**call, "call_id": "call_2", "arguments": '{"day":"weekday"}'}
+arrivals = [execute_call(weekday), reply]
+# 요청 순서(call, weekday)대로 두 결과를 찾아 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">weekday = {**call, "call_id": "call_2", "arguments": '{"day":"weekday"}'}
+arrivals = [execute_call(weekday), reply]
+
+by_call = {result["call_id"]: result for result in arrivals}
+for request in (call, weekday):
+    payload = json.loads(by_call[request["call_id"]]["output"])
+    print(request["call_id"], payload["data"]["hours"])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">call_1 10:00~16:00
+call_2 09:00~18:00</pre></div><div class="cell-after"><p>먼저 도착한 결과의 ID는 call_2입니다. 위치 0을 첫 요청에 붙이면 주말 질문에 평일 시간을 답하게 됩니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
@@ -213,7 +205,7 @@ call_id = call_1
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

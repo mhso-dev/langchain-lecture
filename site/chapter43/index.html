@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 43 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>RAG 프로젝트의 문제 정의와 수용 기준</h1>
-<p class="hero-description">가상 과정에 처음 온 수강생이 과제를 어디에 내야 하는지 묻습니다. 안내 화면은 과제함 위치와 제출 뒤 확인할 일을 알려 줍니다. 중간 프로젝트의 범위를 이처럼 한 사용자가 겪는 일 한 가지로 줄여 봅니다. 이후 52장까지 같은 course-guide-v1 문서를 씁니다.</p>
+<p class="hero-description">중간 프로젝트의 예시는 가상 과정 운영 안내 서비스입니다. 52장까지 course-guide-v1을 사용해 과제 제출 질문과 문서로 답할 수 없는 개인 점수 질문의 수용 기준을 정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -57,6 +57,7 @@ print(criterion[<span class="tok-string">'input'</span>], criterion[<span class=
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">내 점수는 몇 점인가요? 문서로 확인할 수 없음을 알리며 점수를 만들지 않는다.</pre></div>
 <div class="cell-after"><p>“내 점수는 몇 점인가요?”에 문서로 확인할 수 없다고 답합니다. 이 조건이면 팀은 개인 성적 데이터를 수집할 이유가 없습니다.</p>
 </div>
+<p id="example-analysis">A2의 성공 조건은 점수 조회에 성공하는 것이 아닙니다. 개인 점수를 묻는 입력을 받았을 때 숫자를 지어내지 않고 답변 범위를 알리는 것입니다. 팀 기획서에도 범위 밖 질문 하나와 실제로 표시할 응답을 함께 적어 두면 시연 때 같은 기준으로 판정할 수 있습니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>범위 밖 질문에도 기대 행동이 있습니다</h3><p>A2의 입력은 개인 점수를 묻습니다. 수용 기준을 확인할 때는 답변이 점수를 만들지 않았는지와 검색 결과에 점수를 뒷받침할 자료가 있었는지를 함께 봅니다. 문장 하나만 보고서는 둘을 구별하기 어렵습니다.</p></div>
 
@@ -81,7 +82,7 @@ print(criterion[<span class="tok-string">'input'</span>], criterion[<span class=
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

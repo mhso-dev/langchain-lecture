@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 109 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>소유자 권한과 응답 노출 검증</h1>
-<p class="hero-description">공개 사용자 화면은 자신의 대화와 허용된 규정만 보여 주기로 했습니다. 다른 사용자의 대화를 조회할 때도 이 조건이 유지되는지 가상의 읽기 전용 자료로 살펴봅니다.</p>
+<p class="hero-description">가상의 읽기 전용 기록에서 세션 소유자와 자료 접근 범위를 검수합니다. 거부 응답의 노출 필드와 정상 사용자의 조회 결과를 각각 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,11 +34,9 @@
 </header>
 <p class="concept-intro">소유자 권한 검사는 다른 사용자의 정보를 노출하지 않으면서 정당한 소유자의 조회는 허용해야 합니다. 두 경우의 응답 범위를 함께 검증합니다.</p><p>방어 점검 기록　상황 가상 사용자 bob이 자신에게 없는 대화를 조회 / 기대 본문·소유자·존재 여부를 노출하지 않음 / 로컬 관찰 session_not_found, 저장 시도 없음 / 후속 자기 대화는 그대로 읽을 수 있는지 대조. 이 검증에는 수업용 가명과 가상 문서만 사용했습니다.</p>
 <!-- lesson-visual visual-scope -->
-<figure class="lesson-clip" id="visual-scope"><h3>소유자가 맞지 않을 때 어디서 끝날까요?</h3>
-<video autoplay loop muted playsinline aria-label="소유자가 맞지 않을 때 어디서 끝날까요?" src="visual-scope.mp4"></video>
-<figcaption>다른 사용자의 세션은 읽기 단계에서 session_not_found가 됩니다. 응답 result는 None이고 저장 단계는 not_attempted입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-scope"></span>
 <!-- /lesson-visual visual-scope -->
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 조회 거부 응답의 노출 범위</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 조회 거부 응답의 노출 범위</h3>
 <div class="cell-before"><p>other-owner 사례의 관찰 필드를 읽습니다. 서버 요청을 보내지 않고 이미 기록된 결과만 확인합니다.</p>
 <p>정상 사례를 기록할 때는 가상 사용자와 그 사용자에게 허용한 세션을 한 쌍으로 적으세요. 접근을 거부한 화면에는 안내만 남기고, 어느 권한 검사에서 멈췄는지는 내부 점검 기록에 보관합니다.</p>
 </div>
@@ -54,6 +52,7 @@ print(observed[<span class="tok-string">"result"</span>], observed[<span class="
 None not_attempted</pre></div>
 <div class="cell-after"><p>rejected와 session_not_found가 나오고 결과는 None, 저장은 not_attempted입니다. 다른 사람이 가진 대화인지 존재하지 않는 대화인지에 관한 정보도 사용자 안내에 덧붙이지 않습니다.</p>
 </div>
+<p id="example-analysis">다른 소유자의 세션을 요청했을 때 응답에서 문서 ID나 과거 질문까지 드러나면 본문을 숨긴 효과가 사라집니다. 거부 응답의 상태뿐 아니라 외부에 반환한 필드를 확인하고, 정상 소유자 경로에서는 자신의 자료를 읽을 수 있는지도 따로 검사합니다.</p>
 </article>
 </section>
 <section id="nb-regression" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -66,8 +65,8 @@ None not_attempted</pre></div>
 <!-- END MOTION -->
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-authorize-own-session"><h3>조회 거부 뒤 정상 사용자의 경로도 검증하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-authorize-own-session.mp4" aria-label="조회 거부 뒤 정상 사용자의 경로도 검증하기" aria-describedby="workflow-authorize-own-session-caption"></video><figcaption id="workflow-authorize-own-session-caption">접근을 거부한 검사 다음에 bob 자신의 대화로 정상 사례를 확인합니다. 이 과제에는 정상 응답 자료가 제공됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>bob의 요청</strong> · 정상 회귀 입력 = bob · 장비 B 질문</li><li><strong>소유자·세션</strong> · 확인 기준 = 사용자 + 세션</li><li><strong>자기 대화</strong> · normal_result.status = answered</li><li><strong>정상 결과</strong> · 첫 출처의 id = RULE-B</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 정상 소유자 응답</h3>
+<span class="lesson-anchor" id="workflow-authorize-own-session"></span><span class="lesson-anchor" id="workflow-authorize-own-session-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 정상 소유자 응답</h3>
 <div class="cell-before"><p>같은 세션 이름을 가진 두 사용자 예제에서 bob의 정상 결과를 읽어 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">normal_result = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
@@ -111,7 +110,7 @@ print(normal_result[<span class="tok-string">"status"</span>], normal_result[<sp
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

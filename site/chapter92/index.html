@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 092 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>기준선 통과율과 오류 분석</h1>
-<p class="hero-description">91장의 최소 경로로 고정 질문 일곱 개를 실행한 기록이 있습니다. 화면에 답이 떴더라도 문서에 없는 질문에 엉뚱한 규정을 인용했다면 실패로 남겨야 합니다.</p>
+<p class="hero-description">91장의 최소 구현을 고정 질문 일곱 개로 평가합니다. 답변 출력 여부와 수용 기준 통과 여부를 구분하고, 실패한 항목을 다음 수정의 기준선으로 남깁니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -47,6 +47,7 @@ print(sum(row[<span class="tok-string">"passed"</span>] <span class="tok-keyword
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 / 7</pre></div>
 <div class="cell-after"><p>2 / 7이 나옵니다. 같은 일곱 질문을 보며 코드를 수정하므로 이 비율은 공개 개발 사례의 결과입니다. 다른 사용자 질문에 대한 정확도로 발표할 수 없습니다.</p>
 </div>
+<p id="example-analysis">2/7을 발표 자료에 옮길 때는 어떤 판본으로 어떤 일곱 문항을 실행했는지 함께 표시합니다. 다음 판에서 질문을 빼거나 추가하면 통과 비율이 높아져도 같은 조건의 개선인지 알기 어렵습니다. 실패 사유까지 남겨야 고칠 기능을 선택할 수 있습니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>2/7을 실제 질문 번호로 풀어 읽기</h3><p>passed가 True인 두 행은 Q02와 Q06입니다. 다음 판본도 2/7이라면 이 두 ID가 여전히 통과하는지 확인하세요. 예를 들어 Q01이 새로 통과하고 Q02가 실패하면 합계가 그대로여서 어느 질문이 달라졌는지 드러나지 않습니다.</p></div>
 
@@ -62,11 +63,9 @@ print(sum(row[<span class="tok-string">"passed"</span>] <span class="tok-keyword
 
 
 <!-- lesson-visual detail-difference -->
-<figure class="lesson-clip" id="detail-difference"><h3>일곱 문항에서 실패한 조건 하나까지 따라가기</h3>
-<video autoplay loop muted playsinline aria-label="일곱 문항에서 실패한 조건 하나까지 따라가기" src="detail-difference.mp4"></video>
-<figcaption>Q02와 Q06이 통과해 기준선은 2/7입니다. Q01의 상세 검사에서는 답변 내용과 출처 ID가 맞아도 절과 개정일 등 출처 세부 정보가 빠져 실패합니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-difference"></span>
 <!-- /lesson-visual detail-difference -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패한 평가 조건</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 실패한 평가 조건</h3>
 <div class="cell-before"><p>기록된 검사 결과에서 실패한 항목의 이름을 뽑아 설계 담당자에게 전하세요.</p>
 <p>Q01에서 답과 문서 ID가 맞아도 절 정보가 빠지면 source_metadata는 False입니다. 모든 필수 조건을 만족해야 하는 전체 passed도 False가 됩니다. 셀 01의 2/7은 이렇게 판정해 둔 일곱 행을 집계한 값입니다.</p>
 </div>
@@ -101,7 +100,7 @@ print([name <span class="tok-keyword">for</span> name, passed <span class="tok-k
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

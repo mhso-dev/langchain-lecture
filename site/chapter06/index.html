@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 06 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>HTTP 요청과 JSON 응답 처리</h1>
-<p class="hero-description">할 일 1번을 요청했는데 제목 대신 ‘찾을 수 없음’이 돌아왔습니다. 먼저 HTTP 응답을 받은 것인지, 받은 데이터가 원하는 기록인지부터 나눠서 확인합니다. 가상 응답으로 연습하므로 외부 서버와 계정은 필요하지 않습니다.</p>
+<p class="hero-description">할 일 1번을 조회하는 예제로 요청 경로, HTTP 상태, JSON 본문, 응답 ID를 검사합니다. 기본 실습은 가상 응답을 사용하며 외부 계정 없이 실행할 수 있습니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 006 · 8H</span><span>5장까지: 함수·예외·모듈·JSON</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -48,7 +48,7 @@ print(path)</code></pre></figure>
 </div>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="http"></span><div class="lesson-explanation" id="reading-http"><h3>HTTP 리소스와 응답</h3><div class="prose"><p>HTTP 요청은 서버에 어떤 자원을 어떻게 다룰지 전달하는 메시지입니다. URL은 주소, GET은 조회 방법입니다. 서버는 상태 코드·헤더·본문을 응답합니다. JSON은 응답 본문에 담길 수 있는 데이터 형식이며 HTTP 자체와 같은 뜻은 아닙니다.</p>
-<p>이 장은 인증키가 필요 없는 공개 연습용 할 일 API를 사용합니다. 외부 호출은 조회(GET) 한 건으로 제한합니다. 같은 URL이더라도 서버나 네트워크 상태에 따라 결과가 달라지므로 함수와 실패 처리를 따로 만듭니다. requests도 많이 쓰이지만 이번 실습은 HTTPX 하나로 통일하고 비동기 호출은 다루지 않습니다.</p>
+<p>기본 실습에서는 /todos/1이라는 요청 경로를 만들고 미리 적어 둔 JSON 본문을 읽습니다. 셀 05에서 HTTPX가 받는 404도 수업용 함수가 만든 응답입니다. 실제 서버에 접속하는 경우는 공개 API 선택 실습으로 구분합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>URL·응답 구성</caption><thead><tr><th scope="col">부분</th><th scope="col">예</th><th scope="col">역할</th></tr>
 </thead><tbody><tr><td>주소</td><td>https://jsonplaceholder.typicode.com</td><td>연결할 서비스</td></tr>
@@ -66,15 +66,7 @@ print(path)</code></pre></figure>
 <tr><td>429</td><td>요청 제한</td><td>즉시 반복하지 않고 정책 확인</td></tr>
 <tr><td>5xx</td><td>서버 측 실패</td><td>기록하고 재시도 정책 확인</td></tr>
 </tbody></table></div>
-<div class="worked-case" id="flow-9"><h3>조회에서 사용까지</h3>
-<p>200만 확인하고 곧바로 화면에 쓰지 않습니다.</p>
-<article id="flow-9-step-0"><small>STEP 01 · 클라이언트</small><h4>GET 경로와 리소스 ID</h4>
-<p>타임아웃을 설정하고 요청합니다.</p><pre>요청할 id = 1</pre></article><article id="flow-9-step-1"><small>STEP 02 · HTTPX</small><h4>HTTP 상태 코드 검사</h4>
-<p>raise_for_status()로 2xx가 아닌 응답을 구분합니다.</p><pre>200 → 본문 읽기
-404 → 상태 검사에서 중단 (셀 05)</pre></article><article id="flow-9-step-2"><small>STEP 03 · JSON</small><h4>JSON 응답 디코딩</h4>
-<p>JSON 파싱이 실패할 수도 있습니다.</p><pre>JSON → Python 값
-HTML → JSON 변환에서 중단 (셀 04)</pre></article><article id="flow-9-step-3"><small>STEP 04 · 우리 함수</small><h4>필수 키와 필드 타입 검사</h4>
-<p>id·title·completed 계약을 확인한 뒤 사용합니다.</p><pre>title = "HTTP 연습"</pre></article></div></div>
+<div class="table-scroll" tabindex="0" id="flow-9"><table><caption>조회 실패를 구분하는 근거</caption><thead><tr><th scope="col">관찰한 값</th><th scope="col">검사 위치</th><th scope="col">다음에 확인할 내용</th></tr></thead><tbody><tr id="flow-9-step-0"><td>/todos/1</td><td>요청 경로</td><td>조회한 번호가 1인지</td></tr><tr id="flow-9-step-1"><td>404</td><td>HTTP 상태</td><td>응답은 도착했지만 자원을 찾지 못함</td></tr><tr id="flow-9-step-2"><td>JSONDecodeError</td><td>본문 해석</td><td>받은 글이 JSON인지</td></tr><tr id="flow-9-step-3"><td>id가 2</td><td>응답 내용</td><td>요청한 1번 기록과 다른 데이터</td></tr></tbody></table></div></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · JSON 응답 디코딩</h3>
 <div class="cell-before"><p>서버가 보냈다고 가정한 JSON 한 건을 Python 값으로 바꿉니다.</p>
@@ -84,8 +76,9 @@ body = <span class="tok-string">'{"id":1,"title":"  HTTP 연습  ","completed":f
 todo = json.loads(body)
 print(todo[<span class="tok-string">"title"</span>].strip())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">HTTP 연습</pre></div>
-<div class="cell-after"><p>HTTP 연습이 나옵니다. 문자열을 해석했다고 해서 값까지 올바르다는 뜻은 아닙니다. 예를 들어 id가 2이면 요청한 기록과 다릅니다.</p>
+<div class="cell-after"><p>디코딩한 title 값은 ‘HTTP 연습’입니다.</p>
 </div>
+<p id="example-analysis">요청 주소는 1번인데 응답의 id만 2로 바꿔 보세요. JSON을 읽는 줄은 여전히 성공합니다. 잘못된 할 일을 화면에 띄우지 않으려면 해석한 객체의 id와 처음 주소를 만들 때 쓴 todo_id를 대조해야 합니다.</p>
 </article>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 요청 ID와 응답 ID 대조</h3>
 <div class="cell-before"><p>응답에서 id만 2로 바꿨습니다. 받은 번호가 요청 번호와 같은지 출력하세요.</p>
@@ -112,15 +105,13 @@ print(received[<span class="tok-string">"id"</span>] == todo_id)</code></pre></f
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-failures -->
-<figure class="lesson-clip" id="visual-failures"><h3>404와 잘못된 JSON은 어디서 갈라질까요?</h3>
-<video autoplay loop muted playsinline aria-label="404와 잘못된 JSON은 어디서 갈라질까요?" src="visual-failures.mp4"></video>
-<figcaption>상태 검사를 먼저 통과한 응답만 JSON으로 읽습니다. 404는 HTTP 검사에서, 본문 형식 오류는 디코딩에서 드러납니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-failures"></span>
 <!-- /lesson-visual visual-failures -->
 
-<span class="lesson-anchor" id="mock"></span><div class="lesson-explanation" id="reading-mock"><h3>모의 응답별 분기 테스트</h3><div class="prose"><p>MockTransport는 실제 소켓 통신 대신 handler 함수가 만든 응답을 돌려줍니다. 외부 인터넷이 끊겨도 같은 입력을 반복할 수 있어 실패 처리 학습에 사용합니다. 제공 handler의 경로별 응답을 읽고 바꿔 보는 것이 기본 활동입니다.</p>
-<p>모의 타임아웃은 예외를 즉시 발생시킨 것입니다. 실제 서버를 기다려 5초가 지났다는 측정 결과가 아닙니다. 이 검사만으로 DNS·TLS·프록시·실제 서버 접속이 된다고 판단하지 않습니다.</p>
+<span class="lesson-anchor" id="mock"></span><div class="lesson-explanation" id="reading-mock"><h3>모의 응답별 분기 테스트</h3><div class="prose"><p>셀 05의 missing은 어떤 경로를 받아도 상태 코드 404를 반환합니다. 주소만 바꾸어서는 성공 응답이 나오지 않습니다. 응답을 만드는 함수가 무엇을 돌려주는지와 클라이언트가 그 상태를 어떻게 처리하는지를 따로 읽으세요.</p>
+<p>응답이 도착했기 때문에 이 예외에는 error.response가 있습니다. 서버에서 아무 응답도 받지 못한 시간 초과라면 이곳에서 404를 읽을 수 없습니다.</p>
 </div></div>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · JSONDecodeError 처리</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · JSONDecodeError 처리</h3>
 <div class="cell-before"><p>상태 코드는 200인데 본문에는 HTML이 담겼다고 가정합니다. 어떤 변환에서 실패하는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">try</span>:
@@ -179,7 +170,7 @@ print(type(completed) <span class="tok-keyword">is</span> bool)</code></pre></fi
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>JSON 구조와 필드 검증</h3><div class="prose"><p>외부에서 받은 값은 우리 코드의 타입 힌트대로 온다고 가정하지 않습니다. 이 함수는 JSON 객체(dict), 양의 정수 id, 비어 있지 않은 문자열 title, bool completed를 요구합니다. 필요한 키가 없거나 종류가 다르면 ValueError로 거부합니다.</p>
+<span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>JSON 구조와 필드 검증</h3><div class="prose"><p>과제 03은 요청과 응답의 id가 일치하는지, 과제 06은 completed가 파이썬 bool인지 검사합니다. 두 조건은 독립적입니다. 번호가 일치해도 completed가 문자열이면 완료 상태로 사용할 수 없습니다.</p>
 <p>isinstance(값, 종류)는 해당 종류인지 검사합니다. bool은 Python에서 int의 하위 종류이므로 id에 True가 들어오는 것을 막으려면 type(todo_id) is int처럼 정확한 종류를 확인할 수 있습니다. 여기서는 숫자와 bool을 구분하는 과제 규칙에 사용합니다.</p>
 <p>문자열 "false"를 bool(...)로 바꾸면 비어 있지 않아 True가 됩니다. completed를 임의 변환하지 말고 JSON의 true/false가 Python bool로 읽혔는지 확인합니다.</p>
 </div></div>
@@ -216,7 +207,7 @@ print(type(completed) <span class="tok-keyword">is</span> bool)</code></pre></fi
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

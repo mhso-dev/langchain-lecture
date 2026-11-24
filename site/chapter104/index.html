@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 104 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>답변 카드와 요청 대기 상태</h1>
-<p class="hero-description">알파 점검을 준비하며 답과 출처를 한곳에서 읽을 수 있게 하자는 시안을 만들었습니다. 102장에서 받은 응답을 이용해 장비 A의 질문부터 원문 위치까지 한 화면에 배치합니다.</p>
+<p class="hero-description">102장의 응답으로 장비 A의 답과 근거 위치를 한 화면에 배치합니다. 결과 카드와 응답 대기 상태에서 사용자에게 보이는 정보의 차이를 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -57,6 +57,7 @@ print(f'개정일 {source[<span class="tok-string">"revised_on"</span>]} · {sou
 개정일 2026-11-01 · rules-v1</pre></div>
 <div class="cell-after"><p>규정 A, 1쪽 2.1절과 개정일이 답 바로 아래에 보입니다. 줄을 나눠 놓으면 작은 화면에서도 문서 위치와 답의 문장을 따로 읽을 수 있습니다.</p>
 </div>
+<p id="example-analysis">사용자는 답을 읽은 뒤 이 지시가 어느 판본에 있는지 확인해야 합니다. 카드에서 규정 이름·쪽·절·개정일을 한 답과 묶어 표시하면 다른 검색 결과의 근거를 잘못 따라갈 가능성을 줄일 수 있습니다. 응답 대기 중에는 이전 카드의 근거를 붙이지 않습니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>답과 인용 위치가 같은 응답에서 왔는지 확인하기</h3><p>출력의 첫 줄은 result의 answer, 다음 두 줄은 같은 result의 첫 번째 source에서 나옵니다. 새 질문을 보낸 뒤 답만 바꾸고 이전 source를 재사용하면 새 답 옆에 옛 규정이 붙습니다. 한 응답에서 답과 출처를 함께 꺼내는 이유입니다.</p></div>
 
@@ -84,11 +85,9 @@ print(f'개정일 {source[<span class="tok-string">"revised_on"</span>]} · {sou
 <p>화면 시안입니다. 왼쪽에는 이전 답의 출처가 없고 오른쪽에는 지금 읽은 절이 답 바로 아래에 나타납니다.</p>
 </div>
 <!-- lesson-visual visual-progress -->
-<figure class="lesson-clip" id="visual-progress"><h3>새 질문의 답을 기다리는 동안 비우는 칸</h3>
-<video autoplay loop muted playsinline aria-label="새 질문의 답을 기다리는 동안 비우는 칸" src="visual-progress.mp4"></video>
-<figcaption>이전 카드의 본문과 RULE-A 출처를 같이 비웁니다. 새 답변을 받기 전에는 직전 근거가 새 질문의 출처처럼 남아 있지 않아야 합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-progress"></span>
 <!-- /lesson-visual visual-progress -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 대기 상태 표시</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 대기 상태 표시</h3>
 <div class="cell-before"><p>현재 답을 아직 받지 못한 경우를 담아 대기 문구를 만들어 보세요. 앞 질문의 출처를 새 카드에 복사하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 현재 요청 ID, 대기 문구, 비어 있는 새 출처 목록을 작성하세요.</span></code></pre></figure>
@@ -111,7 +110,7 @@ print(view[<span class="tok-string">"message"</span>], view[<span class="tok-str
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 17 / AGENT LOOP</span><span class="template-badge">학생용 교재</span></div>
 <h1>도구 호출 루프와 종료 조건</h1>
-<p class="hero-description">‘주말 운영 시간과 대출 기간을 함께 알려 주세요.’라고 물었습니다. 이 프로그램에서는 두 정보를 따로 조회합니다. 실행 기록을 이어 쓰고, 남은 호출 기회가 없으면 새로운 도구 요청을 실행하기 전에 멈추는 루프를 구성합니다.</p>
+<p class="hero-description">주말 운영 시간과 대출 기간을 서로 다른 함수에서 조회합니다. 각 도구의 결과를 메시지 이력에 추가하고, 남은 호출 횟수와 모델 응답에 따라 반복을 종료합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 017 · 8H</span><span>16장 도구 왕복·호출 ID·예외</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -35,31 +35,36 @@
 </header>
 <p class="concept-intro">도구 호출 루프는 모델이 다음 도구를 요청할 때마다 실행 결과를 기록하고 다시 호출합니다. 최종 답변과 호출 상한은 서로 다른 종료 사유입니다.</p><p>두 도구를 쓰기 위해 이 장에서는 이름을 get_hours와 get_loan_rule로 정했습니다. 함수 이름이 달라도 각 요청과 결과를 같은 call_id로 연결한다는 원칙은 16장과 같습니다.</p>
 
-<span class="lesson-anchor" id="input"></span><div class="lesson-explanation" id="reading-input"><h3>모델 호출 예산과 도구 실행</h3><p>한 번의 모델 응답은 도구 요청일 수도 있고 최종 문장일 수도 있습니다. 두 도구 결과를 읽고 최종 문장까지 받으려면 이 예제의 max_calls가 3이어야 합니다.</p></div>
+<span class="lesson-anchor" id="input"></span><span class="lesson-anchor" id="reading-input"></span>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 function_call 실행</h3>
 <div class="cell-before"><p>제공된 execute는 이름·인자를 검사하고 조회 값을 JSON으로 묶습니다. 하나의 도구 결과부터 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 22줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">import json
 
-<span class="tok-keyword">def</span> execute(item):
-    <span class="tok-keyword">try</span>:
-        args=json.loads(item[<span class="tok-string">"arguments"</span>])
-        <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(args,dict): <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"객체 필요"</span>)
-        <span class="tok-keyword">if</span> item[<span class="tok-string">"name"</span>]==<span class="tok-string">"get_hours"</span> <span class="tok-keyword">and</span> set(args)=={<span class="tok-string">"day"</span>} <span class="tok-keyword">and</span> args[<span class="tok-string">"day"</span>] <span class="tok-keyword">in</span> {<span class="tok-string">"weekday"</span>,<span class="tok-string">"weekend"</span>}:
-            result={<span class="tok-string">"ok"</span>:<span class="tok-keyword">True</span>,<span class="tok-string">"hours"</span>:<span class="tok-string">"09:00~18:00"</span> <span class="tok-keyword">if</span> args[<span class="tok-string">"day"</span>]==<span class="tok-string">"weekday"</span> <span class="tok-keyword">else</span> <span class="tok-string">"10:00~16:00"</span>}
-        <span class="tok-keyword">elif</span> item[<span class="tok-string">"name"</span>]==<span class="tok-string">"get_loan_rule"</span> <span class="tok-keyword">and</span> args=={}:
-            result={<span class="tok-string">"ok"</span>:<span class="tok-keyword">True</span>,<span class="tok-string">"loan_days"</span>:<span class="tok-number">14</span>}
-        <span class="tok-keyword">else</span>: <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"허용하지 않은 요청"</span>)
-    <span class="tok-keyword">except</span> (ValueError,TypeError,KeyError):
-        result={<span class="tok-string">"ok"</span>:<span class="tok-keyword">False</span>,<span class="tok-string">"error"</span>:<span class="tok-string">"invalid_tool_request"</span>}
-    <span class="tok-keyword">return</span> {<span class="tok-string">"type"</span>:<span class="tok-string">"function_call_output"</span>,<span class="tok-string">"call_id"</span>:item[<span class="tok-string">"call_id"</span>],<span class="tok-string">"output"</span>:json.dumps(result,ensure_ascii=<span class="tok-keyword">False</span>)}
+def execute(item):
+    try:
+        args = json.loads(item[&quot;arguments&quot;])
+        if not isinstance(args, dict):
+            raise ValueError(&quot;객체 필요&quot;)
+        if item[&quot;name&quot;] == &quot;get_hours&quot; and set(args) == {&quot;day&quot;}:
+            hours = {&quot;weekday&quot;: &quot;09:00~18:00&quot;, &quot;weekend&quot;: &quot;10:00~16:00&quot;}
+            result = {&quot;ok&quot;: True, &quot;hours&quot;: hours[args[&quot;day&quot;]]}
+        elif item[&quot;name&quot;] == &quot;get_loan_rule&quot; and args == {}:
+            result = {&quot;ok&quot;: True, &quot;loan_days&quot;: 14}
+        else:
+            raise ValueError(&quot;허용하지 않은 요청&quot;)
+    except (ValueError, TypeError, KeyError):
+        result = {&quot;ok&quot;: False, &quot;error&quot;: &quot;invalid_tool_request&quot;}
+    return {&quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: item[&quot;call_id&quot;],
+            &quot;output&quot;: json.dumps(result, ensure_ascii=False)}
 
-first = {<span class="tok-string">"type"</span>: <span class="tok-string">"function_call"</span>, <span class="tok-string">"name"</span>: <span class="tok-string">"get_hours"</span>, <span class="tok-string">"call_id"</span>: <span class="tok-string">"c1"</span>, <span class="tok-string">"arguments"</span>: <span class="tok-string">'{"day":"weekend"}'</span>}
+first = {&quot;type&quot;: &quot;function_call&quot;, &quot;name&quot;: &quot;get_hours&quot;, &quot;call_id&quot;: &quot;c1&quot;, &quot;arguments&quot;: &#x27;{&quot;day&quot;:&quot;weekend&quot;}&#x27;}
 first_result = execute(first)
-print(json.loads(first_result[<span class="tok-string">"output"</span>])[<span class="tok-string">"hours"</span>])</code></pre></figure>
+print(json.loads(first_result[&quot;output&quot;])[&quot;hours&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>c1 요청에서 찾은 10:00~16:00입니다. 다음 요청은 대출 기간을 묻기 때문에 새 식별자 c2를 써야 합니다.</p>
 </div>
+<p id="example-analysis">원래 질문은 주말 운영 시간과 대출 기간을 함께 요구합니다. 첫 도구 결과에는 10:00~16:00만 있습니다. 이 시점에 루프를 끝내면 대출 기간은 비어 있습니다. 실제 에이전트에서는 모델이 다음 호출을 결정합니다. 이 실습에서는 미리 정해 둔 두 번째 요청 c2로 대출 기간을 조회합니다.</p>
 </article>
 <span class="lesson-anchor" id="tools"></span><div class="lesson-explanation" id="reading-tools"><h3>서로 다른 두 도구의 인자</h3><p>get_hours는 day가 weekday 또는 weekend인지 확인한 후 hours를 반환합니다. get_loan_rule은 빈 인자 객체를 받아 loan_days에 14를 넣습니다. 한 도구의 인자 규칙을 다른 도구에 그대로 적용할 수 없습니다.</p></div>
 
@@ -76,21 +81,7 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 </div>
 </article>
 <span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>도구 요청과 결과가 쌓이는 이력</h3><p>history의 첫 항목은 사용자 질문입니다. 그 뒤에는 c1의 호출과 결과가 한 쌍으로 들어 있고, 이어서 c2의 호출과 결과가 추가됩니다. 마지막 결과 안쪽의 loan_days를 읽으면 14입니다.</p></div>
-<span class="lesson-anchor" id="trace"></span><div class="lesson-explanation" id="reading-trace"><h3>응답을 다음 모델 입력으로 전달</h3><div class="worked-case" id="flow-8"><h3>두 도구와 최종 답변</h3>
-<p>모델 출력은 고정 응답입니다. 아래 호출 수는 외부 API 호출 수가 아닙니다.</p>
-<article id="flow-8-step-0"><small>STEP 01 · 모의 모델</small><h4>첫 번째 도구 요청</h4>
-<p>첫 모델 응답의 call_id c1을 확인합니다.</p><pre>get_hours(day=weekend)
-누적 모델 응답 1회 · 도구 실행 0회</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>운영 시간 함수 실행</h4>
-<p>검사한 도구를 실행하고 같은 c1로 결과를 history에 추가합니다.</p><pre>function_call_output: c1
-누적 모델 응답 1회 · 도구 실행 1회</pre></article><article id="flow-8-step-2"><small>STEP 03 · 모의 모델</small><h4>후속 도구 요청</h4>
-<p>두 번째 모델 응답이 다른 도구를 요청합니다.</p><pre>get_loan_rule(): c2
-누적 모델 응답 2회 · 도구 실행 1회</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python</small><h4>대출 기간 함수 실행</h4>
-<p>14일을 반환하고 다음 모델 요청의 맥락에 넣습니다.</p><pre>function_call_output: c2
-누적 모델 응답 2회 · 도구 실행 2회</pre></article><article id="flow-8-step-4"><small>STEP 05 · 모의 모델</small><h4>최종 응답의 종료 조건</h4>
-<p>세 번째 모델 응답에는 도구 요청이 없습니다.</p><pre>completed
-누적 모델 응답 3회 · 도구 실행 2회</pre></article></div>
-<div class="prose"><p>응답을 보고 요청 수와 실행 수를 따로 셉니다. function_call은 실행 요청이며 결과는 Python의 execute가 만듭니다. 실제 모델을 붙일 때만 도구 선택이 모델의 판단이 됩니다.</p>
-</div></div>
+<span class="lesson-anchor" id="trace"></span><span class="lesson-anchor" id="reading-trace"></span><span class="lesson-anchor" id="flow-8"></span><span class="lesson-anchor" id="flow-8-step-0"></span><span class="lesson-anchor" id="flow-8-step-1"></span><span class="lesson-anchor" id="flow-8-step-2"></span><span class="lesson-anchor" id="flow-8-step-3"></span><span class="lesson-anchor" id="flow-8-step-4"></span>
 
 </section>
 <section id="nb-loop" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -103,14 +94,12 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-loop -->
-<figure class="lesson-clip" id="visual-loop"><h3>두 도구 뒤에 모델 호출이 한 번 더 필요한 이유</h3>
-<video autoplay loop muted playsinline aria-label="두 도구 뒤에 모델 호출이 한 번 더 필요한 이유" src="visual-loop.mp4"></video>
-<figcaption>도구 결과 두 개가 기록된 시점에도 최종 안내 문장은 아직 없습니다. 대본의 세 번째 모델 응답이 message일 때 completed가 됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-loop"></span>
 <!-- /lesson-visual visual-loop -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="loop"></span><div class="lesson-explanation" id="reading-loop"><h3>도구를 실행한 뒤의 다음 응답</h3><p>주말 시간과 대출 기간을 함께 묻는 질문에 첫 응답은 운영 시간, 둘째 응답은 대출 규칙을 요청합니다. 이 장은 세 모델 응답을 script에 미리 담아 두고, 어떤 입력에서 history가 늘어나거나 루프가 끝나는지 관찰합니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-last-call"><h3>요청 c2가 이력에 있어도 실행 결과가 없는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-last-call.mp4" aria-label="요청 c2가 이력에 있어도 실행 결과가 없는 이유" aria-describedby="workflow-last-call-caption"></video><figcaption id="workflow-last-call-caption">max_calls를 2로 낮추면 두 번째 모델 응답을 기록한 뒤 상한에 걸립니다. 마지막 이력 항목은 c2의 호출 요청입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>모델 응답</strong> · 두 번째 응답 = get_loan_rule</li><li><strong>이력 추가</strong> · history의 마지막 ID = c2</li><li><strong>예산 확인</strong> · number / max_calls = 2 / 2</li><li><strong>상한 종료</strong> · status = model_limit</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 최종 메시지에서 루프 종료</h3>
+<figure class="execution-trace" id="workflow-last-call"><h3>요청 c2가 이력에 있어도 실행 결과가 없는 이유</h3><figcaption id="workflow-last-call-caption">max_calls를 2로 낮추면 두 번째 모델 응답을 기록한 뒤 상한에 걸립니다. 마지막 이력 항목은 c2의 호출 요청입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>모델 응답</strong> · 두 번째 응답 = get_loan_rule</li><li><strong>이력 추가</strong> · history의 마지막 ID = c2</li><li><strong>예산 확인</strong> · number / max_calls = 2 / 2</li><li><strong>상한 종료</strong> · status = model_limit</li></ol></figure>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 최종 메시지에서 루프 종료</h3>
 <div class="cell-before"><p>회차마다 먼저 응답 종류를 읽습니다. 최종 응답을 받거나 상한에 닿으면 함수를 빠져나갑니다.</p>
 <p>모델이 더 요청할 도구가 없다고 답하면 이 루프는 끝납니다. 요청 ID 중복을 막으려면 execute(item)를 부르기 전에 이미 처리한 ID인지 확인해야 합니다. 실행 뒤에 ID를 비교하면 같은 도구가 이미 두 번 작동했을 수 있습니다.</p>
 </div>
@@ -132,11 +121,11 @@ script = [first, second, answer]
 trace = run_script(script, max_calls=<span class="tok-number">3</span>)
 print(trace[<span class="tok-string">"model_calls"</span>], trace[<span class="tok-string">"history"</span>][-<span class="tok-number">1</span>][<span class="tok-string">"text"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3 주말 운영 시간은 10:00~16:00이고 대출 기간은 14일입니다.</pre></div>
-<div class="cell-after"><p>세 번째 응답의 type이 message여서 최종 문장을 읽고 끝납니다. 대본에서 사용한 모의 모델 응답은 세 번, 도구 실행은 두 번입니다. 전체 구현은 미완료 응답도 따로 기록합니다.</p>
+<div class="cell-after"><p>세 번째 응답은 message이므로 반복을 끝냅니다. 응답 목록이 먼저 바닥나면 함수 마지막 줄에서 incomplete를 반환합니다. 외부 모델을 부르지 않고도 두 종료 경로를 따로 재현할 수 있습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>응답 종류와 호출 상한 검사 순서</h3><p>run_script는 응답 항목을 history에 넣은 뒤 type을 확인합니다. message이면 completed로 끝납니다. 도구 요청이고 이미 max_calls에 도달했다면 model_limit을 반환합니다. 예산이 남을 때만 도구를 실행해 결과를 history에 붙입니다.</p></div>
-<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>복수 도구 실행 로그</h3><div class="prose"><p>모델 응답 세 번은 도구 요청 두 번과 최종 답변 한 번입니다. 도구 실행 두 번과 모델 요청 세 번을 같은 숫자로 세면 안 됩니다. 기본 실행은 로컬 고정 응답이라 실제 API 토큰·요금·지연은 측정하지 않습니다.</p>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>복수 도구 실행 로그</h3><div class="prose"><p>script의 각 항목은 미리 작성한 응답입니다. 반면 function_call_output은 execute를 실행한 자리에서 만들어집니다. history에서 두 종류를 구분하면 도구를 실제로 몇 번 실행했는지 셀 수 있습니다.</p>
 </div></div>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · max_calls 초과 판정</h3>
@@ -150,7 +139,7 @@ print(limited[<span class="tok-string">"status"</span>], limited[<span class="to
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="limits"></span><div class="lesson-explanation" id="reading-limits"><h3>호출 예산이 3일 때와 2일 때</h3><p>max_calls가 3이면 두 도구를 실행한 뒤 세 번째 모델 응답에서 최종 문장을 얻습니다. 2이면 두 번째 요청 c2를 받은 시점에 model_limit을 반환해 c2의 도구 결과는 생성되지 않습니다.</p></div>
+<span class="lesson-anchor" id="limits"></span><span class="lesson-anchor" id="reading-limits"></span>
 
 </section>
 <section id="nb-duplicate" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -179,6 +168,19 @@ print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword"
 </header>
 <div class="prose"><p>대화 기록에서 c2가 마지막일 때와 c2의 결과가 마지막일 때를 비교해 보세요. 같은 ID가 보이더라도 하나는 요청, 하나는 실행 뒤 기록입니다. 호출 상한을 두는 위치에 따라 실제 실행 횟수가 달라집니다.</p>
 </div>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="transfer-practice">과제 06 · 루프에 중복 실행 방지 넣기</h3><div class="cell-before"><p>도구 호출 직전에 이미 처리한 ID를 검사하는 run_once_per_id(items)를 작성하세요. 첫 요청이 재전송되면 이력을 거기서 멈추고, 실제로 만들어진 결과의 ID만 출력합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">replayed = [first, first, second]
+# 중복 요청에서 멈추고, 실행한 결과의 ID 목록을 출력하세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">replayed = [first, first, second]
+
+def run_once_per_id(items):
+    results = {}
+    for request in items:
+        call_id = request["call_id"]
+        if call_id in results:
+            break
+        results[call_id] = execute(request)
+    return list(results)
+
+print(run_once_per_id(replayed))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['c1']</pre></div><div class="cell-after"><p>두 번째 c1은 이미 저장한 결과와 연결됩니다. break 뒤의 c2에도 결과가 없습니다. 이 예제의 기록은 함수 호출이 끝나면 사라집니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
@@ -193,7 +195,7 @@ print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword"
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

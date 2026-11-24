@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 62 / MCP</span><span class="template-badge">학생용 교재</span></div>
 <h1>MCP 도구와 LangChain 에이전트 연결</h1>
-<p class="hero-description">에이전트가 ‘주말 운영 시간’을 물으면 어느 연결에서 도구를 실행할지 앱이 정합니다. 61장의 MCP 서버를 그대로 쓰면서 실제 LangChain 도구 하나가 현재 열린 MCP 세션을 통해 시간을 받아오도록 연결합니다.</p>
+<p class="hero-description">61장의 MCP 서버에 LangChain 도구를 연결합니다. 주말 운영 시간 요청을 열린 세션으로 전달하고 응답의 요일·시간과 도구 메시지를 대조합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 062 · 8H</span><span>55–56일 create_agent·실행 정책 · 61일 MCP 함수·결과</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -78,8 +78,9 @@ hours = {<span class="tok-string">"weekday"</span>: <span class="tok-string">"09
     result = <span class="tok-keyword">await</span> lookup.ainvoke({<span class="tok-string">"day"</span>: <span class="tok-string">"weekend"</span>})
 print(result)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
-<div class="cell-after"><p>LangChain 도구가 반환한 10:00~16:00은 MCP 서버의 시간표 값입니다. 세션을 닫은 뒤 도구만 보관하면 요청 경로가 끊어집니다. 실제 에이전트는 도구를 등록한 뒤에도 세션이 열린 동안 실행해야 합니다.</p>
+<div class="cell-after"><p>lookup은 생성될 때 전달받은 session으로 get_library_hours를 호출합니다. 따라서 에이전트의 실행까지 async with 블록 안에서 마쳐야 같은 연결로 결과를 받을 수 있습니다.</p>
 </div>
+<p id="example-analysis">주말 시간 문자열이 돌아왔어도 어느 경로에서 얻었는지 구분해야 합니다. 여기서는 LangChain 쪽 도구 호출이 MCP 서버의 함수를 거칩니다. 연결 코드를 수정한 뒤에는 사람이 읽는 시간뿐 아니라 요청한 요일과 응답의 요일도 대조합니다.</p>
 </article>
 <span class="lesson-anchor" id="direct"></span><div class="lesson-explanation" id="reading-direct"><h3>LangChain 도구가 호출하는 MCP 도구</h3><p>lookup.ainvoke에 weekend를 주면 어댑터가 같은 day를 MCP의 get_library_hours에 보냅니다. Python 쪽 lookup과 서버에서 등록한 도구의 이름은 서로 달라도 됩니다.</p><div class="worked-case" id="flow-6"><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
 <p>셀 02에서는 주말을 직접 요청했습니다. 여기서는 셀 04의 모델이 평일을 요청합니다. 같은 hours-1을 요청과 결과에서 찾아보세요.</p>
@@ -105,11 +106,9 @@ content = 09:00~18:00</pre></article><article id="flow-6-step-4"><small>STEP 05 
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-mismatch -->
-<figure class="lesson-clip" id="visual-mismatch"><h3>도구 호출 ID를 맞춘 뒤에도 확인할 값</h3>
-<video autoplay loop muted playsinline aria-label="도구 호출 ID를 맞춘 뒤에도 확인할 값" src="visual-mismatch.mp4"></video>
-<figcaption>비교 예시는 주말을 요청했는데 평일 결과가 돌아온 경우입니다. 받은 구조에 hours가 있어도 day가 다르면 요청한 결과로 사용할 수 없습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-mismatch"></span>
 <!-- /lesson-visual visual-mismatch -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 요청 인자와 반환값 대조</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 요청 인자와 반환값 대조</h3>
 <div class="cell-before"><p>주말 요청에 돌아온 응답이 평일입니다. 요일 불일치를 찾아내는 조건을 작성하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">received = {<span class="tok-string">'day'</span>: <span class="tok-string">'weekday'</span>, <span class="tok-string">'hours'</span>: <span class="tok-string">'09:00~18:00'</span>}
@@ -119,14 +118,14 @@ requested = <span class="tok-string">'weekend'</span>
 requested = <span class="tok-string">'weekend'</span>
 print(received[<span class="tok-string">'day'</span>] == requested)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>False입니다. 이 값을 정상 운영 시간으로 보여 주기 전에 중단해야 합니다. 이미 닫힌 연결을 사용한 경우와 서버가 오류를 보낸 경우, 응답 내용이 요청과 다른 경우를 구분하세요.</p>
+<div class="cell-after"><p>요일 비교 결과는 False입니다. 서버가 반환한 값 자체는 ‘09:00~18:00’으로 정상처럼 보이지만 주말 요청에는 쓸 수 없습니다. make_lookup에서 이 경우에 해당하는 오류 이름은 result_day_mismatch입니다.</p>
 </div>
 </details>
 </article>
 <span class="lesson-anchor" id="policy"></span><div class="lesson-explanation" id="reading-policy"><h3>정상처럼 보이는 다른 요일의 결과</h3><p>받은 hours가 그럴듯해도 requested가 weekend이고 받은 day가 weekday이면 해당 요청의 답으로 쓸 수 없습니다. 이 경우 어댑터는 result_day_mismatch로 중단합니다.</p></div>
 <span class="lesson-anchor" id="failures"></span><span class="lesson-anchor" id="reading-failures"></span>
 <span class="lesson-anchor" id="practice"></span><span class="lesson-anchor" id="reading-practice"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-mcp-check-day"><h3>요일이 어긋나면 시간 전달 중단</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-mcp-check-day.mp4" aria-label="요일이 어긋나면 시간 전달 중단" aria-describedby="workflow-mcp-check-day-caption"></video><figcaption id="workflow-mcp-check-day-caption">과제에서 주어진 받은 값을 어댑터의 검사에 대입해 봅니다. 출력 가능한 문자열도 요청한 요일과 맞아야 합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청 요일</strong> · requested = weekend</li><li><strong>받은 결과</strong> · day · hours = weekday · 09:00~18:00</li><li><strong>요일 대조</strong> · day 일치 = False</li><li><strong>불일치 오류</strong> · 오류 코드 = result_day_mismatch</li></ol></figure>
+<span class="lesson-anchor" id="workflow-mcp-check-day"></span><span class="lesson-anchor" id="workflow-mcp-check-day-caption"></span>
 
 </section>
 <section id="nb-agent" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -135,8 +134,8 @@ print(received[<span class="tok-string">'day'</span>] == requested)</code></pre>
 </header>
 <p>평일 요청 한 건을 내는 대본 모델을 실제 create_agent에 연결합니다. 최종 답안은 대본에 고정했으므로 도구가 어디에서 무엇을 가져왔는지는 도구 메시지로 확인하세요.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-mcp-tool-message"><h3>에이전트의 호출 ID가 MCP 왕복을 마칠 때</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-mcp-tool-message.mp4" aria-label="에이전트의 호출 ID가 MCP 왕복을 마칠 때" aria-describedby="workflow-mcp-tool-message-caption"></video><figcaption id="workflow-mcp-tool-message-caption">MCP가 조회한 시각을 ToolMessage에 넣을 때에는 모델이 발급한 hours-1이 다시 붙습니다. 이 이름은 모델의 요청 ID입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>고정 모델</strong> · tool_call_id = hours-1</li><li><strong>lookup</strong> · day = weekday</li><li><strong>MCP 도구</strong> · hours = 09:00~18:00</li><li><strong>lookup</strong> · day 대조 = weekday = weekday</li><li><strong>ToolMessage</strong> · 요청 ID · 내용 = hours-1 · 09:00~18:00</li><li><strong>고정 모델</strong> · 최종 문장 = 조회가 끝났습니다.</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · ToolMessage에서 도구 응답 추출</h3>
+<span class="lesson-anchor" id="workflow-mcp-tool-message"></span><span class="lesson-anchor" id="workflow-mcp-tool-message-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · ToolMessage에서 도구 응답 추출</h3>
 <div class="cell-before"><p>lookup에 등록한 실행 함수가 MCP를 한 번 부릅니다. 수업용 모델과 서버 모두 네트워크를 사용하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">from</span> langchain.agents <span class="tok-keyword">import</span> create_agent
@@ -172,15 +171,33 @@ model = DemoModel(responses=[
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>같은 평일 질문을 Python 함수와 MCP를 연결한 LangChain 도구에 한 번씩 전달해 시간을 비교해 보세요. 속도 비교가 필요하면 네트워크가 있는 실제 주소에서 따로 측정해야 합니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 서버가 다른 요일을 보냈을 때 거절하기</h3><div class="cell-before"><p>주말 조회에 평일 값을 돌려주는 응답을 재현하세요. 아래 대역은 네트워크 없이 그 응답만 전달합니다. make_lookup의 요일 검사에서 어떤 오류가 발생하는지 확인하세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">from types import SimpleNamespace
+
+class WrongDaySession:
+    async def call_tool(self, name, arguments):
+        return SimpleNamespace(isError=False, structuredContent={"day": "weekday", "hours": "09:00~18:00"})
+
+# make_lookup(WrongDaySession())에 주말을 요청하고 ValueError를 확인하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">from types import SimpleNamespace
+
+class WrongDaySession:
+    async def call_tool(self, name, arguments):
+        return SimpleNamespace(isError=False, structuredContent={"day": "weekday", "hours": "09:00~18:00"})
+
+lookup_wrong_day = make_lookup(WrongDaySession())
+try:
+    await lookup_wrong_day.ainvoke({"day": "weekend"})
+except ValueError as error:
+    print(error)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">result_day_mismatch</pre></div><div class="cell-after"><p>응답에는 정상적인 시간 문자열이 들어 있지만 요청은 주말이고 응답은 평일입니다. 이 검사를 빼면 에이전트는 평일 시간을 주말 답으로 받습니다. 이 과제는 어댑터의 오류 분기만 실행하며 MCP 연결은 앞선 셀에서 확인합니다.</p></div></details></article>
 </section>
 
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

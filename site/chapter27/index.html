@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 27 / LANGGRAPH</span><span class="template-badge">학생용 교재</span></div>
 <h1>LangGraph 조건부 간선과 재검색</h1>
-<p class="hero-description">‘책을 빌리는 기간?’에는 검색 낱말 ‘대출’이 없습니다. 한 번은 질문을 고쳐 다시 찾되 같은 실패가 끝없이 이어지지 않도록 검색 횟수를 상태에 남깁니다.</p>
+<p class="hero-description">‘책을 빌리는 기간?’을 첫 검색에서 찾지 못하면 질문을 수정하고 다시 검색합니다. 조건부 간선이 문서 목록과 attempts를 읽어 답변·재시도·종료 중 한 경로를 선택합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 027 · 8H</span><span>26장 Node·Edge·State, Python 조건문과 함수 반환</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -33,9 +33,9 @@
 </div>
 </header>
 <p class="concept-intro">조건부 간선은 상태에 따라 서로 다른 노드로 이어집니다. 빈 검색 결과를 다시 찾게 할 때는 반복을 끝낼 조건도 필요합니다.</p><p>search가 시도 횟수를 올린 직후 route가 문서 유무와 attempts를 읽습니다. 문서가 있으면 답을 쓰고, 없고 한 번만 찾았다면 검색어를 바꿉니다. 두 번 찾고도 빈 목록이면 멈춥니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>조건부 간선에서 선택되는 경로</h3><video autoplay loop muted playsinline aria-label="조건부 간선에서 선택되는 경로" src="concept.mp4"></video><figcaption>선로가 갈라지는 지점에서 열차는 한쪽으로만 갑니다. route()의 반환값을 바꾸면 어느 노드가 실행되는지 코드와 대조하세요.</figcaption></figure>
-<figure class="lesson-clip workflow-clip" id="workflow-success-first-time"><h3>첫 검색에서 문서가 있으면 재작성 간선을 건너뜁니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-success-first-time.mp4" aria-label="첫 검색에서 문서가 있으면 재작성 간선을 건너뜁니다" aria-describedby="workflow-success-first-time-caption"></video><figcaption id="workflow-success-first-time-caption">질문에 대출이라는 낱말이 이미 있습니다. route에 들어온 attempts가 1이어도 documents를 먼저 검사하므로 rewrite로 가지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents 1건</li><li><strong>answer_node</strong> · 경로 이름 = answer → answer_node</li><li><strong>END</strong> · 검색 횟수 = 1</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · route()의 분기 반환값</h3>
+<span class="lesson-anchor" id="concept-clip"></span>
+<span class="lesson-anchor" id="workflow-success-first-time"></span><span class="lesson-anchor" id="workflow-success-first-time-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · route()의 분기 반환값</h3>
 <div class="cell-before"><p>검색을 한 번 마쳤고 문서를 못 찾았습니다. 다음에 갈 곳을 고르는 함수만 먼저 실행하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> route(state):
@@ -48,8 +48,8 @@
 after_search = {<span class="tok-string">'question'</span>: <span class="tok-string">'책을 빌리는 기간?'</span>, <span class="tok-string">'documents'</span>: [], <span class="tok-string">'answer'</span>: <span class="tok-string">''</span>, <span class="tok-string">'attempts'</span>: <span class="tok-number">1</span>}
 print(route(after_search))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">retry</pre></div>
-<div class="cell-after"><p>retry가 나왔습니다. 이 함수는 검색을 실행하지 않고 다음 경로의 이름만 돌려줍니다. 다음 제공 셀에서 retry와 rewrite가 연결되는 줄을 찾아보세요.</p>
-</div>
+
+<p id="example-analysis">retry가 출력된 줄에서는 아직 두 번째 검색을 하지 않았습니다. route는 경로 이름을 고르고, 그래프에 등록한 조건부 간선이 그 이름을 다음 노드와 연결합니다. 첫 검색에 문서가 있었을 때와 비어 있었을 때 어느 노드를 한 번 더 지나게 되는지 비교하세요.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="branch"></span><div class="lesson-explanation" id="reading-branch"><h3>조건 함수의 경로 이름</h3><div class="prose"><p>search가 documents를 갱신한 뒤 route가 현재 상태를 읽습니다. route의 역할은 답변을 만드는 것이 아니라 answer·retry·stop 중 한 문자열을 반환하는 것입니다. add_conditional_edges의 대응표가 그 문자열을 등록한 노드 이름과 연결합니다.</p>
 <p>직접 성공에서는 한 번 검색하고 종료합니다. 실패라고 무조건 다시 검색하면 같은 입력과 결과를 끝없이 반복할 수 있습니다. 이번 예제는 문서가 없고 attempts가 2보다 작을 때만 재시도합니다.</p>
@@ -66,7 +66,7 @@ print(route(after_search))</code></pre></figure>
 <h2>질의 재작성과 재검색 횟수 제한</h2>
 </div>
 </header>
-<section class="practice-space" id="practice-space" data-practice="retry"><h3>검색 상태에 따른 다음 노드</h3><label>검색 상태 <select><option value="0,1">빈 결과 · 첫 시도</option><option value="0,2">빈 결과 · 두 번째 시도</option><option value="1,1">근거 발견 · 첫 시도</option></select></label><div class="practice-stage" role="img" aria-label="검색 상태에 따른 다음 노드"></div><output aria-live="polite">첫 검색 결과가 비면 재검색하고 두 번째에도 비면 종료합니다.</output></section><!-- MOTION retry-tokens -->
+<section class="practice-space" id="practice-space" data-text-results data-practice="retry"><h3>검색 상태에 따른 다음 노드</h3><p>문서가 있는지와 이미 실행한 검색 횟수가 다음 경로를 결정합니다.</p><label>검색 상태 <select><option value="0,1">빈 결과 · 첫 시도</option><option value="0,2">빈 결과 · 두 번째 시도</option><option value="1,1">근거 발견 · 첫 시도</option></select></label><output aria-live="polite">첫 검색 결과가 비면 재검색하고 두 번째에도 비면 종료합니다.</output></section><!-- MOTION retry-tokens -->
 
 <!-- END MOTION -->
 
@@ -128,7 +128,7 @@ print(search(after_search)[<span class="tok-string">'attempts'</span>])</code></
 </div></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-rewrite-and-recover"><h3>한 번 고친 질문이 두 번째 검색에서 성공합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-rewrite-and-recover.mp4" aria-label="한 번 고친 질문이 두 번째 검색에서 성공합니다" aria-describedby="workflow-rewrite-and-recover-caption"></video><figcaption id="workflow-rewrite-and-recover-caption">route의 retry는 rewrite 노드를 선택합니다. 다음 search가 비어 있지 않은 documents를 돌려주면 answer 경로로 바뀝니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 대출을 빌리는 기간?</li><li><strong>search</strong> · attempts=2 = documents 1건</li><li><strong>answer_node</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
+<figure class="lesson-clip workflow-clip" id="workflow-rewrite-and-recover"><h3>한 번 고친 질문이 두 번째 검색에서 성공합니다</h3><video controls muted playsinline preload="metadata" src="workflow-rewrite-and-recover.mp4" aria-label="한 번 고친 질문이 두 번째 검색에서 성공합니다" aria-describedby="workflow-rewrite-and-recover-caption"></video><figcaption id="workflow-rewrite-and-recover-caption">route의 retry는 rewrite 노드를 선택합니다. 다음 search가 비어 있지 않은 documents를 돌려주면 answer 경로로 바뀝니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 대출을 빌리는 기간?</li><li><strong>search</strong> · attempts=2 = documents 1건</li><li><strong>answer_node</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · rewrite 노드의 질의 변경</h3>
 <div class="cell-before"><p>질문 한 건의 마지막 상태에서 횟수와 답을 확인하세요.</p>
 </div>
@@ -157,8 +157,8 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="limit"></span><div class="lesson-explanation" id="reading-limit"><h3>반복 상한과 실행 오류</h3><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
-<p>빈 질문은 search에서 ValueError로 중단됩니다. 질문 자체가 없는데 재검색해도 정보가 늘지 않으므로 입력을 고치도록 합니다. 실제 네트워크 오류의 재시도 여부는 오류 종류·시간 제한·중복 실행 위험을 함께 판단해야 하며 이 장의 로컬 예제로 이를 검증했다고 주장하지 않습니다.</p>
+<span class="lesson-anchor" id="limit"></span><div class="lesson-explanation" id="reading-limit"><h3>반복 상한과 실행 오류</h3><div class="prose"><p>run의 recursion_limit=20은 그래프 실행 단계의 한도입니다. 검색을 두 번으로 제한하는 코드는 route의 attempts &lt; 2입니다. 정상 종료라면 주차 질문에서도 예외 대신 fallback의 안내를 받습니다.</p>
+<p>공백뿐인 질문은 search가 ValueError를 내므로 route까지 도달하지 않습니다. 주차 질문은 검색 함수가 빈 목록을 정상 반환해 route에서 재시도 여부를 정합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>오류 점검</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">수정 방향</th></tr>
 </thead><tbody><tr><td>끝나지 않거나 GraphRecursionError</td><td>attempts 증가·route 상한</td><td>검색 후 증가와 stop 연결 확인</td></tr>
@@ -167,9 +167,9 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 <tr><td>빈 질문 ValueError</td><td>입력 값</td><td>공백이 아닌 질문 입력</td></tr>
 <tr><td>항상 문서 없음</td><td>키워드 포함 검사</td><td>가상 검색의 정확한 조건 확인</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="assignment"></span><div class="lesson-explanation" id="reading-assignment"><h3>분기 하나를 바꾼 뒤 비교할 세 입력</h3><p>대출 기간?, 책을 빌리는 기간?, 주차장은?을 각각 실행하면 즉시 성공, 재작성 후 성공, 두 번째 검색 후 종료를 구별할 수 있습니다. 종료 안내가 맞아도 검색 횟수가 예상과 다르면 route의 조건 순서를 다시 보세요.</p></div>
+<span class="lesson-anchor" id="assignment"></span><span class="lesson-anchor" id="reading-assignment"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-retry-budget"><h3>주차 질문은 같은 간선을 돌고도 fallback으로 끝납니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-retry-budget.mp4" aria-label="주차 질문은 같은 간선을 돌고도 fallback으로 끝납니다" aria-describedby="workflow-retry-budget-caption"></video><figcaption id="workflow-retry-budget-caption">같은 재검색 경로에서 질문이 바뀌지 않을 수 있습니다. 두 번째 빈 결과에서는 route가 stop을 반환해 fallback으로 이어집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 주차장은?</li><li><strong>search</strong> · attempts=2 = documents = []</li><li><strong>fallback</strong> · 경로 이름 = stop → fallback</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
+<span class="lesson-anchor" id="workflow-retry-budget"></span><span class="lesson-anchor" id="workflow-retry-budget-caption"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -178,6 +178,18 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </header>
 <div class="prose"><p>검색 한 번에 바로 답하는 질문도 골라 보세요. 세 질문 모두 search 다음에 route를 거칩니다. 어떤 상태에서 다음 경로가 갈라졌나요?</p>
 </div>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3 id="transfer-practice">과제 05 · 재검색이 끝나는 노드 추적</h3><div class="cell-before"><p>주차 질문에서는 rewrite가 질문을 바꾸지 못합니다. 그래프의 stream_mode="updates"를 사용해 실제로 실행된 노드의 이름과 search가 보고한 attempts만 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button class="copy-button js-only" type="button" data-copy="transfer-start" aria-label="노트북에서 직접 작성 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-start">request = {"question": "주차장은?", "documents": [], "answer": "", "attempts": 0}
+# 각 갱신에 들어 있는 노드 이름과 검색 횟수를 읽으세요.</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 코드</span><button class="copy-button js-only" type="button" data-copy="transfer-solution" aria-label="풀이 코드 복사">복사</button></figcaption><pre tabindex="0"><code id="transfer-solution">request = {"question": "주차장은?", "documents": [], "answer": "", "attempts": 0}
+
+for update in make_graph().stream(request, stream_mode="updates"):
+    for node, change in update.items():
+        if node == "search":
+            print(node, change["attempts"])
+        else:
+            print(node)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">search 1
+rewrite
+search 2
+fallback</pre></div><div class="cell-after"><p>첫 번째 빈 검색은 rewrite로 가지만 두 번째 빈 검색은 fallback으로 갑니다. route는 다음 노드를 고르는 조건 함수이므로 실행 노드 이름으로 따로 출력되지 않습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
@@ -190,7 +202,7 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

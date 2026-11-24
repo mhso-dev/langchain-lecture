@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 094 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>텍스트 정규화와 원문 해시</h1>
-<p class="hero-description">규정 본문에서 줄바꿈을 없앤 뒤 출처 위치가 사라졌다면 검색기가 답은 찾아도 원문을 알려 줄 수 없습니다. A 규정 한 건을 사본으로 처리해 어떤 값이 바뀌고 어느 값이 유지되는지 봅니다.</p>
+<p class="hero-description">장비실 규정 사본을 정리하면서 원문 문자열을 UTF-8로 인코딩한 지문과 쪽·절 정보를 보존합니다. 줄바꿈을 변경했을 때 원본 지문과 처리된 문장이 각각 어떻게 달라지는지 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -58,6 +58,7 @@ print(prepared[<span class="tok-string">"id"</span>], prepared[<span class="tok-
 RULE-A 2.1 rules-v1</pre></div>
 <div class="cell-after"><p>지문은 8336aeea로 시작합니다. RULE-A, 2.1, rules-v1은 원본 그대로입니다. 본문을 먼저 정리한 뒤 지문을 계산하면 원본에 있던 추가 공백이나 줄바꿈을 놓칠 수 있습니다.</p>
 </div>
+<p id="example-analysis">해시는 입력 바이트에서 계산합니다. 눈에 보이는 문장은 같아도 줄바꿈 표현이 다르면 원문 문자열을 UTF-8로 인코딩한 지문은 달라질 수 있습니다. 팀이 추적하려는 대상이 읽어 온 원문 문자열인지, 정규화한 본문인지에 따라 어느 단계의 지문을 저장할지 정합니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>SHA-256이 대조하는 입력의 범위</h3><p>sha256에 전달되는 바이트는 raw의 text에서만 가져옵니다. 본문을 둔 채 section만 바꾸면 지문은 그대로입니다. 원문 위치까지 재현해야 할 때는 출력의 둘째 줄에 있는 식별자·절·판본도 따로 대조하세요.</p></div>
 
@@ -67,12 +68,12 @@ RULE-A 2.1 rules-v1</pre></div>
 </div>
 </header>
 <p>재처리 메모 예시　교정 사본에는 점검 전 뒤에 줄바꿈이 들어갔습니다. 검색용 본문을 만들면 두 내용이 같지만 원문 지문은 달라집니다. 팀은 정리 전 원본의 차이를 보관하고 출처의 절 번호가 달라졌는지 확인한 뒤 새 판본을 발행합니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>검색용 문자열과 원문 해시</h3><video autoplay loop muted playsinline aria-label="검색용 문자열과 원문 해시" src="concept.mp4"></video><figcaption>빈칸 간격이 다른 두 원본의 지문이 다르게 표시됩니다. 정규화한 텍스트가 같더라도 원본을 그대로 비교한 결과는 다를 수 있습니다.</figcaption></figure><!-- MOTION byte-fingerprint -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION byte-fingerprint -->
 
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 줄바꿈과 원문 지문</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 줄바꿈과 원문 지문</h3>
 <div class="cell-before"><p>예시 원문에 줄바꿈을 넣어 지문이 달라지는지, 정리한 문장이 같은지 각각 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">edited = raw[<span class="tok-string">"text"</span>].replace(<span class="tok-string">"전 "</span>, <span class="tok-string">"전\n"</span>)
@@ -98,7 +99,7 @@ True</pre></div>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

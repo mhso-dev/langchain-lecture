@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 45 / MIDTERM PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>질문 전체 일치 검색의 기준선과 빈 결과</h1>
-<p class="hero-description">질문 한 건을 넣고 검색 결과가 답변과 출처 표시까지 이어지는지 확인합니다. 이 예시는 실제 운영 안내를 흉내 낸 고정 질문과 답으로 연결을 확인합니다. Chroma로 검색한 결과와 모델이 생성한 답변은 별도로 측정합니다.</p>
+<p class="hero-description">고정 질문을 검색·답변·출처 표시까지 연결해 중간 프로젝트의 기준선을 만듭니다. 예제는 로컬 규칙으로 흐름을 재현하며 Chroma 검색 품질과 모델의 답변 품질은 별도로 측정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,8 +34,8 @@
 </header>
 <p class="concept-intro">검색 기준선은 개선 효과를 비교할 첫 구현입니다. 답변과 출처를 함께 돌려주고, 관련 문서를 놓친 질문도 남깁니다.</p><p>가상 안내 p2가 실린 수업용 페이지판은 1쪽입니다. 문단 ID를 course-guide-v1:p2로 연결하고 본문·출처·쪽수를 함께 넘깁니다. 모의 검색은 Q01의 정확한 문구만 받습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-exact-query"><h3>기준선 검색에서 문단 하나가 선택되는 조건</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-exact-query.mp4" aria-label="기준선 검색에서 문단 하나가 선택되는 조건" aria-describedby="workflow-exact-query-caption"></video><figcaption id="workflow-exact-query-caption">strip()으로 양끝 공백을 지우고 전체 질문이 같은지 비교합니다. 참인 경로는 문서 객체의 본문과 출처를 함께 반환합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · 질문 = 과제는 어디에 내나요?</li><li><strong>전체 비교</strong> · 문장 전체의 일치 = True</li><li><strong>문서 반환</strong> · found[0] = course-guide-v1:p2 · 1쪽</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · retrieve()로 문서 본문·출처 조회</h3>
+<span class="lesson-anchor" id="workflow-exact-query"></span><span class="lesson-anchor" id="workflow-exact-query-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · retrieve()로 문서 본문·출처 조회</h3>
 <div class="cell-before"><p>도서관 예제의 library-1 대신 팀 자료의 문서 ID가 보이는지 확인하세요.</p>
 <p>기준선 한 행을 만들 때 질문, 기대 문단, 검색이 반환한 원문, 사용자에게 표시할 답을 따로 적으세요. 반환된 원문의 한 구절을 직접 가리킬 수 있는지 확인한 뒤, 화면용으로 짧게 다듬은 문장을 마지막 칸에 씁니다.</p>
 </div>
@@ -58,6 +58,7 @@ print(source[<span class="tok-string">'id'</span>], source[<span class="tok-stri
 course-guide-v1:p2 1</pre></div>
 <div class="cell-after"><p>출력은 제출 방법 원문, course-guide-v1:p2, 1입니다. 문단 번호 2를 쪽수에 넣으면 학생이 맞는 쪽으로 갈 수 없습니다. 완성 화면에서는 “과제함에 제출하고 파일 이름과 등록 시간을 확인합니다”라는 가상 답 옆에 이 출처를 표시합니다.</p>
 </div>
+<p id="example-analysis">둘째 줄에서 course-guide-v1:p2는 문단 ID이고, 그 뒤의 1은 수업용 페이지판에서의 쪽 번호입니다. 다른 버전의 운영 안내에서 과제 제출 위치가 바뀌면 답변 문구만 비교해서는 어느 안내를 사용했는지 추적하기 어렵습니다. 문서 버전과 문단 ID를 실행 기록에 함께 남기는 이유입니다.</p>
 </article>
 </section>
 <section id="nb-baseline-gap" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -71,11 +72,9 @@ course-guide-v1:p2 1</pre></div>
 
 
 <!-- lesson-visual visual-baseline-gap -->
-<figure class="lesson-clip" id="visual-baseline-gap"><h3>관련 문서가 있어도 검색 결과가 빌 수 있습니다</h3>
-<video autoplay loop muted playsinline aria-label="관련 문서가 있어도 검색 결과가 빌 수 있습니다" src="visual-baseline-gap.mp4"></video>
-<figcaption>기준선 함수는 공백을 정리한 질문 전체가 지정 문자열과 같을 때만 결과를 줍니다. 업로드 실패 문의는 이 조건에서 탈락합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-baseline-gap"></span>
 <!-- /lesson-visual visual-baseline-gap -->
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색 미적중 결과 진단</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 검색 미적중 결과 진단</h3>
 <div class="cell-before"><p>가상 안내의 업로드 실패 질문을 검색해 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">failure_question = <span class="tok-string">'과제 업로드가 실패했어요. 어떻게 해야 하나요?'</span>
@@ -96,7 +95,7 @@ print(retrieve(failure_question))</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

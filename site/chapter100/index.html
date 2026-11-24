@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 100 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>소유자·세션별 기록과 보존 한도</h1>
-<p class="hero-description">두 담당자가 각자의 화면에서 같은 이름의 대화를 만들었습니다. 키를 대화 이름 하나로 잡으면 한 사람의 RULE-A 근거가 다른 사람의 화면에 나올 수 있습니다. 지금 누가 어떤 대화를 읽는지를 키에 담아 봅니다.</p>
+<p class="hero-description">두 사용자가 같은 세션 이름을 사용해도 각자 허용된 이력만 읽도록 저장 키를 설계합니다. 한 사용자의 기록을 삭제한 뒤 다른 사용자의 데이터가 남는지 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -33,7 +33,7 @@
 </div>
 </header>
 <p class="concept-intro">대화 이름이 같아도 소유자가 다르면 별도의 기록입니다. 사용자·세션을 함께 지정하고 보존할 턴 수와 초기화 범위를 정합니다.</p><p>완성 상태표　가상 사용자 alice / 대화 main / 현재 근거 RULE-A. 가상 사용자 bob / 대화 main / 현재 근거 RULE-B. 예시에서는 신뢰한 수업용 주체와 세션 ID를 함께 키로 씁니다. 화면이 보내는 이름만 보고 소유자를 바꾸어서는 안 됩니다. 아래 메모리 사본으로 먼저 두 키를 읽어 보세요.</p>
-<section class="practice-space" id="practice-space" data-practice="session"><h3>복합 키와 세션 격리</h3><label>조회할 소유자 <select><option value="alice">alice</option><option value="bob">bob</option></select></label><div class="practice-stage" role="img" aria-label="복합 키와 세션 격리"></div><output aria-live="polite">같은 main 세션 이름을 써도 alice는 RULE-A, bob은 RULE-B를 읽습니다.</output></section><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 복합 키로 세션 조회</h3>
+<section class="practice-space" id="practice-space" data-text-results data-practice="session"><h3>복합 키와 세션 격리</h3><p>세션 이름은 main으로 고정하고 조회할 소유자만 변경합니다.</p><label>조회할 소유자 <select><option value="alice">alice</option><option value="bob">bob</option></select></label><output aria-live="polite">같은 main 세션 이름을 써도 alice는 RULE-A, bob은 RULE-B를 읽습니다.</output></section><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 복합 키로 세션 조회</h3>
 <div class="cell-before"><p>두 사용자가 모두 main을 선택했을 때 bob의 현재 근거를 꺼냅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">sessions = {(<span class="tok-string">"alice"</span>, <span class="tok-string">"main"</span>): [<span class="tok-string">"RULE-A"</span>], (<span class="tok-string">"bob"</span>, <span class="tok-string">"main"</span>): [<span class="tok-string">"RULE-B"</span>]}
@@ -42,6 +42,7 @@ print(sessions[(trusted_owner, <span class="tok-string">"main"</span>)])</code><
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['RULE-B']</pre></div>
 <div class="cell-after"><p>RULE-B만 나옵니다. 100장 제공 기록에서도 서로 다른 저장 파일에서 각각 RULE-A와 RULE-B를 읽었습니다. 이 셀은 같은 구분을 메모리 안에서만 보여 줍니다.</p>
 </div>
+<p id="example-analysis">세션 이름만 같다고 같은 대화는 아닙니다. 이 예제는 소유자와 세션을 함께 지정해 RULE-B의 이력을 찾습니다. 삭제를 검증할 때도 지울 사용자의 데이터가 없어졌는지와 다른 사용자의 기록이 남았는지를 각각 확인합니다.</p>
 </article>
 </section>
 <section id="nb-expiry" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -54,13 +55,11 @@ print(sessions[(trusted_owner, <span class="tok-string">"main"</span>)])</code><
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-expiry -->
-<figure class="lesson-clip" id="detail-expiry"><h3>같은 main에서 alice의 이력만 지우기</h3>
-<video autoplay loop muted playsinline aria-label="같은 main에서 alice의 이력만 지우기" src="detail-expiry.mp4"></video>
-<figcaption>세션 사본에서 (alice, main)을 지운 뒤 다시 조회하면 None이 나옵니다. 같은 대화 이름을 쓰는 (bob, main)에서는 여전히 RULE-B를 읽습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-expiry"></span>
 <!-- /lesson-visual detail-expiry -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-fixed-expiration"><h3>새 답변이 와도 세션의 만료 시각이 그대로인 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-fixed-expiration.mp4" aria-label="새 답변이 와도 세션의 만료 시각이 그대로인 이유" aria-describedby="workflow-fixed-expiration-caption"></video><figcaption id="workflow-fixed-expiration-caption">보존 정책 예시에서 만료는 생성 후 300초입니다. 최근 다섯 턴을 관리하는 규칙과 만료 시각을 따로 추적하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>생성</strong> · 생성 시각 = 1000초</li><li><strong>만료 시각 계산</strong> · 만료 예정 = 1000 + 300 = 1300초</li><li><strong>새 턴</strong> · 새 답 뒤 만료 예정 = 1300초</li><li><strong>만료</strong> · 정책상 만료 = 1300초</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 소유자별 이력 삭제</h3>
+<span class="lesson-anchor" id="workflow-fixed-expiration"></span><span class="lesson-anchor" id="workflow-fixed-expiration-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 소유자별 이력 삭제</h3>
 <div class="cell-before"><p>가상 alice가 main 삭제를 요청했습니다. 사본에서 그 키만 덜어내고 bob의 마지막 근거를 다시 읽어 보세요.</p>
 <p>최근 5턴을 남기는 세션에서 여섯 번째 턴을 저장하면 첫 번째 턴이 빠지고 2~6번째 턴이 남습니다. 생성 후 300초가 되면 세션 자체가 만료됩니다. 아래 과제에서 실제로 관찰하는 것은 소유자를 골라 삭제한 결과입니다.</p>
 </div>
@@ -86,7 +85,7 @@ print(remaining.get((<span class="tok-string">"alice"</span>, <span class="tok-s
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

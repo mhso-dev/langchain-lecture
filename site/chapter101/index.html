@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 101 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>Skill·외부 도구 도입 기준</h1>
-<p class="hero-description">장비 A를 점검하려는 학생에게 예약 API가 필요할까요? 이 장의 목표는 팀이 외부 연동을 도입할지 보류할지 결정하고 이유를 남기는 것입니다. 현재 규정만으로 답할 수 있는지 먼저 확인하세요.</p>
+<p class="hero-description">로컬 규정 조회만으로 처리한 질문과 실제 일정 데이터가 필요한 요청을 구분합니다. 예약 API 연동을 보류한 이유와 재검토에 필요한 자료·권한을 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -46,6 +46,7 @@ print(record[<span class="tok-string">"question_id"</span>], record[<span class=
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Q01 answered ['RULE-A']</pre></div>
 <div class="cell-after"><p>Q01에서 answered와 RULE-A가 나옵니다. 교육용 로컬 경로로 이 한 건을 처리했다는 근거입니다. 실제 예약이나 현장 장비 정보에 접근한 기록은 없습니다.</p>
 </div>
+<p id="example-analysis">Q01이 RULE-A로 답해졌다는 결과는 로컬 규정 조회를 검증합니다. 날짜에 따라 달라지는 공개 일정까지 확인했다는 근거는 없습니다. 외부 일정을 기능 범위에 넣으려면 읽을 수 있는 자료, 갱신 기준, 접근 실패 시 표시할 답을 따로 정합니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>질문을 도구의 입력과 출력으로 나눠 보기</h3><p>Q01의 완료 기록에는 규정 ID인 RULE-A가 있습니다. 여기서 다음 달 일정까지 답하려면 어떤 새 입력과 출처가 필요한지 적어 보세요. 이미 가진 문서로 재현한 답과 앞으로 도입할 일정 조회를 서로 다른 사례로 기록할 수 있습니다.</p></div>
 
@@ -80,7 +81,7 @@ print(decision_note[<span class="tok-string">"도입 조건"</span>], decision_n
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 08 / LLM SERVICES</span><span class="template-badge">학생용 교재</span></div>
 <h1>LLM 서비스 비교와 응답 평가</h1>
-<p class="hero-description">‘참가비가 아직 정해지지 않았다’는 회의 메모가 요약본에서 ‘무료’로 바뀌었습니다. 같은 원문으로 만든 요약을 한 문장씩 대조한 뒤 비교 기록을 작성합니다. 노트북의 응답은 수업용 작성 예시입니다.</p>
+<p class="hero-description">가상 회의록에는 참가비가 미정이라고 적혀 있지만 요약에는 ‘무료’로 표시돼 있습니다. 같은 원문을 기준으로 요약의 주장과 근거를 대조합니다. 노트북 응답은 수업용 예시입니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 008 · 8H</span><span>파일 저장·CSV·Python 기초</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,8 +39,8 @@
 
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-meeting-claim"><h3>‘무료’라는 요약을 원문에서 확인하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-meeting-claim.mp4" aria-label="‘무료’라는 요약을 원문에서 확인하기" aria-describedby="workflow-meeting-claim-caption"></video><figcaption id="workflow-meeting-claim-caption">회의록과 요약에 ‘참가비’가 모두 있어도 두 문장이 같은 사실을 말하는지 따로 읽어야 합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요약 문장</strong> · 요약이 주장한 값 = 참가비는 무료다.</li><li><strong>원문 찾기</strong> · 검색어 = 참가비</li><li><strong>의미 대조</strong> · 원문의 결정 상태 = 아직 합의하지 않았다.</li><li><strong>판정</strong> · 근거에 맞는 기록 = 참가비 미합의</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · splitlines()로 원문 분리</h3>
+<span class="lesson-anchor" id="workflow-meeting-claim"></span><span class="lesson-anchor" id="workflow-meeting-claim-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · splitlines()로 원문 분리</h3>
 <div class="cell-before"><p>아래 회의는 가상 사례입니다. 예산·참가비와 대면 모임에 관한 문장이 어느 쪽에 있는지 찾으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">meeting = <span class="tok-string">"""가상 독서 모임 운영 회의 / 2026-11-10
@@ -56,6 +56,7 @@ print(<span class="tok-string">"\n"</span>.join(meeting.splitlines()[-<span clas
 검토 중: 대면 모임도 가능하지만 이번 회의에서 확정하지 않았다.</pre></div>
 <div class="cell-after"><p>예산과 참가비는 미합의, 대면 모임은 검토 단계입니다. 결정 사항에 적힌 이번 모임 방식은 온라인입니다.</p>
 </div>
+<p id="example-analysis">‘참가비가 무료다’라는 요약을 검토한다면 회의록에서 ‘참가비’를 찾는 데서 멈추지 마세요. 그 뒤에 붙은 말은 ‘합의하지 않았다’입니다. 회의 뒤에 참가비가 정해지더라도 이번 회의에서 결정한 사항을 묻는 표에는 미정으로 남겨야 합니다.</p>
 </article>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 원문에서 요약의 근거 찾기</h3>
 <div class="cell-before"><p>오프라인 대체 자료의 한 문장을 읽고 이를 뒷받침할 원문을 찾아보세요.</p>
@@ -67,7 +68,7 @@ print(evidence)</code></pre></figure>
 <div class="cell-after"><p>‘예산과 참가비는 아직 합의하지 않았다.’가 나옵니다. 같은 단어가 있다고 해서 candidate를 지지하는 근거가 되지는 않습니다. 문장이 실제로 말하는 내용을 읽어야 합니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="offline"></span><div class="lesson-explanation" id="reading-offline"><h3>제공된 응답에서 근거 확인하기</h3><p>서비스에 접속할 수 없어도 ‘참가비는 무료다’라는 제공 문장을 회의록과 대조할 수 있습니다. ‘아직 합의하지 않았다’는 원문을 찾아 차이를 적고, 출처를 ‘제공 예시’로 표시하세요.</p></div>
+<span class="lesson-anchor" id="offline"></span><div class="lesson-explanation" id="reading-offline"><h3>제공된 응답에서 근거 확인하기</h3><p>회의록에는 “예산과 참가비는 아직 합의하지 않았다.”라고 적혀 있습니다. 여기서 확인할 수 있는 것은 비용이 미정이라는 사실입니다. 참가비가 무료라는 제공 응답은 회의록으로 뒷받침할 수 없습니다.</p></div>
 
 </section>
 <section id="nb-compare" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -163,7 +164,7 @@ print(example_record[<span class="tok-string">"서비스"</span>], example_recor
 <tr><td>unknown_preserved</td><td>없는 마감일·예산·참가비를 만들어 넣지 않음</td></tr>
 <tr><td>evidence_ok</td><td>각 근거가 실제 원문 문장에 대응</td></tr>
 </tbody></table></div>
-<div class="prose"><p>이 코드는 필수 조건 칸이 비었는지만 확인합니다. 답변의 정확성을 자동 채점하지 않습니다. 표의 내용과 원문 대조는 사람이 수행합니다.</p>
+<div class="prose"><p>과제 05의 기록표는 답변과 판정을 보관합니다. 빈칸을 채워도 그 판정이 맞는지 검사하는 코드는 없습니다. 받은 문장 옆에 판단의 근거가 된 회의록 한 줄을 함께 남기세요.</p>
 </div></div>
 <article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 확정 안건 필터링</h3>
 <div class="cell-before"><p>응답 B는 대면 모임으로 적었습니다. 원문의 결정 사항에서 장소와 일시가 있는 줄을 골라 출력하세요.</p>
@@ -176,7 +177,7 @@ print(decision)</code></pre></figure>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="submit"></span><div class="lesson-explanation" id="reading-submit"><h3>과업별 서비스 선택 기준</h3><div class="prose"><p>다음 장에서는 같은 작업을 더 명확하게 요청하는 방법을 배웁니다. 오늘 저장한 최초 요청과 실패 사례를 그대로 가져오세요.</p>
+<span class="lesson-anchor" id="submit"></span><div class="lesson-explanation" id="reading-submit"><h3>과업별 서비스 선택 기준</h3><div class="prose"><p>같은 서비스에서도 공통 요청을 보낸 첫 답과 오류를 지적한 뒤의 답은 조건이 다릅니다. ‘하늘’에게 붙인 마감일이 수정되었는지 비교하려면 두 문장을 각각 보관하세요.</p>
 </div></div>
 
 </section>
@@ -203,7 +204,7 @@ print(decision)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

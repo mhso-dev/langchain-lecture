@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,8 +18,8 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 081</span><span class="template-badge">학생용 교재</span></div>
 <h1>FastAPI로 구현하는 할 일 CRUD</h1>
-<p class="hero-description">브라우저 안에 있던 할 일을 서버에 보냈습니다. 추가 버튼을 눌렀다는 사실만으로 화면 목록을 확정하면 저장에 실패한 항목이 남을 수 있습니다. 실제 FastAPI 경로를 호출해 응답을 받은 뒤에만 화면에 보일 값을 정합니다.</p>
-<div class="hero-meta"><span>기초 · 연결 실습</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>68 요청·응답 · 79 fetch · 80 T1 투두</span></div>
+<p class="hero-description">FastAPI 경로로 할 일을 추가·수정·삭제합니다. 브라우저의 목록은 서버가 확정한 ID와 처리 결과를 받은 뒤 갱신합니다.</p>
+<div class="hero-meta"><span>교육일 81 · 8시간</span><span>선수 수업 · 68장 요청·응답 · 79장 fetch · 80장 할 일 추가</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -88,12 +88,12 @@ TRIM = <span class="tok-string">""</span>.join(chr(n) <span class="tok-keyword">
     <span class="tok-keyword">return</span> {<span class="tok-string">"data"</span>: items.pop(id)}
 
 client = TestClient(app)</code></pre></figure>
-<div class="cell-after"><p>경로를 정의했습니다. T1 제목은 JavaScript trim과 같은 25개 공백 문자만 양끝에서 제거합니다. 삭제한 번호를 다시 사용하지 않도록 별도 카운터를 뒀습니다. 개별 조회나 제목 변경을 연습할 때는 참조 앱을 받으세요. 압축을 푼 폴더에서 FastAPI와 uvicorn이 설치된 수업 환경으로 python -m uvicorn app:create_app --factory 명령을 실행하세요. /docs에서 할 일을 등록하고 응답의 ID로 GET /todos/{todo_id}를 연 뒤, PATCH에 {"title":"복습"}을 보내세요. 같은 ID로 다시 조회해 바뀐 제목을 확인합니다.</p>
+<div class="cell-after"><p>TestClient가 호출할 네 경로를 준비했습니다. 등록할 때는 제목의 양끝 공백을 없애고 새 ID를 발급합니다. 이 노트북의 PATCH는 completed만 받습니다. 아래 ZIP은 개별 조회와 제목 수정까지 구현한 강사용 참고 코드입니다. 수업 실습은 다음 셀에서 같은 TestClient로 계속합니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="validation"></span><div class="lesson-explanation" id="reading-validation"><h3>완료 입력에서 StrictBool 사용하기</h3><p>Complete 모델의 completed는 StrictBool입니다. JSON의 true와 문자열 &quot;true&quot;는 자료형이 다릅니다. 모델을 통과한 값만 경로 함수에 전달되므로 화면도 불리언을 보내야 합니다.</p></div>
 
-<p><a class="lesson-file" href="downloads/chapter81_reference.zip" download="chapter81_reference.zip">개별 조회와 제목 수정을 지원하는 참조 앱 받기</a></p>
+<p><a class="lesson-file" href="downloads/chapter81_reference.zip" download="chapter81_reference.zip">강사용 참고 코드 · 개별 조회와 제목 수정 (ZIP)</a></p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · POST 응답에서 ID 읽기</h3>
 <div class="cell-before"><p>POST 응답에서 서버가 정한 번호를 보관합니다.</p>
 </div>
@@ -101,8 +101,7 @@ client = TestClient(app)</code></pre></figure>
 item = created.json()[<span class="tok-string">"data"</span>]
 print(created.status_code, item)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">201 {'id': 1, 'title': '복습', 'completed': False}</pre></div>
-<div class="cell-after"><p>201과 함께 id 1, 제목 복습, completed False가 돌아옵니다. 새로고침한 화면은 GET /todos가 반환한 목록으로 다시 그릴 수 있습니다.</p>
-</div>
+<div class="cell-after"><p id="example-analysis">201 응답에 담긴 id는 서버에서 발급한 값입니다. 다음 PATCH는 이 값을 경로에 넣습니다. 목록의 첫 줄을 수정 대상으로 삼으면 정렬 순서가 달라질 때 다른 항목을 고칠 수 있습니다.</p></div>
 </article>
 <span class="lesson-anchor" id="uncertain"></span><span class="lesson-anchor" id="reading-uncertain"></span>
 
@@ -118,13 +117,11 @@ print(created.status_code, item)</code></pre></figure>
 
 
 <!-- lesson-visual visual-confirm -->
-<figure class="lesson-clip" id="visual-confirm"><h3>완료 요청과 없는 ID의 요청을 비교하기</h3>
-<video autoplay loop muted playsinline aria-label="완료 요청과 없는 ID의 요청을 비교하기" src="visual-confirm.mp4"></video>
-<figcaption>1번 행을 완료한 다음 999번에 수정을 요청하면 404가 돌아옵니다. 실패 응답으로 화면의 기존 1번 행을 덮어쓰지 않습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-confirm"></span>
 <!-- /lesson-visual visual-confirm -->
 
 <span class="lesson-anchor" id="edit"></span><span class="lesson-anchor" id="reading-edit"></span>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · PATCH 후 목록 조회</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · PATCH 후 목록 조회</h3>
 <div class="cell-before"><p>반환 상태와 목록의 같은 ID가 일치하는지 확인합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">response = client.patch(f"/todos/{item[<span class="tok-string">'id'</span>]}", json={<span class="tok-string">"completed"</span>: <span class="tok-keyword">True</span>})
@@ -134,7 +131,7 @@ print(response.status_code, listed[<span class="tok-string">"id"</span>], listed
 <div class="cell-after"><p>200 1 True입니다. 제목이 같은 다른 항목이 있어도 요청 경로의 번호가 대상 행을 가리킵니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="screen"></span><div class="lesson-explanation" id="reading-screen"><h3>수정 응답 이후 목록에서 확인할 값</h3><p>PATCH의 응답 코드를 확인한 뒤 GET /todos로 저장된 행을 다시 읽습니다. 200, 1, True는 각각 요청 성공, 대상 ID, 현재 완료 상태를 뜻합니다.</p></div>
+<span class="lesson-anchor" id="screen"></span><div class="lesson-explanation" id="reading-screen"><h3>수정 응답 이후 목록에서 확인할 값</h3><p>이 예제는 POST를 한 번만 실행하므로 목록의 첫 행이 방금 만든 항목입니다. 여러 건을 등록했다면 응답 목록에서 item의 ID로 해당 행을 찾아야 합니다. 200, 1, True는 각각 요청 성공, 대상 ID, 현재 완료 상태를 뜻합니다.</p></div>
 
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 응답 목록의 HTML 렌더링</h3>
 <div class="cell-before"><p>앞에서 받은 GET의 data를 사용해 노트북 안에 완료 목록을 그립니다. 이어서 없는 항목의 실패 응답을 받아도 직전에 확인한 목록을 유지합니다.</p>
@@ -159,25 +156,29 @@ print(failed.status_code)</code></pre></figure>
 <span class="lesson-anchor" id="errors"></span><div class="lesson-explanation" id="reading-errors"><h3>404 뒤에 기존 목록을 보존하는 분기</h3><p>999번 항목에 PATCH를 보내면 404가 반환됩니다. 변경 결과로 visible을 교체하는 줄은 is_success일 때만 실행되므로 기존 1번 항목은 화면에 남습니다.</p></div>
 
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · DELETE 결과 검증</h3>
-<div class="cell-before"><p>기존 실습 항목을 지우고 DELETE 결과 번호와 목록 길이를 출력하세요.</p>
+<div class="cell-before"><p>할 일을 삭제한 뒤 같은 ID로 한 번 더 삭제를 요청하세요. 두 응답의 상태 코드와 마지막 목록을 비교하면 재시도가 실제 저장 상태에 미치는 영향을 확인할 수 있습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-5"><span class="tok-comment"># DELETE /todos/{id}와 GET /todos를 차례로 요청하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">deleted = client.delete(f"/todos/{item[<span class="tok-string">'id'</span>]}")
-print(deleted.json()[<span class="tok-string">'data'</span>][<span class="tok-string">'id'</span>], len(client.get(<span class="tok-string">'/todos'</span>).json()[<span class="tok-string">'data'</span>]))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1 0</pre></div>
-<div class="cell-after"><p>1 0입니다. 삭제 응답은 지운 레코드를, 재조회 결과는 현재 남은 목록을 보여 줍니다. 실제 DB 재시작 후에도 유지되는지는 다음 장에서 다룹니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-5"># 같은 ID에 DELETE를 두 번 보내고 GET /todos로 남은 목록을 읽으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">path = f"/todos/{item['id']}"
+removed = client.delete(path)
+again = client.delete(path)
+print(removed.status_code, again.status_code)
+print(client.get("/todos").json()["data"])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 404
+[]</pre></div>
+<div class="cell-after"><p>첫 요청에서 항목을 꺼냈으므로 같은 ID로 보낸 두 번째 요청에서는 existing이 404를 냅니다. 두 응답 코드는 달라도 최종 목록은 빈 배열입니다. 이 과제를 다시 실행할 때는 셀 01부터 시작해 항목을 새로 만드세요.</p>
 </div>
 </details>
 </article>
 <span class="lesson-anchor" id="regression"></span><span class="lesson-anchor" id="reading-regression"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-delete-confirm"><h3>DELETE 응답과 GET 목록이 확인하는 서로 다른 값</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-delete-confirm.mp4" aria-label="DELETE 응답과 GET 목록이 확인하는 서로 다른 값" aria-describedby="workflow-delete-confirm-caption"></video><figcaption id="workflow-delete-confirm-caption">삭제 응답에서 어떤 ID를 지웠는지 보고, 새 GET 요청으로 진짜 목록에서 사라졌는지 확인합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 항목</strong> · 항목 = 1 · 복습</li><li><strong>DELETE</strong> · 요청 경로 = /todos/1</li><li><strong>응답 ID</strong> · data.id = 1</li><li><strong>GET /todos</strong> · 목록 길이 = 0</li></ol></figure>
+<span class="lesson-anchor" id="workflow-delete-confirm"></span><span class="lesson-anchor" id="workflow-delete-confirm-caption"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>화면에서 변경을 요청한 시점과 서버 응답으로 확정한 시점을 가리켜 보세요. 응답이 끊겼다면 같은 쓰기를 무작정 반복하기 전에 목록을 조회해 현재 상태를 확인합니다.</p>
+<div class="prose"><p>PATCH에 JSON 문자열 "true"를 넣었을 때와 불리언 true를 넣었을 때를 비교해 보세요. StrictBool이 문자열을 거절하면 목록은 그대로여야 합니다. 응답 코드와 GET으로 읽은 행이 각각 어떤 사실을 알려주는지 구분합니다.</p>
 </div>
 
 <span class="lesson-anchor" id="diff"></span><span class="lesson-anchor" id="reading-diff"></span>
@@ -188,7 +189,7 @@ print(deleted.json()[<span class="tok-string">'data'</span>][<span class="tok-st
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

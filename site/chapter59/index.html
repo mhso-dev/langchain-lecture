@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 059</span><span class="template-badge">학생용 교재</span></div>
 <h1>대화 문맥의 최근 턴과 요약 메모리</h1>
-<p class="hero-description">사용자가 ‘발표 장소를 기억하나요?’라고 물었습니다. 대화에는 회의실 B라는 말이 남아 있지만 최근 메시지 두 턴만 꺼내면 장소가 보이지 않습니다. 저장한 대화와 이번 모델 입력의 차이를 살펴봅니다.</p>
+<p class="hero-description">발표 장소가 회의실 B라고 기록된 대화에서 최근 두 발화만 선택해 모델에 보낼 문맥을 구성합니다. 전체 이력, 최근 문맥, 요약 중 어떤 자료에서 장소를 복원할 수 있는지 비교합니다.</p>
 <div class="hero-meta"><span>중간 프로젝트·에이전트 이후</span><span>8H · 전반 4H / 후반 4H</span><span>29 체크포인트 · 55 create_agent · 56 실행 정책</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -32,14 +32,14 @@
 <h2>슬라이싱으로 최근 발화 선택</h2>
 </div>
 </header>
-<p class="concept-intro">최근 턴을 자르는 방법은 오래된 발화를 제외하고, 요약은 여러 발화를 짧게 바꿉니다. 두 방법에서 어떤 사실이 사라지는지 비교합니다.</p><section class="practice-space" id="practice-space" data-practice="memory"><h3>대화에서 유지할 최근 턴</h3><label>남겨 둘 발화 수 <input type="range" min="1" max="4" step="1" value="2"><span class="practice-value">2</span></label><div class="practice-stage" role="img" aria-label="대화에서 유지할 최근 턴"></div><output aria-live="polite">최근 두 발화에는 기한과 분량이 남고 장소와 언어는 빠집니다.</output></section><!-- MOTION memory-aperture -->
+<p class="concept-intro">최근 턴을 자르는 방법은 오래된 발화를 제외하고, 요약은 여러 발화를 짧게 바꿉니다. 두 방법에서 어떤 사실이 사라지는지 비교합니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="memory"><h3>최근 발화 수에 따른 입력 문맥</h3><p>전체 이력에서 이번 호출에 포함할 최근 발화의 수를 선택합니다.</p><label>남겨 둘 발화 수 <input type="range" min="1" max="4" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">최근 두 발화에는 기한과 분량이 남고 장소와 언어는 빠집니다.</output></section><!-- MOTION memory-aperture -->
 
 <!-- END MOTION -->
 
 
 
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 리스트 슬라이싱으로 최근 발화 선택</h3>
-<div class="cell-before"><p>기존 수업 대화에서 최근 두 턴을 고릅니다. 장소를 담은 첫 발화가 남을까요?</p>
+<div class="cell-before"><p>사용자 발화 네 개 중 최근 두 개를 잘라 새 목록에 담습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">turns = [<span class="tok-string">"발표 장소는 회의실 B입니다."</span>, <span class="tok-string">"발표 언어는 한국어입니다."</span>,
          <span class="tok-string">"최종 제출 기한은 금요일 18시입니다."</span>, <span class="tok-string">"슬라이드는 5장으로 준비합니다."</span>]
@@ -48,14 +48,15 @@ print(recent)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['최종 제출 기한은 금요일 18시입니다.', '슬라이드는 5장으로 준비합니다.']</pre></div>
 <div class="cell-after"><p>기한과 분량만 남습니다. 음수 인덱스로 만든 recent는 모델에 넘길 부분을 선택한 값입니다. 원래 turns에는 네 문장이 그대로 있습니다.</p>
 </div>
+<p id="example-analysis">최근 두 발화만 전달한 결과에는 제출 기한과 슬라이드 수가 남고 발표 장소는 빠졌습니다. 장소를 다시 물었을 때 모델이 대답하지 못한다면 먼저 입력에 회의실 B가 남아 있는지 확인합니다. 저장된 이력과 이번 호출에 포함한 문맥은 다를 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="turns"></span><span class="lesson-anchor" id="reading-turns"></span>
 <span class="lesson-anchor" id="recent"></span><div class="lesson-explanation" id="reading-recent"><h3>마지막 두 발화가 남기는 단서</h3><p>turns[-2:]에는 제출 기한과 슬라이드 수가 들어갑니다. 이 목록만 읽고 발표 장소를 물으면 회의실 B라는 단서를 찾을 수 없습니다.</p></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-history-window"><h3>잘라 낸 입력과 그대로인 대화 기록</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-history-window.mp4" aria-label="잘라 낸 입력과 그대로인 대화 기록" aria-describedby="workflow-history-window-caption"></video><figcaption id="workflow-history-window-caption">recent를 만든 뒤 turns[0]을 읽습니다. 어디에 장소가 남았는지를 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>turns</strong> · 원본 항목 = 4개</li><li><strong>최근 두 문장</strong> · 선택 = turns[-2:]</li><li><strong>선택 입력</strong> · recent가 담은 단서 = 금요일 18시 · 5장</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 저장된 이력에서 사실 복원</h3>
+<span class="lesson-anchor" id="workflow-history-window"></span><span class="lesson-anchor" id="workflow-history-window-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 저장된 이력에서 사실 복원</h3>
 <div class="cell-before"><p>조금 전 만든 목록 대신 보관한 첫 발화를 읽습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(turns[<span class="tok-number">0</span>])</code></pre></figure>
@@ -71,7 +72,7 @@ print(recent)</code></pre></figure>
 <h2>요약과 원문 기록의 정보 손실 대조</h2>
 </div>
 </header>
-<p>수업용 요약은 처음 세 턴을 읽고도 기한을 빠뜨렸습니다. 요약문에 출처 턴이 적혀 있는 것만으로 필요한 사실이 모두 보존됐다고 판단할 수 없습니다.</p>
+<p>아래 고정 요약문은 장소와 언어만 담았습니다. 세 번째 발화의 기한을 질문받았을 때 이 요약만으로 답할 수 있는지 검사합니다.</p>
 <!-- MOTION summary-hole -->
 
 <!-- END MOTION -->
@@ -79,11 +80,9 @@ print(recent)</code></pre></figure>
 
 
 <!-- lesson-visual detail-summary -->
-<figure class="lesson-clip" id="detail-summary"><h3>같은 제출 기한이 요약과 최근 발화에 남는 방식</h3>
-<video autoplay loop muted playsinline aria-label="같은 제출 기한이 요약과 최근 발화에 남는 방식" src="detail-summary.mp4"></video>
-<figcaption>수업용 요약은 첫 세 발화 중 장소와 언어만 보존합니다. 세 번째 발화의 금요일 18시는 요약에서 빠지지만 최근 두 발화에는 남습니다. 같은 사실을 두 메모리 표현에서 찾아보세요.</figcaption></figure>
+<span class="lesson-anchor" id="detail-summary"></span>
 <!-- /lesson-visual detail-summary -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 요약에서 누락된 사실</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 요약에서 누락된 사실</h3>
 <div class="cell-before"><p>금요일 18시라는 조건이 이 문장에 남았는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">summary = <span class="tok-string">"발표 장소는 회의실 B이며 발표 언어는 한국어입니다."</span>
@@ -98,7 +97,7 @@ print(<span class="tok-string">"금요일 18시"</span> <span class="tok-keyword
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 요약과 최근 발화의 문맥 구성</h3>
 <div class="cell-before"><p>요약 한 줄과 최근 발화 두 줄을 차례로 묶고 연결된 모델 입력을 줄 단위로 출력하세요.</p>
-<p>‘금요일 18시’는 요약문에서 온 값이 아닙니다. 최근 발화 두 개 중 T3가 기한을 되살립니다. 뒤의 summary 비교는 최근 발화로 T4만 붙이므로 같은 요약을 써도 deadline이 비어 있습니다.</p>
+<p>여기서 기한은 세 번째 발화에 들어 있습니다. recent를 마지막 발화 하나로 좁히면 같은 요약문을 사용해도 입력에 기한이 남지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># summary와 recent를 묶어 줄바꿈으로 연결하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">context = [summary, *recent]
@@ -119,8 +118,13 @@ print(<span class="tok-string">'\n'</span>.join(context))</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>어떤 사실이 남는지는 대화 길이와 요약 내용에 달렸습니다. 새 주제의 대화에서도 남길 사용자 선호 한 가지를 고르고, 그 정보가 없을 때 무엇을 다시 물어볼지 정하세요.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 장소가 바뀌었을 때 요약 갱신하기</h3><div class="cell-before"><p>사용자가 발표 장소를 강의실 C로 바꿨습니다. 오래된 요약의 장소만 고치고, 제출 기한과 슬라이드 수를 담은 최근 발화를 그대로 이어 붙이세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># summary의 장소를 갱신하고 recent로부터 기한과 분량을 덧붙이세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">updated_summary = summary.replace("회의실 B", "강의실 C")
+print("\n".join([updated_summary, *recent]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">발표 장소는 강의실 C이며 발표 언어는 한국어입니다.
+최종 제출 기한은 금요일 18시입니다.
+슬라이드는 5장으로 준비합니다.</pre></div><div class="cell-after"><p>첫 줄만 바뀝니다. 예전 요약을 그대로 두고 새 장소만 뒤에 덧붙이면 모델 입력 안에 발표 장소가 두 곳이 됩니다. 여기서는 고정된 문장의 장소만 치환했으므로 표현이 다른 대화의 자동 요약까지 해결하지는 않습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
@@ -133,7 +137,7 @@ print(<span class="tok-string">'\n'</span>.join(context))</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

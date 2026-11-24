@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 54 / SQL</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQL 매개변수 바인딩과 트랜잭션</h1>
-<p class="hero-description">alice가 초안의 제목을 바꿨습니다. 바뀐 값을 읽은 직후라도 아직 확정하지 않았다면 되돌릴 수 있습니다. 이번에는 행을 넣고 값을 묶어서 보내는 방법과 변경을 확정하는 시점을 각각 살펴봅니다.</p>
+<p class="hero-description">초안 문서를 저장하고 소유자와 문서 번호를 조건으로 수정합니다. 변경 직후의 조회값을 commit 또는 rollback 이후의 값과 비교합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 054 · 8H</span><span>53일 SELECT·WHERE·키·JOIN / Python 함수·예외·with·환경변수 복습</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -36,7 +36,7 @@
 </header>
 <p class="concept-intro">SQL 매개변수는 쿼리의 자리표시자에 값을 별도로 전달합니다. 트랜잭션에서는 변경을 확정하기 전에 되돌릴 수 있습니다.</p><p>강의 원자료와 같은 문서 ID로 작은 SQLite 메모리 표를 준비합니다. 쿼리 문자열의 ?는 SQLite용 값 자리입니다. 입력값을 SQL 문장에 직접 이어 붙이지 않고 별도 튜플로 넘깁니다. PostgreSQL의 psycopg에서는 이 자리를 %s로 씁니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-owner-and-document"><h3>같은 문서 ID로 소유자만 바꾼 두 조회</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-owner-and-document.mp4" aria-label="같은 문서 ID로 소유자만 바꾼 두 조회" aria-describedby="workflow-owner-and-document-caption"></video><figcaption id="workflow-owner-and-document-caption">get_title에 같은 doc_id를 넣고 전달하는 사용자만 바꿔 두 번째 조건이 결과에 미치는 영향을 따라갑니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>같은 문서 ID</strong> · document_id = 기존 초안의 ID</li><li><strong>bob 조회</strong> · id 일치 / owner 일치 = True / False</li><li><strong>행 없음</strong> · get_title 반환값 = None</li></ol></figure>
+<figure class="execution-trace" id="workflow-owner-and-document"><h3>같은 문서 ID로 소유자만 바꾼 두 조회</h3><figcaption id="workflow-owner-and-document-caption">get_title에 같은 doc_id를 넣고 전달하는 사용자만 바꿔 두 번째 조건이 결과에 미치는 영향을 따라갑니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>같은 문서 ID</strong> · document_id = 기존 초안의 ID</li><li><strong>bob 조회</strong> · id 일치 / owner 일치 = True / False</li><li><strong>행 없음</strong> · get_title 반환값 = None</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · INSERT로 초안 저장</h3>
 <div class="cell-before"><p>초기 자료는 커밋합니다. 이 셀을 다시 실행하면 모든 실습 값이 처음으로 돌아갑니다.</p>
 </div>
@@ -56,6 +56,7 @@ print(get_title(<span class="tok-string">'alice'</span>, doc_id))</code></pre></
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">초안</pre></div>
 <div class="cell-after"><p>초안이 보입니다. 문서 ID가 같아도 WHERE 조건의 owner가 다르면 같은 행을 읽을 수 없습니다. 실제 서비스의 owner는 인증을 마친 요청에서 정해야 합니다.</p>
 </div>
+<p id="example-analysis">‘초안’이 조회됐다는 사실은 해당 행의 저장을 확인해 줍니다. 다른 사용자가 같은 문서 번호로 조회하거나 수정할 수 있는지는 별개입니다. 다음 쿼리에서 문서 번호와 소유자를 함께 조건에 넣어 접근 범위를 제한합니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="create"></span><div class="lesson-explanation" id="reading-create"><h3>문서 한 건을 담는 테이블</h3><p>course_documents의 id는 문서 한 건을 구별합니다. title과 content에는 각각 제목과 본문을 저장하고 owner에는 소유자를 저장합니다. 첫 셀이 초안을 넣고 commit한 뒤에는 이 행을 기준으로 수정 전후를 비교할 수 있습니다.</p></div>
@@ -86,17 +87,15 @@ print(get_title(<span class="tok-string">'alice'</span>, doc_id))</code></pre></
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-tx -->
-<figure class="lesson-clip" id="visual-tx"><h3>rollback()이 되돌리는 값</h3>
-<video autoplay loop muted playsinline aria-label="rollback()이 되돌리는 값" src="visual-tx.mp4"></video>
-<figcaption>같은 연결에서는 UPDATE 직후 수정한 초안이 보입니다. 트랜잭션을 되돌리면 다시 조회한 제목은 마지막으로 확정된 초안입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-tx"></span>
 <!-- /lesson-visual visual-tx -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · UPDATE 직후 행 조회</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · UPDATE 직후 행 조회</h3>
 <div class="cell-before"><p>아직 commit을 호출하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">db.execute(<span class="tok-string">"UPDATE course_documents SET title = ? WHERE id = ? AND owner = ?"</span>, (<span class="tok-string">"수정한 초안"</span>, doc_id, owner))
 print(get_title(owner, doc_id))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">수정한 초안</pre></div>
-<div class="cell-after"><p>수정한 초안입니다. 이 출력은 같은 연결에서 새 값을 읽었다는 증거이며 변경이 영구 저장됐다는 증거는 아닙니다.</p>
+<div class="cell-after"><p>수정한 초안입니다. 이 출력은 같은 연결에서 새 값을 읽었다는 증거이며 다른 연결에서도 이 변경을 읽을 수 있는지는 보여 주지 않습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="change"></span><div class="lesson-explanation" id="reading-change"><h3>문서를 새로 넣기와 제목 바꾸기</h3><p>INSERT는 새 ID와 소유자·제목·본문을 한 행으로 저장합니다. 뒤의 UPDATE는 WHERE에서 같은 문서 ID와 소유자를 모두 지정하고, 이미 있는 행의 title만 수정한 초안으로 바꿉니다.</p></div>
@@ -129,7 +128,7 @@ print(get_title(owner, doc_id))</code></pre></figure>
 </details>
 </article>
 <span class="lesson-anchor" id="delete"></span><div class="lesson-explanation" id="reading-delete"><h3>DELETE와 대상 행 검사</h3><div class="prose"><p>DELETE는 조건에 맞는 행을 지웁니다. 열 하나를 비우는 UPDATE와 다릅니다. 아래 문장은 오늘 만든 새 실습 문서 한 행만 대상으로 삼습니다. WHERE가 빠진 DELETE는 테이블의 모든 행을 대상으로 하므로 그대로 실행하지 않습니다.</p>
-<p>sql/054_changes.sql은 BEGIN부터 COMMIT까지 한 묶음으로 제공합니다. 삽입한 제목은 초안, 수정 후 제목은 수정한 초안, 삭제 뒤 조회는 0행이 예상됩니다. 마지막에 행이 없는 이유는 오류로 되돌렸기 때문이 아니라, 묶음 안에서 그 행을 삭제하고 확정했기 때문입니다.</p>
+<p>셀 05에서는 삭제를 커밋하지 않습니다. 삭제 직후 get_title은 None을 반환하고 rollback 다음에는 앞서 확정한 제목 ‘초안’을 다시 읽습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>세 명령 비교</caption><thead><tr><th scope="col">명령</th><th scope="col">바뀌는 것</th><th scope="col">실행 뒤 확인</th></tr>
 </thead><tbody><tr><td>INSERT</td><td>새 행 추가</td><td>같은 ID 조회</td></tr>
@@ -160,7 +159,7 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 <span class="tok-keyword">else</span>:
     print(<span class="tok-string">"PostgreSQL 변경은 준비된 수업 커널에서 확인하세요."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">PostgreSQL 변경은 준비된 수업 커널에서 확인하세요.</pre></div>
-<div class="cell-after"><p>실행한 PostgreSQL에서는 “조회문 복습”이 나와야 합니다. 접속 준비 안내는 PostgreSQL에서 변경이 성공했다는 뜻이 아닙니다. 앞에서 실행한 메모리 실습은 SQL 변경 순서를 확인한 결과입니다. 서버 실습에는 psycopg, 수업용 PostgreSQL 연결, 임시 테이블 생성 권한이 필요합니다. HK_COURSE_USE_POSTGRES=1인 수업 커널에서 실행한 뒤 바인딩한 제목과 다시 읽은 값을 비교하세요.</p>
+<div class="cell-after"><p>PostgreSQL 선택 셀에서 임시 표를 만든 경우 출력은 ‘조회문 복습’입니다. 접속 준비 안내는 PostgreSQL에서 변경이 성공했다는 뜻이 아닙니다. 앞에서 실행한 메모리 실습은 SQL 변경 순서를 확인한 결과입니다. 서버 실습에는 psycopg, 수업용 PostgreSQL 연결, 임시 테이블 생성 권한이 필요합니다. HK_COURSE_USE_POSTGRES=1인 수업 커널에서 실행한 뒤 바인딩한 제목과 다시 읽은 값을 비교하세요.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="connect"></span><div class="lesson-explanation" id="reading-connect"><h3>선택 셀의 PostgreSQL 연결</h3><p>이 셀은 psycopg가 설치되고 HK_COURSE_USE_POSTGRES 값이 1일 때 연결을 엽니다. 연결이 준비되면 임시 테이블 hk_note에서 값을 바인딩해 저장·조회하고 rollback합니다. 기본 SQLite 셀은 PostgreSQL 연결 없이도 실행할 수 있습니다.</p></div>
@@ -173,8 +172,15 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>문서 등록과 질문 기록을 한 동작으로 묶을 때 두 번째 변경이 실패하면 첫 번째 변경도 되돌려야 할지 정하세요. 두 SQL문을 어느 트랜잭션에 넣을지 판단하는 근거가 됩니다.</p>
-</div>
+<article class="notebook-cell" id="applied-practice" data-cell="7" data-task="1"><h3>과제 07 · 수정된 행이 0건일 때의 결과 확인하기</h3><div class="cell-before"><p>문서 ID는 그대로 두고 bob이 제목을 바꾸려는 경우를 조회하세요. UPDATE로 바뀐 행 수와 alice가 다시 읽은 제목을 함께 출력하세요.</p></div>
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># 제목을 '확정본'으로 바꾸되 id와 owner를 모두 조건에 넣으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">change = db.execute(
+    "UPDATE course_documents SET title = ? WHERE id = ? AND owner = ?",
+    ("확정본", doc_id, "bob"),
+)
+print(change.rowcount, get_title("alice", doc_id))
+db.rollback()</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">0 초안</pre></div><div class="cell-after"><p>SQL 문장은 정상 실행됐지만 두 조건을 만족한 행이 없습니다. 성공 응답을 만들기 전에 반영된 행 수를 확인하면 엉뚱한 사용자에게 수정 완료를 알리는 일을 막을 수 있습니다.</p></div></details></article>
 </section>
 
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
@@ -191,7 +197,7 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

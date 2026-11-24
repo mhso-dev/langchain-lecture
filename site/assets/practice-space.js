@@ -9,18 +9,20 @@
   const teal = 0x22c9bb, amber = 0xffb25b, muted = 0x405573, white = 0xc6dafa;
   let renderer, scene, camera, diagram;
   const T = window.THREE;
-  try {
-    renderer = new T.WebGLRenderer({antialias:true, alpha:true});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.domElement.setAttribute('aria-hidden', 'true');
-    stage.append(renderer.domElement);
-    scene = new T.Scene();
-    camera = new T.OrthographicCamera(-6,6,2.9,-2.9,.1,80);
-    camera.position.set(0,0,18);
-    scene.add(new T.HemisphereLight(0xffffff,0x7587a2,1.8));
-    const lamp = new T.DirectionalLight(0xffffff,1.8);
-    lamp.position.set(-3,5,8); scene.add(lamp);
-  } catch (err) { renderer = null; stage.hidden = true; }
+  if (stage && T) {
+    try {
+      renderer = new T.WebGLRenderer({antialias:true, alpha:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.domElement.setAttribute('aria-hidden', 'true');
+      stage.append(renderer.domElement);
+      scene = new T.Scene();
+      camera = new T.OrthographicCamera(-6,6,2.9,-2.9,.1,80);
+      camera.position.set(0,0,18);
+      scene.add(new T.HemisphereLight(0xffffff,0x7587a2,1.8));
+      const lamp = new T.DirectionalLight(0xffffff,1.8);
+      lamp.position.set(-3,5,8); scene.add(lamp);
+    } catch (err) { renderer = null; stage.hidden = true; }
+  }
 
   function solid(geometry,x,y,color,z=0) {
     const obj = new T.Mesh(geometry,new T.MeshStandardMaterial({color,roughness:.55}));
@@ -120,14 +122,22 @@
     docs.forEach((d,i)=>{const x=(i-1)*3.45;box(x,0,2.9,1.2,i<k?(i===1?amber:teal):muted);label('#'+(i+1),x,.99);label(d,x,0,.31,'#0b192d');});
     return '기대 문서는 2위입니다. k = '+k+'일 때 Recall@k = '+(k>=2?'1':'0')+', 상위 k 안에서 계산한 첫 적중 순위의 역수 = '+(k>=2?'0.5':'0')+'입니다.';
   }
-  function rerank(v) {
-    const a='.',b='도서 대출 기간은 14일입니다', before=[a,b],after=v==='on'?[b,a]:before;
-    label('검색 후보',-2.9,1.78);label('최종 순위',2.9,1.78);
-    before.forEach((d,i)=>{const y=1-i*2.1,n=after.indexOf(d),y2=1-n*2.1,c=i?teal:amber;
-      line(-1.6,y,1.6,y2,c);box(-3,y,2.9,.86,c);box(3,y2,2.9,.86,c);
-      label(i?'14일 문장':'.',-3,y,.31,'#102236');label(i?'14일 문장':'.',3,y2,.31,'#102236');
+  function rerank(mode) {
+    const candidates = [
+      { id: 'library-1:1', text: '.', containsLoan: false },
+      { id: 'library-1:0', text: '도서 대출 기간은 14일입니다', containsLoan: true }
+    ];
+    const ranked = candidates.slice();
+    if (mode === 'on') ranked.sort((a, b) => Number(b.containsLoan) - Number(a.containsLoan));
+    const items = ranked.map((doc) => {
+      const item = document.createElement('li');
+      const id = document.createElement('code');
+      id.textContent = doc.id;
+      item.append(id, '　', doc.text);
+      return item;
     });
-    return '1위 「'+after[0]+'」 · 2위 「'+after[1]+'」. 후보 수는 두 건입니다.';
+    panel.querySelector('.ranked-documents').replaceChildren(...items);
+    return '1위 ' + ranked[0].id + ' · 후보 2건 · 정렬 키는 본문에 ‘대출’이 있는지 여부입니다.';
   }
   function memory(n) {
     const turns=['장소 · 회의실 B','언어 · 한국어','기한 · 금요일 18시','분량 · 5장'];
@@ -213,24 +223,15 @@
     return event+' · '+ref+' · 검사 '+(check==='pass'?'성공':'실패')+' → publish '+(allowed?'실행':'생략')+'.';
   }
   function wrapping(width) {
-    const left=-4.95, scale=.0214, gap=10, input=180, button=100;
-    const wrap=input+gap+button>width, right=left+width*scale;
-    line(left,1.25,right,1.25,white);line(right,1.25,right,-1.65,white);
-    function element(text,x,y,w,c) {box(x+w*scale/2,y,w*scale,.78,c);label(text,x+w*scale/2,y,.30,'#102236');}
-    element('입력 180',left,.46,input,teal);
-    element('버튼 100',wrap?left:left+(input+gap)*scale,wrap?-.72:.46,button,amber);
-    return '고정 폭 비교 예시 · 180 + 10 + 100 = 290px. 컨테이너 '+width+'px에서 버튼은 '+(wrap?'둘째':'첫째')+' 줄입니다.';
+    panel.querySelector('.wrapping-example').style.width = width + 'px';
+    const wraps = 180 + 10 + 100 > width;
+    return '입력 180px + 간격 10px + 버튼 100px = 290px. 설정한 폭 ' + width +
+      'px에서 버튼은 ' + (wraps ? '둘째' : '첫째') + ' 줄에 배치됩니다.';
   }
   function substring(needle) {
-    const titles=['복습 50%','복습 마무리'];
-    const positions=titles.map(title=>title.indexOf(needle)+1);
-    titles.forEach((title,i)=>{
-      const y=.85-i*1.7;
-      label(title,-2.8,y,.42);
-      box(1.9,y,3.2,.85,positions[i]?teal:muted);
-      label('instr = '+positions[i],1.9,y,.32,positions[i]?'#102236':'#ffffff');
-    });
-    return '검색어 「'+needle+'」 · instr()가 0보다 큰 행은 '+positions.filter(Boolean).length+'건입니다. 위치는 1부터 셉니다.';
+    const titles = ['복습 50%', '복습 마무리'];
+    return titles.map(title => '「' + title + '」 → ' + (title.indexOf(needle) + 1)).join('　/　') +
+      ' · instr()의 결과는 첫 글자가 1, 일치하는 문자열이 없으면 0입니다.';
   }
   function equipment(question) {
     const found=['A','B'].filter(id=>question.includes('장비 '+id));
@@ -240,14 +241,9 @@
       '장비 '+found[0]+'만 일치해 점검 안내를 돌려줍니다.'+(question.includes('교체')?' 이 규칙은 교체 일정이라는 의도를 검사하지 않아 오답입니다.':'');
   }
   function regexBoundary(input) {
-    const output=input.replace(/장비([AB])(?=$|[^A-Za-z0-9])/g,'장비 $1');
-    const chars=[...output];
-    chars.forEach((c,i)=>{
-      const x=(i-(chars.length-1)/2)*1.05, inserted=output!==input&&c===' ';
-      box(x,0,.91,1.13,inserted?amber:teal);
-      label(c===' '?'␣':c,x,0,.5,'#102236');
-    });
-    return '입력 「'+input+'」 → 출력 「'+output+'」. '+(input===output?'경계 조건을 통과하지 않아 원문을 유지합니다.':'A 또는 B 앞에 공백 한 칸을 넣었습니다.');
+    const output = input.replace(/장비([AB])(?=$|[^A-Za-z0-9])/g, '장비 $1');
+    return '입력 「' + input + '」 → 출력 「' + output + '」 · ' +
+      (output === input ? '경계 조건을 만족하지 않아 원문을 유지합니다.' : '장비명과 영문자 사이에 공백을 삽입했습니다.');
   }
   function taskDenominator(fourth) {
     const outcomes=['success','failed','aborted',fourth];

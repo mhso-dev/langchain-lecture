@@ -1,8 +1,10 @@
 # AI 엔지니어링 교재
 
-일반 수업 75장과 프로젝트 41장을 교육일 순서대로 읽는 학생용 사이트다. 목차는 `/`, 각 장은 `/chapter01/`부터 `/chapter116/`까지 독립된 주소를 쓴다. 각 장의 제목과 목차에는 실습에서 쓰는 개념·문법·API 이름을 표시한다.
+목차는 일반 수업 75장(1–42, 53–85장)을 교육일 순서대로 보여 준다. ‘프로젝트 참고자료도 표시’를 선택하면 이전에 작성한 중간·최종 프로젝트 자료 41장을 열 수 있다. 목차는 `/`, 각 장은 `/chapter01/`부터 `/chapter116/`까지 독립된 주소를 쓴다. 각 장의 제목과 목차에는 실습에서 쓰는 개념·문법·API 이름을 표시한다.
 
 ## 한 장 수정하기
+
+일반 수업의 최근 집필·실행 범위는 [75장 전수검수 기록](reports/classroom-review.md)에서 확인한다.
 
 교육 내용을 고칠 때는 [노트북 중심 개편 계획](reports/notebook-first-plan.md)과 [116장 작업표](reports/notebook-revision-map.md)에서 그 장의 입력 자료, 학생이 직접 작성할 코드나 문서, 확인할 결과를 먼저 찾는다.
 
@@ -15,7 +17,7 @@
 | 공통 디자인·조작·이미지·Three.js | `site/assets/` |
 | 이전·다음 장 탐색과 사이트 빌드 | `scripts/build.mjs` |
 
-Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 실험이 있는 장에서는 `#practice-space`로 바로 이동할 수 있다. 무음 영상은 개념을 배우는 절에서 자동 반복 재생된다. [장별 시각 자료 검토 기록](reports/visual-lessons.md)에서 각 장면의 위치와 예시를 확인할 수 있다. 새 영상의 작화와 웹·노트북 반영 스크립트는 `artwork/visual_lessons/`에 있다.
+Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 실험이 있는 장에서는 `#practice-space`로 바로 이동할 수 있다. 남긴 영상은 학생이 직접 재생하고 멈출 수 있다. 실행값은 본문이나 노트북에서도 읽을 수 있다. [장별 시각 자료 검토 기록](reports/visual-lessons.md)에서 각 장면의 위치와 예시를 확인할 수 있다. 새 영상의 작화와 웹·노트북 반영 스크립트는 `artwork/visual_lessons/`에 있다.
 
 ## 확인하기
 
@@ -28,6 +30,12 @@ python3 -m http.server 8000 --directory dist
 ```
 
 브라우저에서 `http://localhost:8000/`을 연다. 검사는 116개 장과 노트북, 실제 파일 경로와 HTML 앵커를 대조한다. 셀 실행 여부와 수업 내용의 교육 검수는 해당 장의 변경 기록에 따로 적는다.
+
+일반 수업 오프라인 교재는 빌드 후 다음 명령으로 묶는다. 압축을 풀어 `index.html`을 열면 목차와 노트북 다운로드가 작동한다.
+
+```sh
+python3 scripts/package_classroom.py ../deliverables/classroom-75.zip
+```
 
 ## 변경과 배포
 

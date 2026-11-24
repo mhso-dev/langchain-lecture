@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 113 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>파일 백업과 세션 데이터 복원</h1>
-<p class="hero-description">프로그램을 다시 켰다는 보고를 받았습니다. 점검 담당자가 보던 규정과 대화까지 살아났는지는 별도 질문입니다. 운영 원본 대신 임시 가상 세션을 새 위치에 복원하고, 내용을 다시 읽는 순서를 따라갑니다.</p>
+<p class="hero-description">임시 세션 사본을 별도 위치에 복원하고 저장된 요청을 다시 조회합니다. 원본 보존, 사본의 바이트 일치, 실제 업무 데이터의 복구 범위를 구분해 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -33,7 +33,7 @@
 </div>
 </header>
 <p class="concept-intro">백업 파일의 존재만으로는 복구 여부를 알 수 없습니다. 다른 위치에서 사본을 열고 필요한 레코드가 그대로 읽히는지 확인합니다.</p><p>복구 기록 예시　① 가상 세션 파일을 준비 ② 별도 디렉터리에 복구 ③ 복구 직후 원본과 바이트 대조 ④ 새 위치에서 마지막 요청 ID 읽기. 운영 상황에서는 복구 시점과 새 쓰기를 멈췄는지 먼저 확인해야 합니다. 아래 셀은 자신이 만든 임시 폴더 안에서만 파일을 만듭니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>원본과 별도 위치에 복원한 사본</h3><video autoplay loop muted playsinline aria-label="원본과 별도 위치에 복원한 사본" src="concept.mp4"></video><figcaption>왼쪽 보관함에 원본이 남아 있는 동안 오른쪽 사본을 열어 봅니다. 복구 검증은 사본을 실제로 읽고 필요한 값을 대조하는 작업입니다.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 세션 사본의 복원과 재조회</h3>
+<span class="lesson-anchor" id="concept-clip"></span><article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 세션 사본의 복원과 재조회</h3>
 <div class="cell-before"><p>읽기 확인은 복구 대상에서 수행합니다. 원본 내용으로 답을 출력하면 잘못된 복구 경로도 성공으로 보입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> pathlib <span class="tok-keyword">import</span> Path
@@ -54,6 +54,7 @@
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True r6</pre></div>
 <div class="cell-after"><p>True와 r6가 나옵니다. 첫 값은 현재 두 사본의 바이트 일치이고 둘째 값은 복구한 사본을 읽은 결과입니다. 셀이 끝나면 이 셀의 임시 디렉터리는 정리됩니다.</p>
 </div>
+<p id="example-analysis">복원한 사본에서 요청 r6을 다시 읽은 것이 이번 검사의 범위입니다. 운영 복구 시간을 제시하려면 운영 백업을 대상으로 복원을 수행하고, 필요한 요청을 다시 조회할 때까지 걸린 시간을 기록해야 합니다. 로컬 사본의 성공과 운영 훈련 결과를 분리합니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>True와 r6이 확인한 복원 결과의 차이</h3><p>True는 복사한 두 파일을 바이트 단위로 비교한 결과입니다. r6은 복구한 위치에서 JSON을 다시 읽고 마지막 요청 ID를 꺼낸 값입니다. 바이트가 같다는 검사와 복구 파일을 실제로 파싱해 원하는 기록을 찾는 검사를 함께 수행한 셈입니다.</p></div>
 
@@ -68,11 +69,9 @@
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-replay -->
-<figure class="lesson-clip" id="detail-replay"><h3>복구 파일에서 r6과 r0을 다시 찾기</h3>
-<video autoplay loop muted playsinline aria-label="복구 파일에서 r6과 r0을 다시 찾기" src="detail-replay.mp4"></video>
-<figcaption>최근 요청 r2~r6을 보존한 가상 복구 기록입니다. r6 재요청은 목록에서 찾아 거부하지만, 보존 구간 밖의 r0까지 과거에 처리했는지는 이 목록으로 판정할 수 없습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-replay"></span>
 <!-- /lesson-visual detail-replay -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 복원 범위 기록</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 복원 범위 기록</h3>
 <div class="cell-before"><p>제공 기록에서 원본이 그대로였는지와 운영 자료를 복구한 적이 있는지를 읽어 두 범위를 한 문장씩 구분하세요.</p>
 <p>셀에서 읽은 마지막 값 r6와 임시 사본의 요청 r5·r6를 재현 기록에 적습니다. 보존 기간을 지켰는지와 같은 요청이 두 번 저장되지 않았는지는 별도 검사의 기록을 보고 채우세요.</p>
 </div>
@@ -101,7 +100,7 @@ print(<span class="tok-string">"운영 자료 실제 복구"</span>, record[<spa
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,8 +19,8 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 79 / 120</span><span class="template-badge">학생용 교재</span></div>
 <h1>JavaScript 폼 이벤트와 fetch 응답 처리</h1>
-<p class="hero-description">과정 안내 질문을 입력하고 전송을 누르면 어떤 값이 보내질까요? 78장의 투두 화면에서 입력칸과 버튼을 구별했습니다. 이번에는 별도 과정 안내 사례를 사용합니다. 노트북에서 submit 이벤트와 HTTP 응답을 재현하며 화면에 넣을 문장을 선택합니다.</p>
-<div class="hero-meta"><span>웹 기초</span><span>8H · 전반 4H + 후반 4H</span><span>69·78일</span></div>
+<p class="hero-description">과정 안내 화면의 submit 이벤트에서 요청 JSON을 만들고, HTTP 응답을 결과 영역에 반영합니다. 노트북에서는 이벤트와 응답을 재현해 정상·오류 경로를 구분합니다.</p>
+<div class="hero-meta"><span>교육일 79 · 8시간</span><span>선수 수업 · 69장 HTTP 응답 · 78장 입력 요소</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -35,14 +35,12 @@
 </header>
 <p class="concept-intro">웹 폼은 제출 이벤트에서 입력값을 읽어 요청 본문을 만듭니다. 비동기 응답을 받으면 상태를 확인한 뒤 화면에 표시할 값을 꺼냅니다.</p><p>브라우저의 submit 처리기는 event.preventDefault()로 기본 페이지 이동을 막고 입력값의 양끝을 정리합니다. 노트북에서는 Node.js가 설치된 수업 커널에서 실제 JavaScript를 실행합니다. DOM을 띄우지 않고 표준 EventTarget을 이용해 제출 동작만 재현합니다.</p>
 <!-- lesson-visual visual-event -->
-<figure class="lesson-clip" id="visual-event"><h3>폼 문자열이 JSON 요청 본문이 되는 과정</h3>
-<video autoplay loop muted playsinline aria-label="폼 문자열이 JSON 요청 본문이 되는 과정" src="visual-event.mp4"></video>
-<figcaption>submit 이벤트에서 기본 동작을 멈추고 trim()으로 양끝 공백을 없앱니다. question과 k를 담은 객체를 직렬화한 값이 요청 본문입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-event"></span>
 <!-- /lesson-visual visual-event -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="values"></span><div class="lesson-explanation" id="reading-values"><h3>제출 이벤트가 읽는 입력값</h3><p>submit 이벤트에서 preventDefault()로 기본 폼 전송을 멈추고 입력값의 양끝 공백을 trim()으로 제거합니다. JSON.stringify가 만든 문자열을 보면 question은 문자열이고 k는 숫자입니다.</p></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · JavaScript 실행 환경 준비</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · JavaScript 실행 환경 준비</h3>
 <div class="cell-before"><p>코드를 바꿀 곳은 다음 셀의 JavaScript입니다. 제공 함수는 실행 결과를 노트북에 표시합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> subprocess
@@ -67,8 +65,7 @@ form.addEventListener("submit", event =&gt; {
 form.dispatchEvent(new Event("submit", {cancelable: true}));
 """</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{"question":"과제는 어디에 내나요?","k":2}</pre></div>
-<div class="cell-after"><p>JSON에는 정리한 question과 검색 개수 k가 담겼습니다. 이 단계에서는 네트워크 요청이나 답변 표시가 일어나지 않았습니다.</p>
-</div>
+<div class="cell-after"><p id="example-analysis">출력된 JSON의 question은 양끝 공백을 뺀 문자열이고 k는 숫자 2입니다. 이 셀은 요청 본문을 만드는 단계에서 끝납니다. 다음 셀에서 응답을 만들고 표시할 답변을 읽습니다.</p></div>
 </article>
 <span class="lesson-anchor" id="contract"></span><span class="lesson-anchor" id="reading-contract"></span>
 <span class="lesson-anchor" id="sessions"></span><div class="lesson-explanation" id="reading-sessions"><h3>대화 경로와 질문 본문의 역할</h3><p>예제의 경로에는 chat-a가, JSON 본문에는 question과 k가 들어갑니다. 경로는 어느 대화로 보낼지를, 본문은 이번에 무엇을 물을지를 나타냅니다. 이 셀은 네트워크에 접속하지 않고 fixtureFetch로 응답을 만듭니다.</p><div class="worked-case" id="flow-6"><h3>chat-a의 모의 응답에서 읽는 값</h3><span class="lesson-anchor" id="flow-6-step-0"></span><span class="lesson-anchor" id="flow-6-step-1"></span><span class="lesson-anchor" id="flow-6-step-2"></span><span class="lesson-anchor" id="flow-6-step-3"></span><p>셀 03은 대화가 이미 있다는 가정 아래 /conversations/chat-a/ask를 사용합니다. fixtureFetch가 질문을 읽고 result.answer를 돌려주면 예제 객체의 textContent에 넣습니다. 대화 생성이나 DB 저장을 실행하는 셀은 없습니다.</p></div></div>
@@ -86,8 +83,8 @@ form.dispatchEvent(new Event("submit", {cancelable: true}));
 
 <span class="lesson-anchor" id="async"></span><div class="lesson-explanation" id="reading-async"><h3>응답 도착과 JSON 읽기의 두 await</h3><p>첫 await는 모의 함수가 돌려주는 Response를 기다립니다. 성공 상태를 확인한 뒤 두 번째 await로 JSON 본문을 읽습니다. 응답 객체 자체에는 아직 result.answer 형태의 속성이 없습니다.</p></div>
 <span class="lesson-anchor" id="origin"></span><span class="lesson-anchor" id="reading-origin"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-response-to-dom"><h3>모의 POST 응답에서 답변 텍스트가 되는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-response-to-dom.mp4" aria-label="모의 POST 응답에서 답변 텍스트가 되는 경로" aria-describedby="workflow-response-to-dom-caption"></video><figcaption id="workflow-response-to-dom-caption">앞 셀의 질문을 넣은 성공 경로입니다. 질문이 달라 fixtureFetch가 422를 반환하면 본문 표시 단계에 도달하지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>POST</strong> · 대화 경로 = chat-a/ask</li><li><strong>질문 확인</strong> · 질문 = 과제는 어디에 내나요?</li><li><strong>응답 확인</strong> · response.ok = true</li><li><strong>JSON 읽기</strong> · 읽을 필드 = result.answer</li><li><strong>텍스트 표시</strong> · 표시 위치 = element.textContent</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 응답 JSON을 모의 객체의 textContent에 대입</h3>
+<span class="lesson-anchor" id="workflow-response-to-dom"></span><span class="lesson-anchor" id="workflow-response-to-dom-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 응답 JSON을 모의 객체의 textContent에 대입</h3>
 <div class="cell-before"><p>fetch 응답과 JSON 해석을 각각 await합니다. 여기서 element는 화면 요소의 textContent 속성만 흉내 낸 객체입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 16줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">run_js(<span class="tok-string">"""
@@ -114,17 +111,26 @@ console.log(element.textContent);
 <span class="lesson-anchor" id="practice"></span><span class="lesson-anchor" id="reading-practice"></span>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · HTTP 실패 시 분기</h3>
-<div class="cell-before"><p>404 응답의 ok를 읽어 ‘대화를 찾을 수 없습니다’라는 문구를 선택하는 JavaScript를 작성하세요.</p>
-<p>빈 본문을 돌려준 404에서는 JSON을 읽기 전에 멈춥니다. 저장 실패 503의 응답에는 이미 만든 답과 저장 경고가 남을 수 있습니다. 상태 코드를 확인한 뒤 그 API가 약속한 오류 본문 형식에 따라 읽으세요.</p>
+<div class="cell-before"><p>본문이 빈 404 응답을 받더라도 JSON 파싱 오류가 나지 않게 처리하세요. 앞 셀의 성공 처리와 같은 위치에서 상태 코드를 먼저 읽고 안내 문구를 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># run_js에 JavaScript를 전달하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">run_js(<span class="tok-string">'const r = new Response(null,{status:404}); console.log(r.ok ? "완료" : "대화를 찾을 수 없습니다");'</span>)</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"># Node의 Response(null, {status: 404})를 사용해 상태별 처리를 작성하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">run_js("""
+const response = new Response(null, {status: 404});
+if (response.status === 404) {
+  console.log("대화를 찾을 수 없습니다");
+} else if (response.ok) {
+  const body = await response.json();
+  console.log(body.result.answer);
+} else {
+  console.log("HTTP " + response.status);
+}
+""")</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">대화를 찾을 수 없습니다</pre></div>
-<div class="cell-after"><p>404 응답은 Promise가 정상적으로 돌아올 수 있어도 ok는 false입니다. HTTP 오류와 연결 자체가 끊겨 Promise가 거절된 경우를 따로 처리합니다. 셀에서 응답을 준비한 곳은 Node입니다. 브라우저에서 확인할 때는 첫 POST 응답의 대화 ID를 다음 POST가 실제로 보내는지 개발자 도구의 네트워크 기록에서 대조하세요.</p>
+<div class="cell-after"><p>빈 본문에 response.json()을 먼저 호출하면 예외가 나서 안내 문구까지 가지 못합니다. 여기서는 Response를 직접 만들었습니다. 실제 연결이 끊겨 응답 객체 자체를 받지 못한 경우는 별도의 예외 처리 대상입니다.</p>
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="states"></span><div class="lesson-explanation" id="reading-states"><h3>404 응답을 받았을 때 표시할 문구</h3><p>과제에서는 상태 404인 Response를 직접 만듭니다. r.ok가 false이므로 완료 문구를 생략하고 대화를 찾을 수 없다는 문자열을 출력합니다.</p></div>
+<span class="lesson-anchor" id="states"></span><div class="lesson-explanation" id="reading-states"><h3>404 응답을 받았을 때 표시할 문구</h3><p>404인 Response는 빈 본문을 가질 수 있습니다. 이 경우에는 상태별 안내를 먼저 선택해 JSON 파싱 오류가 실제 HTTP 상태를 가리지 않게 합니다.</p></div>
 <span class="lesson-anchor" id="cancel"></span><span class="lesson-anchor" id="reading-cancel"></span>
 
 </section>
@@ -132,7 +138,7 @@ console.log(element.textContent);
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>같은 대화에서 이전 요청의 늦은 응답이 새 답변을 덮을 수 있습니다. 제출할 때 요청 번호를 기억하고 화면을 바꾸기 직전 현재 요청인지 확인할 위치를 찾아보세요.</p>
+<div class="prose"><p>제출 이벤트의 입력에는 양끝 공백이 있고 JSON 요청에는 없습니다. 응답이 실패했을 때 입력을 다시 보내기 전에는 어느 대화 ID와 질문이 요청에 실렸는지 확인합니다.</p>
 </div>
 
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
@@ -142,7 +148,7 @@ console.log(element.textContent);
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

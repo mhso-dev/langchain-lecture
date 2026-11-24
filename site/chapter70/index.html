@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,8 +18,8 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 70 / HTTP API</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 문서 상태와 대화 턴 저장</h1>
-<p class="hero-description">파일 이름은 보이는데 그 문서로 질문하면 근거가 없습니다. 문서를 접수한 때, 원문을 읽어 검색할 수 있게 된 때, 답변을 대화 이력에 저장한 때는 서로 다릅니다. 작은 SQL 데이터베이스에서 각 단계의 행을 확인합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 070 · 8H</span><span>54일 SQL 저장 함수·트랜잭션, 60일 명시 기억, 69일 소유 대화·스트림</span></div>
+<p class="hero-description">SQL 데이터베이스에서 문서 접수, 본문 처리 완료, 대화 저장을 구분합니다. 파일은 접수됐지만 아직 질문에 사용할 수 없는 상태를 조회 결과로 확인합니다.</p>
+<div class="hero-meta"><span>교육일 70 · 8시간</span><span>선수 수업 · 54장 SQL 변경 · 60장 사용자별 기억 · 69장 대화 이력</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -39,14 +39,12 @@
 
 
 <!-- lesson-visual visual-upload -->
-<figure class="lesson-clip" id="visual-upload"><h3>접수된 문서는 언제 검색할 수 있을까요?</h3>
-<video autoplay loop muted playsinline aria-label="접수된 문서는 언제 검색할 수 있을까요?" src="visual-upload.mp4"></video>
-<figcaption>doc-1 행을 만들었을 때 본문은 NULL입니다. 바이트를 해독해 본문과 상태를 함께 갱신한 뒤에야 ready 조건의 검색에 포함됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-upload"></span>
 <!-- /lesson-visual visual-upload -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="states"></span><div class="lesson-explanation" id="reading-states"><h3>received와 ready를 가르는 조건</h3><p>접수 직후 doc-1의 body는 NULL이고 status는 received입니다. 본문을 디코딩해 저장하면서 같은 행의 상태를 ready로 바꿉니다. 검색할 때는 ready인 행만 선택하므로 접수만 끝난 문서는 답변 근거에 들어가지 않습니다.</p></div>
 <span class="lesson-anchor" id="upload"></span><div class="lesson-explanation" id="reading-upload"><h3>UTF-8 바이트를 문서 본문으로 읽기</h3><p>문자열을 encode(&quot;utf-8&quot;) 하면 바이트가 됩니다. 셀에서는 같은 인코딩으로 decode한 텍스트를 body에 저장합니다. bytes를 그대로 저장할 때와 읽어서 답변에 사용할 문자열을 저장할 때의 차이를 확인하세요.</p></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문서 접수 상태 저장</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 문서 접수 상태 저장</h3>
 <div class="cell-before"><p>과제 안내를 alice 문서로 접수합니다. 텍스트를 저장하기 전에는 ready로 표시하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> sqlite3, json
@@ -73,8 +71,7 @@ print(<span class="tok-string">"변경한 행:"</span>, change.rowcount)
 print(db.execute(<span class="tok-string">"SELECT status, body FROM docs WHERE id='doc-1'"</span>).fetchone())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">변경한 행: 1
 ('ready', '과제는 학습 관리 페이지의 과제함에 제출합니다.')</pre></div>
-<div class="cell-after"><p>ready와 읽은 문장이 함께 돌아옵니다. 읽을 수 없는 바이트를 넣었다면 ready로 바꾸는 줄까지 진행하면 안 됩니다.</p>
-</div>
+<div class="cell-after"><p id="example-analysis">이 UPDATE는 디코딩한 body와 ready를 같은 행에 기록합니다. 디코딩이 실패하면 SQL을 호출하기 전에 예외가 납니다. 같은 셀을 다시 실행했을 때 변경 수가 0이라면 새로 처리한 행이 없었다는 뜻입니다.</p></div>
 </article>
 <span class="lesson-anchor" id="mapping"></span><span class="lesson-anchor" id="reading-mapping"></span>
 <span class="lesson-anchor" id="scope"></span><div class="lesson-explanation" id="reading-scope"><h3>UPDATE의 세 조건</h3><p>doc-1이라는 ID, alice라는 소유자, received라는 이전 상태가 모두 맞아야 UPDATE가 한 행을 바꿉니다. 첫 갱신 직후 같은 UPDATE를 다시 실행한다면 상태가 이미 ready이므로 변경한 행 수는 0이 됩니다.</p></div>
@@ -84,13 +81,13 @@ print(db.execute(<span class="tok-string">"SELECT status, body FROM docs WHERE i
 <h2>답변·출처 저장과 소유자별 조회</h2>
 </div>
 </header>
-<p>답변 문장만 저장하면 같은 대화를 다시 열 때 어떤 문서와 쪽수를 썼는지 복원하기 어렵습니다. 서비스 결과 A1을 통째로 저장하고 다시 읽습니다. 수업용 doc-1 식별자는 업로드한 문서를 가리킵니다.</p>
+<p>답변 문장만 저장하면 같은 대화를 다시 열 때 어떤 문서와 쪽수를 썼는지 복원하기 어렵습니다. 답변과 출처 목록을 JSON 하나로 저장한 뒤 다시 읽습니다. 수업용 doc-1 식별자는 업로드한 문서를 가리킵니다.</p>
 
 <span class="lesson-anchor" id="service"></span><span class="lesson-anchor" id="reading-service"></span>
 <span class="lesson-anchor" id="memory"></span><span class="lesson-anchor" id="reading-memory"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-ready-to-turn"><h3>준비된 문서가 저장된 답변의 출처가 되기까지</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-ready-to-turn.mp4" aria-label="준비된 문서가 저장된 답변의 출처가 되기까지" aria-describedby="workflow-ready-to-turn-caption"></video><figcaption id="workflow-ready-to-turn-caption">doc-1이 ready가 된 뒤, alice가 chat-a에서 다시 읽는 문장이 어디서 왔는지 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>접수</strong> · 문서 상태 = received</li><li><strong>본문 등록</strong> · 변경한 행 = 1행 · ready</li><li><strong>문서 조회</strong> · 검색 조건 = alice · doc-1 · ready</li><li><strong>턴 저장</strong> · 저장 위치 = alice · chat-a</li><li><strong>출처 복원</strong> · 출처 = doc-1:p1</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 저장된 턴에서 출처 조회</h3>
-<div class="cell-before"><p>소유자의 준비된 문서에서 원문을 읽고, 답변과 함께 출처·호출 수를 저장합니다.</p>
+<span class="lesson-anchor" id="workflow-ready-to-turn"></span><span class="lesson-anchor" id="workflow-ready-to-turn-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 저장된 턴에서 출처 조회</h3>
+<div class="cell-before"><p>alice의 ready 문서에서 본문을 읽어 답변과 출처를 구성합니다. generation_calls의 1은 저장할 JSON에 직접 넣은 예시 값이며 이 셀에서 모델을 호출하지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">body = db.execute(<span class="tok-string">"SELECT body FROM docs WHERE owner=? AND id=? AND status='ready'"</span>,
                   (<span class="tok-string">"alice"</span>, <span class="tok-string">"doc-1"</span>)).fetchone()[<span class="tok-number">0</span>]
@@ -108,13 +105,21 @@ print(json.loads(saved[<span class="tok-number">0</span>])[<span class="tok-stri
 <span class="lesson-anchor" id="readback"></span><div class="lesson-explanation" id="reading-readback"><h3>소유자와 대화 이름을 함께 조회하기</h3><p>alice의 chat-a에는 결과가 한 건 있습니다. 대화 이름을 그대로 두고 소유자만 bob으로 바꾸면 두 조건을 모두 만족하는 행이 없어 fetchone()이 None을 돌려줍니다.</p></div>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 소유자 조건을 포함한 대화 조회</h3>
-<div class="cell-before"><p>bob이 chat-a를 조회할 때 행이 보이지 않는 조건을 완성하세요.</p>
+<div class="cell-before"><p>조회 함수에 소유자와 대화 이름을 전달하세요. alice가 읽은 답변의 출처 ID와, 같은 chat-a를 bob으로 읽은 결과를 순서대로 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 두 자리표시자에 소유자와 대화 이름을 넣으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">row = db.execute(<span class="tok-string">'SELECT result FROM turns WHERE owner=? AND conversation=?'</span>, (<span class="tok-string">'bob'</span>, <span class="tok-string">'chat-a'</span>)).fetchone()
-print(row)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None</pre></div>
-<div class="cell-after"><p>None입니다. 이 셀은 SQL 조회 조건을 확인했습니다. 실제 배포용 로그인과 DB 권한 설정은 별도로 검증해야 합니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">def load_turn(owner, conversation):
+    # 소유자와 대화 이름으로 조회하고, 찾은 JSON만 복원하세요.
+    pass</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">def load_turn(owner, conversation):
+    row = db.execute("SELECT result FROM turns WHERE owner=? AND conversation=?",
+                     (owner, conversation)).fetchone()
+    return json.loads(row[0]) if row is not None else None
+
+print(load_turn("alice", "chat-a")["sources"][0]["id"])
+print(load_turn("bob", "chat-a"))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">doc-1:p1
+None</pre></div>
+<div class="cell-after"><p>두 번의 조회에서 바뀐 값은 소유자뿐입니다. 항상 None을 반환하는 잘못된 함수도 bob 한 건만 시험하면 통과합니다. alice가 원래 저장한 출처까지 받는지 함께 확인합니다.</p>
 </div>
 </details>
 </article>
@@ -123,7 +128,7 @@ print(row)</code></pre></figure>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>파일 접수 후 원문을 읽지 못한 경우와 답변을 만든 뒤 턴 저장이 실패한 경우에 각각 어떤 기록을 확인할지 말해 보세요.</p>
+<div class="prose"><p>ready인데 원문이 NULL이라면 문서 처리 단계의 상태와 저장값이 맞지 않습니다. 문서는 정상인데 대화를 다시 열었을 때 출처가 없다면 turns.result에 저장한 JSON부터 확인합니다.</p>
 </div>
 
 <span class="lesson-anchor" id="failures"></span><span class="lesson-anchor" id="reading-failures"></span>
@@ -146,7 +151,7 @@ print(row)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

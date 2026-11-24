@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 105 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>RAG 화면의 오류 상태와 안내 문구</h1>
-<p class="hero-description">화면의 빨간 안내가 모두 “다시 시도하세요”라면 사용자는 문서에 답이 없어도 같은 질문을 계속 보냅니다. 근거 없음, 권한 확인 필요, 전달 여부 미확인에서 서로 다른 다음 행동을 고릅니다.</p>
+<p class="hero-description">근거 부족, 접근 거부, 저장 여부 미확인의 다음 행동을 각각 설계합니다. 재전송으로 중복 작업이 생길 수 있는 상황을 일반적인 조회 실패와 구분합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,8 +34,8 @@
 </header>
 <p class="concept-intro">근거를 찾지 못했다는 정상 응답과 서버 응답을 끝까지 받지 못한 상태는 다릅니다. 각 상태에서 사용자에게 확실히 말할 수 있는 내용만 표시합니다.</p><p>Q03의 문안 예시　“현재 허용된 자료로 교체 일정을 확인할 수 없습니다. 담당자에게 근거를 확인하세요.” 처리 자체는 끝났으므로 진행 표시를 끄고 출처를 비웁니다. 다른 사람의 대화를 찾을 수 없는 경우에는 대화가 실제로 존재하는지 드러내지 않고 현재 선택한 대화와 접근 범위를 확인하도록 안내합니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-no-evidence-card"><h3>Q03을 종료하고 담당자 확인을 안내하는 화면</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-no-evidence-card.mp4" aria-label="Q03을 종료하고 담당자 확인을 안내하는 화면" aria-describedby="workflow-no-evidence-card-caption"></video><figcaption id="workflow-no-evidence-card-caption">일정 근거를 찾지 못한 Q03은 완료된 질의입니다. 상태를 읽어 진행 표시를 끝내고 다음 행동을 안내합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>결과 수신</strong> · sources = []</li><li><strong>상태 확인</strong> · status = no_evidence</li><li><strong>안내 문구</strong> · answer의 첫 문장 = 주어진 문서에서 확인할 수 없습니다.</li><li><strong>다음 행동</strong> · 다음 행동 = 담당자에게 근거 확인</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 근거 없는 결과의 상태 카드</h3>
+<span class="lesson-anchor" id="workflow-no-evidence-card"></span><span class="lesson-anchor" id="workflow-no-evidence-card-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 근거 없는 결과의 상태 카드</h3>
 <div class="cell-before"><p>로컬 Q03의 업무 결과를 읽고 다음에 할 행동을 붙여 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">result = {<span class="tok-string">'status'</span>: <span class="tok-string">'no_evidence'</span>,
@@ -50,6 +50,7 @@
 다음 행동 · 담당자에게 근거 확인</pre></div>
 <div class="cell-after"><p>사용자가 규정에서 찾을 수 없는 일정을 어디서 확인할지 알게 됩니다. 검색이 실패했거나 서버가 응답하지 않은 상황과는 안내가 다릅니다.</p>
 </div>
+<p id="example-analysis">근거가 없을 때는 담당자에게 내용을 확인하도록 안내합니다. 저장에 실패한 경우에는 답이 계산됐을 수도 있으므로 무조건 다시 보내라고 안내하면 중복 처리가 생길 수 있습니다. 같은 오류 색상을 쓰더라도 다음 행동은 실패 단계에 맞춰 달라져야 합니다.</p>
 </article>
 </section>
 <section id="nb-uncertain" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -62,11 +63,9 @@
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-uncertain -->
-<figure class="lesson-clip" id="detail-uncertain"><h3>응답이 끊기면 저장 실패라고 할 수 있을까요?</h3>
-<video autoplay loop muted playsinline aria-label="응답이 끊기면 저장 실패라고 할 수 있을까요?" src="detail-uncertain.mp4"></video>
-<figcaption>첫 장면의 화면은 결과를 받지 못해 저장 상태를 모릅니다. 다음 장면에서는 failed가 화면에 도착하므로 저장 실패를 알릴 수 있습니다. 전송이 끊기면 같은 요청 기록부터 확인합니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-uncertain"></span>
 <!-- /lesson-visual detail-uncertain -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 저장 오류 안내</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 저장 오류 안내</h3>
 <div class="cell-before"><p>답은 계산했지만 저장이 실패한 save_failure의 상태를 보고, 다음 행동이 들어간 한 줄을 적으세요.</p>
 <p>이 사례의 요청 ID는 save_failure이고 저장 상태는 failed입니다. 오류 코드 storage_failure는 저장 단계의 실패를 뜻합니다. 서버에 요청이 도착했는지조차 모르는 경우와 구분해 화면 문구를 정하세요.</p>
 </div>
@@ -92,7 +91,7 @@
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

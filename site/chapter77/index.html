@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,8 +19,8 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 77 / CI·CD</span><span class="template-badge">학생용 교재</span></div>
 <h1>컨테이너 이미지 digest와 롤백 기준</h1>
-<p class="hero-description">배포 직전, 승인 화면에 적힌 이미지와 CI가 검사한 이미지의 이름은 같은데 digest가 다릅니다. 어떤 버전을 실제로 적용할지 정하지 않으면 되돌릴 때도 근거가 없습니다. 한 배포의 승인 조건과 실패 후 복구 경로를 로컬 기록으로 연습합니다.</p>
-<div class="hero-meta"><span>기초 이후 · 배포 자동화 준비</span><span>교육일 077 · 8H (전반 4H / 후반 4H)</span><span>75일 배포·백업/복구, 76일 같은 commit·digest 기록</span></div>
+<p class="hero-description">승인한 이미지와 배포 후보의 태그는 같지만 digest가 다른 사례를 다룹니다. 로컬 배포 기록으로 적용 조건과 실패 시 이전 이미지로 복구하는 기준을 점검합니다.</p>
+<div class="hero-meta"><span>교육일 77 · 8시간</span><span>선수 수업 · 75장 백업·복구 · 76장 작업 의존성과 후보 커밋</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -36,8 +36,8 @@
 <h2>가변 태그와 콘텐츠 지문</h2>
 </div>
 </header>
-<p class="concept-intro">태그는 다른 이미지를 가리키도록 옮길 수 있습니다. 배포 후보를 구별하려면 이미지 내용에 대응하는 digest와 기능 검사 결과를 함께 봅니다.</p><p>CI는 검사한 소스와 이미지 후보를 함께 인계합니다. CD는 환경 승인과 현재 배포 상태를 확인하고 그 후보만 적용합니다. 여기서는 작은 바이트열의 SHA-256으로 서로 다른 내용을 구별합니다. 실제 레지스트리에서 받은 manifest digest를 대신하는 수업용 값입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>이동하는 태그와 고정된 지문</h3><video autoplay loop muted playsinline aria-label="이동하는 태그와 고정된 지문" src="concept.mp4"></video><figcaption>이름표가 다른 상자로 옮겨가는 동안 두 상자의 봉인을 보세요. 같은 태그로 다시 조회해도 같은 내용이라는 보장은 없습니다.</figcaption></figure><!-- MOTION floating-tag -->
+<p class="concept-intro">태그는 다른 이미지를 가리키도록 옮길 수 있습니다. 배포 후보를 구별하려면 이미지 내용에 대응하는 digest와 기능 검사 결과를 함께 봅니다.</p><p>CI는 검사한 소스와 이미지 후보를 함께 인계합니다. CD는 환경 승인과 현재 배포 상태를 확인하고 그 후보만 적용합니다. 셀 01의 입력은 실제 이미지 파일이 아니라 course-image B와 course-image C라는 두 바이트열입니다. 이 두 값의 SHA-256부터 비교합니다. 실제 레지스트리에서 받은 manifest digest를 대신하는 수업용 값입니다.</p>
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION floating-tag -->
 
 <!-- END MOTION -->
 
@@ -45,8 +45,8 @@
 
 <span class="lesson-anchor" id="dispatch"></span><div class="lesson-explanation" id="reading-dispatch"><h3>같은 지문과 승인 여부를 함께 확인하기</h3><p>can_apply는 expected와 candidate가 같은지, 검토자가 승인했는지를 함께 봅니다. 지문이 같아도 승인하지 않은 후보는 적용하지 않습니다.</p></div>
 <span class="lesson-anchor" id="environment-review"></span><span class="lesson-anchor" id="reading-environment-review"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-candidate-gate"><h3>승인한 이미지와 후보 이미지가 달라졌을 때</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-candidate-gate.mp4" aria-label="승인한 이미지와 후보 이미지가 달라졌을 때" aria-describedby="workflow-candidate-gate-caption"></video><figcaption id="workflow-candidate-gate-caption">수업에서는 두 바이트열의 해시로 후보의 일치 여부를 연습합니다. 실제 레지스트리에서 내려받은 이미지를 검사한 결과와 구별하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>승인본 B</strong> · 승인 대상 = course-image B</li><li><strong>후보 C</strong> · 현재 후보 = course-image C</li><li><strong>지문 비교</strong> · approved == candidate = False</li><li><strong>적용 보류</strong> · can_apply = False</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 태그와 해시 지문 비교</h3>
+<figure class="execution-trace" id="workflow-candidate-gate"><h3>승인한 이미지와 후보 이미지가 달라졌을 때</h3><figcaption id="workflow-candidate-gate-caption">수업에서는 두 바이트열의 해시로 후보의 일치 여부를 연습합니다. 실제 레지스트리에서 내려받은 이미지를 검사한 결과와 구별하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>승인본 B</strong> · 승인 대상 = course-image B</li><li><strong>후보 C</strong> · 현재 후보 = course-image C</li><li><strong>지문 비교</strong> · approved == candidate = False</li><li><strong>적용 보류</strong> · can_apply = False</li></ol></figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 태그와 해시 지문 비교</h3>
 <div class="cell-before"><p>내용 한 줄이 바뀌었을 때 같은 승인값을 계속 쓸 수 있는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> hashlib
@@ -56,21 +56,26 @@ approved = digest(<span class="tok-string">b"course-image B"</span>)
 candidate = digest(<span class="tok-string">b"course-image C"</span>)
 print(approved == candidate)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>False입니다. 승인 당시 검토한 내용과 현재 후보가 다르면 배포를 중단하고 새 후보의 검사 기록을 확인합니다.</p>
-</div>
+<div class="cell-after"><p id="example-analysis">False는 B와 C의 지문이 다르다는 비교 결과입니다. 태그만 기록했다면 같은 이름이 다른 내용으로 옮겨간 뒤 어느 후보를 승인했는지 구분하기 어렵습니다.</p></div>
 </article>
 <span class="lesson-anchor" id="candidate-current"></span><span class="lesson-anchor" id="reading-candidate-current"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 적용 전 조건 검사</h3>
-<div class="cell-before"><p>승인한 digest와 후보 digest가 같고, 사람이 해당 환경의 적용을 승인했을 때만 배포를 허용하세요.</p>
+<div class="cell-before"><p>사람이 승인한 지문과 현재 후보 지문을 비교해 적용 여부를 반환하세요. 지문 불일치, 승인 누락, 두 조건 충족을 각각 검사하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># can_apply(expected, candidate, approved_by_reviewer)를 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3"><span class="tok-keyword">def</span> can_apply(expected, candidate, approved_by_reviewer):
-    <span class="tok-keyword">return</span> expected == candidate <span class="tok-keyword">and</span> approved_by_reviewer
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">def can_apply(expected, candidate, approved_by_reviewer):
+    # 동일한 후보를 승인했을 때만 True를 반환하세요.
+    pass</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">def can_apply(expected, candidate, approved_by_reviewer):
+    return expected == candidate and approved_by_reviewer
 
-print(can_apply(approved, candidate, <span class="tok-keyword">True</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
-<div class="cell-after"><p>사람이 승인했다고 표시해도 digest가 달라 False입니다. 수동 실행 버튼, 환경 승인, 후보 동일성은 각각 따로 확인합니다.</p>
+print(can_apply(approved, candidate, True))
+print(can_apply(approved, approved, False))
+print(can_apply(approved, approved, True))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False
+False
+True</pre></div>
+<div class="cell-after"><p>첫 호출에서는 승인 뒤 후보 내용이 달라졌고, 둘째에서는 후보가 같아도 승인이 없습니다. 셋째 결과만 적용 조건을 충족합니다. 적용 뒤 올바른 출처를 반환하는지는 다음 셀에서 따로 확인합니다.</p>
 </div>
 </details>
 </article>
@@ -88,14 +93,12 @@ print(can_apply(approved, candidate, <span class="tok-keyword">True</span>))</co
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-rollback -->
-<figure class="lesson-clip" id="detail-rollback"><h3>HTTP 200을 받은 이미지 B가 왜 롤백될까요?</h3>
-<video autoplay loop muted playsinline aria-label="HTTP 200을 받은 이미지 B가 왜 롤백될까요?" src="detail-rollback.mp4"></video>
-<figcaption>B는 HTTP 200을 반환하지만 출처가 None입니다. 검사 실패를 확인하면 active를 previous에 보관한 A로 되돌리고 A의 course-guide-v1:p2를 다시 읽습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-rollback"></span>
 <!-- /lesson-visual detail-rollback -->
 
 <span class="lesson-anchor" id="verify-service"></span><div class="lesson-explanation" id="reading-verify-service"><h3>health와 출처의 두 검사</h3><p>버전 B는 health 200을 반환하지만 source는 None입니다. 이 예제의 통과 기준에는 출처 course-guide-v1:p2도 있으므로 정상 HTTP 상태만 놓고 적용을 확정할 수 없습니다.</p></div>
 <span class="lesson-anchor" id="failures"></span><span class="lesson-anchor" id="reading-failures"></span>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 검증 실패 시 롤백 판단</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 검증 실패 시 롤백 판단</h3>
 <div class="cell-before"><p>health가 정상이더라도 문서 근거가 사라진 후보를 어떻게 처리하는지 보세요.</p>
 <p>앞 과제에서는 승인이 가리키는 후보와 적용할 후보가 달라서 멈췄습니다. 이번에는 B의 승인이 유효해 적용했고, 그 뒤 검사가 실패한 상황입니다. 되돌리기를 판단하는 시점이 다릅니다.</p>
 </div>
@@ -115,12 +118,37 @@ print(deployment[<span class="tok-string">"active"</span>], versions[deployment[
 <span class="lesson-anchor" id="image-rollback"></span><div class="lesson-explanation" id="reading-image-rollback"><h3>이전 버전 포인터 복구하기</h3><p>B를 적용하기 전에 A를 previous에 저장합니다. 기능 검사에 실패하면 active를 previous로 돌리므로 마지막 출력은 A와 A에 기록된 출처입니다. 이 셀은 버전 선택을 딕셔너리로 모의합니다.</p></div>
 <span class="lesson-anchor" id="database-restore"></span><span class="lesson-anchor" id="reading-database-restore"></span>
 
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="acceptance-practice">과제 04 · 잘못된 출처를 반환한 후보의 복구 검사</h3>
+<div class="cell-before"><p>후보 B도 HTTP 상태 200을 기록했지만 질문에 딸린 출처가 다른 문서입니다. 상태와 출처를 함께 검사한 뒤 후보가 탈락하면 이전판을 선택하고, 선택한 판에 같은 검사를 한 번 더 적용하세요.</p></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="extended-4-1" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="extended-4-1">release = {"A": {"health": 200, "source": "course-guide-v1:p2"},
+           "B": {"health": 200, "source": "다른-문서:p1"}}
+previous, active = "A", "B"
+expected_source = "course-guide-v1:p2"
+# release[active]를 검사하고, 실패하면 previous를 선택해 같은 검사를 다시 실행하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="extended-4-2" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="extended-4-2">release = {"A": {"health": 200, "source": "course-guide-v1:p2"},
+           "B": {"health": 200, "source": "다른-문서:p1"}}
+previous, active = "A", "B"
+expected_source = "course-guide-v1:p2"
+
+def accepts(version):
+    record = release[version]
+    return record["health"] == 200 and record["source"] == expected_source
+
+print(active, accepts(active))
+if not accepts(active):
+    active = previous
+print(active, accepts(active))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">B False
+A True</pre></div>
+<div class="cell-after"><p>후보 B에는 출처 값이 들어 있어도 기대한 문서와 다릅니다. 값이 비어 있는지만 검사하면 놓칩니다. A를 다시 선택한 뒤 같은 기능 검사를 통과해야 이 모의 복구가 끝납니다. 이 실습은 메모리 안의 버전 기록을 사용합니다.</p></div>
+</details>
+</article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<div class="prose"><p>운영 인계에는 적용한 후보 digest, 이전 digest, 확인한 요청과 결과, 적용하거나 되돌린 시각을 남깁니다. 상태를 읽을 수 없을 때 임의로 배포를 반복하지 않도록 담당자를 정하세요.</p>
+<div class="prose"><p>같은 후보를 승인받았더라도 적용 뒤 출처가 비어 있다면 버전 B의 기능 검사는 실패입니다. 적용 전 확인하는 지문과 적용 후 확인하는 문서 출처를 각각 어느 셀에서 읽는지 짚어 보세요.</p>
 </div>
 
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
@@ -142,7 +170,7 @@ print(deployment[<span class="tok-string">"active"</span>], versions[deployment[
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

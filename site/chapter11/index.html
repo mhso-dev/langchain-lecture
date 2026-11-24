@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 11 / SDK</span><span class="template-badge">학생용 교재</span></div>
 <h1>OpenAI Responses API의 요청·응답 구조</h1>
-<p class="hero-description">화면에서는 한 줄 답변이 보이지만 프로그램이 받는 응답에는 모델 이름, 완료 상태, 사용량도 들어 있습니다. 한 번의 요청을 준비하고 수업용 응답을 받아 보낸 질문과 돌려받은 답, 사용량이 각각 어디에 남는지 확인합니다.</p>
+<p class="hero-description">Responses API 요청에서 질문의 역할과 내용을 지정하고, 수업용 응답에서 답변·완료 상태·사용량을 각각 읽습니다. 응답 일부만 받았을 때는 완료 상태가 해석 기준이 됩니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 011 · 8H</span><span>Python 함수·예외·환경변수·HTTP·10장 검증</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -44,7 +44,7 @@
 <tr><td>실제 API 서버</td><td>선택 모델 실행</td></tr>
 <tr><td>MockTransport</td><td>HTTP 전송 대신 고정 응답 반환</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>호출 전 입력 검증</h3><div class="prose"><p>다음 장에서는 응답 형식을 스키마로 정하고, 불완전 응답·거절·스트리밍을 구분합니다. 오늘의 호출 함수와 오류 기록이 출발점입니다.</p>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>호출 전 입력 검증</h3><div class="prose"><p>첫 요청에 필요한 값은 모델 이름과 사용자 질문입니다. 셀 01에서 request["input"][0]["content"]를 읽으면 어떤 질문이 모의 서버까지 전달될지 호출 전에 확인할 수 있습니다.</p>
 </div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · role과 content 구성</h3>
 <div class="cell-before"><p>model은 예제의 대역 이름입니다. 실제 계정에서 선택할 모델과 구분하세요.</p>
@@ -55,6 +55,7 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">SDK가 하는 일을 한 문장으로 설명하세요.</pre></div>
 <div class="cell-after"><p>원래 질문이 그대로 나옵니다. max_output_tokens는 생성할 출력의 한도이고 입력 문장 길이나 실제 생성 토큰 수가 아닙니다.</p>
 </div>
+<p id="example-analysis">이 셀을 여러 번 실행해도 호출 비용이 쌓이지 않습니다. 만든 것은 요청 내용을 담은 파이썬 사전이고 마지막 줄은 그 안의 질문을 읽습니다. 다음 단계에서 응답을 볼 때는 어떤 전송 함수가 그 값을 돌려줬는지도 확인하세요.</p>
 </article>
 <span class="lesson-anchor" id="context"></span><div class="lesson-explanation" id="reading-context"><h3>대화 메시지 목록 구성</h3><div class="prose"><p>이 예제의 input에는 사용자 메시지 하나가 있습니다. 프로그램을 다시 실행해도 지난 요청의 내용이 자동으로 포함된다고 가정하지 않습니다. 후속 질문에 앞선 내용이 필요하면 그 내용을 입력으로 전달하는 방식을 명시적으로 구현해야 합니다.</p>
 </div></div>
@@ -70,11 +71,9 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-sdk-mock -->
-<figure class="lesson-clip" id="visual-sdk-mock"><h3>모의 전송에서 답변이 돌아오기까지</h3>
-<video autoplay loop muted playsinline aria-label="모의 전송에서 답변이 돌아오기까지" src="visual-sdk-mock.mp4"></video>
-<figcaption>MockTransport가 요청 본문을 받은 뒤 수업용 응답을 반환합니다. 마지막에 학생 코드가 읽는 값은 response.output_text입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-sdk-mock"></span>
 <!-- /lesson-visual visual-sdk-mock -->
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 모의 SDK 응답 생성</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 모의 SDK 응답 생성</h3>
 <div class="cell-before"><p>제공 함수는 요청에서 user 역할을 확인하고, message 하나와 사용량 예시가 든 HTTP 응답을 준비합니다.</p>
 <p>제공 함수는 네트워크 대신 예제 응답을 만듭니다. 셀 03에서는 본문을, 과제 04에서는 같은 응답의 사용량을 읽습니다. 처음에는 함수 안의 생성 코드보다 반환된 응답 한 건을 따라가세요.</p>
 </div>
@@ -118,8 +117,8 @@ sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="
 <div class="cell-after"><p>SDK가 꺼낸 본문은 ‘가상 안내를 확인했습니다.’입니다. 이 문장은 제공 함수의 응답 본문에서 왔습니다. 실제 서비스 모델의 생성 결과나 품질을 보여 주지는 않습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="request"></span><div class="lesson-explanation" id="reading-request"><h3>SDK 요청 함수</h3><div class="prose"><p>ask는 클라이언트, 모델 이름, 질문을 입력받습니다. instructions에는 응답 방식, input에는 사용자 메시지를 전달합니다. max_output_tokens는 출력의 상한이며 항상 그만큼 출력하거나 같은 길이의 문장을 만든다는 뜻은 아닙니다.</p>
-<p>함수 안에서 요청이 끝난 뒤 응답 상태와 텍스트를 반환합니다. 호출 한 번의 성공이 내용의 정확성까지 보장하지 않으므로 10장의 원문 대조 기준을 함께 적용합니다.</p>
+<span class="lesson-anchor" id="request"></span><div class="lesson-explanation" id="reading-request"><h3>SDK 요청 함수</h3><div class="prose"><p>셀 03에서 request 앞에 붙인 별표 두 개는 셀 01에서 만든 사전을 responses.create의 이름 있는 인자로 풀어 전달합니다. 이 요청에는 model, input, max_output_tokens가 들어 있습니다. 한도를 300으로 두어도 응답의 실제 총량은 usage에서 별도로 읽습니다.</p>
+<p>모의 전송 함수는 JSON을 담은 HTTP 응답을 반환합니다. 이를 받은 SDK가 response 객체를 만들고, response.output_text가 그 안의 텍스트를 꺼냅니다. 상태와 사용량은 각각 response.status와 response.usage에서 읽을 수 있습니다.</p>
 </div></div>
 
 </section>
@@ -129,8 +128,8 @@ sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="
 </header>
 <p>토큰은 모델이 입력과 출력을 세는 단위입니다. 과금이나 지연을 추측하지 않고 응답에 실제 제공된 값을 읽습니다. 요청 상태가 미완료면 본문 길이만 보고 성공으로 기록하지 않습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-partial-response"><h3>응답 조각이 있어도 완료 상태를 먼저 확인하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-partial-response.mp4" aria-label="응답 조각이 있어도 완료 상태를 먼저 확인하기" aria-describedby="workflow-partial-response-caption"></video><figcaption id="workflow-partial-response-caption">partial의 text에는 ‘가상 안’이 남아 있습니다. 상태가 incomplete인 이 실행에서는 미완료 안내가 출력됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>응답 받기</strong> · partial.text = 가상 안</li><li><strong>status 검사</strong> · partial.status = incomplete</li><li><strong>미완료 안내</strong> · print() = 미완료 응답</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · usage의 토큰 합계</h3>
+<span class="lesson-anchor" id="workflow-partial-response"></span><span class="lesson-anchor" id="workflow-partial-response-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="example-cell-4">과제 04 · usage의 토큰 합계</h3>
 <div class="cell-before"><p>제공 응답과 같은 사용량 사전입니다. 사용량이 보고된 경우 총 토큰 수를 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">usage = {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>}
@@ -167,6 +166,14 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 </article>
 <span class="lesson-anchor" id="failures"></span><div class="lesson-explanation" id="reading-failures"><h3>완료 상태를 확인한 뒤 본문 읽기</h3><p>예제의 partial에는 짧은 text가 있지만 status는 incomplete입니다. 미리 받은 글자가 있어도 완성된 답변으로 표시하기 전에는 상태를 확인해야 합니다. 이 셀의 출력은 ‘미완료 응답’입니다.</p></div>
 
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="practice-recheck">과제 06 · 응답 상태에 따라 표시할 본문 선택</h3><div class="cell-before"><p>셀 05의 partial에는 text가 있지만 응답은 아직 끝나지 않았습니다. 완료 응답일 때만 본문을 반환하는 display_text를 작성하세요. partial에 적용하면 ‘응답 대기’가 나와야 합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="practice-recheck-starter" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-starter">def display_text(reply):
+    # 완료된 응답만 본문을 표시하세요.
+    pass</code></pre></figure><details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="practice-recheck-answer" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0"><code id="practice-recheck-answer">def display_text(reply):
+    if reply["status"] == "completed":
+        return reply["text"]
+    return "응답 대기"
+
+print(display_text(partial))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">응답 대기</pre></div><div class="cell-after"><p>text 값이 있는지만 검사하면 미완료인 ‘가상 안’까지 표시합니다. 같은 사전에서 status만 completed로 바꾸면 함수가 본문을 돌려주는지도 확인하세요.</p></div></details></article>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -189,7 +196,7 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

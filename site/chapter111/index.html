@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 111 / PROJECT QUALITY</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>최소 재현 입력과 회귀 테스트</h1>
-<p class="hero-description">98장에서 “장비A” 표기를 고친 뒤, 장비AB를 잘못 바꾸거나 기존 정상 질문이 깨지지는 않았을까요? 새 기능을 더 붙이기 전에 수정 이유와 재현 조건을 후보 기록에 남겨 봅니다.</p>
+<p class="hero-description">장비명 정규화 수정 후 원래 정상 질문, 실패 재현 입력, 장비AB 반례를 다시 검사합니다. 릴리스 후보에 채택 범위와 회귀 결과를 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,8 +34,8 @@
 </header>
 <p class="concept-intro">최소 재현 입력은 결함을 드러내는 가장 작은 사례입니다. 고친 뒤에는 실패 사례뿐 아니라 원래 정상인 입력의 결과도 확인합니다.</p><p>변경 기록 예시　결함 Q98-N01은 “장비A”를 장비 이름으로 읽지 못했습니다. 변경은 A·B 뒤에 더 이어지는 영문·숫자가 없을 때만 장비와 글자 사이에 공백을 넣은 한 규칙입니다. Q98-G01의 “장비AB”는 그대로 두고 기존 Q01도 유지합니다. 111장에서 새로 발견한 사용자 결함이 아니라 98장의 수정 사례를 후보판으로 다시 확인하는 예시입니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-preserve-working-input"><h3>붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-preserve-working-input.mp4" aria-label="붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기" aria-describedby="workflow-preserve-working-input-caption"></video><figcaption id="workflow-preserve-working-input-caption">이미 공백이 있는 정상 질문을 수정 후보에 넣습니다. 같은 문자열이 그대로 나오는지도 회귀 검사에 포함합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 Q01</strong> · original = 장비 A의 점검 전 확인 사항은?</li><li><strong>패턴 대조</strong> · 장비 바로 뒤 글자 = 공백</li><li><strong>문자열 유지</strong> · 치환 횟수 = 0회</li><li><strong>기존값 대조</strong> · normalize(original) == original = True</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기존 정상 입력의 회귀 테스트</h3>
+<span class="lesson-anchor" id="workflow-preserve-working-input"></span><span class="lesson-anchor" id="workflow-preserve-working-input-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 기존 정상 입력의 회귀 테스트</h3>
 <div class="cell-before"><p>후보판의 규칙을 이미 띄어쓰기가 있는 Q01에 다시 적용합니다.</p>
 <p>후보 카드에는 검사한 대상을 적으세요. 장비명 공백을 바로잡았다는 출력은 입력 정규화의 근거입니다. 최종 응답의 RULE-A까지 맞는지는 같은 질문을 끝까지 실행한 회귀 기록에서 따로 확인합니다.</p>
 </div>
@@ -49,6 +49,7 @@ print(normalize(original) == original)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True입니다. 새 표기를 처리하도록 바꾸면서 기존 입력의 형태까지 바뀌지 않았습니다. 이 한 건과 모호한 이름, 처음 실패한 이름을 따로 기록해야 수정의 범위를 설명할 수 있습니다.</p>
 </div>
+<p id="example-analysis">기존 정상 문항의 True는 원래 동작이 유지됐다는 결과입니다. 수정한 결함의 해결 여부는 그 결함을 재현했던 최소 입력으로 확인해야 합니다. 릴리스 후보에는 기존 정상 사례와 수정 대상 사례의 결과를 함께 남깁니다.</p>
 </article>
 </section>
 <section id="nb-freeze" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -62,11 +63,9 @@ print(normalize(original) == original)</code></pre></figure>
 
 
 <!-- lesson-visual detail-freeze -->
-<figure class="lesson-clip" id="detail-freeze"><h3>기본 일곱 문항과 확장 세 문항을 따로 세기</h3>
-<video autoplay loop muted playsinline aria-label="기본 일곱 문항과 확장 세 문항을 따로 세기" src="detail-freeze.mp4"></video>
-<figcaption>한 칸은 공개 평가 문항 하나입니다. 기본 문항은 두 판 모두 7/7이고 확장 문항만 1/3에서 3/3으로 바뀝니다. 이 결과로 실제 사용자 질문에서의 성능까지 판정할 수는 없습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-freeze"></span>
 <!-- /lesson-visual detail-freeze -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 최소 실패 입력 재검증</h3>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 최소 실패 입력 재검증</h3>
 <div class="cell-before"><p>처음 실패한 Q98-N01에서 어떤 문자열이 실제 검색 단계에 들어갈지 표시하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 장비A를 붙여 쓴 질문에 후보 규칙을 적용하세요.</span></code></pre></figure>
@@ -89,7 +88,7 @@ print(normalize(original) == original)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>
