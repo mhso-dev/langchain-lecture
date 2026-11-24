@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,4 +40,5 @@ for (const [index, chapter] of chapters.entries()) {
     writeFileSync(join(output, chapter, file), page);
   }
 }
+execFileSync('python3', [fileURLToPath(new URL('../daily-labs/generate.py', import.meta.url)), output], { stdio: 'inherit' });
 console.log(chapters.length + '개 장과 학생 노트북을 dist에 생성했습니다.');
