@@ -18,6 +18,7 @@ class Page(HTMLParser):
         self.simulations = []
         self.has_practice = False
         self.has_clip = False
+        self.clip_playback_errors = []
         self.title = None
 
     def handle_starttag(self, tag, attributes):
@@ -33,7 +34,10 @@ class Page(HTMLParser):
             else:
                 self.links.append(value)
         self.has_practice |= "data-practice" in attrs
-        self.has_clip |= tag == "video" and attrs.get("src") == "concept.mp4"
+        if tag == "video" and attrs.get("src") == "concept.mp4":
+            self.has_clip = True
+            if not {"autoplay", "loop", "muted", "playsinline"}.issubset(attrs) or "controls" in attrs:
+                self.clip_playback_errors.append("개념 영상의 무음 자동 반복 재생 설정 오류")
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
         if tag == "iframe" and attrs.get("src") == "simulation.html":
@@ -48,6 +52,7 @@ def main():
         page.feed(path.read_text(encoding="utf-8"))
         pages[path] = page
     for path, page in pages.items():
+        errors.extend(f"{path.relative_to(ROOT)}: {error}" for error in page.clip_playback_errors)
         for link in page.links:
             url = urlsplit(link)
             if url.scheme or url.netloc:
