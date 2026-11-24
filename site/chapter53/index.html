@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 53 / SQL</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQL SELECT·JOIN·GROUP BY</h1>
-<p class="hero-description">도서관 질문을 남긴 사람이 누구인지 보려는데 질문 표에는 alice라는 ID만 있습니다. 사용자 표에서 같은 ID를 찾아 이름을 붙이는 작업부터 시작합니다. 수업용 가상 데이터만 사용합니다.</p>
+<p class="hero-description">가상 도서관 자료에서 질문과 사용자를 ID로 연결해 조회합니다. SQLite로 정렬·JOIN·집계를 재현하고, 준비된 PostgreSQL 환경에서 같은 집계 조건을 확인하는 선택 실습이 이어집니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 053 · 8H</span><span>5~7일 파일·데이터·터미널 실행 / 프로젝트의 문서·질문 기록 또는 제공 가상 자료</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -38,7 +38,7 @@
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>SQL 조회 요구 정의</h3><div class="prose"><p>문서가 늘고 질문 기록이 쌓이면 ‘alice가 어떤 문서에 질문했는가?’처럼 여러 기록을 함께 보는 일이 생깁니다. 오늘은 Python 목록에 있던 데이터를 표의 행으로 생각하고, 필요한 행을 SQL로 골라 냅니다. SQL은 관계형 데이터베이스에 데이터 작업을 요청하는 언어입니다. PostgreSQL은 그 요청을 처리하는 데이터베이스 프로그램입니다.</p>
 <p>이전 팀 프로젝트에서 문서 하나와 질문 두 개를 골라 보세요. 실행 기록이 없다면 이 장의 가상 도서관·실습실 자료를 사용합니다. 앞선 52일 교재나 자기 코드의 실행 성공을 이번 실습의 조건으로 삼지 않습니다. 가상 자료를 실제 서비스 이용 기록으로 보고하지도 않습니다.</p>
 </div></div>
-<figure class="lesson-clip workflow-clip" id="workflow-where-order-limit"><h3>최근 질문 한 건을 고르는 세 연산</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-where-order-limit.mp4" aria-label="최근 질문 한 건을 고르는 세 연산" aria-describedby="workflow-where-order-limit-caption"></video><figcaption id="workflow-where-order-limit-caption">셀의 과제에서 결과가 만들어지는 논리 순서입니다. 먼저 alice를 고른 뒤 최신 ID를 앞에 두고 한 건만 반환합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>전체 질문</strong> · course_turns.id = 1, 2, 3</li><li><strong>WHERE</strong> · owner = &#x27;alice&#x27; = 1, 2</li><li><strong>ORDER BY</strong> · id DESC = 2, 1</li><li><strong>LIMIT</strong> · LIMIT 1 = 주말 운영은요?</li></ol></figure>
+<figure class="execution-trace" id="workflow-where-order-limit"><h3>최근 질문 한 건을 고르는 세 연산</h3><figcaption id="workflow-where-order-limit-caption">셀의 과제에서 결과가 만들어지는 논리 순서입니다. 먼저 alice를 고른 뒤 최신 ID를 앞에 두고 한 건만 반환합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>전체 질문</strong> · course_turns.id = 1, 2, 3</li><li><strong>WHERE</strong> · owner = &#x27;alice&#x27; = 1, 2</li><li><strong>ORDER BY</strong> · id DESC = 2, 1</li><li><strong>LIMIT</strong> · LIMIT 1 = 주말 운영은요?</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · SQLite 테이블과 테스트 데이터</h3>
 <div class="cell-before"><p>수업용 원자료에서 가져온 질문 세 건을 넣고 alice의 질문만 읽습니다. 이 셀을 다시 실행하면 새 메모리 DB로 시작합니다.</p>
 </div>
@@ -58,6 +58,7 @@ print(db.execute(<span class="tok-string">"SELECT question FROM course_turns WHE
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[('언제 여나요?',), ('주말 운영은요?',)]</pre></div>
 <div class="cell-after"><p>첫 두 행만 보입니다. WHERE가 bob의 행을 빼고 ORDER BY가 질문 ID의 오름차순으로 돌려줬습니다. SELECT 뒤의 question은 반환할 열입니다.</p>
 </div>
+<p id="example-analysis">SQLite 조회 결과의 각 행은 열 한 개짜리 튜플입니다. 화면에서 질문만 표시하려면 행 전체와 그 행의 첫 열을 구분해야 합니다. 또 ‘가장 최근 질문’을 고르는 조건에는 삽입 순서를 추측하는 대신 정렬할 열과 방향을 명시합니다.</p>
 </article>
 <span class="lesson-anchor" id="relation"></span><div class="lesson-explanation" id="reading-relation"><h3>질문 행의 owner와 사용자 행의 id</h3><p>course_turns의 한 행은 질문 한 번이고 course_users의 한 행은 사용자 한 명입니다. 질문 1번과 2번의 owner는 모두 alice입니다. 이후 두 테이블을 연결하면 질문 행을 복사해 이름을 저장하지 않고도 화면에 학습자 A라고 표시할 수 있습니다.</p></div>
 <span class="lesson-anchor" id="select"></span><div class="lesson-explanation" id="reading-select"><h3>SELECT로 question 열만 읽기</h3><p>SELECT question은 반환할 열을 고릅니다. FROM course_turns는 읽을 테이블을 정합니다. WHERE와 ORDER BY가 어느 행을 어떤 순서로 고를지 정해도 최종 출력에 담기는 것은 question 열입니다.</p></div>
@@ -110,11 +111,9 @@ id1 alice 언제 여나요?</pre></article><article id="flow-6-step-3"><small>ST
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-join-count -->
-<figure class="lesson-clip" id="visual-join-count"><h3>세 대화 행이 두 사용자 그룹으로 합쳐집니다</h3>
-<video autoplay loop muted playsinline aria-label="세 대화 행이 두 사용자 그룹으로 합쳐집니다" src="visual-join-count.mp4"></video>
-<figcaption>각 대화 행의 owner가 사용자 id와 일치하는 곳으로 이동합니다. COUNT(*)로 세면 학습자 A의 대화는 2건, B의 대화는 1건입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-join-count"></span>
 <!-- /lesson-visual visual-join-count -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · JOIN과 GROUP BY 집계</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · JOIN과 GROUP BY 집계</h3>
 <div class="cell-before"><p>JOIN으로 이름을 붙인 뒤 사용자별 행 수를 집계합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">sql = <span class="tok-string">"""SELECT u.display_name, COUNT(*) AS turn_count
@@ -189,7 +188,7 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

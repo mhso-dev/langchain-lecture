@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 66 / AGENTIC SERVICE</span><span class="template-badge">학생용 교재</span></div>
 <h1>역할별 함수 분리와 호출 비용</h1>
-<p class="hero-description">같은 과제 제출 질문을 한 역할이 처리했을 때와 근거 담당·답변 담당으로 나눴을 때를 비교합니다. 역할을 늘리기 전에 두 담당자가 실제로 주고받아야 하는 문서와 질문을 정합니다.</p>
+<p class="hero-description">과제 제출 질문을 한 에이전트가 처리한 경우와 근거 담당·답변 담당으로 나눈 경우를 비교합니다. 파이썬 함수로 인계한 질문과 문서 ID를 확인하고 두 실행 기록의 호출 수를 비교합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 066 · 8H</span><span>58일 Skill 로딩·63일 필수 검색·64일 승인·65일 분류</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,8 +39,8 @@
 <!-- END MOTION -->
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-evidence-handoff"><h3>두 함수가 같은 근거를 넘기는 위치</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-evidence-handoff.mp4" aria-label="두 함수가 같은 근거를 넘기는 위치" aria-describedby="workflow-evidence-handoff-caption"></video><figcaption id="workflow-evidence-handoff-caption">이 셀은 모델을 호출하지 않습니다. 근거 함수가 만든 딕셔너리에서 답변 함수가 어떤 값을 이어받는지 볼 수 있습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · 질문 = 과제는 어디에 내나요?</li><li><strong>evidence_role</strong> · 근거 ID = course-guide-v1:p2</li><li><strong>인계 객체</strong> · 전달 필드 = question · id · text</li><li><strong>answer_role</strong> · 답변에서 사용한 값 = text + [id]</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 역할 간 근거 데이터 전달</h3>
+<span class="lesson-anchor" id="workflow-evidence-handoff"></span><span class="lesson-anchor" id="workflow-evidence-handoff-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 역할 간 근거 데이터 전달</h3>
 <div class="cell-before"><p>두 함수 사이로 지나가는 값과 최종 문장을 따라가세요.</p>
 <p>정상 기록에서는 역할을 마친 뒤 finish에 도달해 result를 공개합니다. 뒤의 상한 실험에서는 계획을 끝까지 수행하지 못해 result가 null로 남습니다. 두 결과는 서로 다른 실행입니다.</p>
 </div>
@@ -56,6 +56,7 @@ print(answer_role(handoff))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div>
 <div class="cell-after"><p>답변 끝의 p2는 근거 담당이 전달한 ID입니다. 문장을 만드는 쪽에서 새로 붙인 문서 번호가 아닙니다.</p>
 </div>
+<p id="example-analysis">두 역할 사이에서 최종 문장만 전달하면 두 번째 역할은 p2의 어느 구절을 읽었는지 확인하기 어렵습니다. 원래 질문과 근거 ID를 함께 넘겨야 인계 전후의 요청이 같은지, 답변이 같은 근거를 사용했는지 대조할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>두 역할 사이의 인계값</h3><p>evidence_role의 출력은 question·id·text를 담은 딕셔너리입니다. answer_role은 그중 text와 id를 읽어 한 문장으로 묶습니다. 이 셀의 역할은 일반 Python 함수입니다.</p></div>
 <span class="lesson-anchor" id="meaning"></span><span class="lesson-anchor" id="reading-meaning"></span>
@@ -84,11 +85,9 @@ print(question == handoff[<span class="tok-string">'question'</span>])</code></p
 </header>
 <p>제공 파일 role-comparison.json에서 Q01 두 행을 골랐습니다. 검색 결과는 고정했고 모델은 수업용 대본입니다. 모델 호출 수와 업무상 필수 검색 수를 섞지 마세요.</p>
 <!-- lesson-visual detail-observations -->
-<figure class="lesson-clip" id="detail-observations"><h3>역할을 나누면 어떤 호출이 늘어날까요?</h3>
-<video autoplay loop muted playsinline aria-label="역할을 나누면 어떤 호출이 늘어날까요?" src="detail-observations.mp4"></video>
-<figcaption>고정된 근거를 사용한 Q01의 두 기록을 종류별로 집계합니다. 필수 검색은 양쪽 모두 1회이고 모델 호출만 2회에서 4회로 늘어납니다. 막대는 실제 실행 순서나 지연 시간을 나타내지 않습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-observations"></span>
 <!-- /lesson-visual detail-observations -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 역할별 호출 횟수 비교</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 역할별 호출 횟수 비교</h3>
 <div class="cell-before"><p>single과 two_roles의 기록에서 모델 호출 횟수가 얼마나 달라졌는지 계산하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">single = {<span class="tok-string">"model_calls"</span>: <span class="tok-number">2</span>, <span class="tok-string">"mandatory_retrieval_calls"</span>: <span class="tok-number">1</span>}
@@ -126,7 +125,7 @@ print(two_roles[<span class="tok-string">"model_calls"</span>] - single[<span cl
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

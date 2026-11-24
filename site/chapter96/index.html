@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 96 / 120</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>출처 표기 함수와 응답 카드</h1>
-<p class="hero-description">검색 함수가 규정을 돌려주면 점검 담당자는 그것을 읽고 원문을 찾아야 합니다. Q01에서 사용자에게 보일 두 줄을 직접 조립한 뒤, 장비명이 없는 경우에는 어떻게 화면이 달라져야 할지 정합니다.</p>
+<p class="hero-description">Q01의 검색 결과로 화면에 표시할 답변과 원문 위치를 조립합니다. 장비명이 없는 질문은 규정을 임의로 고르는 대신 추가 확인 경로로 보냅니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -66,10 +66,11 @@ show_reply(reply)</code></pre></figure>
 RULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1</pre></div>
 <div class="cell-after"><p>답 바로 아래에 RULE-A의 위치가 붙습니다. 출처 ID만 나왔다면 검색 결과의 누락인지 화면 함수에서 일부 필드만 읽었는지 두 값을 대조하세요.</p>
 </div>
+<p id="example-analysis">인용의 각 필드는 원문을 다시 찾는 데 쓰입니다. RULE-A로 자료를 식별하고 1쪽 2.1절로 이동한 뒤 개정일을 대조합니다. 다른 조가 이 정보만으로 시연에 사용한 문장을 찾을 수 있는지가 출처 표시의 확인 기준입니다.</p>
 </article>
 
-<figure class="lesson-clip workflow-clip" id="workflow-empty-source-loop"><h3>출처가 0건이면 show_reply()에서 어느 줄까지 실행될까?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-empty-source-loop.mp4" aria-label="출처가 0건이면 show_reply()에서 어느 줄까지 실행될까?" aria-describedby="workflow-empty-source-loop-caption"></video><figcaption id="workflow-empty-source-loop-caption">추가 질문도 답변 영역에 표시됩니다. 빈 sources를 순회하면 citation_line()은 한 번도 호출되지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>응답 받기</strong> · sources = []</li><li><strong>답 표시</strong> · answer = 장비 A인가요, 장비 B인가요?</li><li><strong>출처 순회</strong> · 반복 횟수 = 0회</li><li><strong>표시 종료</strong> · 출력 = 질문 한 줄</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>show_reply()의 추가 질문</h3>
+<span class="lesson-anchor" id="workflow-empty-source-loop"></span><span class="lesson-anchor" id="workflow-empty-source-loop-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">show_reply()의 추가 질문</h3>
 <div class="cell-before"><p>아래 셀을 실행한 뒤 바로 앞의 결과와 비교하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">reply_missing = {<span class="tok-string">"answer"</span>: <span class="tok-string">"장비 A인가요, 장비 B인가요?"</span>, <span class="tok-string">"sources"</span>: []}
@@ -131,7 +132,7 @@ RULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

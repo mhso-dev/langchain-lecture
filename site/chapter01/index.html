@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 01 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>Jupyter 커널과 Python 코드 실행</h1>
-<p class="hero-description">노트북을 처음 열면 코드와 결과가 같은 화면에 있습니다. 인사말을 직접 바꿔 보고, 셀에 쓴 내용과 커널이 기억하는 값이 언제 달라지는지 확인해 봅시다.</p>
+<p class="hero-description">Jupyter는 셀에 작성한 코드와 마지막 실행 결과를 함께 저장합니다. 인사말을 수정하고 다시 실행하면서 편집 내용, 커널의 변수, 출력이 각각 언제 바뀌는지 확인합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 001 · 8H</span><span>선수 지식 없음</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -51,13 +51,14 @@
 <p>화면 구성은 JupyterLab을 기준으로 그린 예입니다. 수업 PC에 실행 주소나 커널이 준비되지 않았다면 강사에게 수업용 접속 위치를 확인하세요.</p>
 </div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · print()로 문자열 출력</h3>
-<div class="cell-before"><p>따옴표 사이에 적힌 문장 중 어디까지 화면에 나올까요?</p>
+<div class="cell-before"><p>문자열 리터럴을 print에 전달합니다.</p>
 <p>코드 셀은 실행할 내용을 적는 칸입니다. 먼저 아래 줄을 한 번 클릭하고 Shift+Enter를 누르세요. 셀 아래에 ‘안녕하세요, Python!’이 나오면 이 노트북에서 첫 실행을 마친 것입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">print(<span class="tok-string">"안녕하세요, Python!"</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">안녕하세요, Python!</pre></div>
 <div class="cell-after"><p>따옴표는 글의 시작과 끝을 알려 주는 기호입니다. 화면에는 ‘안녕하세요, Python!’만 나타납니다.</p>
 </div>
+<p id="example-analysis">따옴표 안의 Python을 자기 이름으로 바꾸되 아직 실행하지 마세요. 위에는 수정한 코드, 아래에는 이전 실행 결과가 남습니다. Shift+Enter를 눌러야 커널이 바뀐 코드를 읽고 아래 출력을 새로 씁니다. 나중에 변수 값이 예상과 다를 때도 어느 셀을 마지막으로 실행했는지부터 살펴보세요.</p>
 </article>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 산술식의 평가와 출력</h3>
 <div class="cell-before"><p>같은 print에 이번에는 따옴표 없이 식을 넣습니다.</p>
@@ -83,11 +84,11 @@
 </div>
 </header>
 <p>코드를 고쳐도 커널 안의 값은 셀을 다시 실행할 때 바뀝니다. 다음 두 셀을 실행하고, 첫 셀에서 이름만 바꾼 뒤 둘째 셀을 먼저 실행해 보세요.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>셀 편집과 커널 변수</h3><video autoplay loop muted playsinline aria-label="셀 편집과 커널 변수" src="concept.mp4"></video><figcaption>종이의 파란 네모를 노란 원으로 고쳐도 오른쪽 창은 그대로입니다. 실행 버튼을 누른 뒤에야 커널에 해당하는 창이 바뀝니다.</figcaption></figure><!-- MOTION kernel-imprint -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION kernel-imprint -->
 
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 변수에 문자열 대입</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · 변수에 문자열 대입</h3>
 <div class="cell-before"><p>오른쪽 값을 learner라는 이름으로 저장합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">learner = <span class="tok-string">"학습자"</span></code></pre></figure>
@@ -152,11 +153,9 @@ print(settings.get(<span class="tok-string">"LEARNER_NAME"</span>, <span class="
 </header>
 <p>Git은 선택한 파일의 내용과 변경 설명을 커밋에 남깁니다. 아래 제공 셀은 임시 폴더에 연습 저장소를 만들고 첫 인사 셀의 실행 안내를 기록합니다. 현재 프로젝트와 개인 Git 설정은 건드리지 않습니다. 강의용 컴퓨터에서 Git이 준비되어 있으면 그대로 실행하세요.</p>
 <!-- lesson-visual detail-git-snapshot -->
-<figure class="lesson-clip" id="detail-git-snapshot"><h3>git add 뒤에 커밋되는 파일은 어디에 있을까요?</h3>
-<video autoplay loop muted playsinline aria-label="git add 뒤에 커밋되는 파일은 어디에 있을까요?" src="detail-git-snapshot.mp4"></video>
-<figcaption>README.md를 추가하면 현재 내용이 스테이징 영역에 담깁니다. git commit은 그 내용을 커밋에 기록하고 git log에는 메시지 ‘첫 인사 실행 안내’가 표시됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-git-snapshot"></span>
 <!-- /lesson-visual detail-git-snapshot -->
-<article class="notebook-cell" data-cell="9" data-task="0"><h3>셀 09 · git log로 첫 커밋 조회</h3>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="example-cell-9">셀 09 · git log로 첫 커밋 조회</h3>
 <div class="cell-before"><p>저장소 만들기(init), 기록할 파일 고르기(add), 기록 남기기(commit)를 거친 뒤 방금 남긴 변경 설명을 읽습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 17줄</span><button class="copy-button js-only" data-copy="code-11" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-11"><span class="tok-keyword">import</span> shutil
@@ -211,7 +210,7 @@ print(settings.get(<span class="tok-string">"LEARNER_NAME"</span>, <span class="
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

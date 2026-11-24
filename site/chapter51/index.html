@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 051</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>실험 재현을 위한 README와 실행 기록</h1>
-<p class="hero-description">시연을 맡은 동료는 팀의 코드가 어느 질문에 어떤 근거를 보여야 하는지 모릅니다. 실행 안내를 한 문단으로 적고, 동료가 처음 여는 노트북에서 정상 응답과 알려진 한계를 구분할 수 있게 합니다.</p>
+<p class="hero-description">중간 프로젝트를 인계받을 동료가 첫 질문을 재현할 수 있도록 실행 조건과 기대 근거를 기록합니다. 같은 환경의 재실행과 새 환경 설치 검증을 구분합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -65,6 +65,7 @@ print(record)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{'same_regression_bytes': True, 'clean_install': 'not_run', 'new_os': 'not_run', 'peer_reproduction': 'not_run'}</pre></div>
 <div class="cell-after"><p>회귀 파일은 같고 새 설치·다른 OS·동료 재현은 not_run입니다. 팀 발표에서 실행이 막혔다면 기록을 대신 열어 “제공 결과 분석”이라고 알리고, 실패한 셀과 오류 내용을 남기세요.</p>
 </div>
+<p id="example-analysis">같은 회귀 결과를 바이트 단위로 재현했더라도 clean_install과 new_os에는 not_run이 남습니다. 인수인계 자료에는 사용한 환경과 실행 명령을 싣고, 새 설치 환경에서 같은 절차를 수행한 기록은 별도 항목으로 둡니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-2"><h3>재현 기록이 증명하는 범위</h3><p>same_regression_bytes가 True이면 비교한 회귀 결과 파일이 같습니다. 그러나 clean_install, new_os, peer_reproduction은 각각 not_run입니다. 같은 파일이라는 관찰로 다른 운영체제에서도 재현됐다고 결론낼 수는 없습니다.</p></div>
 
@@ -80,7 +81,7 @@ print(record)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

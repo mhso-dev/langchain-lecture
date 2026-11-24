@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 72 / CONTAINERS</span><span class="template-badge">학생용 교재</span></div>
 <h1>Docker Compose 네트워크와 볼륨</h1>
-<p class="hero-description">API와 PostgreSQL을 서로 다른 컨테이너에 두었습니다. 내 컴퓨터에서는 DB에 접속되는데 API의 localhost에서는 연결되지 않습니다. Compose 서비스 이름, 컨테이너 안팎의 포트, 데이터를 보관할 볼륨을 한 요청 경로에 맞춰 읽습니다.</p>
+<p class="hero-description">호스트에서 PostgreSQL에 접속하는 주소와 API 컨테이너에서 사용하는 주소를 비교합니다. Compose의 서비스 이름, 내부 포트, 호스트 포트, 볼륨이 각각 어디에 쓰이는지 확인합니다.</p>
 <div class="hero-meta"><span>기초 이후 · 배포 준비</span><span>교육일 072 · 8H (전반 4H / 후반 4H)</span><span>53일 관계·54일 DB 함수·70일 H1·71일 이미지</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -41,14 +41,12 @@
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-compose -->
-<figure class="lesson-clip" id="detail-compose"><h3>같은 DB에 호스트와 API는 어디로 접속할까요?</h3>
-<video autoplay loop muted playsinline aria-label="같은 DB에 호스트와 API는 어디로 접속할까요?" src="detail-compose.mp4"></video>
-<figcaption>호스트에서 127.0.0.1:55432로 접속하면 공개 포트가 DB의 5432로 연결됩니다. 같은 Compose 네트워크의 API는 서비스 이름을 써서 db:5432로 곧바로 접속합니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-compose"></span>
 <!-- /lesson-visual detail-compose -->
 
 <span class="lesson-anchor" id="network"></span><div class="lesson-explanation" id="reading-network"><h3>API에서 보이는 주소와 호스트에서 보이는 주소</h3><p>Compose 네트워크의 API는 PGHOST에서 db를, PGPORT에서 5432를 읽습니다. 호스트 쪽 공개 주소는 127.0.0.1:55432입니다. 어디에서 접속하는지가 달라지면 같은 DB를 가리키는 주소도 달라집니다.</p><div class="worked-case" id="flow-6"><h3>Compose YAML에서 실제로 공개한 포트</h3><span class="lesson-anchor" id="flow-6-step-0"></span><span class="lesson-anchor" id="flow-6-step-1"></span><span class="lesson-anchor" id="flow-6-step-2"></span><span class="lesson-anchor" id="flow-6-step-3"></span><p>db의 ports에만 127.0.0.1:55432:5432가 있습니다. 호스트의 DB 클라이언트는 127.0.0.1:55432, 내부 api는 db:5432로 연결합니다. api에는 ports 항목이 없어 이 선언만으로 호스트의 8000번 포트에서 API에 접속할 수 없습니다.</p></div></div>
 <span class="lesson-anchor" id="variables"></span><span class="lesson-anchor" id="reading-variables"></span>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Compose 서비스 이름과 포트</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · Compose 서비스 이름과 포트</h3>
 <div class="cell-before"><p>아래는 72장 구성에서 연결·저장에 필요한 항목을 뽑은 선언입니다. PyYAML로 실제 YAML을 읽습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> yaml
@@ -72,6 +70,7 @@ print(connection[<span class="tok-string">"PGHOST"</span>], connection[<span cla
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">db 5432</pre></div>
 <div class="cell-after"><p>db 5432는 API가 쓰는 목적지입니다. 호스트에서 DB에 접속할 때 쓰는 55432를 대신 넣으면 이 연결 경로와 맞지 않습니다.</p>
 </div>
+<p id="example-analysis">API 컨테이너에서 DB에 접속할 때는 서비스 이름 db와 내부 포트 5432를 사용합니다. 호스트에서 열어 둔 55432는 노트북처럼 컨테이너 밖에서 접속할 때의 포트입니다. 접속 오류가 나면 먼저 요청을 보낸 프로세스가 어느 쪽에서 실행 중인지 확인합니다.</p>
 </article>
 <span class="lesson-anchor" id="same-image"></span><span class="lesson-anchor" id="reading-same-image"></span>
 <span class="lesson-anchor" id="start-order"></span><div class="lesson-explanation" id="reading-start-order"><h3>Compose 구성 검사에서 확인한 값</h3><p>docker compose config는 YAML을 해석해 정규화된 설정을 출력합니다. 여기서 DB의 target 경로를 읽은 뒤, 파일을 저장하고 다시 여는 동작은 다음 SQLite 셀에서 따로 실험합니다.</p></div>
@@ -93,7 +92,7 @@ print(port_map.split(<span class="tok-string">':'</span>)[<span class="tok-numbe
 </div>
 </header>
 <p>선언된 볼륨은 DB의 데이터 디렉터리에 연결됩니다. 같은 컴퓨터·프로젝트의 같은 볼륨을 다시 연결해야 기존 자료를 읽을 수 있습니다. 다른 호스트에 같은 이름만 만들어도 이전 데이터가 생기는 것은 아닙니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>컨테이너 교체와 볼륨의 보존</h3><video autoplay loop muted playsinline aria-label="컨테이너 교체와 볼륨의 보존" src="concept.mp4"></video><figcaption>기존 장치에서 빼낸 서랍이 새 장치에 들어갑니다. 컨테이너를 바꾼 뒤 같은 데이터를 읽으려면 이전 볼륨을 다시 연결해야 합니다.</figcaption></figure><!-- MOTION persistent-volume -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION persistent-volume -->
 
 <!-- END MOTION -->
 
@@ -101,7 +100,7 @@ print(port_map.split(<span class="tok-string">':'</span>)[<span class="tok-numbe
 
 <span class="lesson-anchor" id="project-volume"></span><div class="lesson-explanation" id="reading-project-volume"><h3>볼륨 이름과 컨테이너 경로</h3><p>course-data는 Compose에 선언한 볼륨 키이고 /var/lib/postgresql/data는 DB 컨테이너 안의 연결 위치입니다. 둘을 구분하면 컨테이너를 교체할 때 어느 저장소를 다시 연결할지 읽을 수 있습니다.</p></div>
 <span class="lesson-anchor" id="restart-recreate"></span><span class="lesson-anchor" id="reading-restart-recreate"></span>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · Compose 구성 검증</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · Compose 구성 검증</h3>
 <div class="cell-before"><p>Docker Compose가 설치된 커널에서는 실제 config 명령이 선언을 해석합니다. 이미지를 받거나 컨테이너를 띄우지 않습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4"><span class="tok-keyword">import</span> json, shutil, subprocess
@@ -128,8 +127,8 @@ print(port_map.split(<span class="tok-string">':'</span>)[<span class="tok-numbe
 
 <span class="lesson-anchor" id="relations"></span><span class="lesson-anchor" id="reading-relations"></span>
 <span class="lesson-anchor" id="migrations"></span><span class="lesson-anchor" id="reading-migrations"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-reopen-file"><h3>연결을 닫은 뒤에도 같은 본문을 읽는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-reopen-file.mp4" aria-label="연결을 닫은 뒤에도 같은 본문을 읽는 경로" aria-describedby="workflow-reopen-file-caption"></video><figcaption id="workflow-reopen-file-caption">이 셀은 임시 SQLite 파일로 재연결을 실험합니다. Compose 볼륨의 실제 재생성은 별도 검증 대상입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>INSERT</strong> · 기록 키 = alice · doc-1</li><li><strong>commit</strong> · 파일 = course.db</li><li><strong>close</strong> · 기존 연결 = db.close()</li><li><strong>connect</strong> · 새 연결 = reopened</li><li><strong>SELECT</strong> · before == after = True</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · DB 재연결과 영속성 확인</h3>
+<span class="lesson-anchor" id="workflow-reopen-file"></span><span class="lesson-anchor" id="workflow-reopen-file-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · DB 재연결과 영속성 확인</h3>
 <div class="cell-before"><p>행 수만 비교하면 내용이 달라져도 알아채기 어렵습니다. 같은 소유자·문서 ID로 원문을 읽고 대조하세요.</p>
 <p>셀 03은 Compose 설정에서 연결 대상을 읽습니다. 셀 04가 다시 여는 대상은 SQLite 파일입니다. 실제 볼륨 보존을 확인하려면 같은 볼륨을 연결한 DB 컨테이너를 다시 띄우고 이전 행을 조회해야 합니다.</p>
 </div>
@@ -186,7 +185,7 @@ print(after[<span class="tok-number">0</span>], before == after)</code></pre></f
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

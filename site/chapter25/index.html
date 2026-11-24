@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 25 / RAG REVIEW</span><span class="template-badge">학생용 교재</span></div>
 <h1>RAG 입력 계약과 오류 진단</h1>
-<p class="hero-description">휴관 요일을 물었는데 검색 결과로 대출 기간 문서가 나왔습니다. 질문, 검색 결과, 프롬프트에 들어간 본문, 답변의 출처를 순서대로 확인해 실패가 시작된 위치를 찾습니다.</p>
+<p class="hero-description">휴관 요일 질문에 대출 기간 문서가 검색된 사례를 재현합니다. 기대 문서 ID, 실제 검색 목록, 프롬프트의 원문, 답변 인용을 대조해 처음 어긋난 단계를 찾습니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 025 · 8H</span><span>20~24장 문서·검색·LCEL RAG</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -60,6 +60,7 @@ print(case[<span class="tok-string">"expected_document_ids"</span>][<span class=
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False입니다. 대출 기간 문서만 가져왔으므로 생성 프롬프트를 고치기 전에 검색 범위와 전달한 질문부터 확인합니다.</p>
 </div>
+<p id="example-analysis">틀린 답을 고치려고 바로 답변 문장을 수정하면 다음 질문에서도 같은 검색 오류가 반복됩니다. 이 예에서는 기대 문서가 library-2인데 검색 목록에 들어 있지 않습니다. 그 문서를 직접 넣었을 때 휴관 안내가 나오는지 보면 검색 단계와 답변 단계를 나누어 점검할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="diagnose"></span><div class="lesson-explanation" id="reading-diagnose"><h3>오류가 처음 생긴 단계 찾기</h3><p>휴관일 질문에서 기대 문서는 library-2인데 retrieved에는 library-1이 들어 있습니다. 모델에 보낼 문맥을 만들기 전부터 근거가 바뀌었으므로 먼저 검색 결과를 확인합니다.</p></div>
 
@@ -81,9 +82,7 @@ print(hits[<span class="tok-number">0</span>][<span class="tok-string">"text"</s
 </header>
 <p>이 장의 준비 함수는 질문과 자료를 validate 함수로 검사한 뒤 question, context 두 칸을 만들어야 합니다. 빈 목록은 정상적인 ‘근거 없음’으로 None을 반환합니다. 출처가 망가진 자료까지 None으로 처리하지 않습니다.</p>
 <!-- lesson-visual detail-repair -->
-<figure class="lesson-clip" id="detail-repair"><h3>빈 문서 목록과 잘못된 쪽 번호는 어디로 갈까요?</h3>
-<video autoplay loop muted playsinline aria-label="빈 문서 목록과 잘못된 쪽 번호는 어디로 갈까요?" src="detail-repair.mp4"></video>
-<figcaption>같은 질문에 문서 목록만 바꿔 prepare_inputs() 풀이의 세 경로를 비교합니다. 빈 목록은 None을 돌려주고, 쪽 번호 0은 검사 중 예외를 일으킵니다. 2쪽인 정상 문서만 출처가 붙은 문맥으로 조립됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-repair"></span>
 <!-- /lesson-visual detail-repair -->
 
 <span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>문맥 생성 함수 구현</h3><div class="prose"><p>prepare_inputs는 질문과 문서 목록을 받아 LCEL 입력을 만듭니다. 질문 양끝 공백을 제거하고, 비어 있거나 문자열이 아니면 ValueError로 멈춥니다. 문서 목록도 검사한 뒤 빈 목록이면 None을 반환합니다. 정상 결과에는 question과 context 두 키만 둡니다.</p>
@@ -97,7 +96,7 @@ print(hits[<span class="tok-number">0</span>][<span class="tok-string">"text"</s
 <tr><td>정상 질문·문서</td><td>정리한 question과 출처 문맥 context</td></tr>
 <tr><td>team-01:p-01 ID</td><td>그대로 보존</td></tr>
 </tbody></table></div></div>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 메타데이터의 쪽 번호 검증</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 메타데이터의 쪽 번호 검증</h3>
 <div class="cell-before"><p>23장의 자료 계약을 검사하는 함수들을 그대로 사용합니다. 페이지 번호만 0으로 바뀌었습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 43줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">import</span> re
@@ -185,7 +184,7 @@ print(prepared[<span class="tok-string">"context"</span>])</code></pre></figure>
 
 <span class="lesson-anchor" id="finish"></span><div class="lesson-explanation" id="reading-finish"><h3>오류 진단과 보충 기준</h3><div class="prose"><p>다음 26장에서는 함수가 값을 읽고 바꾸는 과정을 question·documents·answer 상태로 나타냅니다. 입문 예제는 documents를 문자열 목록으로 줄여 상태 갱신에 집중하고, 30장에서 출처 객체 목록으로 돌아오는 이유를 설명합니다. 지금의 원문과 출처를 지우거나 모든 계약이 곧바로 같다고 가정하는 과제가 아닙니다.</p>
 </div></div>
-<figure class="lesson-clip workflow-clip" id="workflow-baseline-evidence"><h3>검색 실패와 올바른 문서를 직접 넣은 결과 구분</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-baseline-evidence.mp4" aria-label="검색 실패와 올바른 문서를 직접 넣은 결과 구분" aria-describedby="workflow-baseline-evidence-caption"></video><figcaption id="workflow-baseline-evidence-caption">같은 dev-02 질문에서 첫 검색 후보와 기대 근거를 대조합니다. 올바른 문서를 손으로 넣어 본 성공은 실제 검색기를 고쳤다는 증거와 구별합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기준 질문</strong> · expected_document_ids = [library-2]</li><li><strong>기존 후보</strong> · retrieved[0].id = library-1</li><li><strong>ID 대조</strong> · 기대 ID 포함 여부 = False</li><li><strong>기대 문서</strong> · hits[0]의 ID / 쪽 = library-2 / 2</li><li><strong>기록</strong> · 기대 문서의 본문 = 도서관은 월요일에 휴관합니다.</li></ol></figure>
+<figure class="execution-trace" id="workflow-baseline-evidence"><h3>검색 실패와 올바른 문서를 직접 넣은 결과 구분</h3><figcaption id="workflow-baseline-evidence-caption">같은 dev-02 질문에서 첫 검색 후보와 기대 근거를 대조합니다. 올바른 문서를 손으로 넣어 본 성공은 실제 검색기를 고쳤다는 증거와 구별합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기준 질문</strong> · expected_document_ids = [library-2]</li><li><strong>기존 후보</strong> · retrieved[0].id = library-1</li><li><strong>ID 대조</strong> · 기대 ID 포함 여부 = False</li><li><strong>기대 문서</strong> · hits[0]의 ID / 쪽 = library-2 / 2</li><li><strong>기록</strong> · 기대 문서의 본문 = 도서관은 월요일에 휴관합니다.</li></ol></figure>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 고정 입력의 회귀 결과 기록</h3>
 <div class="cell-before"><p>hits에 실제로 들었던 ID와 쪽을 읽어 교정 전 자료의 ID와 함께 출력하세요.</p>
 </div>
@@ -222,7 +221,7 @@ print(<span class="tok-string">"기대 원문과 대조한 ID:"</span>, hits[<sp
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

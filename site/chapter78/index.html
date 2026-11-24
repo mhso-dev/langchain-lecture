@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 78 / 120</span><span class="template-badge">학생용 교재</span></div>
 <h1>HTML 입력 요소와 반응형 CSS</h1>
-<p class="hero-description">투두 화면에서 ‘할 일 제목’을 눌렀는데 입력창에 커서가 가지 않습니다. HTML이 레이블과 입력칸을 어떻게 묶는지 살펴본 뒤, 노트북 안에 실제로 그린 화면에서 글자와 간격을 바꾸어 봅니다.</p>
+<p class="hero-description">투두 화면의 레이블과 입력 필드를 for와 id로 연결합니다. 노트북에서 렌더링한 HTML을 사용해 입력·버튼·결과 영역의 배치와 동작을 확인합니다.</p>
 <div class="hero-meta"><span>웹 기초</span><span>8H · 전반 4H + 후반 4H</span><span>68·77일</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -60,6 +60,7 @@ display({<span class="tok-string">"text/html"</span>: markup, <span class="tok-s
 &lt;div class=&quot;input-row&quot;&gt;&lt;input id=&quot;todo-title&quot; type=&quot;text&quot; placeholder=&quot;예: CSS 간격 바꾸기&quot;&gt;
 &lt;button type=&quot;button&quot; disabled&gt;추가 동작 준비 중&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;"></iframe><div class="cell-after"><p>화면에 입력칸이 보이지만 입력 내용을 저장하는 코드는 없습니다. 표시와 저장을 따로 설계하면 화면을 읽기 전에 서버를 준비할 필요가 없습니다.</p>
 </div>
+<p id="example-analysis">버튼이 보인다는 것과 클릭하면 항목이 추가된다는 것은 별개입니다. 이 예제의 버튼은 비활성 상태여서 입력 요소의 배치와 레이블 연결까지만 확인할 수 있습니다. 추가 기능을 검증하는 단계에서는 사용자 동작과 목록의 변화를 함께 관찰합니다.</p>
 </article>
 <span class="lesson-anchor" id="form"></span><div class="lesson-explanation" id="reading-form"><h3>for와 id가 같을 때의 초점 이동</h3><p>레이블의 for 값은 입력 요소의 id를 가리킵니다. 표시 문구가 같아도 이 두 값이 다르면 브라우저가 올바른 입력칸을 연결할 수 없습니다. 레이블 글자를 눌러 어느 입력칸에 초점이 가는지 확인하세요.</p></div>
 <span class="lesson-anchor" id="list"></span><span class="lesson-anchor" id="reading-list"></span>
@@ -78,7 +79,7 @@ display({<span class="tok-string">'text/html'</span>: fixed, <span class="tok-st
 </details>
 </article>
 <span class="lesson-anchor" id="states"></span><span class="lesson-anchor" id="reading-states"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-label-target"><h3>레이블에서 실제 입력칸을 찾는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-label-target.mp4" aria-label="레이블에서 실제 입력칸을 찾는 경로" aria-describedby="workflow-label-target-caption"></video><figcaption id="workflow-label-target-caption">새 제목 레이블의 for를 수정하면 브라우저가 가리킬 입력칸이 달라집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>레이블</strong> · for = task-a</li><li><strong>ID 찾기</strong> · 입력칸 id = task-b</li><li><strong>일치 없음</strong> · 일치 여부 = task-a ≠ task-b</li><li><strong>for 수정</strong> · 수정한 for = task-b</li><li><strong>ID 찾기</strong> · 다시 비교 = task-b = task-b</li><li><strong>입력칸 연결</strong> · 연결된 요소 = input#task-b</li></ol></figure>
+<span class="lesson-anchor" id="workflow-label-target"></span><span class="lesson-anchor" id="workflow-label-target-caption"></span>
 
 </section>
 <section id="nb-layout" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -87,7 +88,7 @@ display({<span class="tok-string">'text/html'</span>: fixed, <span class="tok-st
 </header>
 <p>flex 컨테이너의 gap은 자식 사이 간격입니다. wrap을 켜면 폭이 부족할 때 버튼이 다음 줄로 내려갈 수 있습니다. 입력칸 자체의 여백만 늘리면 두 요소 사이의 간격은 의도와 다를 수 있습니다.</p>
 <!-- lesson-visual practice-space -->
-<section class="practice-space" id="practice-space" data-practice="wrapping"><h3>폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?</h3><p>입력칸 180px, 버튼 100px, gap 10px로 고정한 flex-wrap 비교 예시입니다. 컨테이너 폭을 290px와 289px로 바꿔 보세요.</p><label>컨테이너 폭(px) <input type="range" min="200" max="440" step="1" value="290"><span class="practice-value">290</span></label><div class="practice-stage" role="img" aria-label="폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?"></div><output aria-live="polite">290px에서는 입력칸과 버튼이 한 줄입니다. 289px에서는 1px가 부족해 버튼이 다음 줄로 넘어갑니다.</output></section>
+<section class="practice-space" id="practice-space" data-text-results data-practice="wrapping"><h3>flex-wrap의 줄바꿈 경계</h3><p>입력 필드 180px, 버튼 100px, 간격 10px를 고정한 화면입니다. 컨테이너 폭만 변경합니다.</p><label>컨테이너 폭(px) <input type="range" min="200" max="440" step="1" value="290"><span class="practice-value">290</span></label><div class="wrapping-scroll"><div class="wrapping-example"><span>할 일 제목</span><span>추가</span></div></div><output aria-live="polite">290px에서는 입력칸과 버튼이 한 줄입니다. 289px에서는 1px가 부족해 버튼이 다음 줄로 넘어갑니다.</output></section>
 <!-- /lesson-visual practice-space -->
 
 <span class="lesson-anchor" id="css"></span><div class="lesson-explanation" id="reading-css"><h3>부모 행에 적용되는 flex와 gap</h3><p>display:flex와 flex-wrap:wrap은 input과 button이 함께 들어 있는 .input-row에 적용합니다. gap:10px은 두 요소 사이의 여백입니다. 입력칸 자체에 적용하면 이 둘을 한 행으로 배치할 수 없습니다.</p></div>
@@ -129,7 +130,7 @@ display({<span class="tok-string">"text/html"</span>: style + second, <span clas
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

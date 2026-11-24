@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 091 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>키워드 조회 함수의 최소 구현</h1>
-<p class="hero-description">Q01 한 건을 끝까지 보내 보겠습니다. 사용자가 질문을 쓰고 장비 규정 한 줄이 화면에 뜨면 최소 경로를 연결한 것입니다. 같은 방식으로 교체 일정까지 대답해도 되는지는 다른 질문에서 드러납니다.</p>
+<p class="hero-description">Q01이 입력에서 규정 한 줄과 출처를 반환하기까지 최소 경로를 구현합니다. 같은 장비명으로 교체 일정을 물었을 때도 점검 규정을 내놓는 반례로 범위를 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,8 +34,8 @@
 </header>
 <p class="concept-intro">최소 조회 함수는 일부 질문에서만 맞을 수 있습니다. 장비명이 같은 두 질문을 보내 목적까지 구별하는지 확인합니다.</p><p>91장의 첫 구현은 장비명과 허용 그룹으로 규정을 찾습니다. 먼저 질문을 넣었을 때 화면에 어떤 답이 돌아오는지 보고, 서버와 모델 호출은 뒤로 미룹니다. 아래 셀은 공개 그룹의 장비 질문 경로를 재현합니다. 응답의 sources에는 아직 문서 ID만 담습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-one-allowed-rule"><h3>thin_lookup()이 장비 A의 규정 하나를 고르는 과정</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-one-allowed-rule.mp4" aria-label="thin_lookup()이 장비 A의 규정 하나를 고르는 과정" aria-describedby="workflow-one-allowed-rule-caption"></video><figcaption id="workflow-one-allowed-rule-caption">공개 문서에서 장비 이름이 일치하는 항목을 셉니다. 일치한 문서가 정확히 한 건일 때만 그 문장을 답에 담습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>입력 검사</strong> · question = 장비 A의 점검 전 확인 사항은?</li><li><strong>공개 장비 검색</strong> · matches = [&#x27;RULE-A&#x27;]</li><li><strong>후보 수</strong> · len(matches) = 1</li><li><strong>규정 반환</strong> · sources = [{&#x27;id&#x27;: &#x27;RULE-A&#x27;}]</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · thin_lookup()의 정상 응답</h3>
+<span class="lesson-anchor" id="workflow-one-allowed-rule"></span><span class="lesson-anchor" id="workflow-one-allowed-rule-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · thin_lookup()의 정상 응답</h3>
 <div class="cell-before"><p>A가 들어간 질문을 넣고 어떤 필드가 화면으로 넘어가는지 읽어 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 40줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
@@ -93,7 +93,7 @@ print(reply[<span class="tok-string">"answer"</span>], reply[<span class="tok-st
 <!-- END MOTION -->
 
 <!-- lesson-visual practice-space -->
-<section class="practice-space" id="practice-space" data-practice="equipment"><h3>장비명이 맞아도 답이 엉뚱해질 수 있을까요?</h3><p>thin_lookup()이 검사하는 것은 공개 문서의 장비명입니다. 같은 장비에 대해 점검과 교체 일정을 각각 물어보세요.</p><label>질문 <select><option value="장비 A 점검 전 확인 사항은?">장비 A 점검 전 확인 사항은?</option><option value="장비 A 교체 일정은?">장비 A 교체 일정은?</option><option value="장비 B 점검은?">장비 B 점검은?</option><option value="점검 전 무엇을 보나요?">점검 전 무엇을 보나요?</option></select></label><div class="practice-stage" role="img" aria-label="장비명이 맞아도 답이 엉뚱해질 수 있을까요?"></div><output aria-live="polite">장비 A의 점검과 교체 일정 모두 RULE-A로 연결됩니다. 두 번째 질문은 찾은 문서가 있어도 질문의 의도와 답변이 어긋납니다.</output></section>
+<section class="practice-space" id="practice-space" data-text-results data-practice="equipment"><h3>장비명 필터의 적용 범위</h3><p>thin_lookup()은 장비명을 검사합니다. 같은 장비의 점검 질문과 교체 일정 질문을 비교합니다.</p><label>질문 <select><option value="장비 A 점검 전 확인 사항은?">장비 A 점검 전 확인 사항은?</option><option value="장비 A 교체 일정은?">장비 A 교체 일정은?</option><option value="장비 B 점검은?">장비 B 점검은?</option><option value="점검 전 무엇을 보나요?">점검 전 무엇을 보나요?</option></select></label><output aria-live="polite">장비 A의 점검과 교체 일정 모두 RULE-A로 연결됩니다. 두 번째 질문은 찾은 문서가 있어도 질문의 의도와 답변이 어긋납니다.</output></section>
 <!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 의도 불일치 반례</h3>
 <div class="cell-before"><p>함수는 그대로 두고 질문만 바꿉니다.</p>
@@ -104,6 +104,7 @@ print(thin_lookup(question)[<span class="tok-string">"answer"</span>])</code></p
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 전원 표시등을 확인합니다.</pre></div>
 <div class="cell-after"><p>점검 문장이 또 나옵니다. 함수는 장비 이름을 발견한 뒤 ‘점검’과 ‘교체’ 중 무엇을 묻는지 보지 않았습니다. 이 응답은 다음 장의 실패 사례입니다.</p>
 </div>
+<p id="example-analysis">질문의 의도를 바꿔도 ‘전원 표시등’이라는 점검 안내가 그대로 나옵니다. 정상 예제 한 건이 성공한 것으로는 이 함수가 사용자의 의도를 구분한다고 말할 수 없습니다. 최소 시연을 만든 다음에는 장비는 같고 요청만 다른 입력을 붙여 처리 범위를 드러냅니다.</p>
 </article>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 장비명 누락 처리</h3>
 <div class="cell-before"><p>어느 장비인지 묻는 경로로 들어가려면 어떤 입력을 주면 될까요? 상태값까지 확인하세요.</p>
@@ -127,7 +128,7 @@ print(thin_lookup(question)[<span class="tok-string">"answer"</span>])</code></p
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

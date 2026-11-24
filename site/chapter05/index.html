@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 05 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>CSV 읽기와 데이터 정제</h1>
-<p class="hero-description">기록표를 받았는데 id가 2인 첫 행은 시간이 비어 있고 그다음 행에는 20분이 적혀 있습니다. 중복부터 지우면 쓸 수 있는 20분이 사라집니다. 어느 행을 먼저 남길지 작은 표로 확인합니다.</p>
+<p class="hero-description">CSV에서 ID 2가 두 번 등장합니다. 첫 행의 시간은 비어 있고 두 번째 행에는 20분이 기록돼 있습니다. 누락값 처리와 중복 제거의 순서에 따라 최종 집계가 달라집니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 005 · 8H</span><span>4장: 함수·모듈·객체 사용</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -50,8 +50,9 @@ csv_text = <span class="tok-string">"""id,title,minutes
 rows = list(csv.DictReader(StringIO(csv_text)))
 print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"minutes"</span>]))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">''</pre></div>
-<div class="cell-after"><p>작은따옴표 두 개는 길이 0인 문자열입니다. 0분이라는 뜻으로 고치면 누락된 값과 실제 0분을 구분할 수 없습니다.</p>
+<div class="cell-after"><p>빈 문자열은 repr로 출력하면 작은따옴표 두 개로 표시됩니다.</p>
 </div>
+<p id="example-analysis">빈 minutes를 발견하자마자 0으로 저장하면 나중에 ‘0분 공부했다’와 ‘시간을 입력하지 않았다’를 구별할 수 없습니다. 이 예에서는 같은 ID로 20분을 적은 행도 뒤에 있습니다. 중복 제거를 먼저 하면 첫 번째 2번 행을 보존하는 방식에서는 유효한 20분 기록을 잃습니다.</p>
 </article>
 <span class="lesson-anchor" id="formats"></span><div class="lesson-explanation" id="reading-formats"><h3>CSV·JSON 직렬화와 역직렬화</h3><div class="prose"><p>CSV는 쉼표 같은 구분자로 열을 나누는 표 형식입니다. 값 안에도 쉼표가 있을 수 있어 문자열을 split(",")으로 자르지 않고 csv 모듈을 사용합니다. DictReader는 첫 행을 키로 삼아 각 행을 딕셔너리로 읽습니다. 여기서 분 값 "30"도 문자열입니다.</p>
 <p>with 블록은 파일을 사용한 뒤 닫는 처리를 맡습니다. newline=""는 csv 모듈이 줄바꿈을 처리하도록 하는 옵션입니다. list(...)는 행을 읽어 작은 목록으로 모읍니다.</p>
@@ -80,11 +81,9 @@ print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"min
 
 
 <!-- lesson-visual visual-clean-order -->
-<figure class="lesson-clip" id="visual-clean-order"><h3>어떤 2번 행을 남길까요?</h3>
-<video autoplay loop muted playsinline aria-label="어떤 2번 행을 남길까요?" src="visual-clean-order.mp4"></video>
-<figcaption>minutes가 빈 첫 2번 행을 먼저 제외합니다. 유효한 행만 모은 뒤 ID를 비교해야 20분짜리 2번 행이 남습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-clean-order"></span>
 <!-- /lesson-visual visual-clean-order -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 유효한 행만 리스트에 추가</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 유효한 행만 리스트에 추가</h3>
 <div class="cell-before"><p>아래 함수는 이 작은 CSV의 정수 표기만 읽습니다. 숫자 변환과 범위 검사까지 성공한 행을 모으세요.</p>
 <p>CSV의 minutes는 문자열입니다. clean_row는 '30'을 30으로 바꾸지만 '30.0'에서는 int 변환이 실패해 행을 제외합니다. 뒤의 판다스 예시는 먼저 숫자로 읽어 정수와 값이 같은 30.0을 허용합니다. 팀 자료에는 어느 표기까지 허용할지 한 가지 규칙을 정하세요.</p>
 </div>
@@ -223,7 +222,7 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

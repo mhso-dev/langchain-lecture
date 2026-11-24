@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 37 / RAG EVALUATION</span><span class="template-badge">학생용 교재</span></div>
 <h1>청크 크기·중첩·top-k 비교 실험</h1>
-<p class="hero-description">검색 평가에서 기대한 원문을 찾았는데 답에 ‘14일’이 보이지 않습니다. 원문 한 쪽을 몇 글자씩 나누느냐에 따라 검색기에 보이는 조각이 달라집니다.</p>
+<p class="hero-description">청크 크기·중첩·검색 개수를 한 번에 하나씩 바꿉니다. ‘대출 기간’과 ‘14일’이 같은 후보에 남는지 확인해 설정 변경과 답변 근거의 관계를 추적합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 037 · 8H</span><span>21장 청킹·22장 E1·36장 평가 기록</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -64,6 +64,7 @@ print(split_text(text, <span class="tok-number">16</span>, <span class="tok-numb
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['도서 대출 기간은 14일입니다', '.']</pre></div>
 <div class="cell-after"><p>첫 조각에는 14일이, 다음 조각에는 마침표만 남았습니다. 원문이 짧아도 고정 글자 수로 자르면 의미 없는 조각이 생길 수 있습니다.</p>
 </div>
+<p id="example-analysis">첫 조각만 보고 분할이 잘됐다고 판단하기 쉽습니다. 뒤에 남은 마침표 한 글자도 인덱스에 들어갈 후보입니다. 크기를 줄인 뒤에는 조각 수와 함께 ‘대출 기간’과 ‘14일’을 같은 조각에서 읽을 수 있는지도 확인하세요.</p>
 </article>
 <span class="lesson-anchor" id="size"></span><div class="lesson-explanation" id="reading-size"><h3>청크 크기와 문장 경계</h3><div class="prose"><p>size는 Python 문자열에서 한 청크에 넣는 최대 문자 수입니다. 토큰 수가 아닙니다. size=16을 8로 줄이면 원문 하나가 더 많은 조각으로 나뉩니다. 숫자·조건·주어가 서로 떨어질 수 있으므로 청크 개수만 비교하지 말고 실제 문자열을 읽습니다.</p>
 <p>대출 원문은 “도서 대출 기간은 14일입니다.”라는 규칙입니다. 제공 코드가 만든 8문자 첫 청크는 “도서 대출 기간”이고 숫자 14가 없습니다. 원문 ID는 맞게 찾더라도 답변에 필요한 부분이 검색 결과에서 빠질 수 있습니다.</p>
@@ -122,8 +123,8 @@ print(repr(overlapped[<span class="tok-number">0</span>][-<span class="tok-numbe
 <!-- END MOTION -->
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-more-chunks"><h3>k가 2가 되면 찾은 원문도 두 개일까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-more-chunks.mp4" aria-label="k가 2가 되면 찾은 원문도 두 개일까요?" aria-describedby="workflow-more-chunks-caption"></video><figcaption id="workflow-more-chunks-caption">고정한 ranking을 앞에서부터 자릅니다. 둘째 청크의 ID는 달라도 원문 ID는 첫 청크와 같습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>고정 순위</strong> · 원문 = library-1</li><li><strong>k = 1</strong> · ranking[:1] = library-1:0</li><li><strong>k = 2</strong> · ranking[:2] = library-1:0, library-1:1</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · top-k 변경과 검색 범위</h3>
+<span class="lesson-anchor" id="workflow-more-chunks"></span><span class="lesson-anchor" id="workflow-more-chunks-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · top-k 변경과 검색 범위</h3>
 <div class="cell-before"><p>아래 목록은 제공 실험에서 저장한 dev-01의 순위입니다. 어느 청크가 추가되는지 읽으세요.</p>
 <p>추가로 찾은 조각 ‘출 기간은 14’에서 14 다음 글자를 확인하세요. 숫자는 보이지만 단위 ‘일’은 이 조각에 없습니다. 두 건을 찾았다는 사실만으로 답에 필요한 문장이 모두 들어왔다고 판단할 수 없습니다.</p>
 </div>
@@ -156,7 +157,7 @@ print(ranking[:<span class="tok-number">2</span>])</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

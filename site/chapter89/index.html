@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 089 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>자료 접근 범위와 대체 데이터</h1>
-<p class="hero-description">자료를 받으면 팀원 한 명의 컴퓨터에서 열리는 것과 모든 사용자에게 보여 줄 수 있는 것을 구분해야 합니다. 규정 A와 내부 규정을 같은 폴더에서 읽을 수 있어도 공개 그룹에 인용할 수 있는 범위는 다릅니다.</p>
+<p class="hero-description">서버가 읽을 수 있는 규정과 공개 사용자가 인용할 수 있는 규정의 범위를 분리합니다. 공개 그룹으로 필터링한 자료에서 근거 위치를 복원합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,11 +34,9 @@
 </header>
 <p class="concept-intro">자료마다 접근할 수 있는 사용자가 다릅니다. 자료 목록에 허용 범위를 적고 외부 연결이 끊겼을 때 사용할 근거를 정합니다.</p><p>자료 카드 A　RULE-A / 가상 장비실 규정 A / 1쪽 2.1절 / 개정 2026-11-01 / rules-v1 / public·admin 허용. 자료 카드 B　RULE-B / 가상 장비실 규정 B / 2쪽 2.2절 / 같은 개정일·판본 / 같은 두 그룹 허용. 별도 내부 규정 RULE-ADMIN은 admin만 읽도록 정해 둡니다. 세 문서 모두 수업용 가상 자료이며 소속 기관의 실제 방침은 별도로 확인해야 합니다.</p>
 <!-- lesson-visual detail-inventory -->
-<figure class="lesson-clip" id="detail-inventory"><h3>공개 그룹의 검색 후보에 들어가는 문서</h3>
-<video autoplay loop muted playsinline aria-label="공개 그룹의 검색 후보에 들어가는 문서" src="detail-inventory.mp4"></video>
-<figcaption>문서마다 groups에 public이 있는지 먼저 확인합니다. RULE-A와 RULE-B만 후보로 들어가고 관리자 전용 문서는 검색 전에 제외됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-inventory"></span>
 <!-- /lesson-visual detail-inventory -->
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공개 그룹의 자료 필터</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 공개 그룹의 자료 필터</h3>
 <div class="cell-before"><p>자료 담당자가 가상 public 사용자에게 제공할 문서 ID만 고릅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 29줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
@@ -73,6 +71,7 @@ print([doc[<span class="tok-string">"id"</span>] <span class="tok-keyword">for</
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['RULE-A', 'RULE-B']</pre></div>
 <div class="cell-after"><p>RULE-A와 RULE-B 두 개가 남습니다. 검색한 뒤 민감한 결과를 가리는 방식에서는 검색 기록에 본문이 남을 수 있으므로 이 예시에서는 먼저 후보를 줄입니다.</p>
 </div>
+<p id="example-analysis">검색 전에 공개 자료를 걸러 낸 결과가 RULE-A와 RULE-B입니다. 이 목록은 접근할 수 있는 후보를 정한 것이고, 어느 문서가 이번 질문의 근거인지는 다음 판단입니다. 권한 필터와 검색 결과를 따로 기록해야 답이 비었을 때 어느 쪽에서 제외됐는지 추적할 수 있습니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>허용 문서 목록에서 빠진 항목 추적하기</h3><p>출력된 RULE-A와 RULE-B는 public 사용자가 살펴볼 수 있는 후보입니다. 여기에서 RULE-ADMIN이 빠진 이유를 찾으려면 원자료의 groups를 읽어 보세요. admin만 들어 있으므로 장비 이름을 비교하기 전에 이미 제외됩니다.</p></div>
 
@@ -113,7 +112,7 @@ print(locator[<span class="tok-string">"source"</span>], locator[<span class="to
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

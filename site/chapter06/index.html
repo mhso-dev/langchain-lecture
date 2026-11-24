@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 06 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>HTTP 요청과 JSON 응답 처리</h1>
-<p class="hero-description">할 일 1번을 요청했는데 제목 대신 ‘찾을 수 없음’이 돌아왔습니다. 먼저 HTTP 응답을 받은 것인지, 받은 데이터가 원하는 기록인지부터 나눠서 확인합니다. 가상 응답으로 연습하므로 외부 서버와 계정은 필요하지 않습니다.</p>
+<p class="hero-description">할 일 1번을 조회하는 예제로 요청 경로, HTTP 상태, JSON 본문, 응답 ID를 검사합니다. 기본 실습은 가상 응답을 사용하며 외부 계정 없이 실행할 수 있습니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 006 · 8H</span><span>5장까지: 함수·예외·모듈·JSON</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -84,8 +84,9 @@ body = <span class="tok-string">'{"id":1,"title":"  HTTP 연습  ","completed":f
 todo = json.loads(body)
 print(todo[<span class="tok-string">"title"</span>].strip())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">HTTP 연습</pre></div>
-<div class="cell-after"><p>HTTP 연습이 나옵니다. 문자열을 해석했다고 해서 값까지 올바르다는 뜻은 아닙니다. 예를 들어 id가 2이면 요청한 기록과 다릅니다.</p>
+<div class="cell-after"><p>디코딩한 title 값은 ‘HTTP 연습’입니다.</p>
 </div>
+<p id="example-analysis">요청 주소는 1번인데 응답의 id만 2로 바꿔 보세요. JSON을 읽는 줄은 여전히 성공합니다. 잘못된 할 일을 화면에 띄우지 않으려면 해석한 객체의 id와 처음 주소를 만들 때 쓴 todo_id를 대조해야 합니다.</p>
 </article>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 요청 ID와 응답 ID 대조</h3>
 <div class="cell-before"><p>응답에서 id만 2로 바꿨습니다. 받은 번호가 요청 번호와 같은지 출력하세요.</p>
@@ -112,15 +113,13 @@ print(received[<span class="tok-string">"id"</span>] == todo_id)</code></pre></f
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-failures -->
-<figure class="lesson-clip" id="visual-failures"><h3>404와 잘못된 JSON은 어디서 갈라질까요?</h3>
-<video autoplay loop muted playsinline aria-label="404와 잘못된 JSON은 어디서 갈라질까요?" src="visual-failures.mp4"></video>
-<figcaption>상태 검사를 먼저 통과한 응답만 JSON으로 읽습니다. 404는 HTTP 검사에서, 본문 형식 오류는 디코딩에서 드러납니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-failures"></span>
 <!-- /lesson-visual visual-failures -->
 
 <span class="lesson-anchor" id="mock"></span><div class="lesson-explanation" id="reading-mock"><h3>모의 응답별 분기 테스트</h3><div class="prose"><p>MockTransport는 실제 소켓 통신 대신 handler 함수가 만든 응답을 돌려줍니다. 외부 인터넷이 끊겨도 같은 입력을 반복할 수 있어 실패 처리 학습에 사용합니다. 제공 handler의 경로별 응답을 읽고 바꿔 보는 것이 기본 활동입니다.</p>
 <p>모의 타임아웃은 예외를 즉시 발생시킨 것입니다. 실제 서버를 기다려 5초가 지났다는 측정 결과가 아닙니다. 이 검사만으로 DNS·TLS·프록시·실제 서버 접속이 된다고 판단하지 않습니다.</p>
 </div></div>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · JSONDecodeError 처리</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · JSONDecodeError 처리</h3>
 <div class="cell-before"><p>상태 코드는 200인데 본문에는 HTML이 담겼다고 가정합니다. 어떤 변환에서 실패하는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">try</span>:
@@ -216,7 +215,7 @@ print(type(completed) <span class="tok-keyword">is</span> bool)</code></pre></fi
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

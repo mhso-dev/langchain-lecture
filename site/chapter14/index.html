@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 14 / ROUTING</span><span class="template-badge">학생용 교재</span></div>
 <h1>분류 함수와 조건부 라우팅</h1>
-<p class="hero-description">영수증 위치와 인증 오류는 서로 다른 안내가 필요합니다. 먼저 분류 결과 한 단어를 얻고, 그 값을 받아 어느 작성 규칙을 적용할지는 파이썬 코드가 결정합니다.</p>
+<p class="hero-description">영수증 문의와 인증 오류를 서로 다른 처리 함수로 보냅니다. 분류 함수의 반환값, 파이썬 조건문이 선택한 경로, 추가 확인이 필요한 입력을 비교합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 014 · 8H</span><span>13장 순차 워크플로우·딕셔너리·예외</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -51,6 +51,7 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">billing</pre></div>
 <div class="cell-after"><p>billing이 나옵니다. 두 단어가 모두 있거나 모두 없으면 이 함수는 분류를 확정하지 않고 clarify를 반환합니다.</p>
 </div>
+<p id="example-analysis">‘영수증 오류가 납니다’에는 두 신호가 모두 들어 있습니다. 이 입력을 어느 한 팀으로 보내면 다른 요청을 놓칠 수 있습니다. 조건문에서 두 신호가 같은지 먼저 검사하는 이유를 두 단어가 모두 없는 문의와도 비교해 보세요.</p>
 </article>
 <span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>분류 함수와 실행 함수</h3><div class="prose"><p>분류 모델은 입력이 어느 분야인지 문자열을 제안합니다. 그 문자열로 어떤 작업을 수행할지는 Python 코드가 결정합니다. 모델이 billing이라고 썼다는 이유만으로 결제나 환불이 실제 실행된 것은 아닙니다.</p>
 <p>이번 예제는 접수 안내 문장만 만듭니다. 외부 계정 조회·환불·데이터 변경은 하지 않습니다. 경로 분류는 사용자 권한이나 작업 승인도 대신하지 않습니다.</p>
@@ -92,12 +93,12 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 
 
 <!-- lesson-visual practice-space -->
-<section class="practice-space" id="practice-space" data-practice="classify"><h3>영수증과 오류가 동시에 나오면 어디로 갈까요?</h3><p>수업의 분류 함수는 두 단어의 포함 여부를 검사합니다. 질문을 바꾸면서 강조되는 경로와 안내 작성 함수의 호출 수를 확인하세요.</p><label>문의 내용 <select><option value="영수증이 필요합니다">영수증이 필요합니다</option><option value="인증 오류입니다">인증 오류입니다</option><option value="영수증 오류입니다">영수증 오류입니다</option><option value="도와주세요">도와주세요</option></select></label><div class="practice-stage" role="img" aria-label="영수증과 오류가 동시에 나오면 어디로 갈까요?"></div><output aria-live="polite">두 단서 중 하나만 있을 때는 해당 경로에서 1회 작성합니다. 둘 다 있거나 모두 없으면 clarify로 이동하고 작성 횟수는 0입니다.</output></section>
+<section class="practice-space" id="practice-space" data-text-results data-practice="classify"><h3>문의 유형과 호출 횟수</h3><p>영수증과 오류의 포함 여부로 분류 경로를 선택합니다. 추가 확인이 필요한 입력에서는 안내 작성 함수를 호출하지 않습니다.</p><label>문의 내용 <select><option value="영수증이 필요합니다">영수증이 필요합니다</option><option value="인증 오류입니다">인증 오류입니다</option><option value="영수증 오류입니다">영수증 오류입니다</option><option value="도와주세요">도와주세요</option></select></label><output aria-live="polite">두 단서 중 하나만 있을 때는 해당 경로에서 1회 작성합니다. 둘 다 있거나 모두 없으면 clarify로 이동하고 작성 횟수는 0입니다.</output></section>
 <!-- /lesson-visual practice-space -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>순차 실행에서 조건부 실행으로</h3><p>13장에서는 정상적인 문의가 요약·분류·작성 단계를 모두 거쳤습니다. 여기서는 먼저 route를 판정한 뒤 작성 호출을 할지 결정합니다. technical이면 해당 작성 규칙을 사용하고 clarify이면 추가 질문을 곧바로 반환합니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-classifier-timeout"><h3>분류기의 시간 초과는 어느 경로로 돌아올까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-classifier-timeout.mp4" aria-label="분류기의 시간 초과는 어느 경로로 돌아올까요?" aria-describedby="workflow-classifier-timeout-caption"></video><figcaption id="workflow-classifier-timeout-caption">timed_out을 분류 함수로 넣으면 결제 단서가 있는 질문도 작성 함수까지 도달하지 못합니다. 여기서 clarify의 원인은 classification_error입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · question = 영수증이 필요합니다</li><li><strong>분류 호출</strong> · timed_out() = TimeoutError</li><li><strong>예외 처리</strong> · reason = classification_error</li><li><strong>결과</strong> · writes = 0</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · route_request()로 실행 경로 선택</h3>
+<span class="lesson-anchor" id="workflow-classifier-timeout"></span><span class="lesson-anchor" id="workflow-classifier-timeout-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · route_request()로 실행 경로 선택</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>
 </div>
@@ -205,7 +206,7 @@ print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

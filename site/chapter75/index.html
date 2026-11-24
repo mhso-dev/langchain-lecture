@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 75 / CLOUD DEPLOYMENT</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 백업과 복구 검증</h1>
-<p class="hero-description">접속과 재시작은 성공했는데 어제 올린 문서가 사라졌습니다. 복구를 확인하려면 백업 파일을 열 수 있다는 사실만으로는 부족합니다. 원본을 유지한 채 별도 대상에 복원하고 같은 소유자·문서·원문을 다시 읽어 봅니다.</p>
+<p class="hero-description">별도 DB에 백업을 복원하고 원본의 소유자·문서·본문을 다시 조회합니다. 서비스 재시작, 백업 파일 생성, 실제 데이터 복구를 각각 다른 결과로 기록합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 075 · 8H</span><span>74일 examples/student/manual-record.md</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -72,6 +72,7 @@ print(restored_row, restored_row == original_row)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('과제함에 제출합니다.',) True</pre></div>
 <div class="cell-after"><p>복원한 행에 ‘과제함에 제출합니다.’가 남고 원본과 같다는 결과가 나옵니다. 실제 서비스라면 여기서 문서뿐 아니라 대화·출처·벡터 매핑까지 같은 요청으로 대조합니다.</p>
 </div>
+<p id="example-analysis">복원된 행이 한 건이라는 숫자만 보면 내용이 바뀌어도 놓칩니다. 이 셀은 새 DB에서 ‘과제함에 제출합니다.’를 다시 읽어 원본과 대조합니다. 운영 복구 기록에도 행 수와 함께 사용자가 실제로 다시 읽어야 하는 레코드 하나를 남깁니다.</p>
 </article>
 <span class="lesson-anchor" id="restart"></span><span class="lesson-anchor" id="reading-restart"></span>
 <span class="lesson-anchor" id="restore"></span><div class="lesson-explanation" id="reading-restore"><h3>원본·백업본·복구 대상을 나누기</h3><p>원본은 origin, 복사본은 backup, 복구 검사를 할 대상은 target입니다. backup.backup(target)을 호출한 뒤 target에만 변경을 가하면 원본을 비교 기준으로 계속 사용할 수 있습니다.</p></div>
@@ -87,14 +88,12 @@ print(restored_row, restored_row == original_row)</code></pre></figure>
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-incident -->
-<figure class="lesson-clip" id="visual-incident"><h3>복원 검증에서 행 수가 같아도 다시 읽는 이유</h3>
-<video autoplay loop muted playsinline aria-label="복원 검증에서 행 수가 같아도 다시 읽는 이유" src="visual-incident.mp4"></video>
-<figcaption>행 수 1은 레코드가 있다는 뜻입니다. 복원 대상 DB에서 본문까지 다시 읽어 원본의 문장과 같아야 이 예시의 복구 검사가 통과합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-incident"></span>
 <!-- /lesson-visual visual-incident -->
 
 <span class="lesson-anchor" id="logs"></span><span class="lesson-anchor" id="reading-logs"></span>
 <span class="lesson-anchor" id="local-check"></span><span class="lesson-anchor" id="reading-local-check"></span>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 원문 필드의 불일치 검출</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 원문 필드의 불일치 검출</h3>
 <div class="cell-before"><p>가상 복구본에서 doc-1 원문만 바뀌었습니다. 행 수를 세는 대신 앞서 선택한 원문과 다시 대조하세요.</p>
 <p>origin에서 backup으로 복사하고, backup에서 target으로 복원했습니다. backup.backup(target)에서 점 왼쪽은 읽을 DB이고 괄호 안은 받을 DB입니다. 이번 과제에서는 복원본 target의 본문만 바꿉니다.</p>
 </div>
@@ -108,7 +107,7 @@ print(target.execute(query, key).fetchone() == original_row)</code></pre></figur
 </details>
 </article>
 <span class="lesson-anchor" id="compare"></span><div class="lesson-explanation" id="reading-compare"><h3>같은 키로 원문 비교하기</h3><p>문서 소유자 alice와 ID doc-1을 두 DB에서 동일하게 사용합니다. 대상의 본문만 수정하면 양쪽에 여전히 한 행이 있어도 restored_row와 original_row가 달라집니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-restore-verification"><h3>행 수가 같아도 복원 검사가 실패하는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-restore-verification.mp4" aria-label="행 수가 같아도 복원 검사가 실패하는 이유" aria-describedby="workflow-restore-verification-caption"></video><figcaption id="workflow-restore-verification-caption">백업본을 별도 DB에 복원한 뒤, 대상의 본문만 바꿉니다. 각 단계에서 원본과 대상의 비교값을 읽어 보세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>원본 DB</strong> · 대상 키 = alice · doc-1</li><li><strong>백업 DB</strong> · 문서 수 = 1행</li><li><strong>대상 DB</strong> · 복원 방법 = backup.backup(target)</li><li><strong>본문 대조</strong> · 원본과 같은가? = True</li><li><strong>대상 수정</strong> · 대상 본문 = 제출 기한 미확인</li><li><strong>본문 대조</strong> · 원본과 같은가? = False</li></ol></figure>
+<span class="lesson-anchor" id="workflow-restore-verification"></span><span class="lesson-anchor" id="workflow-restore-verification-caption"></span>
 
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -125,7 +124,7 @@ print(target.execute(query, key).fetchone() == original_row)</code></pre></figur
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

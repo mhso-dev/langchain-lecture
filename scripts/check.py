@@ -17,6 +17,7 @@ class Page(HTMLParser):
         self.notebooks = []
         self.simulations = []
         self.has_practice = False
+        self.has_spatial_practice = False
         self.videos = []
         self.clip_playback_errors = []
         self.closed_lesson_blocks = []
@@ -37,6 +38,8 @@ class Page(HTMLParser):
             else:
                 self.links.append(value)
         self.has_practice |= "data-practice" in attrs
+        if "data-practice" in attrs and "data-text-results" not in attrs:
+            self.has_spatial_practice = True
         if tag == "video":
             self.videos.append(attrs.get("src"))
             if not attrs.get("src", "").endswith(".mp4"):
@@ -44,8 +47,8 @@ class Page(HTMLParser):
             if "observation-clip" in attrs.get("class", "").split():
                 if not {"controls", "playsinline"}.issubset(attrs) or not attrs.get("poster") or "autoplay" in attrs:
                     self.clip_playback_errors.append("관찰 영상의 재생 컨트롤·정지 화면·수동 재생 설정 오류")
-            elif not {"autoplay", "loop", "muted", "playsinline"}.issubset(attrs) or "controls" in attrs:
-                self.clip_playback_errors.append("개념 영상의 무음 자동 반복 재생 설정 오류")
+            elif "controls" not in attrs or "playsinline" not in attrs or "autoplay" in attrs or "loop" in attrs:
+                self.clip_playback_errors.append("수동 재생·일시정지 설정 오류")
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
         if tag == "iframe" and attrs.get("src") == "chunk-lab.html":
@@ -85,7 +88,7 @@ def main():
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
         if page.has_practice:
-            for asset in ("../assets/three.min.js", "../assets/practice-space.js"):
+            for asset in (["../assets/practice-space.js"] + (["../assets/three.min.js"] if page.has_spatial_practice else [])):
                 if asset not in page.links:
                     errors.append(f"{name} 실험 스크립트 연결 누락: {asset}")
         if "pdf-layers" in page.ids:
@@ -110,7 +113,7 @@ def main():
             errors.append(f"{name} 코드 셀 누락")
     if errors:
         raise SystemExit("\n".join(sorted(set(errors))))
-    experiments = sum(int(p.has_practice) + int("pdf-layers" in p.ids) + len(p.simulations) for p in pages.values())
+    experiments = sum(int(p.has_spatial_practice) + int("pdf-layers" in p.ids) + len(p.simulations) for p in pages.values())
     print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {experiments}곳, 영상 {sum(len(p.videos) for p in pages.values())}편 통과")
 
 

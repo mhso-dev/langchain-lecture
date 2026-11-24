@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 77 / CI·CD</span><span class="template-badge">학생용 교재</span></div>
 <h1>컨테이너 이미지 digest와 롤백 기준</h1>
-<p class="hero-description">배포 직전, 승인 화면에 적힌 이미지와 CI가 검사한 이미지의 이름은 같은데 digest가 다릅니다. 어떤 버전을 실제로 적용할지 정하지 않으면 되돌릴 때도 근거가 없습니다. 한 배포의 승인 조건과 실패 후 복구 경로를 로컬 기록으로 연습합니다.</p>
+<p class="hero-description">승인한 이미지와 배포 후보의 태그는 같지만 digest가 다른 사례를 다룹니다. 로컬 배포 기록으로 적용 조건과 실패 시 이전 이미지로 복구하는 기준을 점검합니다.</p>
 <div class="hero-meta"><span>기초 이후 · 배포 자동화 준비</span><span>교육일 077 · 8H (전반 4H / 후반 4H)</span><span>75일 배포·백업/복구, 76일 같은 commit·digest 기록</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -37,7 +37,7 @@
 </div>
 </header>
 <p class="concept-intro">태그는 다른 이미지를 가리키도록 옮길 수 있습니다. 배포 후보를 구별하려면 이미지 내용에 대응하는 digest와 기능 검사 결과를 함께 봅니다.</p><p>CI는 검사한 소스와 이미지 후보를 함께 인계합니다. CD는 환경 승인과 현재 배포 상태를 확인하고 그 후보만 적용합니다. 여기서는 작은 바이트열의 SHA-256으로 서로 다른 내용을 구별합니다. 실제 레지스트리에서 받은 manifest digest를 대신하는 수업용 값입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>이동하는 태그와 고정된 지문</h3><video autoplay loop muted playsinline aria-label="이동하는 태그와 고정된 지문" src="concept.mp4"></video><figcaption>이름표가 다른 상자로 옮겨가는 동안 두 상자의 봉인을 보세요. 같은 태그로 다시 조회해도 같은 내용이라는 보장은 없습니다.</figcaption></figure><!-- MOTION floating-tag -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION floating-tag -->
 
 <!-- END MOTION -->
 
@@ -45,8 +45,8 @@
 
 <span class="lesson-anchor" id="dispatch"></span><div class="lesson-explanation" id="reading-dispatch"><h3>같은 지문과 승인 여부를 함께 확인하기</h3><p>can_apply는 expected와 candidate가 같은지, 검토자가 승인했는지를 함께 봅니다. 지문이 같아도 승인하지 않은 후보는 적용하지 않습니다.</p></div>
 <span class="lesson-anchor" id="environment-review"></span><span class="lesson-anchor" id="reading-environment-review"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-candidate-gate"><h3>승인한 이미지와 후보 이미지가 달라졌을 때</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-candidate-gate.mp4" aria-label="승인한 이미지와 후보 이미지가 달라졌을 때" aria-describedby="workflow-candidate-gate-caption"></video><figcaption id="workflow-candidate-gate-caption">수업에서는 두 바이트열의 해시로 후보의 일치 여부를 연습합니다. 실제 레지스트리에서 내려받은 이미지를 검사한 결과와 구별하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>승인본 B</strong> · 승인 대상 = course-image B</li><li><strong>후보 C</strong> · 현재 후보 = course-image C</li><li><strong>지문 비교</strong> · approved == candidate = False</li><li><strong>적용 보류</strong> · can_apply = False</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 태그와 해시 지문 비교</h3>
+<figure class="execution-trace" id="workflow-candidate-gate"><h3>승인한 이미지와 후보 이미지가 달라졌을 때</h3><figcaption id="workflow-candidate-gate-caption">수업에서는 두 바이트열의 해시로 후보의 일치 여부를 연습합니다. 실제 레지스트리에서 내려받은 이미지를 검사한 결과와 구별하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>승인본 B</strong> · 승인 대상 = course-image B</li><li><strong>후보 C</strong> · 현재 후보 = course-image C</li><li><strong>지문 비교</strong> · approved == candidate = False</li><li><strong>적용 보류</strong> · can_apply = False</li></ol></figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 태그와 해시 지문 비교</h3>
 <div class="cell-before"><p>내용 한 줄이 바뀌었을 때 같은 승인값을 계속 쓸 수 있는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> hashlib
@@ -58,6 +58,7 @@ print(approved == candidate)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>False입니다. 승인 당시 검토한 내용과 현재 후보가 다르면 배포를 중단하고 새 후보의 검사 기록을 확인합니다.</p>
 </div>
+<p id="example-analysis">태그 문자열이 같아도 그 태그가 나중에 다른 이미지를 가리킬 수 있습니다. 되돌릴 버전을 정할 때 해시 지문을 기록하는 이유입니다. 이번 후보와 승인한 이미지의 지문이 다르면 배포 전에 어떤 산출물을 검사했는지 다시 확인합니다.</p>
 </article>
 <span class="lesson-anchor" id="candidate-current"></span><span class="lesson-anchor" id="reading-candidate-current"></span>
 
@@ -88,14 +89,12 @@ print(can_apply(approved, candidate, <span class="tok-keyword">True</span>))</co
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-rollback -->
-<figure class="lesson-clip" id="detail-rollback"><h3>HTTP 200을 받은 이미지 B가 왜 롤백될까요?</h3>
-<video autoplay loop muted playsinline aria-label="HTTP 200을 받은 이미지 B가 왜 롤백될까요?" src="detail-rollback.mp4"></video>
-<figcaption>B는 HTTP 200을 반환하지만 출처가 None입니다. 검사 실패를 확인하면 active를 previous에 보관한 A로 되돌리고 A의 course-guide-v1:p2를 다시 읽습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-rollback"></span>
 <!-- /lesson-visual detail-rollback -->
 
 <span class="lesson-anchor" id="verify-service"></span><div class="lesson-explanation" id="reading-verify-service"><h3>health와 출처의 두 검사</h3><p>버전 B는 health 200을 반환하지만 source는 None입니다. 이 예제의 통과 기준에는 출처 course-guide-v1:p2도 있으므로 정상 HTTP 상태만 놓고 적용을 확정할 수 없습니다.</p></div>
 <span class="lesson-anchor" id="failures"></span><span class="lesson-anchor" id="reading-failures"></span>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 검증 실패 시 롤백 판단</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 검증 실패 시 롤백 판단</h3>
 <div class="cell-before"><p>health가 정상이더라도 문서 근거가 사라진 후보를 어떻게 처리하는지 보세요.</p>
 <p>앞 과제에서는 승인이 가리키는 후보와 적용할 후보가 달라서 멈췄습니다. 이번에는 B의 승인이 유효해 적용했고, 그 뒤 검사가 실패한 상황입니다. 되돌리기를 판단하는 시점이 다릅니다.</p>
 </div>
@@ -142,7 +141,7 @@ print(deployment[<span class="tok-string">"active"</span>], versions[deployment[
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

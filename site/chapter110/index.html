@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 110 / PROJECT QUALITY</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>응답 지연 시간 계산과 호출 비용의 측정 조건</h1>
-<p class="hero-description">사용자가 답을 기다린 시간을 줄이고 싶습니다. 이때 로컬 함수의 처리 시간과 화면이 뜰 때까지의 시간을 섞어 재면 바꿀 곳을 잘못 고를 수 있습니다. 한 요청의 시작과 끝부터 표시해 봅니다.</p>
+<p class="hero-description">한 요청의 구간별 지연과 외부 호출 비용을 기록합니다. 합성 시각의 차이, 실제 측정값, 미측정 항목을 분리해 서로 다른 실행을 비교할 수 있게 합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -35,7 +35,7 @@
 </div>
 </header>
 <p class="concept-intro">지연 시간은 어느 시점부터 어디까지 재는지에 따라 달라집니다. 처리 구간과 사용자 대기 구간을 구별하고 호출 수와 비용의 측정 근거를 확인합니다.</p><p>측정 카드 예시　Q01 / rules-v1 / 공개 그룹 / 시작은 서비스 처리 직전 / 종료는 결과 검증과 JSON 저장이 끝난 시점 / 업무 결과 answered / 근거 RULE-A. 실제 사용자 대기는 브라우저 전송과 표시 시간까지 더 관찰해야 합니다. 아래 숫자는 단위를 연습하기 위해 만든 합성 시각입니다.</p>
-<section class="practice-space" id="practice-space" data-practice="latency"><h3>대기 시간과 전체 응답 시간</h3><label>대기 시간(ms) <input type="range" min="0" max="12" step="1" value="4"><span class="practice-value">4</span></label><div class="practice-stage" role="img" aria-label="대기 시간과 전체 응답 시간"></div><output aria-live="polite">처리 시간이 3.5 ms로 같아도 대기 4 ms를 포함한 전체 시간은 7.5 ms입니다.</output></section><!-- MOTION stopwatch-span -->
+<section class="practice-space" id="practice-space" data-text-results data-practice="latency"><h3>대기 시간과 전체 응답 시간</h3><p>처리 시간은 3.5ms로 고정하고 합성 대기 시간만 변경합니다.</p><label>대기 시간(ms) <input type="range" min="0" max="12" step="1" value="4"><span class="practice-value">4</span></label><output aria-live="polite">처리 시간이 3.5 ms로 같아도 대기 4 ms를 포함한 전체 시간은 7.5 ms입니다.</output></section><!-- MOTION stopwatch-span -->
 
 <!-- END MOTION -->
 
@@ -50,6 +50,7 @@ print(elapsed_ms, <span class="tok-string">"ms (합성 시각)"</span>)</code></
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3.5 ms (합성 시각)</pre></div>
 <div class="cell-after"><p>3.5ms는 이 두 고정 숫자의 차이입니다. 팀이 실제 시간을 잴 때는 같은 장비와 자료, 같은 시작·종료 위치에서 여러 번 관찰하고 실패한 시도도 남깁니다.</p>
 </div>
+<p id="example-analysis">3.5ms는 예제에 미리 넣은 두 시각의 차이입니다. 실제 서비스의 응답 지연을 보고하려면 같은 요청에서 시작과 종료 시각을 관측해야 합니다. 호출 비용도 외부 호출 횟수, 실제 사용량, 적용 단가가 있어야 계산할 수 있습니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>두 눈금 사이의 차이를 밀리초로 읽기</h3><p>합성 시각 15,500,000에서 12,000,000을 빼면 차이는 3,500,000나노초입니다. 1밀리초가 1,000,000나노초이므로 결과는 3.5밀리초입니다. 브라우저가 표시를 끝낸 시각까지 재지 않았다면 그 시간은 이 차이에 들어가지 않습니다.</p></div>
 
@@ -82,7 +83,7 @@ print(record[<span class="tok-string">"source"</span>], record[<span class="tok-
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 085</span><span class="template-badge">학생용 교재</span></div>
 <h1>FastAPI 앱 재시작과 DB 호환성</h1>
-<p class="hero-description">투두 화면이 열리고도 저장 버튼이 실패할 수 있습니다. 새 코드가 due_date와 priority를 쓰는데 DB에는 82장의 열만 남아 있는 상황입니다. 앱이 요구하는 스키마가 DB에 있는지 확인한 뒤 한 항목의 저장·재조회까지 검증합니다.</p>
+<p class="hero-description">새 앱에서 due_date와 priority를 사용하는데 DB에는 예전 열만 있는 상황을 점검합니다. 앱 교체 전후에 같은 ID를 조회해 데이터 보존과 호환성을 확인합니다.</p>
 <div class="hero-meta"><span>기초 · 프로젝트 연결</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>72일 · 77일 · 84일</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -63,13 +63,11 @@ print(sorted(required - applied))</code></pre></figure>
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-smoke -->
-<figure class="lesson-clip" id="visual-smoke"><h3>새 앱에서 같은 파일 DB 다시 열기</h3>
-<video autoplay loop muted playsinline aria-label="새 앱에서 같은 파일 DB 다시 열기" src="visual-smoke.mp4"></video>
-<figcaption>첫 앱에서 만든 할 일을 저장하고 앱을 닫습니다. 같은 DB 경로로 시작한 새 앱이 기존 ID로 날짜와 우선순위를 읽는지 확인합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-smoke"></span>
 <!-- /lesson-visual visual-smoke -->
 
 <span class="lesson-anchor" id="section-06"></span><div class="lesson-explanation" id="reading-section-06"><h3>같은 파일을 사용하는 두 TestClient</h3><p>make_app(path)를 두 번 호출하면 FastAPI 앱은 두 개가 생깁니다. 두 앱 모두 release.db를 열도록 경로를 고정해, 첫 앱에서 쓴 값을 새 앱이 정말 다시 읽는지 확인합니다.</p></div>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 앱의 DB 경로와 조회 함수</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 앱의 DB 경로와 조회 함수</h3>
 <div class="cell-before"><p>이 축약본의 POST는 수업에서 정한 제목·마감일·우선순위 입력을 받습니다. 상태가 어디에 저장되는지 보세요.</p>
 <p>앞의 배포 기록에서는 084가 빠졌으므로 migrate 단계로 돌아가야 합니다. 다음 셀은 필요한 열을 갖춘 새 SQLite 파일을 사용합니다. 여기에서 확인하는 일은 배포 환경의 이관이 아니라 저장한 값을 새 앱에서 다시 읽는 일입니다.</p>
 </div>
@@ -116,7 +114,7 @@ path = Path(tmp.name) / <span class="tok-string">"release.db"</span>
 </div>
 </article>
 
-<figure class="lesson-clip workflow-clip" id="workflow-app-replacement"><h3>앱 인스턴스를 바꾼 뒤 같은 ID가 조회되는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-app-replacement.mp4" aria-label="앱 인스턴스를 바꾼 뒤 같은 ID가 조회되는 경로" aria-describedby="workflow-app-replacement-caption"></video><figcaption id="workflow-app-replacement-caption">두 TestClient는 서로 다른 FastAPI 앱을 사용합니다. 공유하는 것은 release.db 경로입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>원래 앱</strong> · 인스턴스 = original</li><li><strong>POST /todos</strong> · 응답 상태 = 201</li><li><strong>파일 DB</strong> · 저장 파일 = release.db</li><li><strong>새 앱</strong> · 인스턴스 = replacement</li><li><strong>GET /todos/1</strong> · 조회 기준 = baseline의 id</li><li><strong>레코드 대조</strong> · baseline == observed = True</li></ol></figure>
+<figure class="execution-trace" id="workflow-app-replacement"><h3>앱 인스턴스를 바꾼 뒤 같은 ID가 조회되는 경로</h3><figcaption id="workflow-app-replacement-caption">두 TestClient는 서로 다른 FastAPI 앱을 사용합니다. 공유하는 것은 release.db 경로입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>원래 앱</strong> · 인스턴스 = original</li><li><strong>POST /todos</strong> · 응답 상태 = 201</li><li><strong>파일 DB</strong> · 저장 파일 = release.db</li><li><strong>새 앱</strong> · 인스턴스 = replacement</li><li><strong>GET /todos/1</strong> · 조회 기준 = baseline의 id</li><li><strong>레코드 대조</strong> · baseline == observed = True</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 새 앱에서 같은 ID 재조회</h3>
 <div class="cell-before"><p>수업 앱 두 개를 차례로 만들고 실제 HTTP 응답 data를 비교합니다.</p>
 </div>
@@ -131,6 +129,7 @@ print(observed[<span class="tok-string">"title"</span>], observed[<span class="t
 복습 2027-04-02 high</pre></div>
 <div class="cell-after"><p>201 True 뒤에 같은 제목·마감일·우선순위가 나옵니다. 새 앱에서 같은 데이터에 접근했다는 증거입니다. 클라우드 주소나 실제 컨테이너 재시작 결과는 여기에 포함되지 않습니다.</p>
 </div>
+<p id="example-analysis">새 앱에서 기존 id를 조회해 마감일과 우선순위까지 읽었습니다. 단순히 첫 화면이 뜨는지만 확인했다면 DB 파일을 잘못 연결해도 발견하기 어렵습니다. 배포 점검에는 교체 전후를 비교할 수 있는 레코드와 예상 필드가 필요합니다.</p>
 </article>
 <span class="lesson-anchor" id="section-07"></span><div class="lesson-explanation" id="reading-section-07"><h3>기존 필드와 새 필드를 한 행에서 비교하기</h3><p>응답 코드 201은 첫 요청의 등록 성공입니다. 그 옆의 True는 저장 직후 baseline과 새 앱에서 조회한 observed의 전체 레코드가 같다는 뜻입니다. 제목·기한·우선순위 출력에서 무엇이 유지됐는지도 확인하세요.</p></div>
 <span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
@@ -162,7 +161,7 @@ print(observed[<span class="tok-string">"title"</span>], observed[<span class="t
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

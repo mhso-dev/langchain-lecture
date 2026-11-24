@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 090 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>평가 기준선과 보류 문항</h1>
-<p class="hero-description">질문을 실행한 뒤에 정답을 맞춰 쓰면 다음 버전의 개선 여부를 판단하기 어렵습니다. 장비 A 질문 하나부터 원문과 기대 답을 미리 연결하고, 답할 수 없는 질문에도 기대 상태를 붙입니다.</p>
+<p class="hero-description">장비별 질문을 실행하기 전에 기대 답안과 원문 ID를 고정합니다. 규정에 근거가 없는 질문에는 답변 유보 상태와 빈 출처 목록을 기대 결과로 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,8 +39,8 @@
 
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-check-expected-source"><h3>Q01의 정답표를 원문으로 확인하는 두 검사</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-check-expected-source.mp4" aria-label="Q01의 정답표를 원문으로 확인하는 두 검사" aria-describedby="workflow-check-expected-source-caption"></video><figcaption id="workflow-check-expected-source-caption">규정 ID와 답에 들어갈 사실을 각각 확인합니다. 일치하는 규정에서 기대 문장을 실제로 읽을 수 있어야 합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>Q01 정답표</strong> · 기대 근거 = [&#x27;RULE-A&#x27;]</li><li><strong>규정 식별</strong> · ID 목록 일치 = True</li><li><strong>원문 대조</strong> · 문구 포함 = 전원 표시등</li><li><strong>두 검사 결과</strong> · 셀 출력 = True / True</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기대 근거와 원문 대조</h3>
+<span class="lesson-anchor" id="workflow-check-expected-source"></span><span class="lesson-anchor" id="workflow-check-expected-source-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 기대 근거와 원문 대조</h3>
 <div class="cell-before"><p>Q01에서 기대하는 짧은 표현이 실제 규정 문장에 있는지 확인해 보세요.</p>
 <p>지금 Q01에 고정하는 것은 답안지입니다. 두 True는 기대 문구와 출처가 원문에 있다는 뜻입니다. 서비스의 실제 응답 칸은 비워 두고, 다음 장에서 첫 응답을 얻은 뒤 채우세요.</p>
 </div>
@@ -67,6 +67,7 @@ print(case[<span class="tok-string">"expected_answer_facts"</span>][<span class=
 True</pre></div>
 <div class="cell-after"><p>두 값이 모두 True입니다. 첫째는 문서 식별자, 둘째는 필수 표현을 확인합니다. 문장 전체가 질문에 정확히 답하는지는 자동 비교 뒤에 따로 읽습니다.</p>
 </div>
+<p id="example-analysis">두 True를 한 점수로 합치기 전에 무엇을 비교한 값인지 구분합니다. 근거 ID가 같아도 답변 문장이 원문과 어긋날 수 있고, 문장이 같아도 다른 판본을 인용할 수 있습니다. 팀 평가표에는 두 실패를 따로 남길 수 있는 열이 필요합니다.</p>
 </article>
 </section>
 <section id="nb-split" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -112,7 +113,7 @@ print(missing_case[<span class="tok-string">"expected_status"</span>], missing_c
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

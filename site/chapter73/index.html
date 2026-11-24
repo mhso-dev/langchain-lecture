@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 73 / PGVECTOR</span><span class="template-badge">학생용 교재</span></div>
 <h1>벡터의 L2 거리와 pgvector 검색</h1>
-<p class="hero-description">같은 원문을 같은 벡터로 바꿨는데 한 화면에는 거리가 2, 다른 화면에는 약 1.414가 나옵니다. 문서 순위까지 바뀐 걸까요? 70장의 과제 안내를 소재로 만든 짧은 문장 두 개를 사용해 거리 계산부터 PostgreSQL의 pgvector 검색식까지 따라갑니다.</p>
+<p class="hero-description">질의 벡터 [1, 1, 0]과 문서 p2의 벡터 [1, 0, 1] 사이의 제곱거리는 2이고 거리는 약 1.414입니다. 파이썬 기준값을 먼저 구하고, pgvector 환경이 준비된 경우 같은 벡터로 SQL 조회 결과를 비교합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 073 · 8H</span><span>21일 청크, 22일 E1, 23일 R1, 39일 채택 판단, 70일 B1/H1, 72일 같은 DB·볼륨</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -73,7 +73,7 @@ print(min(texts, key=<span class="tok-keyword">lambda</span> key: dist(new_query
 </div>
 </details>
 </article>
-<figure class="lesson-clip workflow-clip" id="workflow-query-rerank"><h3>질문 속 단어 하나가 최근접 문서를 바꾸는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-query-rerank.mp4" aria-label="질문 속 단어 하나가 최근접 문서를 바꾸는 경로" aria-describedby="workflow-query-rerank-caption"></video><figcaption id="workflow-query-rerank-caption">어휘의 순서는 과제·제출·검토로 고정합니다. 원래 질문과 바꾼 질문의 가장 가까운 문서를 비교하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 질문</strong> · 과제 제출 = [1, 1, 0]</li><li><strong>거리 계산</strong> · L2 거리 = p1 0 · p2 1.414</li><li><strong>p1 선택</strong> · 가장 가까운 문서 = p1</li><li><strong>질문 변경</strong> · 과제 검토 = [1, 0, 1]</li><li><strong>다시 계산</strong> · L2 거리 = p1 1.414 · p2 0</li><li><strong>p2 선택</strong> · 가장 가까운 문서 = p2</li></ol></figure>
+<span class="lesson-anchor" id="workflow-query-rerank"></span><span class="lesson-anchor" id="workflow-query-rerank-caption"></span>
 
 </section>
 <section id="nb-pgvector" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -101,8 +101,9 @@ FROM docs ORDER BY raw_l2, id"""</span>
 <span class="tok-keyword">else</span>:
     print(<span class="tok-string">"PostgreSQL 연결을 선택하지 않았습니다."</span>)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">PostgreSQL 연결을 선택하지 않았습니다.</pre></div>
-<div class="cell-after"><p>기본 실행에서는 PostgreSQL을 호출하지 않습니다. 실제 DB에서 비교할 때는 p1의 0과 p2의 약 1.414, 이어서 두 ID의 순서를 앞 셀과 맞춰 보세요. 수업용 DB에 vector 확장이 있고 커널에서 psycopg로 접속할 수 있을 때 run_postgres를 True로 바꾸세요. p1, p2 순서와 두 거리 값을 Python 결과 옆에 적으세요.</p>
+<div class="cell-after"><p>선택 실습에는 vector 확장이 설치된 PostgreSQL과 해당 DB에 연결할 수 있는 psycopg 환경이 필요합니다.</p>
 </div>
+<p id="example-analysis">run_postgres가 False인 상태에서 남는 출력은 ‘PostgreSQL 연결을 선택하지 않았습니다.’입니다. 앞에서 얻은 p1과 p2의 순위는 파이썬 거리 계산의 결과입니다. pgvector에서도 같은 순위가 나오는지 확인하려면 같은 벡터를 사용하는 SELECT를 실행해 반환된 순위와 거리를 대조해야 합니다.</p>
 </article>
 <span class="lesson-anchor" id="service"></span><span class="lesson-anchor" id="reading-service"></span>
 <span class="lesson-anchor" id="actual"></span><div class="lesson-explanation" id="reading-actual"><h3>Python 계산과 PostgreSQL 실행</h3><p>run_postgres가 False인 기본 상태에서는 SQL 문자열만 준비합니다. PostgreSQL 연결과 pgvector 확장을 갖춘 환경에서만 선택 셀의 SQL을 실행해 Python의 거리 순서와 직접 비교할 수 있습니다.</p></div>
@@ -133,7 +134,7 @@ FROM docs ORDER BY raw_l2, id"""</span>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

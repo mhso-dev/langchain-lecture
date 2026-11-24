@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 15 / FUNCTION CALLING</span><span class="template-badge">학생용 교재</span></div>
 <h1>Function Calling의 도구 명세와 호출 요청</h1>
-<p class="hero-description">‘주말에 도서관이 몇 시까지 열어요?’라는 질문에 모델이 함수를 불러 달라고 답했습니다. 아직 운영 시간을 알아낸 것은 아닙니다. 모델이 볼 수 있는 설명과 실제로 프로그램이 돌려줄 값을 구별해 봅시다.</p>
+<p class="hero-description">주말 운영 시간 조회를 예로 들어 도구 이름, 인자 스키마, 모델의 호출 요청을 본뜬 예시 데이터를 읽습니다. 시간표를 조회하는 함수 실행은 16장에서 다룹니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 015 · 8H</span><span>14장 분기·JSON·12장 스키마</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -60,6 +60,7 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['weekday', 'weekend']</pre></div>
 <div class="cell-after"><p>weekday와 weekend가 허용됩니다. 이 명세는 주소나 실제 개관 시간을 제공하지 않습니다. 운영 시간을 조회하는 함수는 다음 장에서 실행합니다.</p>
 </div>
+<p id="example-analysis">사용자가 ‘토요일 몇 시까지 열어요?’라고 물어도 인자 day에 ‘토요일’을 그대로 넣으면 이 명세와 맞지 않습니다. 모델이 weekend를 골랐다면 요일 분류까지 마친 셈입니다. 몇 시에 문을 닫는지는 여전히 함수의 시간표를 읽어야 알 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>함수 구현과 호출 명세</h3><div class="prose"><p>Python 함수는 프로그램이 실행할 코드입니다. 도구 명세는 모델에게 어떤 기능이 있고 어떤 인자를 받는지 알려 주는 설명입니다. Function Calling에서 모델은 이 명세를 보고 함수 이름과 인자를 포함한 요청을 만들 수 있습니다.</p>
 <p>여기서 사용자가 만든 함수는 애플리케이션이 실행해야 합니다. 모델 응답 안에 함수 이름이 나타났다고 내 컴퓨터에서 함수가 실행된 것은 아닙니다. 이번 장은 요청 관찰까지 다루며 실행·결과 반환은 다음 장에서 구현합니다.</p>
@@ -90,10 +91,10 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 </div>
 </header>
 <p>호출 요청의 arguments는 JSON이 적힌 문자열입니다. 프로그램이 함수에 넘기기 전에 내용을 풀고 명세에 맞는지 검사해야 합니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>도구 호출 요청과 실제 실행</h3><video autoplay loop muted playsinline aria-label="도구 호출 요청과 실제 실행" src="concept.mp4"></video><figcaption>인쇄된 요청서가 나와도 공구함은 닫혀 있습니다. 프로그램이 요청을 읽고 함수를 실행하는 시점을 공구함이 열리는 장면과 연결해 보세요.</figcaption></figure>
+<span class="lesson-anchor" id="concept-clip"></span>
 <span class="lesson-anchor" id="sdk"></span><div class="lesson-explanation" id="reading-sdk"><h3>요청의 tools와 응답의 호출 항목</h3><p>모델에 전달할 tools 목록에는 이 장의 TOOL처럼 이름·설명·인자 규칙을 담습니다. 모델이 도구를 요청하면 응답 항목에서 name, arguments, call_id를 읽습니다. 이 장의 예제는 준비된 응답 항목을 직접 검사합니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-scan-output"><h3>같은 output 목록에서 호출 항목만 모으기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-scan-output.mp4" aria-label="같은 output 목록에서 호출 항목만 모으기" aria-describedby="workflow-scan-output-caption"></video><figcaption id="workflow-scan-output-caption">inspect_calls는 먼저 type을 확인합니다. message에서 건너뛴 자리에 가짜 호출을 채우지 않고, function_call에서만 이름과 인자를 읽습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>type 확인</strong> · items[0].type = message</li><li><strong>계속</strong> · calls = []</li><li><strong>항목 순회</strong> · items[1] = function_call</li><li><strong>type 확인</strong> · function_call 여부 = True</li><li><strong>JSON 해석</strong> · arguments의 day = weekend</li><li><strong>호출 추가</strong> · 추가한 call_id = call_demo_1</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · arguments의 JSON 디코딩</h3>
+<span class="lesson-anchor" id="workflow-scan-output"></span><span class="lesson-anchor" id="workflow-scan-output-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · arguments의 JSON 디코딩</h3>
 <div class="cell-before"><p>모델 응답의 모양을 본떠 만든 요청입니다. 호출 ID와 함수명을 그대로 보관합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">call = {<span class="tok-string">"type"</span>: <span class="tok-string">"function_call"</span>, <span class="tok-string">"call_id"</span>: <span class="tok-string">"call_demo_1"</span>, <span class="tok-string">"name"</span>: <span class="tok-string">"get_library_hours"</span>,
@@ -176,7 +177,7 @@ print(inspect_calls(items))</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

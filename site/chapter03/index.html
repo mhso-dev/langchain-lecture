@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 03 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>함수의 반환값·타입 힌트·예외 처리</h1>
-<p class="hero-description">공부 시간을 입력하는 칸에는 ‘ 30 ’처럼 공백이 낀 숫자도, ‘내일’ 같은 글자도 들어옵니다. 변환 규칙을 함수 한 곳에 모으고, 실패한 입력을 받은 화면에서 어떻게 안내할지 정합니다.</p>
+<p class="hero-description">공부 시간으로 받은 문자열 ‘ 30 ’과 ‘내일’을 같은 함수에 전달합니다. 정수로 변환할 수 있는 입력, 허용 범위를 벗어난 값, 변환할 수 없는 문자열의 처리 경로를 구분합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 003 · 8H</span><span>2장: 변수·조건·반복·딕셔너리</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -35,8 +35,8 @@
 </div>
 </header>
 <p class="concept-intro">함수의 반환값은 호출한 쪽에서 다시 계산에 쓸 수 있는 값입니다. 어떤 입력을 받을지, 처리할 수 없는 입력을 만나면 어떤 예외를 낼지도 함께 설계합니다.</p><p>함수 안에서 결과를 출력하는 것과 결과를 호출한 곳으로 돌려주는 일은 따로 일어납니다. 다음 계산에 쓸 값은 return으로 보냅니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>print()의 출력과 return의 전달</h3><video autoplay loop muted playsinline aria-label="print()의 출력과 return의 전달" src="concept.mp4"></video><figcaption>인쇄된 30과 다음 계산기로 들어가는 표의 도착지를 비교하세요. Python에서 화면에 값을 인쇄하는 일과 호출자에게 값을 돌려주는 일은 별개입니다.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · print()만 호출한 함수의 반환값</h3>
-<div class="cell-before"><p>show_minutes가 30을 화면에 쓴 뒤 saved에는 무엇이 남을까요?</p>
+<span class="lesson-anchor" id="concept-clip"></span><article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · print()만 호출한 함수의 반환값</h3>
+<div class="cell-before"><p>함수 안에서 출력한 값과 호출 결과로 저장한 값을 비교합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> show_minutes(text):
     print(int(text))
@@ -47,6 +47,7 @@ print(saved)</code></pre></figure>
 None</pre></div>
 <div class="cell-after"><p>첫 줄의 30은 함수 안에서 찍혔습니다. 두 번째 줄의 None은 return 없이 끝난 함수가 돌려준 값입니다.</p>
 </div>
+<p id="example-analysis">다음 계산에 사용할 값은 saved에 저장됩니다. saved에 10을 더하면 TypeError가 납니다. 30을 보여 준 print의 일은 그 줄에서 끝났기 때문입니다. 다음 셀처럼 함수에서 정수를 반환하면 호출한 쪽에서 그 수로 계산할 수 있습니다.</p>
 </article>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · return과 int() 형 변환</h3>
 <div class="cell-before"><p>앞뒤 공백을 지우고 정수로 변환한 다음 허용 범위를 확인합니다.</p>
@@ -88,11 +89,9 @@ print(saved) → None</pre></article><article id="flow-9-step-2"><small>STEP 03 
 
 
 <!-- lesson-visual detail-exception -->
-<figure class="lesson-clip" id="detail-exception"><h3>480은 반환하고 481은 예외가 되는 경계</h3>
-<video autoplay loop muted playsinline aria-label="480은 반환하고 481은 예외가 되는 경계" src="detail-exception.mp4"></video>
-<figcaption>0~480분을 허용하는 parse_minutes()에 두 값을 차례로 넣는 비교입니다. 480은 return에 도달하고, 481은 raise에서 호출한 쪽의 except로 넘어갑니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-exception"></span>
 <!-- /lesson-visual detail-exception -->
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · try/except로 ValueError 처리</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · try/except로 ValueError 처리</h3>
 <div class="cell-before"><p>이번에는 정수 변환은 성공하고 범위 검사에서 멈춥니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">try</span>:
@@ -189,7 +188,7 @@ print(normalize_title(<span class="tok-string">"  Python   기초 "</span>))</co
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

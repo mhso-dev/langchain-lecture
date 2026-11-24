@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 02 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>Python의 리스트·딕셔너리와 조건 반복</h1>
-<p class="hero-description">학습 기록 세 건 중에서 30분 이상 공부하고 완료라고 표시한 제목만 뽑으려고 합니다. 한 건을 읽어 조건을 결정한 다음 세 건 전체에 같은 규칙을 적용합니다.</p>
+<p class="hero-description">학습 기록 세 건에서 공부 시간이 30분 이상이고 완료된 항목의 제목을 추출합니다. 한 기록에 적용한 조건을 리스트 전체로 확장합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 002 · 8H</span><span>1장: 파일 저장·터미널 실행</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -35,15 +35,13 @@
 </header>
 <p class="concept-intro">리스트에서는 몇 번째 값인지, 딕셔너리에서는 어떤 키인지 지정해 값을 꺼냅니다. 두 구조가 겹치면 바깥쪽부터 한 단계씩 접근합니다.</p><p>리스트에서는 순서로, 딕셔너리에서는 키로 값을 찾습니다. 자료의 바깥쪽에서 안쪽으로 한 단계씩 내려가 보세요.</p>
 <!-- lesson-visual detail-one-record -->
-<figure class="lesson-clip" id="detail-one-record"><h3>data[&quot;records&quot;][0][&quot;minutes&quot;]를 한 칸씩 따라가기</h3>
-<video autoplay loop muted playsinline aria-label="data[&quot;records&quot;][0][&quot;minutes&quot;]를 한 칸씩 따라가기" src="detail-one-record.mp4"></video>
-<figcaption>records 키로 세 기록의 목록에 들어갑니다. 인덱스 0으로 첫 기록을 고른 뒤 minutes 키로 30을 읽습니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-one-record"></span>
 <!-- /lesson-visual detail-one-record -->
 
 <span class="lesson-anchor" id="collections"></span><div class="lesson-explanation" id="reading-collections"><h3>리스트 인덱스와 딕셔너리 키</h3><div class="prose"><p>리스트는 0부터 시작하는 위치 번호로 값을 찾습니다. 길이가 3이면 사용할 수 있는 0 이상의 인덱스는 0·1·2입니다. topics[3]은 네 번째 값을 요구합니다. append()는 맨 뒤에 값을 하나 추가합니다.</p>
 <p>딕셔너리는 키와 값의 쌍을 담습니다. record["name"]은 name 키의 값을 읽습니다. 없는 키를 대괄호로 읽으면 KeyError, get(키, 기본값)을 쓰면 키가 없을 때 기본값을 얻습니다. get은 값이 None인 경우까지 기본값으로 바꾸지는 않습니다.</p>
 </div></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 딕셔너리 키와 리스트 인덱스 연결</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 딕셔너리 키와 리스트 인덱스 연결</h3>
 <div class="cell-before"><p>records에는 제목이 있는 기록 세 건이 차례로 들어 있습니다.</p>
 <p>data["records"]는 기록 전체입니다. 여기에 [0]을 붙이면 첫 번째 기록 한 건이 남고, 그 기록에서 ["minutes"]를 읽으면 숫자 30이 나옵니다. 두 번째 기록을 읽으려면 어느 대괄호의 숫자를 바꿔야 할까요?</p>
 </div>
@@ -57,6 +55,7 @@ print(first[<span class="tok-string">"minutes"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">30</pre></div>
 <div class="cell-after"><p>30은 첫 기록의 시간입니다. [0]은 첫 번째 기록을, ["minutes"]는 그 기록의 시간을 골랐습니다.</p>
 </div>
+<p id="example-analysis">첫 번째 기록의 공부 시간을 35분으로 수정한다고 가정합니다. [0]을 [1]로 바꾸면 두 번째 기록으로 넘어갑니다. 첫 기록의 시간만 고치려면 같은 기록을 가리킨 채 minutes의 값을 고쳐야 합니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="values"></span><div class="lesson-explanation" id="reading-values"><h3>변수 대입과 자료형</h3><div class="prose"><p>변수는 값을 다시 사용할 수 있도록 붙인 이름입니다. =는 오른쪽 결과를 왼쪽 이름에 연결합니다. 두 값이 같은지 비교할 때는 ==를 씁니다. 위에서 아래로 실행되므로 값을 만들기 전에 사용하면 NameError가 납니다.</p>
 <p>따옴표 안의 "30"은 문자열(str)입니다. 정수(int) 30과 겉모양이 같아도 덧셈의 동작이 다릅니다. 소수는 float, 참과 거짓은 bool, 값이 없다는 표시는 None으로 표현합니다.</p>
@@ -121,7 +120,7 @@ total = 70</pre></article></div></div>
 </div>
 </header>
 <p>두 조건이 동시에 맞아야 합니다. 한 건에서 True 또는 False를 얻은 뒤, 그 조건이 참인 기록의 제목만 새 리스트에 담아 봅시다.</p>
-<section class="practice-space" id="practice-space" data-practice="records"><h3>최소 학습 시간에 따른 필터링</h3><label>최소 시간(분) <input type="range" min="20" max="45" step="5" value="30"><span class="practice-value">30</span></label><div class="practice-stage" role="img" aria-label="최소 학습 시간에 따른 필터링"></div><output aria-live="polite">완료한 기록 30분과 40분이 조건을 통과해 합계는 70분입니다.</output></section><!-- MOTION minute-sieve -->
+<section class="practice-space" id="practice-space" data-text-results data-practice="records"><h3>최소 학습 시간에 따른 필터링</h3><p>완료한 기록 중 선택한 시간 이상인 항목만 합산합니다.</p><label>최소 시간(분) <input type="range" min="20" max="45" step="5" value="30"><span class="practice-value">30</span></label><output aria-live="polite">완료한 기록 30분과 40분이 조건을 통과해 합계는 70분입니다.</output></section><!-- MOTION minute-sieve -->
 
 <!-- END MOTION -->
 
@@ -209,7 +208,7 @@ print(record[<span class="tok-string">"memo"</span>])</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 102 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>POST 요청·응답 계약과 저장 상태</h1>
-<p class="hero-description">팀의 조회 함수는 이미 Q01에 답합니다. 화면에서 같은 기능을 쓰려면 요청에 대화를 식별할 값과 이번 질문을 식별할 값이 함께 있어야 합니다. 요청 하나와 응답 하나로 화면과 서비스 사이의 약속을 정합니다.</p>
+<p class="hero-description">조회 함수를 호출하는 API 요청에 세션 ID와 요청 ID를 포함합니다. 반환된 업무 상태, 저장 결과, 출처가 화면에서 사용하는 필드와 일치하는지 대조합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -45,8 +45,8 @@ print(json.dumps(request, ensure_ascii=<span class="tok-keyword">False</span>))<
 </div>
 </article>
 
-<figure class="lesson-clip workflow-clip" id="workflow-read-response-envelope"><h3>HTTP 200에서 실제 답과 출처 ID까지 내려가기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-read-response-envelope.mp4" aria-label="HTTP 200에서 실제 답과 출처 ID까지 내려가기" aria-describedby="workflow-read-response-envelope-caption"></video><figcaption id="workflow-read-response-envelope-caption">저장된 전송 예시의 겉 상태와 안쪽 값을 읽는 경로입니다. HTTP 상태 코드만으로 인용한 문서까지 알 수는 없습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>전송 기록</strong> · status_code = 200</li><li><strong>python_response</strong> · request_id = normal</li><li><strong>답변 결과</strong> · result.status = answered</li><li><strong>첫 출처</strong> · sources[0].id = RULE-A</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 응답의 출처 필드</h3>
+<span class="lesson-anchor" id="workflow-read-response-envelope"></span><span class="lesson-anchor" id="workflow-read-response-envelope-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 응답의 출처 필드</h3>
 <div class="cell-before"><p>로컬 전송 기록 정상 행에서 화면이 읽을 필드만 발췌했습니다. 실제 응답 원본에는 job 등 추가 필드도 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">transport_row = {<span class="tok-string">'status_code'</span>: <span class="tok-number">200</span>,
@@ -78,6 +78,7 @@ print(payload[<span class="tok-string">"result"</span>][<span class="tok-string"
 RULE-A</pre></div>
 <div class="cell-after"><p>기록에는 200·answered·committed와 RULE-A가 있습니다. 200은 준비 코드의 전송 상태, answered는 질문 처리 결과, committed는 저장 결과입니다. 어느 하나만 보고 나머지를 추정하지 않습니다.</p>
 </div>
+<p id="example-analysis">200은 요청이 처리됐다는 HTTP 상태이고 committed는 서비스가 기록한 저장 결과입니다. 사용자가 다음 접속에서도 답을 볼 수 있어야 한다면 같은 요청 ID로 저장 기록을 다시 읽는 검사가 필요합니다. 답변 생성과 저장 성공을 구분할 수 있는 응답 예입니다.</p>
 </article>
 </section>
 <section id="nb-storage" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -90,11 +91,9 @@ RULE-A</pre></div>
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-storage -->
-<figure class="lesson-clip" id="visual-storage"><h3>답변은 만들어졌는데 저장은 실패할 수 있습니다</h3>
-<video autoplay loop muted playsinline aria-label="답변은 만들어졌는데 저장은 실패할 수 있습니다" src="visual-storage.mp4"></video>
-<figcaption>두 요청 모두 답변을 만들었습니다. 두 번째 요청의 처리 경계에서 저장 실패가 관찰되므로 answered 하나만 보고 저장 완료를 표시할 수 없습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-storage"></span>
 <!-- /lesson-visual visual-storage -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 답변 생성 후 저장 실패</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 선택 연습 · 답변 생성 후 저장 실패</h3>
 <div class="cell-before"><p>기록에서 계산한 답과 저장 오류명을 꺼내어 담당자가 확인할 두 줄을 만드세요.</p>
 <p>failed는 로컬에 제공한 503 기록에서 python_response에 해당하는 부분만 꺼낸 값입니다. 여기서는 result부터 읽습니다. 앞의 기록 전체에서 시작할 때만 body와 python_response를 먼저 거치세요.</p>
 </div>
@@ -157,7 +156,7 @@ storage_failure</pre></div>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

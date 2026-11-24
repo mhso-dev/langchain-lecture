@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 17 / AGENT LOOP</span><span class="template-badge">학생용 교재</span></div>
 <h1>도구 호출 루프와 종료 조건</h1>
-<p class="hero-description">‘주말 운영 시간과 대출 기간을 함께 알려 주세요.’라고 물었습니다. 이 프로그램에서는 두 정보를 따로 조회합니다. 실행 기록을 이어 쓰고, 남은 호출 기회가 없으면 새로운 도구 요청을 실행하기 전에 멈추는 루프를 구성합니다.</p>
+<p class="hero-description">주말 운영 시간과 대출 기간을 서로 다른 함수에서 조회합니다. 각 도구의 결과를 메시지 이력에 추가하고, 남은 호출 횟수와 모델 응답에 따라 반복을 종료합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 017 · 8H</span><span>16장 도구 왕복·호출 ID·예외</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -60,6 +60,7 @@ print(json.loads(first_result[<span class="tok-string">"output"</span>])[<span c
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>c1 요청에서 찾은 10:00~16:00입니다. 다음 요청은 대출 기간을 묻기 때문에 새 식별자 c2를 써야 합니다.</p>
 </div>
+<p id="example-analysis">원래 질문은 주말 운영 시간과 대출 기간을 함께 요구합니다. 첫 도구 결과에는 10:00~16:00만 있습니다. 이 시점에 루프를 끝내면 대출 기간은 비어 있습니다. 실제 에이전트에서는 모델이 다음 호출을 결정합니다. 이 실습에서는 미리 정해 둔 두 번째 요청 c2로 대출 기간을 조회합니다.</p>
 </article>
 <span class="lesson-anchor" id="tools"></span><div class="lesson-explanation" id="reading-tools"><h3>서로 다른 두 도구의 인자</h3><p>get_hours는 day가 weekday 또는 weekend인지 확인한 후 hours를 반환합니다. get_loan_rule은 빈 인자 객체를 받아 loan_days에 14를 넣습니다. 한 도구의 인자 규칙을 다른 도구에 그대로 적용할 수 없습니다.</p></div>
 
@@ -103,14 +104,12 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-loop -->
-<figure class="lesson-clip" id="visual-loop"><h3>두 도구 뒤에 모델 호출이 한 번 더 필요한 이유</h3>
-<video autoplay loop muted playsinline aria-label="두 도구 뒤에 모델 호출이 한 번 더 필요한 이유" src="visual-loop.mp4"></video>
-<figcaption>도구 결과 두 개가 기록된 시점에도 최종 안내 문장은 아직 없습니다. 대본의 세 번째 모델 응답이 message일 때 completed가 됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-loop"></span>
 <!-- /lesson-visual visual-loop -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="loop"></span><div class="lesson-explanation" id="reading-loop"><h3>도구를 실행한 뒤의 다음 응답</h3><p>주말 시간과 대출 기간을 함께 묻는 질문에 첫 응답은 운영 시간, 둘째 응답은 대출 규칙을 요청합니다. 이 장은 세 모델 응답을 script에 미리 담아 두고, 어떤 입력에서 history가 늘어나거나 루프가 끝나는지 관찰합니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-last-call"><h3>요청 c2가 이력에 있어도 실행 결과가 없는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-last-call.mp4" aria-label="요청 c2가 이력에 있어도 실행 결과가 없는 이유" aria-describedby="workflow-last-call-caption"></video><figcaption id="workflow-last-call-caption">max_calls를 2로 낮추면 두 번째 모델 응답을 기록한 뒤 상한에 걸립니다. 마지막 이력 항목은 c2의 호출 요청입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>모델 응답</strong> · 두 번째 응답 = get_loan_rule</li><li><strong>이력 추가</strong> · history의 마지막 ID = c2</li><li><strong>예산 확인</strong> · number / max_calls = 2 / 2</li><li><strong>상한 종료</strong> · status = model_limit</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 최종 메시지에서 루프 종료</h3>
+<figure class="execution-trace" id="workflow-last-call"><h3>요청 c2가 이력에 있어도 실행 결과가 없는 이유</h3><figcaption id="workflow-last-call-caption">max_calls를 2로 낮추면 두 번째 모델 응답을 기록한 뒤 상한에 걸립니다. 마지막 이력 항목은 c2의 호출 요청입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>모델 응답</strong> · 두 번째 응답 = get_loan_rule</li><li><strong>이력 추가</strong> · history의 마지막 ID = c2</li><li><strong>예산 확인</strong> · number / max_calls = 2 / 2</li><li><strong>상한 종료</strong> · status = model_limit</li></ol></figure>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 최종 메시지에서 루프 종료</h3>
 <div class="cell-before"><p>회차마다 먼저 응답 종류를 읽습니다. 최종 응답을 받거나 상한에 닿으면 함수를 빠져나갑니다.</p>
 <p>모델이 더 요청할 도구가 없다고 답하면 이 루프는 끝납니다. 요청 ID 중복을 막으려면 execute(item)를 부르기 전에 이미 처리한 ID인지 확인해야 합니다. 실행 뒤에 ID를 비교하면 같은 도구가 이미 두 번 작동했을 수 있습니다.</p>
 </div>
@@ -193,7 +192,7 @@ print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword"
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

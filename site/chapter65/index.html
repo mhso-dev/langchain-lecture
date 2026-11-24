@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 065 / ROUTING</span><span class="template-badge">학생용 교재</span></div>
 <h1>의도 라우팅과 LangChain 도구 선택</h1>
-<p class="hero-description">‘API 호출에 401 오류가 납니다’라는 문의가 들어왔습니다. 기술 안내 도구 하나면 되는데 결제 안내까지 등록할 필요가 있을까요? 먼저 규칙으로 문의를 분류한 뒤 허용한 도구만 실행합니다.</p>
+<p class="hero-description">401 오류 문의와 결제 문의를 규칙으로 분류하고 경로별로 허용할 도구를 선택합니다. 복합 문의의 추가 확인과 Jev를 이용한 선택 실습도 같은 판단 기준으로 비교합니다.</p>
 <div class="hero-meta"><span>입문 이후 · 에이전트 실습</span><span>8H · Jev 선택 실습 2H</span><span>Function Calling · create_agent</span></div>
 </header>
 <span id="setup"></span><section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -50,6 +50,7 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">technical</pre></div>
 <div class="cell-after"><p>technical은 문의의 분류 결과입니다. 이 문자열을 얻은 것만으로 기술 도구가 실행되지는 않습니다.</p>
 </div>
+<p id="example-analysis">technical은 이 규칙이 고른 처리 경로입니다. 기술 문의로 분류했다는 사실만으로 해당 도구를 실행할 권한이 생기지는 않습니다. 분류 결과를 받은 쪽에서 경로별 허용 도구를 확인하고, 의도가 겹칠 때는 추가 질문을 보냅니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="boundaries"></span><div class="lesson-explanation" id="reading-boundaries"><h3>분류 결과는 다음 단계의 입력</h3><p>rule_route의 반환값은 billing, technical, clarify 중 한 문자열입니다. 기술 문서를 실제로 읽거나 답변을 제공하는 일은 뒤의 분기와 도구 코드가 맡습니다.</p></div>
@@ -65,7 +66,7 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 </details>
 </article>
 <span class="lesson-anchor" id="baselines"></span><div class="lesson-explanation" id="reading-baselines"><h3>단서가 섞이면 추가 질문</h3><p>결제 단서만 있으면 billing이고 기술 단서만 있으면 technical입니다. 두 단서가 함께 있거나 둘 다 없으면 clarify가 됩니다. 단지 먼저 발견된 단어로 결정하지 않습니다.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-mixed-route"><h3>영수증과 401이 한 질문에 들어오면</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-mixed-route.mp4" aria-label="영수증과 401이 한 질문에 들어오면" aria-describedby="workflow-mixed-route-caption"></video><figcaption id="workflow-mixed-route-caption">각 분야 단서가 한 개 이상일 때 rule_route는 어느 도구도 선택하지 않습니다. 뒤 셀의 분기에서는 이 결과가 추가 질문으로 연결됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>복합 문의</strong> · 질문 속 단서 = 영수증 · 401 오류</li><li><strong>결제 검사</strong> · billing = True</li><li><strong>기술 검사</strong> · technical = True</li><li><strong>추가 질문</strong> · 반환값 = clarify</li></ol></figure>
+<span class="lesson-anchor" id="workflow-mixed-route"></span><span class="lesson-anchor" id="workflow-mixed-route-caption"></span>
 
 </section>
 <section id="nb-tool" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -78,13 +79,11 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-tool -->
-<figure class="lesson-clip" id="visual-tool"><h3>분류 레이블이 도구 선택 범위를 좁힙니다</h3>
-<video autoplay loop muted playsinline aria-label="분류 레이블이 도구 선택 범위를 좁힙니다" src="visual-tool.mp4"></video>
-<figcaption>인증 오류 질문은 technical 경로에서 technical_faq를 호출합니다. 결제와 기술 단서가 겹치는 질문은 clarify로 보내 추가 질문을 합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-tool"></span>
 <!-- /lesson-visual visual-tool -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-technical-route"><h3>단일 기술 의도에서 허용된 도구로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-technical-route.mp4" aria-label="단일 기술 의도에서 허용된 도구로" aria-describedby="workflow-technical-route-caption"></video><figcaption id="workflow-technical-route-caption">분류 함수가 반환한 문자열은 답변이 아닙니다. 허용 목록에서 도구를 찾고 invoke를 호출해야 안내 문장이 나옵니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · question = API 인증 오류가 납니다.</li><li><strong>rule_route</strong> · route = technical</li><li><strong>technical_faq</strong> · selected.name = technical_faq</li><li><strong>도구 결과</strong> · 안내 내용 = 키 설정과 실행 환경</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 의도별 허용 도구</h3>
+<span class="lesson-anchor" id="workflow-technical-route"></span><span class="lesson-anchor" id="workflow-technical-route-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 의도별 허용 도구</h3>
 <div class="cell-before"><p>도구 이름과 실제 안내를 확인합니다.</p>
 <p>복합 문의의 분류값 clarify에는 바로 실행할 도구가 없습니다. 이 값이면 도구 목록을 찾기 전에 질문을 돌려주세요. 아래의 기술 문의만 technical 목록에서 함수를 골라 실행합니다.</p>
 </div>
@@ -189,7 +188,7 @@ print(choice <span class="tok-keyword">if</span> accepted <span class="tok-keywo
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

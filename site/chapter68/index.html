@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 68 / HTTP API</span><span class="template-badge">학생용 교재</span></div>
 <h1>FastAPI 요청 모델과 POST 엔드포인트</h1>
-<p class="hero-description">과제 안내를 화면에서 요청하려면 요청 주소와 자료 형식이 필요합니다. FastAPI 앱에 POST /ask를 붙이고 TestClient가 실제 앱에 보낸 HTTP 요청을 관찰합니다. 서버 포트를 열지 않아도 경로와 검증을 확인할 수 있습니다.</p>
+<p class="hero-description">과정 안내 함수를 FastAPI의 POST /ask 경로로 제공합니다. TestClient로 서버 포트를 열지 않고도 요청 검증, HTTP 상태, 답변 근거를 검사합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 068 · 8H</span><span>6일 HTTP 호출, 12일 구조화 응답, 67일 S1 서비스 평가</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -78,6 +78,7 @@ print(response.status_code, response.json()[<span class="tok-string">"result"</s
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 course-guide-v1:p2</pre></div>
 <div class="cell-after"><p>200 뒤의 course-guide-v1:p2는 서비스가 돌려준 근거입니다. HTTP 상태만으로 이 문서가 답을 뒷받침하는지 판단할 수는 없습니다. 여기서 사용한 응답 외피는 핵심 필드만 담았습니다.</p>
 </div>
+<p id="example-analysis">응답 상태 200과 p2는 서로 다른 검사를 뒷받침합니다. 200은 요청 처리가 끝났다는 신호이고, p2는 답변의 근거를 추적할 식별자입니다. 요청 처리 테스트가 성공했더라도 문서 질문에 맞는 문단인지 확인하는 검사는 별도로 필요합니다.</p>
 </article>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="response"></span><div class="lesson-explanation" id="reading-response"><h3>HTTP 200 안의 답변 상태</h3><p>200은 이 요청에 대한 HTTP 처리가 성공했다는 뜻입니다. 실제 근거를 찾았는지는 result.status와 sources를 보고 판별합니다.</p></div>
@@ -95,13 +96,11 @@ print(response.status_code, response.json()[<span class="tok-string">"result"</s
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-errors -->
-<figure class="lesson-clip" id="visual-errors"><h3>입력 검증 실패와 검색 근거 없음의 차이</h3>
-<video autoplay loop muted playsinline aria-label="입력 검증 실패와 검색 근거 없음의 차이" src="visual-errors.mp4"></video>
-<figcaption>공백 질문은 요청 검증에서 422가 됩니다. 형식이 맞는 질문은 처리 함수로 들어가며 근거가 없더라도 정상 응답 본문으로 그 사실을 알립니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-errors"></span>
 <!-- /lesson-visual visual-errors -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-http-validation"><h3>공백 질문이 검색 함수에 닿지 않는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-http-validation.mp4" aria-label="공백 질문이 검색 함수에 닿지 않는 이유" aria-describedby="workflow-http-validation-caption"></video><figcaption id="workflow-http-validation-caption">공백 요청과 올바른 요청이 갈라지는 위치는 FastAPI의 본문 검증 단계입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>POST /ask</strong> · question = &quot;   &quot;</li><li><strong>AskRequest</strong> · value.strip() = &quot;&quot;</li><li><strong>HTTP 422</strong> · 응답 상태 = 422</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 공백 입력의 검증 오류</h3>
+<span class="lesson-anchor" id="workflow-http-validation"></span><span class="lesson-anchor" id="workflow-http-validation-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 공백 입력의 검증 오류</h3>
 <div class="cell-before"><p>Pydantic의 입력 검사를 통과하지 못한 요청의 상태 코드를 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">bad = client.post(<span class="tok-string">"/ask"</span>, json={<span class="tok-string">"question"</span>: <span class="tok-string">"   "</span>})
@@ -152,7 +151,7 @@ print(reply.status_code, reply.json()[<span class="tok-string">'result'</span>][
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

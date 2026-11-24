@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 16 / TOOL EXECUTION</span><span class="template-badge">학생용 교재</span></div>
 <h1>Function Calling의 실행과 결과 반환</h1>
-<p class="hero-description">15장에서 받은 주말 운영 시간 요청에 실제 조회 결과를 붙입니다. 하나의 호출 요청, 프로그램이 실행한 함수, 모델에 돌려줄 결과를 같은 call_id로 따라가 봅시다.</p>
+<p class="hero-description">15장의 호출 요청을 검증한 뒤 도서관 시간표 함수를 실행합니다. 요청과 결과의 call_id를 대조하고, 허용 범위를 벗어난 요일의 처리 결과를 확인합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 016 · 8H</span><span>15장 함수 명세·호출 요청·JSON</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -47,6 +47,7 @@ print(get_library_hours(<span class="tok-string">"weekend"</span>)[<span class="
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>10:00~16:00은 주말 표에서 꺼낸 값입니다. 이 함수는 실제 도서관에 접속하지 않습니다. 허용되지 않은 인자가 들어오는지는 함수를 부르기 전에 검사합니다.</p>
 </div>
+<p id="example-analysis">같은 weekend 조회를 두 번 보내면 두 함수 결과의 시간은 같을 수 있습니다. 이때 10:00~16:00만으로는 어느 요청의 답인지 가릴 수 없습니다. 호출자가 보낸 call_id를 결과에 함께 돌려줘야 각각의 요청과 짝을 지을 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="function"></span><div class="lesson-explanation" id="reading-function"><h3>읽기 전용 함수 연결</h3><div class="prose"><p>함수는 day를 받아 정해진 시간표에서 값을 읽습니다. 데이터는 가상의 수업 자료입니다. 이 함수를 실행했다는 사실과 실제 기관 운영 시간이 맞는다는 주장은 구분해야 합니다.</p>
 </div></div>
@@ -94,13 +95,11 @@ print(json.loads(reply[<span class="tok-string">"output"</span>])[<span class="t
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-id-match -->
-<figure class="lesson-clip" id="visual-id-match"><h3>결과를 원래 호출과 짝짓는 값</h3>
-<video autoplay loop muted playsinline aria-label="결과를 원래 호출과 짝짓는 값" src="visual-id-match.mp4"></video>
-<figcaption>도구의 이름이나 반환 순서 대신 요청과 결과에 공통으로 있는 call_id를 따라갑니다. 두 호출의 결과 순서를 뒤집은 비교 예시입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-id-match"></span>
 <!-- /lesson-visual visual-id-match -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-invalid-day"><h3>허용하지 않은 요일에도 요청 ID가 남는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-invalid-day.mp4" aria-label="허용하지 않은 요일에도 요청 ID가 남는 이유" aria-describedby="workflow-invalid-day-caption"></video><figcaption id="workflow-invalid-day-caption">day가 Friday인 요청은 조회 함수를 실행하기 전에 걸러집니다. 결과의 ok는 False이지만 바깥 call_id에는 원래 요청 ID가 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청</strong> · call_id = call_1</li><li><strong>day 검사</strong> · day = Friday</li><li><strong>오류 구성</strong> · error = invalid_tool_request</li><li><strong>결과 연결</strong> · call_id = call_1</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · call_id 일치 여부</h3>
+<figure class="execution-trace" id="workflow-invalid-day"><h3>허용하지 않은 요일에도 요청 ID가 남는 이유</h3><figcaption id="workflow-invalid-day-caption">day가 Friday인 요청은 조회 함수를 실행하기 전에 걸러집니다. 결과의 ok는 False이지만 바깥 call_id에는 원래 요청 ID가 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청</strong> · call_id = call_1</li><li><strong>day 검사</strong> · day = Friday</li><li><strong>오류 구성</strong> · error = invalid_tool_request</li><li><strong>결과 연결</strong> · call_id = call_1</li></ol></figure>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · call_id 일치 여부</h3>
 <div class="cell-before"><p>원본 call과 결과 reply의 ID가 같은지 확인하고, 같으면 그 ID를 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 두 ID가 같은지 검사하세요.</span></code></pre></figure>
@@ -213,7 +212,7 @@ call_id = call_1
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 36 / RAG EVALUATION</span><span class="template-badge">학생용 교재</span></div>
 <h1>검색 평가 지표와 답변 근거 검증</h1>
-<p class="hero-description">검색 목록에 정답이 있지만 모델 답에는 다른 숫자가 적힐 수 있습니다. 먼저 원문을 찾았는지 계산하고 그다음 답과 인용을 읽습니다. 아래 순위는 지표의 차이를 관찰하기 위해 만든 예입니다.</p>
+<p class="hero-description">고정된 후보 순위로 Recall@k와 첫 적중 순위의 역수를 계산합니다. 검색 적중 여부와 생성 답변의 사실·인용 정확성은 따로 평가합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 036 · 8H</span><span>35장 질문 JSONL·판정표·manifest</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -32,7 +32,7 @@
 <h2>Recall@k와 첫 적중 순위의 역수</h2>
 </div>
 </header>
-<p class="concept-intro">검색 평가는 기대한 문서가 상위 몇 개에 포함됐는지, 몇 번째에 처음 나왔는지를 봅니다. 답변이 실제 원문에 맞는지는 별도 항목입니다.</p><section class="practice-space" id="practice-space" data-practice="ranking"><h3>top-k와 첫 적중 순위</h3><label>포함할 상위 문서 수 <input type="range" min="1" max="3" step="1" value="2"><span class="practice-value">2</span></label><div class="practice-stage" role="img" aria-label="top-k와 첫 적중 순위"></div><output aria-live="polite">기대 근거가 2위에 하나 있습니다. k = 2에서 Recall은 1, 첫 적중 순위의 역수는 0.5입니다.</output></section><!-- MOTION rank-reciprocal -->
+<p class="concept-intro">검색 평가는 기대한 문서가 상위 몇 개에 포함됐는지, 몇 번째에 처음 나왔는지를 봅니다. 답변이 실제 원문에 맞는지는 별도 항목입니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="ranking"><h3>top-k와 첫 적중 순위</h3><p>기대 문서가 2위인 고정 후보에서 평가할 문서 수를 조절합니다.</p><label>포함할 상위 문서 수 <input type="range" min="1" max="3" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">기대 근거가 2위에 하나 있습니다. k = 2에서 Recall은 1, 첫 적중 순위의 역수는 0.5입니다.</output></section><!-- MOTION rank-reciprocal -->
 
 <!-- END MOTION -->
 
@@ -42,8 +42,8 @@
 
 <span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-mean-reciprocal-rank"><h3>두 질문의 첫 적중 순위가 평균 점수가 되기까지</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-mean-reciprocal-rank.mp4" aria-label="두 질문의 첫 적중 순위가 평균 점수가 되기까지" aria-describedby="workflow-mean-reciprocal-rank-caption"></video><figcaption id="workflow-mean-reciprocal-rank-caption">두 질문 모두 상위 두 결과에 근거가 있습니다. 각각의 첫 적중 순위에 역수를 취하면 먼저 적중한 질문의 점수가 더 큽니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>대출 문항</strong> · library-1의 위치 = 2위 → 1/2 = 0.5</li><li><strong>휴관 문항</strong> · library-2의 위치 = 1위 → 1/1 = 1</li><li><strong>역순위 평균</strong> · 두 문항의 MRR = (0.5 + 1) / 2 = 0.75</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Recall@k 계산</h3>
+<span class="lesson-anchor" id="workflow-mean-reciprocal-rank"></span><span class="lesson-anchor" id="workflow-mean-reciprocal-rank-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · Recall@k 계산</h3>
 <div class="cell-before"><p>대출 질문의 기대 원문은 library-1입니다. 목록 맨 앞에는 휴관 문서가 잘못 올라왔습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">ranked = [<span class="tok-string">'library-2'</span>, <span class="tok-string">'library-1'</span>, <span class="tok-string">'library-3'</span>]
@@ -54,6 +54,7 @@ print(recall)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1.0</pre></div>
 <div class="cell-after"><p>1.0은 기대 원문 한 개를 두 문서 안에서 찾았다는 뜻입니다. 대출 문서가 첫 번째였다는 뜻은 아닙니다.</p>
 </div>
+<p id="example-analysis">정답 문서가 후보 두 개 중 둘째라고 해 보세요. 정답 문서가 한 개라면 두 개까지 읽은 Recall@2는 1입니다. 하지만 첫 번째 후보만 화면에 보여 주면 사용자는 근거를 못 봅니다. 순위까지 평가할 때 둘째 적중에 1/2을 주는 이유입니다.</p>
 </article>
 <span class="lesson-anchor" id="recall"></span><div class="lesson-explanation" id="reading-recall"><h3>복수 정답 문서의 Recall@k</h3><div class="prose"><p>k는 검색 함수에 요청한 최대 결과 수입니다. Recall@k는 그 결과에서 기대 근거를 얼마나 찾았는지 보는 비율입니다. 이 교재에서는 청크를 원문 ID로 바꾼 집합을 사용합니다. 분자는 검색 원문 집합과 기대 원문 집합의 교집합 크기이고, 분모는 기대 원문 집합의 크기입니다.</p>
 <p>예를 들어 기대 원문이 library-1과 library-3 두 개인데 검색 결과가 library-1과 library-2라면, 맞게 찾은 원문은 하나라 recall은 1/2=0.5입니다. 검색 결과가 두 개라는 이유로 분모를 2로 정한 것이 아니라, 질문에 필요한 원문이 두 개여서 분모가 2입니다.</p>
@@ -106,11 +107,9 @@ print(mean([<span class="tok-number">0.5</span>, <span class="tok-number">1</spa
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-answer-review -->
-<figure class="lesson-clip" id="visual-answer-review"><h3>인용 ID는 맞는데 왜 답변은 틀릴까요?</h3>
-<video autoplay loop muted playsinline aria-label="인용 ID는 맞는데 왜 답변은 틀릴까요?" src="visual-answer-review.mp4"></video>
-<figcaption>같은 답변을 두 번 대조합니다. [library-1]이 있어도 원문은 14일이고 답변은 999일이므로 내용 검사를 통과하지 못합니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-answer-review"></span>
 <!-- /lesson-visual visual-answer-review -->
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 인용 유효성과 오답 구분</h3>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · 인용 유효성과 오답 구분</h3>
 <div class="cell-before"><p>교육용 오류 문장에서 인용 ID가 기대 근거에 있는지 확인하고 원문과 숫자를 읽어 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">record = {<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
@@ -161,7 +160,7 @@ print(record[<span class="tok-string">'text'</span>])</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

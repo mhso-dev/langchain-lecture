@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 71 / CONTAINERS</span><span class="template-badge">학생용 교재</span></div>
 <h1>Dockerfile과 컨테이너 수명 주기</h1>
-<p class="hero-description">같은 API 이미지를 두 번 실행했다고 해서 먼저 띄운 컨테이너가 다시 시작된 것은 아닙니다. 이미지가 어떤 프로세스를 실행하게 되어 있는지 Dockerfile에서 읽고, 준비된 수업 환경에서는 한 컨테이너의 ID를 유지하며 상태를 관찰합니다.</p>
+<p class="hero-description">FastAPI 프로세스가 언제 시작되는지 Dockerfile의 RUN과 CMD에서 확인합니다. 준비된 환경에서는 컨테이너 ID로 기존 컨테이너의 재시작과 새 컨테이너 실행을 구분합니다.</p>
 <div class="hero-meta"><span>기초 이후 · 배포 준비</span><span>교육일 071 · 8H (전반 4H / 후반 4H)</span><span>7일 실행 환경·70일 H1 문서 API</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -36,14 +36,14 @@
 </div>
 </header>
 <p class="concept-intro">Dockerfile은 이미지를 만드는 지시와 컨테이너가 시작될 때 실행할 기본 명령을 담습니다. 빌드와 실행 중 어느 때 쓰는 줄인지 구분합니다.</p><p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>이미지와 컨테이너의 수명</h3><video autoplay loop muted playsinline aria-label="이미지와 컨테이너의 수명" src="concept.mp4"></video><figcaption>설계도 한 장에서 두 작업 공간이 만들어집니다. 한 공간의 불이 꺼진 뒤에도 설계도와 다른 공간이 남는 모습을 보세요.</figcaption></figure><!-- MOTION image-imprint -->
+<span class="lesson-anchor" id="concept-clip"></span><!-- MOTION image-imprint -->
 
 <!-- END MOTION -->
 
 
 <span class="lesson-anchor" id="dockerfile"></span><div class="lesson-explanation" id="reading-dockerfile"><h3>빌드 시점의 RUN과 시작 시점의 CMD</h3><p>RUN python -m pip install은 이미지를 빌드할 때 의존성을 설치합니다. CMD의 JSON 배열은 컨테이너를 시작할 때 쓸 기본 명령과 인자를 담습니다. 셀에서는 이 배열을 읽으므로 아직 서버가 뜨지는 않습니다.</p></div>
 <span class="lesson-anchor" id="context"></span><span class="lesson-anchor" id="reading-context"></span>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · Dockerfile의 CMD</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · Dockerfile의 CMD</h3>
 <div class="cell-before"><p>71장 입문 이미지의 Dockerfile에서 마지막 CMD 줄을 가져왔습니다. JSON 배열을 읽어 프로그램과 포트를 나눠 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
@@ -53,6 +53,7 @@ print(argv[:<span class="tok-number">4</span>], argv[-<span class="tok-number">1
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['python', '-m', 'uvicorn', 'main:app'] 8000</pre></div>
 <div class="cell-after"><p>python -m uvicorn main:app가 8000번 포트에서 실행됩니다. Dockerfile을 읽은 단계에서는 프로세스나 컨테이너가 아직 만들어지지 않았습니다.</p>
 </div>
+<p id="example-analysis">CMD에 적힌 uvicorn은 컨테이너를 시작할 때 실행됩니다. 의존성 설치까지 이 시점에 두면 컨테이너를 띄울 때마다 설치 작업이 반복됩니다. 다음 셀의 RUN이 이미지 빌드 중에 실행되는 이유를 두 명령의 실행 시점으로 구분할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
 <span class="lesson-anchor" id="h1-package"></span><span class="lesson-anchor" id="reading-h1-package"></span>
@@ -79,8 +80,8 @@ print(next(step <span class="tok-keyword">for</span> step <span class="tok-keywo
 <span class="lesson-anchor" id="image-container"></span><div class="lesson-explanation" id="reading-image-container"><h3>같은 이미지에서 만든 컨테이너</h3><p>이미지는 실행 파일과 환경을 담습니다. docker create로 만든 컨테이너에는 별도의 ID가 생기므로 같은 이미지에서 만든 두 컨테이너도 서로 구별됩니다.</p><div class="worked-case" id="flow-5"><h3>컨테이너 재시작에서 image_id와 cid 읽기</h3><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span><p>선택 셀은 로컬 image_id에서 한 번만 컨테이너를 만듭니다. 뒤의 stop과 start는 같은 cid에 적용됩니다. 소스 파일 변경을 담은 이미지로 옮기려면 그 이미지로 새 컨테이너를 만들어야 합니다.</p></div></div>
 <span class="lesson-anchor" id="lifecycle"></span><div class="lesson-explanation" id="reading-lifecycle"><h3>create·start·stop에서 유지되는 ID</h3><p>선택 셀은 create 결과를 cid에 저장한 뒤 같은 cid로 start, stop, start를 차례로 호출합니다. 준비된 이미지 ID를 입력하면 각 실행 뒤 inspect로 running, exited, running을 관찰할 수 있습니다.</p></div>
 <span class="lesson-anchor" id="intro-practice"></span><span class="lesson-anchor" id="reading-intro-practice"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-container-identity"><h3>중지했던 컨테이너를 다시 시작하면</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-container-identity.mp4" aria-label="중지했던 컨테이너를 다시 시작하면" aria-describedby="workflow-container-identity-caption"></video><figcaption id="workflow-container-identity-caption">로컬 이미지 ID를 제공한 선택 실습의 조건부 경로입니다. create 뒤의 세 상태는 같은 컨테이너 ID를 가리킵니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>create</strong> · 컨테이너 ID = cid</li><li><strong>start</strong> · 동작 = start(cid)</li><li><strong>inspect</strong> · State.Status = running</li><li><strong>stop</strong> · 동작 = stop(cid)</li><li><strong>inspect</strong> · State.Status = exited</li><li><strong>start</strong> · 재시작 후 = running</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 선택 실습 · 컨테이너 상태 조회</h3>
+<span class="lesson-anchor" id="workflow-container-identity"></span><span class="lesson-anchor" id="workflow-container-identity-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 선택 실습 · 컨테이너 상태 조회</h3>
 <div class="cell-before"><p>강사가 제공한 이미지 안에서 Python 대기 프로세스를 실행할 수 있어야 합니다. create는 객체만 만들고, start와 stop은 같은 ID를 대상으로 합니다.</p>
 <p>여기서는 API 대신 대기 프로세스를 띄워 컨테이너가 실행 상태를 유지하는지 봅니다. 컨테이너가 실행 중이어도 요청에 답하는지는 아직 모릅니다. API를 올렸을 때는 질문을 보내 상태 코드와 응답을 따로 확인하세요.</p>
 </div>
@@ -140,7 +141,7 @@ image_id = <span class="tok-string">""</span>  <span class="tok-comment"># 준�
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

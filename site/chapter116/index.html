@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 116 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>프로젝트 기여 검증과 후속 인계</h1>
-<p class="hero-description">최종 발표가 끝나면 발표 문장과 실제로 확인한 자료, 개인이 바꾼 코드를 서로 연결해 둡니다. 팀이 만들었다는 설명만으로는 어떤 판단이 결과에 기여했는지 다음 담당자가 알기 어렵습니다.</p>
+<p class="hero-description">개인 기여를 수정 전 입력·코드 변경·재실행 결과로 기록합니다. 제한된 장비명 표기에서 확인한 개선과 후속 사용자 관찰이 필요한 주장을 구분해 인계합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -50,8 +50,8 @@ print(<span class="tok-string">", "</span>.join(decision[<span class="tok-string
 print(decision[<span class="tok-string">"scope"</span>])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Q98-N01, Q98-N02
 공개 개발 사례의 제한된 장비명 표기. 일반 의미/실사용 품질 승인 아님.</pre></div>
-<div class="cell-after"><p>고쳐진 공개 질문 두 개가 나옵니다. 담당자는 이 결과를 설명할 수 있고, 사용자가 실제로 만족했다거나 새로운 질문 전체가 해결됐다고 확대하지 않아도 됩니다.</p>
-</div>
+
+<p id="example-analysis">Q98-N01과 Q98-N02에서 고친 것은 특정 장비명 표기입니다. 회고에 남길 근거는 수정 전 입력, 적용한 규칙, 수정 뒤 찾은 문서입니다. 처음 보는 표기에도 효과가 있다는 주장은 별도 문항으로, 실제 사용자가 원문을 더 잘 찾는다는 주장은 과업 관찰로 확인해야 합니다.</p>
 </article>
 <div class="lesson-explanation" id="note-code-1"><h3>고친 질문 ID와 새 질문에서의 성능 구분하기</h3><p>Q98-N01과 Q98-N02는 표기 수정으로 고친 공개 사례의 이름입니다. 같은 기록의 independent_holdout은 not_created이므로 이 두 ID로 처음 보는 질문의 성공률을 계산할 수 없습니다. 후속 담당자가 모을 새 질문을 따로 적어 보세요.</p></div>
 
@@ -93,7 +93,7 @@ print(followup[<span class="tok-string">"필요한 자료"</span>], followup[<sp
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 07 / PYTHON</span><span class="template-badge">학생용 교재</span></div>
 <h1>Python 디버깅과 Git 변경 이력</h1>
-<p class="hero-description">학습 기록은 30분, 20분, 40분인데 프로그램은 합계로 40분을 냅니다. 같은 입력으로 증상을 다시 만들고, 고친 줄을 동료에게 어떻게 보여 줄지 실습합니다.</p>
+<p class="hero-description">30분, 20분, 40분을 더한 결과가 40분으로 기록됐습니다. 같은 입력으로 결함을 재현하고 반복문의 누적값을 추적한 뒤, 수정한 줄을 Git 변경 내역에서 확인합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 007 · 8H</span><span>1~6장: Git 첫 커밋·함수·파일·실패 처리</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,10 +39,10 @@
 
 
 <!-- lesson-visual practice-space -->
-<section class="practice-space" id="practice-space" data-practice="accumulator"><h3>초기화 위치를 옮기면 마지막 합은?</h3><p>세 기록의 시간은 30분, 20분, 40분입니다. 같은 자료를 두 번 계산하고, 두 번째 기록을 읽은 직후의 막대부터 비교하세요.</p><label>total = 0의 위치 <select><option value="inside">반복문 안</option><option value="outside">반복문 앞</option></select></label><div class="practice-stage" role="img" aria-label="초기화 위치를 옮기면 마지막 합은?"></div><output aria-live="polite">반복문 안에서 초기화하면 30 → 20 → 40분, 반복 전에 한 번만 초기화하면 30 → 50 → 90분입니다.</output></section>
+<section class="practice-space" id="practice-space" data-text-results data-practice="accumulator"><h3>누적 변수의 초기화 위치</h3><p>total = 0의 위치를 변경하면 같은 입력 30·20·40분에 대한 중간 합계가 달라집니다.</p><label>total = 0의 위치 <select><option value="inside">반복문 안</option><option value="outside">반복문 앞</option></select></label><output aria-live="polite">반복문 안에서 초기화하면 30 → 20 → 40분, 반복 전에 한 번만 초기화하면 30 → 50 → 90분입니다.</output></section>
 <!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 누적 변수 재초기화 오류</h3>
-<div class="cell-before"><p>첫 번째 반복이 끝났을 때의 total을 떠올리고 둘째 반복의 첫 줄을 읽으세요.</p>
+<div class="cell-before"><p>입력은 30, 20, 40분이며 기대 합계는 90분입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">"minutes"</span>: <span class="tok-number">30</span>}, {<span class="tok-string">"minutes"</span>: <span class="tok-number">20</span>}, {<span class="tok-string">"minutes"</span>: <span class="tok-number">40</span>}]
 total = <span class="tok-number">0</span>
@@ -51,8 +51,9 @@ total = <span class="tok-number">0</span>
     total += record[<span class="tok-string">"minutes"</span>]
 print(total)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">40</pre></div>
-<div class="cell-after"><p>40이 나옵니다. 30과 20이 더해지기는 하지만 다음 바퀴마다 다시 0이 됩니다. 마지막 바퀴에서 더한 40만 남습니다.</p>
+<div class="cell-after"><p>마지막 반복에서 더한 40만 출력됐습니다.</p>
 </div>
+<p id="example-analysis">두 번째 반복 직전의 합은 30입니다. 반복문 안에서 total = 0을 다시 실행하므로 두 번째 반복의 결과는 20입니다. 반복 전 초기화는 유지하고 반복문 안의 초기화만 빼면 두 번째 반복의 합이 50이 됩니다. 마지막 값 90이 우연히 맞은 것인지도 이 중간값으로 확인할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="debug"></span><div class="lesson-explanation" id="reading-debug"><h3>누적 변수의 마지막 값을 추적하기</h3><p>30, 20, 40을 더했는데 40만 남았습니다. total = 0이 언제 실행되는지 세 바퀴에 각각 표시해 보세요. 초기화를 반복문 바깥으로 옮기면 두 번째 바퀴는 첫 번째 바퀴가 남긴 30에서 시작합니다.</p></div>
 
@@ -174,7 +175,7 @@ print(conflict)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

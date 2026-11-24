@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 23 / RETRIEVER</span><span class="template-badge">학생용 교재</span></div>
 <h1>Retriever의 검색 입력과 반환 형식</h1>
-<p class="hero-description">22장에서 library-1이 가장 가깝다는 것을 확인했습니다. 이제 답을 쓰는 쪽에 검색 결과를 건네야 합니다. 저장소의 열별 목록을 ‘한 건의 ID, 본문, 출처, 쪽’이 붙은 문서 목록으로 정리합니다.</p>
+<p class="hero-description">벡터 저장소에서 받은 ID·본문·메타데이터의 중첩 목록을 문서별 레코드로 변환합니다. 질문이 여러 개일 때도 각 후보의 본문과 원문 쪽 번호가 함께 전달돼야 합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 023 · 8H</span><span>22장 Chroma 적재·거리·메타데이터</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -34,12 +34,10 @@
 </header>
 <p class="concept-intro">Retriever는 질문을 받아 관련 문서를 돌려주는 구성 요소입니다. 몇 건을 반환할지와 어떤 출처를 허용할지도 입력 조건이 됩니다.</p><p>Chroma의 질의 응답은 여러 질문을 한 번에 받을 수 있게 질문별로 다시 묶여 있습니다. 아래 자료는 실제 서버를 호출하지 않고 그 모양만 담아 둔 한 질문의 응답 예시입니다.</p>
 <!-- lesson-visual visual-nested-results -->
-<figure class="lesson-clip" id="visual-nested-results"><h3>세 목록에서 같은 검색 결과 꺼내기</h3>
-<video autoplay loop muted playsinline aria-label="세 목록에서 같은 검색 결과 꺼내기" src="visual-nested-results.mp4"></video>
-<figcaption>첫 번째 질의의 첫 번째 적중을 가리키는 [0][0]을 세 목록에 똑같이 적용합니다. 서로 다른 위치를 섞으면 본문과 출처가 어긋납니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-nested-results"></span>
 <!-- /lesson-visual visual-nested-results -->
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 중첩 검색 결과의 인덱싱</h3>
-<div class="cell-before"><p>첫 질문에 딸린 ID 목록에서 첫 번째 항목을 골라 보세요.</p>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 중첩 검색 결과의 인덱싱</h3>
+<div class="cell-before"><p>첫 질문의 검색 결과에서 1위 후보의 문서 ID를 읽습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">raw = {<span class="tok-string">"ids"</span>: [[<span class="tok-string">"library-1"</span>]], <span class="tok-string">"documents"</span>: [[<span class="tok-string">"도서 대출 기간은 14일입니다."</span>]],
        <span class="tok-string">"metadatas"</span>: [[{<span class="tok-string">"source"</span>: <span class="tok-string">"가상 도서관 이용 안내"</span>, <span class="tok-string">"page"</span>: <span class="tok-number">1</span>}]]}
@@ -47,6 +45,7 @@ print(raw[<span class="tok-string">"ids"</span>][<span class="tok-number">0</spa
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1</pre></div>
 <div class="cell-after"><p>library-1이 나옵니다. [0]을 한 번만 쓰면 문자열이 아니라 첫 질문의 ID 목록이 남습니다.</p>
 </div>
+<p id="example-analysis">질문 두 개를 한 번에 검색하면 결과의 바깥 목록에도 항목이 두 개 생깁니다. 바깥쪽 인덱스는 어느 질문인지, 안쪽 인덱스는 그 질문에서 몇 번째 후보인지 고릅니다. 첫 질문의 첫 답에 쪽 번호를 붙일 때는 ids와 metadatas 양쪽에서 같은 두 위치를 읽어야 합니다.</p>
 </article>
 <span class="lesson-anchor" id="search"></span><div class="lesson-explanation" id="reading-search"><h3>질의 번호와 결과 순위 읽기</h3><p>raw[&#x27;ids&#x27;][0][0]에서 첫 번째 0은 첫 질의, 두 번째 0은 첫 후보를 뜻합니다. 본문과 메타데이터에서도 같은 두 위치를 골라야 한 문서의 정보가 됩니다.</p></div>
 
@@ -76,9 +75,7 @@ print(row)</code></pre></figure>
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-search -->
-<figure class="lesson-clip" id="detail-search"><h3>쪽 필터를 걸면 가까운 문서도 빠질까요?</h3>
-<video autoplay loop muted playsinline aria-label="쪽 필터를 걸면 가까운 문서도 빠질까요?" src="detail-search.mp4"></video>
-<figcaption>휴관 질문은 필터가 없을 때 제곱 거리가 0인 library-2를 찾습니다. page=1로 후보를 제한하면 2쪽은 순위 계산에서 빠져 대출 안내인 library-1이 반환됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-search"></span>
 <!-- /lesson-visual detail-search -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>Retriever 함수의 역할</h3><div class="prose"><p>검색을 화면이나 답변 생성 코드 안에 섞으면 저장소를 바꾸거나 실패 원인을 찾기 어려워집니다. retrieve(question,k)는 질문과 최대 후보 수를 받아 문서 목록을 반환하는 경계로 둡니다.</p>
@@ -92,7 +89,7 @@ print(row)</code></pre></figure>
 </tbody></table></div>
 <div class="prose"><p>공백을 제거한 질문이 비어 있으면 입력 오류입니다. k는 1 이상의 정수이며 bool은 제외합니다. Python의 True가 정수처럼 취급될 수 있어 따로 확인합니다. 검색 결과가 없는 정상 상황은 []이고, 출처가 잘못되거나 저장소가 응답하지 않는 상황은 예외입니다.</p>
 </div></div>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · retrieve()의 검색 개수</h3>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · retrieve()의 검색 개수</h3>
 <div class="cell-before"><p>자료의 원문 ID를 유지합니다. k는 최대 후보 수이고, 질문은 공백을 제외한 문자열이어야 합니다.</p>
 <p>휴관 질문에서는 결과 한 건이 있지만 주차 요금에는 대응하는 단어가 없어 빈 목록이 돌아옵니다. 질문을 바꾸면 첫 항목을 읽기 전 목록에 문서가 있는지 확인하세요.</p>
 </div>
@@ -206,7 +203,7 @@ print(f"[{hit[<span class="tok-string">'id'</span>]}] {hit[<span class="tok-stri
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

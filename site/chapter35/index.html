@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 35 / RAG EVALUATION</span><span class="template-badge">학생용 교재</span></div>
 <h1>RAG 평가 데이터셋 구성</h1>
-<p class="hero-description">어제보다 답변이 좋아졌다는 말을 확인하려면 어제와 같은 질문을 다시 물을 수 있어야 합니다. 답변을 생성하기 전에 질문, 기대 문서, 자료로 답할 수 있는지를 한 묶음으로 고정합니다.</p>
+<p class="hero-description">평가 질문마다 기대 문서 ID와 답변 가능 여부를 먼저 기록합니다. 질문·자료·판정 기준을 고정해야 다음 판에서 같은 실패가 해소됐는지 비교할 수 있습니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 035 · 8H</span><span>20장 문서·Q1, 34장 Node/Tool 비교 기록</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -36,8 +36,8 @@
 
 <span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-question-evidence"><h3>dev-01에서 어느 원문을 꺼낼까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-question-evidence.mp4" aria-label="dev-01에서 어느 원문을 꺼낼까요?" aria-describedby="workflow-question-evidence-caption"></video><figcaption id="workflow-question-evidence-caption">질문 ID로 문항을 구분하고, 기대 근거 배열의 문서 ID로 원문 사전을 조회합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>평가 문항</strong> · question_id = dev-01</li><li><strong>기대 근거</strong> · expected_document_ids[0] = library-1</li><li><strong>원문 조회</strong> · by_id의 text = 도서 대출 기간은 14일입니다.</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문과 기대 근거 ID 매핑</h3>
+<span class="lesson-anchor" id="workflow-question-evidence"></span><span class="lesson-anchor" id="workflow-question-evidence-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 질문과 기대 근거 ID 매핑</h3>
 <div class="cell-before"><p>가상 도서관 공통 자료의 첫 개발 문항과 연결된 원문을 읽으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
@@ -63,6 +63,7 @@ print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span 
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>library-1에서 14일이라는 사실을 읽었습니다. 기대 답의 표현이 달라도 이 숫자와 대출이라는 조건이 유지되는지 볼 수 있습니다.</p>
 </div>
+<p id="example-analysis">평가 문항에 기대 답 ‘14일’만 남기면 모델이 엉뚱한 문단을 보고 같은 숫자를 말해도 통과할 수 있습니다. 어떤 문서에 그 기간이 적혀 있는지 ID도 함께 적어 두면 검색이 맞았는지 먼저 확인할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="ids"></span><div class="lesson-explanation" id="reading-ids"><h3>문항 ID로 질문을, 문서 ID로 근거를 찾기</h3><p>dev-01은 평가 질문에 붙인 이름입니다. 이 질문의 expected_document_ids에는 library-1이 있고, by_id에서 이 키로 꺼낸 원문이 대출 기간을 14일이라고 설명합니다. 질문 이름과 문서 이름을 서로 바꾸면 연결이 끊깁니다.</p></div>
 <span class="lesson-anchor" id="scope"></span><div class="lesson-explanation" id="reading-scope"><h3>대표 문항의 적용 범위</h3><div class="prose"><p>대표 질문은 우리가 확인하려는 사용 상황을 드러내는 질문입니다. 여기서는 대출 기간, 휴관 요일, 반납함 이용 시간만 원문에 있습니다. 따라서 이 세 주제와 원문에 없는 질문을 나누어 생각합니다. 질문 수를 늘리는 것보다 어떤 상황을 포함하고 어떤 상황을 아직 다루지 않는지 먼저 기록합니다.</p>
@@ -149,7 +150,7 @@ print(by_id[holiday[<span class="tok-string">'expected_document_ids'</span>][<sp
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

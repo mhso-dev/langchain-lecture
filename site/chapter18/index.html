@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 18 / REVIEW</span><span class="template-badge">학생용 교재</span></div>
 <h1>도구 요청의 인자 검증과 실행 차단</h1>
-<p class="hero-description">도구 루프 결과에 대출 기간이 없습니다. 새 기술을 더하기 전에 입력 검사가 잘못된 요청까지 통과시킨 것은 아닌지 살펴봅니다. 17장에서 쓰던 대출 규칙 도구 한 건을 골라 원래 요청을 바꾸지 않는 검사 함수를 완성합니다.</p>
+<p class="hero-description">대출 규칙 조회 요청의 함수 이름, 인자, 호출 ID를 실행 전에 검사합니다. 유효하지 않은 요청과 정상 호출 뒤 빈 결과가 나온 경우를 구분합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 018 · 8H</span><span>11~17장 학습 자료·기본 Python</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,13 +39,11 @@
 
 
 <!-- lesson-visual visual-inspect -->
-<figure class="lesson-clip" id="visual-inspect"><h3>빈 인자와 빈 호출 ID는 다릅니다</h3>
-<video autoplay loop muted playsinline aria-label="빈 인자와 빈 호출 ID는 다릅니다" src="visual-inspect.mp4"></video>
-<figcaption>대출 규칙 도구는 인자 없는 객체를 허용합니다. 공백 ID로는 결과를 연결할 수 없고 등록하지 않은 이름은 실행 대상에서 제외됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-inspect"></span>
 <!-- /lesson-visual visual-inspect -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="diagnose"></span><div class="lesson-explanation" id="reading-diagnose"><h3>요청에서 확인할 세 필드</h3><p>get_loan_rule 요청 한 건을 놓고 name과 call_id, arguments를 각각 읽어 보세요. 도구에 인자가 없어도 요청을 식별하는 ID는 필요합니다.</p></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · arguments의 빈 JSON 객체</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · arguments의 빈 JSON 객체</h3>
 <div class="cell-before"><p>겉보기에는 내용이 없어도 문자열을 풀었을 때 어떤 값이 남는지가 중요합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> json
@@ -54,6 +52,7 @@ print(json.loads(item[<span class="tok-string">"arguments"</span>]) == {})</code
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True가 나옵니다. 빈 문자열은 JSON 문서가 아니어서 같은 변환을 통과할 수 없습니다. []는 읽을 수 있는 JSON이지만 이 도구가 정한 객체 모양과 다릅니다.</p>
 </div>
+<p id="example-analysis">도구에 건넬 인자가 하나도 없더라도 '{}'는 읽을 수 있는 JSON 객체입니다. 반면 call_id가 비어 있으면 실행 뒤 결과를 되돌려 줄 대상을 특정할 수 없습니다. 두 값 모두 화면에서는 ‘빈 값’처럼 보여도 검사하는 지점이 다릅니다.</p>
 </article>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · strip()으로 빈 call_id 검사</h3>
 <div class="cell-before"><p>ID에 공백 세 칸만 들어온 경우를 따로 확인합니다.</p>
@@ -131,8 +130,8 @@ print(validate_request(item))</code></pre></figure>
 <p>이제 증상을 보고 필요한 부분으로 돌아갑니다. 인자를 풀지 못한 경우라면 15장의 arguments를, 요청 ID와 결과 ID가 다르면 16장 왕복을, 상한이 보이면 17장 마지막 반복을 다시 살펴보세요.</p>
 
 <span class="lesson-anchor" id="assessment"></span><div class="lesson-explanation" id="reading-assessment"><h3>원본 요청의 필드를 하나씩 바꿔 검사</h3><p>원본 item에서 도구 이름, 호출 ID, arguments 중 하나만 바꾸어 실행하세요. 어떤 필드가 True를 False로 바꾸었는지 바로 알아볼 수 있습니다. 특히 문자열 &#x27;null&#x27;과 &#x27;{}&#x27;를 각각 넣었을 때의 차이를 확인하세요.</p></div>
-<figure class="lesson-clip workflow-clip" id="workflow-reject-name"><h3>알 수 없는 도구 이름은 인자를 읽기 전에 멈춥니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-reject-name.mp4" aria-label="알 수 없는 도구 이름은 인자를 읽기 전에 멈춥니다" aria-describedby="workflow-reject-name-caption"></video><figcaption id="workflow-reject-name-caption">name만 other_lookup으로 바꾼 bad의 call_id는 c1으로 유지됩니다. 실패를 기록할 때 어떤 요청에서 이름 검사가 막혔는지 함께 남길 수 있습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청 받기</strong> · call_id = c1</li><li><strong>허용 이름</strong> · 받은 이름 = other_lookup</li><li><strong>이름 거부</strong> · allowed = False</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 허용하지 않은 도구 이름 판별</h3>
+<span class="lesson-anchor" id="workflow-reject-name"></span><span class="lesson-anchor" id="workflow-reject-name-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · 허용하지 않은 도구 이름 판별</h3>
 <div class="cell-before"><p>도구 이름이 허용 목록과 다른 요청을 받았습니다. 프로그램이 기록할 값 한 개를 계산합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">bad = {**item, <span class="tok-string">"name"</span>: <span class="tok-string">"other_lookup"</span>}
@@ -173,7 +172,7 @@ print(allowed)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

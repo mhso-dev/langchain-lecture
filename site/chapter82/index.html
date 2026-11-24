@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -20,7 +20,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 082</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 영속성과 instr() 부분 문자열 검색</h1>
-<p class="hero-description">서버를 다시 켰더니 할 일이 사라졌습니다. 이번에는 같은 파일 DB에 다시 연결해 항목을 읽고, ‘50%’처럼 기호가 들어 있는 제목을 정확히 찾습니다. API의 id·title·completed 형태는 81장과 같습니다.</p>
+<p class="hero-description">할 일을 파일 DB에 저장하고 다시 연결해 같은 ID로 조회합니다. 81장의 API 필드를 유지하면서 제목에 포함된 %를 실제 문자로 검색하는 조건도 검사합니다.</p>
 <div class="hero-meta"><span>기초 · 연결 실습</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>54 값 바인딩 · 70 저장 경계 · 81 같은 Todo API</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -40,14 +40,12 @@
 <!-- END MOTION -->
 
 <!-- lesson-visual detail-persist -->
-<figure class="lesson-clip" id="detail-persist"><h3>연결을 닫은 뒤에도 1번 행을 읽는 이유</h3>
-<video autoplay loop muted playsinline aria-label="연결을 닫은 뒤에도 1번 행을 읽는 이유" src="detail-persist.mp4"></video>
-<figcaption>with 블록이 정상 종료되며 todos.db에 저장된 1번 행을 새 연결이 다시 읽습니다. 예시는 임시 작업 폴더가 유지되는 동안의 결과입니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-persist"></span>
 <!-- /lesson-visual detail-persist -->
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>세 열로 저장하는 할 일 한 건</h3><p>todos 테이블은 id를 INTEGER PRIMARY KEY, title을 TEXT, completed를 INTEGER로 둡니다. 이 예제에서는 Python의 False가 SQLite의 정수 0으로 저장되므로 조회 결과의 마지막 값이 0입니다.</p></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · SQLite 파일에 INSERT</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · SQLite 파일에 INSERT</h3>
 <div class="cell-before"><p>저장한 행의 ID를 기록합니다. 커널이 살아 있는 동안만 임시 폴더를 유지합니다.</p>
 <p>저장 결과가 사라진 것 같으면 파일 경로 → 테이블 존재 → 필터 없는 행 순서로 확인하세요. 새 파일에는 테이블이 없어 조회 오류가 나고, 빈 테이블에는 0행이 있습니다. 원래 파일에서 필터만 풀었을 때 ID 1이 보인다면 행은 남아 있습니다.</p>
 </div>
@@ -71,8 +69,8 @@ print(saved_id)</code></pre></figure>
 <span class="lesson-anchor" id="transaction"></span><span class="lesson-anchor" id="reading-transaction"></span>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-file-reopen"><h3>새 연결에서 SQLite 행을 복원하는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-file-reopen.mp4" aria-label="새 연결에서 SQLite 행을 복원하는 경로" aria-describedby="workflow-file-reopen-caption"></video><figcaption id="workflow-file-reopen-caption">행의 ID를 보관하고 연결을 닫습니다. 새 연결에서 같은 파일과 ID로 다시 읽으면 completed는 정수 0으로 보입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>INSERT</strong> · 저장할 제목 = 복습 50%</li><li><strong>커밋</strong> · saved_id = 1</li><li><strong>연결 닫기</strong> · 이전 연결 = db.close()</li><li><strong>파일 열기</strong> · 같은 파일 = todos.db</li><li><strong>ID로 조회</strong> · 저장된 행 = 1 · 복습 50% · 0</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 재연결 후 ID로 SELECT</h3>
+<span class="lesson-anchor" id="workflow-file-reopen"></span><span class="lesson-anchor" id="workflow-file-reopen-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 재연결 후 ID로 SELECT</h3>
 <div class="cell-before"><p>두 번째 연결이 같은 파일을 가리키는지 살펴보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">db = sqlite3.connect(db_path)
@@ -80,6 +78,7 @@ print(db.execute(<span class="tok-string">"SELECT id,title,completed FROM todos 
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(1, '복습 50%', 0)</pre></div>
 <div class="cell-after"><p>(1, '복습 50%', 0)이 돌아옵니다. SQLite는 거짓을 0으로 저장합니다. 웹 API가 JSON으로 반환하는 completed는 불리언이어야 합니다.</p>
 </div>
+<p id="example-analysis">같은 연결에서 방금 쓴 객체를 읽는 것만으로는 재시작 후 보존 여부를 알 수 없습니다. 이 셀은 파일에 다시 연결하고 같은 id로 조회합니다. 제목 ‘복습 50%’의 퍼센트 기호와 완료 값 0을 함께 대조하면 같은 레코드가 보존됐는지 확인할 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="persistence"></span><div class="lesson-explanation" id="reading-persistence"><h3>파일 경로를 고정한 재연결</h3><p>TemporaryDirectory 안에 todos.db를 만들고 정상 커밋한 뒤 연결을 닫습니다. 같은 경로로 sqlite3.connect를 다시 호출했을 때도 1번 행을 찾을 수 있으면 임시 폴더가 살아 있는 동안 파일에 값이 남았음을 확인한 것입니다.</p></div>
 <span class="lesson-anchor" id="store-errors"></span><span class="lesson-anchor" id="reading-store-errors"></span>
@@ -92,7 +91,7 @@ print(db.execute(<span class="tok-string">"SELECT id,title,completed FROM todos 
 </header>
 <p>검색창에 %를 입력한 사용자는 그 기호가 제목에 들어간 할 일을 찾으려 합니다. PostgreSQL 제공 구현은 strpos로 부분 문자열을 검사합니다. SQLite의 비슷한 함수 instr는 찾은 위치를 1부터 세며, 없으면 0을 돌려줍니다.</p>
 <!-- lesson-visual practice-space -->
-<section class="practice-space" id="practice-space" data-practice="substring"><h3>퍼센트 기호가 들어간 행만 어떻게 찾을까요?</h3><p>원래 두 행에 같은 검색어를 넣습니다. SQLite의 instr()가 찾은 첫 위치를 표시합니다. 0은 해당 글자가 없다는 뜻입니다.</p><label>검색 문자열 <select><option value="%">%</option><option value="복습">복습</option><option value="마무리">마무리</option><option value="_">_</option></select></label><div class="practice-stage" role="img" aria-label="퍼센트 기호가 들어간 행만 어떻게 찾을까요?"></div><output aria-live="polite">퍼센트 기호는 ‘복습 50%’의 여섯 번째 글자입니다. %를 찾으면 이 행만, ‘복습’을 찾으면 두 행이 모두 남습니다.</output></section>
+<section class="practice-space" id="practice-space" data-text-results data-practice="substring"><h3>SQLite instr()의 부분 문자열 검색</h3><p>같은 검색어를 두 제목에 적용합니다. instr()가 0이면 해당 문자열을 찾지 못한 것입니다.</p><label>검색 문자열 <select><option value="%">%</option><option value="복습">복습</option><option value="마무리">마무리</option><option value="_">_</option></select></label><output aria-live="polite">퍼센트 기호는 ‘복습 50%’의 여섯 번째 글자입니다. %를 찾으면 이 행만, ‘복습’을 찾으면 두 행이 모두 남습니다.</output></section>
 <!-- /lesson-visual practice-space -->
 
 <span class="lesson-anchor" id="filter"></span><div class="lesson-explanation" id="reading-filter"><h3>완료 조건과 제목 검색을 함께 적용하기</h3><p>두 조건을 AND로 연결하면 제목에 복습이 있으면서 완료 상태인 행만 남습니다. 복습 50%도 제목 조건에는 맞지만 completed가 0이므로 완료 필터를 통과하지 못합니다.</p></div>
@@ -138,7 +137,7 @@ print(db.execute(sql, (<span class="tok-keyword">True</span>, <span class="tok-s
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

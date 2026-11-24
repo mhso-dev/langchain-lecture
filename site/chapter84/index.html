@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 084</span><span class="template-badge">학생용 교재</span></div>
 <h1>SQLite 스키마 변경과 부분 업데이트</h1>
-<p class="hero-description">팀에서 기존 투두에 마감일과 우선순위를 추가해 달라고 했습니다. 예전 할 일도 계속 읽을 수 있어야 하고 제목만 고쳤을 때 마감일이 지워져서는 안 됩니다. 실제 SQL로 기존 행을 이관하고 두 열을 함께 수정해 봅니다.</p>
+<p class="hero-description">기존 투두 데이터에 마감일과 우선순위를 추가합니다. SQL 이관 직후의 옛 행과 각 필드를 수정한 뒤의 값을 비교해 누락·초기화 오류를 확인합니다.</p>
 <div class="hero-meta"><span>기초 · 프로젝트 연결</span><span>8H · 전반 4H + 후반 4H · 휴식·점심 별도</span><span>83일</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -56,6 +56,7 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습', None, 'normal')</pre></div>
 <div class="cell-after"><p>기존 제목은 복습으로 유지되고 새 필드는 None과 normal입니다. 예전 행에 존재하지 않았던 마감일을 임의의 날짜로 채우지 않았습니다.</p>
 </div>
+<p id="example-analysis">기존 행에는 마감일이 없고 우선순위는 normal입니다. 스키마를 바꾼 직후 모든 행에 날짜가 있다고 가정하면 이 옛 항목을 표시할 때 문제가 생깁니다. 새 행 입력 외에 변경 전부터 있던 행을 열 수 있는지도 확인합니다.</p>
 </article>
 <span class="lesson-anchor" id="section-05"></span><div class="lesson-explanation" id="reading-section-05"><h3>ALTER TABLE 이후 기존 행 읽기</h3><p>먼저 기존 형식으로 복습 한 행을 넣은 다음 열을 추가합니다. 기존 행을 다시 조회하면 새 due_date는 None, 기본값이 있는 priority는 normal입니다.</p></div>
 
@@ -66,13 +67,11 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 </header>
 <p>마감일과 우선순위가 함께 온 경우에는 두 열만 고치는 고정 SQL을 선택할 수 있습니다. 입력에서 직접 열 이름을 만들어 붙이지 않습니다. 한 필드가 누락된 요청과 일부러 null을 보내 날짜를 지우는 요청도 구분합니다.</p>
 <!-- lesson-visual visual-patch -->
-<figure class="lesson-clip" id="visual-patch"><h3>제목만 수정할 때 다른 열의 값은?</h3>
-<video autoplay loop muted playsinline aria-label="제목만 수정할 때 다른 열의 값은?" src="visual-patch.mp4"></video>
-<figcaption>UPDATE가 지정한 열만 바뀝니다. 날짜와 우선순위를 채운 뒤 제목만 수정해도 2027-04-02와 high는 같은 행에 남습니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-patch"></span>
 <!-- /lesson-visual visual-patch -->
 
 <span class="lesson-anchor" id="section-06"></span><div class="lesson-explanation" id="reading-section-06"><h3>날짜 문자열을 바인딩하기 전에 확인하기</h3><p>date.fromisoformat으로 실제 달력 날짜인지 검사한 뒤 isoformat 결과를 TEXT 열에 저장합니다. 이 셀에서 날짜를 검사하는 곳은 Python입니다.</p></div>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · UPDATE의 값 바인딩</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · UPDATE의 값 바인딩</h3>
 <div class="cell-before"><p>날짜 문자열은 실제 달력 날짜인지 확인한 뒤 SQL 자리표시자에 넣습니다.</p>
 <p>날짜와 우선순위를 저장한 다음, 같은 행의 제목만 바꿔 보세요. 제목 변경 뒤에도 날짜는 2027-04-02, 우선순위는 high여야 합니다. 다음 과제에서 날짜를 직접 비울 때와 비교합니다.</p>
 </div>
@@ -112,8 +111,8 @@ print(db.execute(<span class="tok-string">'SELECT due_date, priority FROM todos 
 </details>
 </article>
 
-<figure class="lesson-clip workflow-clip" id="workflow-check-rollback"><h3>허용하지 않는 우선순위가 저장되지 않는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-check-rollback.mp4" aria-label="허용하지 않는 우선순위가 저장되지 않는 경로" aria-describedby="workflow-check-rollback-caption"></video><figcaption id="workflow-check-rollback-caption">앞에서 high로 정한 1번 행을 urgent로 바꾸려고 시도합니다. UPDATE의 입력값과 실패 후 SELECT의 값을 비교하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 행</strong> · 현재 priority = high</li><li><strong>UPDATE</strong> · 바인딩한 값 = urgent</li><li><strong>CHECK</strong> · 허용한 값 = low · normal · high</li><li><strong>예외 처리</strong> · 예외 = IntegrityError</li><li><strong>SELECT</strong> · 남은 priority = high</li></ol></figure>
-<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 04 · 허용 우선순위 검증</h3>
+<span class="lesson-anchor" id="workflow-check-rollback"></span><span class="lesson-anchor" id="workflow-check-rollback-caption"></span>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="example-cell-5">셀 04 · 허용 우선순위 검증</h3>
 <div class="cell-before"><p>데이터 규칙이 저장 시점에도 적용되는지 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">try</span>:
@@ -146,7 +145,7 @@ high</pre></div>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

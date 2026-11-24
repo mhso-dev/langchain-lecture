@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 108 / FINAL PROJECT</span><span class="template-badge">프로젝트 사례</span></div>
 <h1>평가 문항 중복 제거와 오답 분석</h1>
-<p class="hero-description">개발자가 Q01을 보며 코드를 고친 뒤 같은 질문으로 통과했다면 회귀 확인에는 쓸 수 있습니다. 처음 보는 질문에 대한 평가에는 다른 질문이 필요합니다. 공백을 붙이거나 ID만 바꾼 복제 질문부터 가려 봅니다.</p>
+<p class="hero-description">개발 질문과 확인용 후보의 중복을 검사합니다. 문항 ID나 공백만 다른 질문을 제외하고, 오답의 원문·기대값·실제값을 나란히 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,11 +39,9 @@
 
 
 <!-- lesson-visual detail-overlap -->
-<figure class="lesson-clip" id="detail-overlap"><h3>공백을 지운 자리에 어떤 차이가 남을까요?</h3>
-<video autoplay loop muted playsinline aria-label="공백을 지운 자리에 어떤 차이가 남을까요?" src="detail-overlap.mp4"></video>
-<figcaption>PUBLIC-DUP-01은 양끝 공백을 떼면 Q01과 같은 문장이 됩니다. 표현을 바꾼 두 번째 문항은 문자열이 달라도 기존 질문과 같은 내용을 물을 수 있어 사람이 의미를 대조합니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-overlap"></span>
 <!-- /lesson-visual detail-overlap -->
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 질문 정규화와 중복 판별</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 질문 정규화와 중복 판별</h3>
 <div class="cell-before"><p>개발 질문과 공개 후보 하나를 문자열 수준에서 대조합니다.</p>
 <p>‘장비 A 점검 전에 볼 것은?’과 ‘장비 A는 점검 전 무엇을 확인하나요?’는 표기가 달라도 의도와 기대 근거 RULE-A가 같습니다. 확인용 세트에 넣기 전에 같은 능력을 다시 묻는 문항인지 검토하고 선택 이유를 남기세요.</p>
 </div>
@@ -53,6 +51,7 @@ print(candidate.strip() == development.strip())</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True입니다. 이 후보는 독립 점수의 분모에서 제외할 수 있습니다. 문자열이 다르다는 결과만으로 의미가 새로운 질문이라고 판정할 수는 없습니다.</p>
 </div>
+<p id="example-analysis">질문 정규화 뒤 같은 문자열이 된 두 문항을 개발용과 확인용에 나눠 넣으면 사실상 같은 입력을 두 번 평가하게 됩니다. 확인 세트를 구성할 때는 표기 차이를 제거한 뒤 중복을 검사하고, 기대 근거가 같은 이유도 원문으로 대조합니다.</p>
 </article>
 </section>
 <section id="nb-failure" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -61,8 +60,8 @@ print(candidate.strip() == development.strip())</code></pre></figure>
 </header>
 <p>실패 분석 연습용 가상 행　질문 “B 장비의 점검 전 기준은?” / 기대 고정 장치, RULE-B 2.2절 / 가정한 검색 결과 RULE-B / 가정한 화면 답 전원 표시등 / 판단 자료는 맞게 골랐고 출력 내용이 원문과 어긋남. 실제 실행에서 중간 결과가 없으면 ‘검색 오류’라고 단정하지 말고 관찰할 단계를 먼저 적습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-localize-wrong-fact"><h3>검색에서 RULE-B를 찾았는데 화면 답은 왜 틀렸을까?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-localize-wrong-fact.mp4" aria-label="검색에서 RULE-B를 찾았는데 화면 답은 왜 틀렸을까?" aria-describedby="workflow-localize-wrong-fact-caption"></video><figcaption id="workflow-localize-wrong-fact-caption">가상 실패 행의 중간 결과를 따라가며 검색 단계와 답변 단계 중 어디서 기대값이 달라지는지 찾습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기대 기준</strong> · 장비 B 기준 = RULE-B · 고정 장치</li><li><strong>검색 결과</strong> · 가정한 검색 결과 = RULE-B</li><li><strong>화면 답</strong> · 가정한 화면 답 = 전원 표시등을 확인합니다.</li><li><strong>필수 사실 대조</strong> · 고정 장치 포함 = False</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 기대값 불일치 기록</h3>
+<span class="lesson-anchor" id="workflow-localize-wrong-fact"></span><span class="lesson-anchor" id="workflow-localize-wrong-fact-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 기대값 불일치 기록</h3>
 <div class="cell-before"><p>위 가상 행의 답에서 원문 필수 표현이 빠졌는지 확인하고 어떤 후속 관찰이 필요한지 적으세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">answer = <span class="tok-string">"점검 전 전원 표시등을 확인합니다."</span>
@@ -88,7 +87,7 @@ print(<span class="tok-string">"조회한 원문이 답 생성 단계에도 그�
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

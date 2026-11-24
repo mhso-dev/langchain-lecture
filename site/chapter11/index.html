@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 11 / SDK</span><span class="template-badge">학생용 교재</span></div>
 <h1>OpenAI Responses API의 요청·응답 구조</h1>
-<p class="hero-description">화면에서는 한 줄 답변이 보이지만 프로그램이 받는 응답에는 모델 이름, 완료 상태, 사용량도 들어 있습니다. 한 번의 요청을 준비하고 수업용 응답을 받아 보낸 질문과 돌려받은 답, 사용량이 각각 어디에 남는지 확인합니다.</p>
+<p class="hero-description">Responses API 요청에서 질문의 역할과 내용을 지정하고, 수업용 응답에서 답변·완료 상태·사용량을 각각 읽습니다. 응답 일부만 받았을 때는 완료 상태가 해석 기준이 됩니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 011 · 8H</span><span>Python 함수·예외·환경변수·HTTP·10장 검증</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -55,6 +55,7 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">SDK가 하는 일을 한 문장으로 설명하세요.</pre></div>
 <div class="cell-after"><p>원래 질문이 그대로 나옵니다. max_output_tokens는 생성할 출력의 한도이고 입력 문장 길이나 실제 생성 토큰 수가 아닙니다.</p>
 </div>
+<p id="example-analysis">이 셀을 여러 번 실행해도 호출 비용이 쌓이지 않습니다. 만든 것은 요청 내용을 담은 파이썬 사전이고 마지막 줄은 그 안의 질문을 읽습니다. 다음 단계에서 응답을 볼 때는 어떤 전송 함수가 그 값을 돌려줬는지도 확인하세요.</p>
 </article>
 <span class="lesson-anchor" id="context"></span><div class="lesson-explanation" id="reading-context"><h3>대화 메시지 목록 구성</h3><div class="prose"><p>이 예제의 input에는 사용자 메시지 하나가 있습니다. 프로그램을 다시 실행해도 지난 요청의 내용이 자동으로 포함된다고 가정하지 않습니다. 후속 질문에 앞선 내용이 필요하면 그 내용을 입력으로 전달하는 방식을 명시적으로 구현해야 합니다.</p>
 </div></div>
@@ -70,11 +71,9 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-sdk-mock -->
-<figure class="lesson-clip" id="visual-sdk-mock"><h3>모의 전송에서 답변이 돌아오기까지</h3>
-<video autoplay loop muted playsinline aria-label="모의 전송에서 답변이 돌아오기까지" src="visual-sdk-mock.mp4"></video>
-<figcaption>MockTransport가 요청 본문을 받은 뒤 수업용 응답을 반환합니다. 마지막에 학생 코드가 읽는 값은 response.output_text입니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-sdk-mock"></span>
 <!-- /lesson-visual visual-sdk-mock -->
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 모의 SDK 응답 생성</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 모의 SDK 응답 생성</h3>
 <div class="cell-before"><p>제공 함수는 요청에서 user 역할을 확인하고, message 하나와 사용량 예시가 든 HTTP 응답을 준비합니다.</p>
 <p>제공 함수는 네트워크 대신 예제 응답을 만듭니다. 셀 03에서는 본문을, 과제 04에서는 같은 응답의 사용량을 읽습니다. 처음에는 함수 안의 생성 코드보다 반환된 응답 한 건을 따라가세요.</p>
 </div>
@@ -129,8 +128,8 @@ sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="
 </header>
 <p>토큰은 모델이 입력과 출력을 세는 단위입니다. 과금이나 지연을 추측하지 않고 응답에 실제 제공된 값을 읽습니다. 요청 상태가 미완료면 본문 길이만 보고 성공으로 기록하지 않습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-partial-response"><h3>응답 조각이 있어도 완료 상태를 먼저 확인하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-partial-response.mp4" aria-label="응답 조각이 있어도 완료 상태를 먼저 확인하기" aria-describedby="workflow-partial-response-caption"></video><figcaption id="workflow-partial-response-caption">partial의 text에는 ‘가상 안’이 남아 있습니다. 상태가 incomplete인 이 실행에서는 미완료 안내가 출력됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>응답 받기</strong> · partial.text = 가상 안</li><li><strong>status 검사</strong> · partial.status = incomplete</li><li><strong>미완료 안내</strong> · print() = 미완료 응답</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · usage의 토큰 합계</h3>
+<span class="lesson-anchor" id="workflow-partial-response"></span><span class="lesson-anchor" id="workflow-partial-response-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="1"><h3 id="example-cell-4">과제 04 · usage의 토큰 합계</h3>
 <div class="cell-before"><p>제공 응답과 같은 사용량 사전입니다. 사용량이 보고된 경우 총 토큰 수를 출력하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">usage = {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>}
@@ -189,7 +188,7 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

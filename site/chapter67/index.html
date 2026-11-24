@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -19,7 +19,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 67 / AGENTIC SERVICE</span><span class="template-badge">학생용 교재</span></div>
 <h1>서비스 평가의 인용 정확성과 분모</h1>
-<p class="hero-description">서비스가 실행을 정상적으로 마쳤는데 안내에 ‘개인 메신저로만 제출한다’고 적혔습니다. 원문은 학습 관리 페이지의 과제함을 가리킵니다. 실행 성공, 인용 번호 일치, 안내 내용의 정확성을 나누어 평가합니다.</p>
+<p class="hero-description">정상 종료된 응답이 올바른 출처 ID를 붙이고도 제출 위치를 잘못 안내한 사례를 평가합니다. 실행 결과, 인용 일치, 원문과 답변의 의미를 각각 판정합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 067 · 8H</span><span>39일 조건 고정·채택 기록, 66일 역할 비교·선택 근거</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -39,11 +39,9 @@
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-fact -->
-<figure class="lesson-clip" id="visual-fact"><h3>문단 ID를 확인한 뒤 답변의 주장과 대조하기</h3>
-<video autoplay loop muted playsinline aria-label="문단 ID를 확인한 뒤 답변의 주장과 대조하기" src="visual-fact.mp4"></video>
-<figcaption>p2라는 위치는 맞습니다. p2의 본문은 과제함 제출을 안내하므로 개인 메신저로만 제출한다는 주장은 근거와 어긋납니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-fact"></span>
 <!-- /lesson-visual visual-fact -->
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 인용과 본문 불일치 검사</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 인용과 본문 불일치 검사</h3>
 <div class="cell-before"><p>같은 ID가 붙었더라도 두 문장의 제출 위치를 읽어 보세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">source = {<span class="tok-string">"id"</span>: <span class="tok-string">"course-guide-v1:p2"</span>, <span class="tok-string">"text"</span>: <span class="tok-string">"과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다."</span>}
@@ -54,6 +52,7 @@ print(source[<span class="tok-string">"text"</span>])</code></pre></figure>
 과제는 학습 관리 페이지의 과제함에 제출합니다. 제출 뒤 파일 이름과 등록 시간을 확인합니다.</pre></div>
 <div class="cell-after"><p>출처 번호는 실제 자료에 있지만 개인 메신저로 제출한다는 말은 해당 자료에서 찾을 수 없습니다. 이 경우에는 검색 실패보다 답변의 의미 오류를 먼저 기록합니다.</p>
 </div>
+<p id="example-analysis">답변 뒤의 p2는 실제로 존재하지만 본문은 ‘개인 메신저’, 원문은 ‘학습 관리 페이지의 과제함’이라고 합니다. 인용 ID 검사만 통과시키면 정반대의 안내를 배포하게 됩니다. 채점할 때는 제출 경로를 나타내는 구절끼리 직접 대조합니다.</p>
 </article>
 <span class="lesson-anchor" id="a1"></span><span class="lesson-anchor" id="reading-a1"></span>
 <span class="lesson-anchor" id="policy"></span><span class="lesson-anchor" id="reading-policy"></span>
@@ -80,8 +79,8 @@ print(f"{corrected} [{source[<span class="tok-string">'id'</span>]}]")</code></p
 </header>
 <p>67장의 제공 평가 기록 26행에는 선택하지 않은 기억·MCP 기능도 들어 있습니다. 같은 승인 건의 대기와 재개가 다른 행에 기록되기도 합니다. 행 수는 서로 독립적인 사용자 질문 수가 아닙니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-observed-cohort"><h3>실패한 실행과 실행하지 않은 항목 나누기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-observed-cohort.mp4" aria-label="실패한 실행과 실행하지 않은 항목 나누기" aria-describedby="workflow-observed-cohort-caption"></video><figcaption id="workflow-observed-cohort-caption">실패했더라도 실제로 실행한 사례는 분모에 남습니다. 평가 행을 고르는 조건을 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>평가 2행</strong> · 기록 수 = 2</li><li><strong>실행 여부</strong> · 선택 기준 = executed_local</li><li><strong>관찰 행</strong> · case_id = E67-search-error</li><li><strong>실패 단계</strong> · failure_stage = retrieval</li></ol></figure>
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 미실행 시나리오의 분모 제외</h3>
+<span class="lesson-anchor" id="workflow-observed-cohort"></span><span class="lesson-anchor" id="workflow-observed-cohort-caption"></span>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 미실행 시나리오의 분모 제외</h3>
 <div class="cell-before"><p>제공 기록에서 발췌한 두 행입니다. 실제 로컬 실행을 표시한 행만 골라 봅니다.</p>
 <p>정상 질문 4행은 답과 근거를 확인하는 데 사용합니다. 진단 20행은 실패 위치를 찾는 기록이고 미채택 2행은 후보를 쓰지 않은 이유를 남깁니다. 세 묶음을 합친 26행을 모두 정상 정답 문항으로 세지 마세요.</p>
 </div>
@@ -121,7 +120,7 @@ print(observed[<span class="tok-number">0</span>][<span class="tok-string">"case
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

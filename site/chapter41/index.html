@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY 041</span><span class="template-badge">학생용 교재</span></div>
 <h1>Streamlit 세션과 LangGraph 체크포인트</h1>
-<p class="hero-description">한 학생이 대출 기간을 묻고 이어서 자료에 없는 주차 요금을 묻습니다. 기록 화면에는 이전 대화가 남아도 지금 답의 출처에는 대출 문서가 남으면 안 됩니다. 화면에 둘 값과 Graph에 넘길 값을 나누어 살펴봅니다.</p>
+<p class="hero-description">Streamlit 대화 이력과 LangGraph의 thread_id를 연결합니다. 지난 질문은 대화에 보존하고, 현재 답변의 출처 패널은 이번 검색 결과로 교체합니다.</p>
 <div class="hero-meta"><span>Python·RAG·Graph 이후</span><span>8H · 전반 4H / 후반 4H</span><span>29 thread·체크포인트 ·34 Graph 도구 흐름 ·40 화면 상태</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -36,8 +36,8 @@
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-checkpoint-process"><h3>thread A의 둘째 질문이 START에서 END까지 가는 길</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-checkpoint-process.mp4" aria-label="thread A의 둘째 질문이 START에서 END까지 가는 길" aria-describedby="workflow-checkpoint-process-caption"></video><figcaption id="workflow-checkpoint-process-caption">검은 상자로 보이던 invoke를 따라가 보세요. 등록한 노드는 process 하나이고, retrieve는 그 안에서 호출됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · thread_id = A · 둘째 호출</li><li><strong>process</strong> · question = 주차 요금은?</li><li><strong>END</strong> · sources / history = [] / 질문 2건</li></ol></figure>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 체크포인터가 있는 그래프 구성</h3>
+<span class="lesson-anchor" id="workflow-checkpoint-process"></span><span class="lesson-anchor" id="workflow-checkpoint-process-caption"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 체크포인터가 있는 그래프 구성</h3>
 <div class="cell-before"><p>history에는 누적 규칙을 붙이고 sources에는 현재 결과만 덮어쓰도록 합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 47줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
@@ -104,6 +104,7 @@ print(second[<span class="tok-string">'sources'</span>])</code></pre></figure>
 []</pre></div>
 <div class="cell-after"><p>질문 두 개가 기록에 있고 현재 출처는 비었습니다. 프런트엔드가 첫 답의 출처를 계속 들고 있다면 화면만 잘못된 상태일 수 있습니다.</p>
 </div>
+<p id="example-analysis">질문 이력에는 대출 기간과 주차 요금이 둘 다 남았는데 현재 출처 목록은 비었습니다. 화면이 되살려야 할 두 상태의 수명이 다르기 때문입니다. 대화 목록은 이어 가되, 출처 패널은 방금 처리한 질문의 결과로 교체하세요.</p>
 </article>
 <div class="lesson-explanation" id="reading-sources"><h3>이번 질문의 출처와 누적 질문</h3><p>thread A의 첫 질문은 library-1을 찾습니다. 같은 A에서 주차 요금을 물으면 두 번째 검색은 빈 목록입니다. sources는 빈 목록으로 교체되고, add 규칙이 붙은 history에는 두 질문이 순서대로 남습니다.</p></div>
 <span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
@@ -119,11 +120,9 @@ print(second[<span class="tok-string">'sources'</span>])</code></pre></figure>
 <!-- END MOTION -->
 
 <!-- lesson-visual visual-new-session -->
-<figure class="lesson-clip" id="visual-new-session"><h3>새 질문에서 지울 것과 남길 것</h3>
-<video autoplay loop muted playsinline aria-label="새 질문에서 지울 것과 남길 것" src="visual-new-session.mp4"></video>
-<figcaption>같은 스레드 A에서 주차 요금을 물으면 이력에는 두 질문이 남습니다. 새 질문에 맞는 근거가 없어 현재 출처 목록은 비워집니다.</figcaption></figure>
+<span class="lesson-anchor" id="visual-new-session"></span>
 <!-- /lesson-visual visual-new-session -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · thread_id별 기록 분리</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · thread_id별 기록 분리</h3>
 <div class="cell-before"><p>B라는 새 대화에 휴관일을 묻고 B의 질문 목록과 현재 쪽수를 표시하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># 다른 ID로 send를 호출하세요.</span></code></pre></figure>
@@ -143,8 +142,8 @@ print(other[<span class="tok-string">'history'</span>], other[<span class="tok-s
 </header>
 <p>제공 앱은 같은 검색 함수와 체크포인터를 씁니다. 앞서 본 처리 중 UI에서 결정하는 것은 대화 ID와 현재 표시할 결과입니다. 새 대화 버튼은 새 ID를 만듭니다. 수업용 예제에는 로그인·운영 저장소가 없습니다.</p>
 
-<figure class="lesson-clip workflow-clip" id="workflow-streamlit-invoke"><h3>폼 제출과 새 대화가 그래프에 미치는 차이</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-streamlit-invoke.mp4" aria-label="폼 제출과 새 대화가 그래프에 미치는 차이" aria-describedby="workflow-streamlit-invoke-caption"></video><figcaption id="workflow-streamlit-invoke-caption">기존 대화에서 대출 질문을 보내는 경로입니다. 새 대화 버튼은 별도로 새 ID를 만들고 current를 먼저 비웁니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>폼 입력</strong> · question = 대출 기간은?</li><li><strong>제출 검사</strong> · submit 및 strip() = 제출됨 · 공백 아님</li><li><strong>대화 설정</strong> · configurable.thread_id = 현재 세션의 thread</li><li><strong>그래프 호출</strong> · process의 sources = library-1</li><li><strong>화면 표시</strong> · 현재 근거 = [library-1] 1쪽</li></ol></figure>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 폼 상태와 대화 ID 연결</h3>
+<span class="lesson-anchor" id="workflow-streamlit-invoke"></span><span class="lesson-anchor" id="workflow-streamlit-invoke-caption"></span>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · 폼 상태와 대화 ID 연결</h3>
 <div class="cell-before"><p>st.session_state.thread를 설정하는 줄과 engine.invoke에 같은 ID를 건네는 줄을 찾아보세요.</p>
 <p>노트북의 앱은 cache_resource로 엔진을 재사용합니다. A에서 B로 전환하면 엔진이 쓰는 저장소는 남지만 현재 화면은 B의 대화 ID와 출처를 기준으로 다시 그립니다. 뒤의 참고 앱은 session_state에 엔진을 두는 별도 구현입니다. 먼저 cache_resource로 그래프를 준비하는 줄과, 제출 뒤 현재 출처를 갱신하는 줄을 찾으세요.</p>
 </div>
@@ -280,7 +279,7 @@ print(<span class="tok-string">"앱 구문 확인"</span>)</code></pre></figure>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>

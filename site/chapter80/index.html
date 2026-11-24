@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -18,7 +18,7 @@
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 80 / CODEX</span><span class="template-badge">학생용 교재</span></div>
 <h1>Codex 요청의 수용 기준과 JavaScript 상태 변경</h1>
-<p class="hero-description">학생이 ‘복습’이라는 할 일을 두 번 입력했습니다. 제목이 같아도 두 항목은 각각 완료하거나 삭제할 수 있어야 합니다. Codex에 건넬 요구를 이 행동으로 좁힌 뒤 제안 코드와 실행 결과를 검토합니다.</p>
+<p class="hero-description">Codex로 투두 앱을 구현할 때 사용할 수용 기준을 작성합니다. 같은 제목을 두 번 입력한 경우와 공백만 입력한 경우로 항목 ID, 초기 상태, 추가 거부를 검증합니다.</p>
 <div class="hero-meta"><span>입문</span><span>교육일 080 · 8H</span><span>7일 재현 기록 · 78일 HTML/CSS · 79일 이벤트·JSON</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
@@ -61,13 +61,14 @@ run_js(store_source + <span class="tok-string">'console.log(JSON.stringify(add("
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{"id":1,"title":"복습","completed":false}</pre></div>
 <div class="cell-after"><p>id는 1, 제목은 복습, 완료 여부는 false입니다. 양끝 공백을 지워도 제목 안쪽 공백은 유지한다는 조건을 다음 입력에서도 확인하세요.</p>
 </div>
+<p id="example-analysis">제목이 같은 ‘복습’을 하나 더 추가해도 두 항목은 서로 다른 작업일 수 있습니다. 화면에서 완료 버튼을 눌렀을 때 어떤 행을 바꿀지는 title보다 id로 정해야 합니다. 반환된 completed 값은 새 작업의 초기 상태를 확인하는 근거입니다.</p>
 </article>
 <span class="lesson-anchor" id="first-change"></span><span class="lesson-anchor" id="reading-first-change"></span>
 <span class="lesson-anchor" id="memory"></span><div class="lesson-explanation" id="reading-memory"><h3>run_js를 다시 호출할 때의 배열</h3><p>run_js는 호출마다 별도의 Node 프로세스를 실행합니다. 같은 store_source를 다시 전달하면 nextId는 1, items는 빈 배열에서 다시 시작합니다. 서로 다른 셀의 목록을 한 목록처럼 이어서 읽지 마세요.</p></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-reject-blank"><h3>공백 입력에서 ID 발급과 배열 추가가 생략되는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-reject-blank.mp4" aria-label="공백 입력에서 ID 발급과 배열 추가가 생략되는 이유" aria-describedby="workflow-reject-blank-caption"></video><figcaption id="workflow-reject-blank-caption">빈 입력 셀은 새 Node 프로세스에서 시작합니다. 오류를 낸 뒤 items.length가 왜 0인지 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>입력</strong> · raw = 공백 세 칸</li><li><strong>trim 확인</strong> · raw.trim() = &quot;&quot;</li><li><strong>예외</strong> · throw = INVALID_TITLE</li><li><strong>오류 확인</strong> · items.length = 0</li></ol></figure>
-<article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 빈 문자열 입력 검증</h3>
+<span class="lesson-anchor" id="workflow-reject-blank"></span><span class="lesson-anchor" id="workflow-reject-blank-caption"></span>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 빈 문자열 입력 검증</h3>
 <div class="cell-before"><p>공백만 보낸 경우 저장소 길이도 함께 확인합니다.</p>
 <p>run_js는 부를 때마다 새 Node 프로세스에서 시작합니다. 이 셀의 배열은 셀 01에서 추가한 항목을 기억하지 않습니다. 같은 행에 연속으로 한 조작을 확인하려면 그 조작을 한 번의 run_js 안에 넣으세요.</p>
 </div>
@@ -94,14 +95,12 @@ catch (error) { console.log(error.message + " " + items.length); }
 
 
 <!-- lesson-visual detail-review -->
-<figure class="lesson-clip" id="detail-review"><h3>제목이 같은 두 할 일에서 어느 행이 바뀔까요?</h3>
-<video autoplay loop muted playsinline aria-label="제목이 같은 두 할 일에서 어느 행이 바뀔까요?" src="detail-review.mp4"></video>
-<figcaption>각 장면은 두 항목 모두 미완료인 상태에서 시작합니다. 제목으로 찾으면 첫 번째 복습이, 선택한 ID 2로 찾으면 두 번째 복습만 완료됩니다.</figcaption></figure>
+<span class="lesson-anchor" id="detail-review"></span>
 <!-- /lesson-visual detail-review -->
 
 <span class="lesson-anchor" id="files"></span><span class="lesson-anchor" id="reading-files"></span>
 <span class="lesson-anchor" id="complete-delete"></span><span class="lesson-anchor" id="reading-complete-delete"></span>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · ID별 완료 상태 변경</h3>
+<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · ID별 완료 상태 변경</h3>
 <div class="cell-before"><p>같은 제목 두 건을 추가한 뒤 id 2만 완료하도록 JavaScript 한 줄을 작성하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># run_js에 store_source와 변경 코드를 함께 전달하세요.</span></code></pre></figure>
@@ -140,7 +139,7 @@ console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 복사·재생·진행 표시에는 JavaScript가 필요합니다.</p>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
 </noscript>
 <script src="../assets/reader.js"></script>
 <script src="../assets/menu-focus.js"></script></body></html>
