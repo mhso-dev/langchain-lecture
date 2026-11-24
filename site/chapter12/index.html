@@ -56,7 +56,7 @@
 </div>
 </header>
 
-<figure class="lesson-clip" id="concept-clip"><h3>null이 든 필드와 누락된 필드</h3><video controls muted playsinline preload="metadata" aria-label="null이 든 필드와 누락된 필드" src="concept.mp4"></video><figcaption>왼쪽 서식에는 null을 담은 칸이 있습니다. 오른쪽 서식의 빈 공간은 항목 자체가 빠진 경우입니다. 코드에서는 키의 존재 여부를 in으로 확인합니다.</figcaption></figure><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 01 · json.loads()의 null 변환</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="셀 01 · json.loads()의 null 변환 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 01 · json.loads()의 null 변환"><code id="code-1"><span class="tok-keyword">import</span> json
+<figure class="lesson-clip" id="concept-clip"><h3>null이 든 필드와 누락된 필드</h3><video autoplay loop muted playsinline aria-label="null이 든 필드와 누락된 필드" src="concept.mp4"></video><figcaption>왼쪽 서식에는 null을 담은 칸이 있습니다. 오른쪽 서식의 빈 공간은 항목 자체가 빠진 경우입니다. 코드에서는 키의 존재 여부를 in으로 확인합니다.</figcaption></figure><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 01 · json.loads()의 null 변환</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="셀 01 · json.loads()의 null 변환 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 01 · json.loads()의 null 변환"><code id="code-1"><span class="tok-keyword">import</span> json
 
 raw = <span class="tok-string">'{"title":"독서 모임","start":null,"audience":"adult"}'</span>
 notice = json.loads(raw)
@@ -134,32 +134,44 @@ print(checked.title)</code></pre></figure>
 </details>
 </article>
 </section>
-<section id="langchain-parsers" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>LangChain 출력 파서 비교</h2></div></header><p>모델에 보낼 형식을 지정하는 방식 외에, 이미 받은 문자열을 프로그램에서 해석하는 방법도 있습니다. 같은 공지에서 행사명과 대상 두 필드만 골라 두 파서를 비교합니다. 저장된 입력으로 실행하므로 API 키는 필요하지 않습니다.</p><p>비교 예제의 실행 환경은 langchain-classic 1.0.8, langchain-core 1.6.12, Pydantic 2.14.1입니다. 파서 패키지가 없는 커널에서는 먼저 노트북 셀에서 %pip install langchain-classic==1.0.8 langchain-core==1.6.12 를 실행하고 커널을 다시 시작하세요.</p><h3>StructuredOutputParser로 필수 키 읽기</h3><p>모델이 보낸 JSON 문자열에서 행사명과 대상을 꺼내 봅니다. ResponseSchema는 필드 이름과 설명을 담습니다. get_format_instructions()는 모델에 보여 줄 형식 안내를 만들고, parse()는 이미 받은 문자열을 딕셔너리로 바꿉니다.</p><pre><code>from langchain_classic.output_parsers.structured import ResponseSchema, StructuredOutputParser
+<section id="langchain-parsers" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>LangChain 출력 파서 비교</h2></div></header><p>모델에 보낼 형식을 지정하는 방식 외에, 이미 받은 문자열을 프로그램에서 해석하는 방법도 있습니다. 같은 공지에서 행사명과 대상 두 필드만 골라 두 파서를 비교합니다. 저장된 입력으로 실행하므로 API 키는 필요하지 않습니다.</p><p>비교 예제의 실행 환경은 langchain-classic 1.0.8, langchain-core 1.6.12, Pydantic 2.14.1입니다. 파서 패키지가 없는 커널에서는 먼저 노트북 셀에서 %pip install langchain-classic==1.0.8 langchain-core==1.6.12 를 실행하고 커널을 다시 시작하세요.</p><h3>StructuredOutputParser로 필수 키 읽기</h3><p>모델이 보낸 JSON 문자열에서 행사명과 대상을 꺼내 봅니다. ResponseSchema는 필드 이름과 설명을 담습니다. get_format_instructions()는 모델에 보여 줄 형식 안내를 만들고, parse()는 이미 받은 문자열을 딕셔너리로 바꿉니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>StructuredOutputParser로 필수 키 읽기</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-23" type="button" aria-label="StructuredOutputParser로 필수 키 읽기 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="StructuredOutputParser로 필수 키 읽기"><code id="code-23"><span class="tok-keyword">from</span> langchain_classic.output_parsers.structured <span class="tok-keyword">import</span> ResponseSchema, StructuredOutputParser
 
 fields = [
-    ResponseSchema(name="title", description="행사 이름"),
-    ResponseSchema(name="audience", description="참가 대상"),
+    ResponseSchema(name=<span class="tok-string">&quot;title&quot;</span>, description=<span class="tok-string">&quot;행사 이름&quot;</span>),
+    ResponseSchema(name=<span class="tok-string">&quot;audience&quot;</span>, description=<span class="tok-string">&quot;참가 대상&quot;</span>),
 ]
 field_parser = StructuredOutputParser.from_response_schemas(fields)
-raw_notice = '{"title":"독서 모임","audience":"adult"}'
+raw_notice = <span class="tok-string">&#x27;{&quot;title&quot;:&quot;독서 모임&quot;,&quot;audience&quot;:&quot;adult&quot;}&#x27;</span>
 parsed_fields = field_parser.parse(raw_notice)
-print(type(parsed_fields).__name__, parsed_fields["title"])</code></pre><div class="output"><strong>실행 결과</strong><pre>dict 독서 모임</pre></div><p>dict와 행사명이 출력됩니다. 파서가 읽은 title은 딕셔너리의 키로 꺼냅니다.</p><h3>StructuredOutputParser가 확인하는 범위</h3><p>필드 설명에 참가 대상을 적어 놓으면 허용하지 않은 값까지 걸러질까요? audience 키를 남겨 두고 값만 바꿔 보세요.</p><pre><code>outside_scope = '{"title":"독서 모임","audience":"everyone"}'
-print(field_parser.parse(outside_scope)["audience"])</code></pre><div class="output"><strong>실행 결과</strong><pre>everyone</pre></div><p>everyone이 그대로 나옵니다. 이 파서는 예상한 키가 있는지 확인했지만 adult만 허용한다는 값 제약은 검사하지 않았습니다.</p><h3>PydanticOutputParser로 필드 값 검증</h3><p>허용 대상을 adult로 한정한 모델을 정의하고 같은 JSON을 읽습니다. parse()가 돌려준 모델에서는 점을 찍어 속성을 읽습니다.</p><pre><code>from typing import Literal
-from pydantic import BaseModel
-from langchain_core.output_parsers import PydanticOutputParser
+print(type(parsed_fields).__name__, parsed_fields[<span class="tok-string">&quot;title&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">dict 독서 모임</pre></div>
+<p>dict와 행사명이 출력됩니다. 파서가 읽은 title은 딕셔너리의 키로 꺼냅니다.</p><h3>StructuredOutputParser가 확인하는 범위</h3><p>필드 설명에 참가 대상을 적어 놓으면 허용하지 않은 값까지 걸러질까요? audience 키를 남겨 두고 값만 바꿔 보세요.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>StructuredOutputParser가 확인하는 범위</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-24" type="button" aria-label="StructuredOutputParser가 확인하는 범위 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="StructuredOutputParser가 확인하는 범위"><code id="code-24">outside_scope = <span class="tok-string">&#x27;{&quot;title&quot;:&quot;독서 모임&quot;,&quot;audience&quot;:&quot;everyone&quot;}&#x27;</span>
+print(field_parser.parse(outside_scope)[<span class="tok-string">&quot;audience&quot;</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">everyone</pre></div>
+<p>everyone이 그대로 나옵니다. 이 파서는 예상한 키가 있는지 확인했지만 adult만 허용한다는 값 제약은 검사하지 않았습니다.</p><h3>PydanticOutputParser로 필드 값 검증</h3><p>허용 대상을 adult로 한정한 모델을 정의하고 같은 JSON을 읽습니다. parse()가 돌려준 모델에서는 점을 찍어 속성을 읽습니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>PydanticOutputParser로 필드 값 검증</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-25" type="button" aria-label="PydanticOutputParser로 필드 값 검증 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="PydanticOutputParser로 필드 값 검증"><code id="code-25"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Literal
+<span class="tok-keyword">from</span> pydantic <span class="tok-keyword">import</span> BaseModel
+<span class="tok-keyword">from</span> langchain_core.output_parsers <span class="tok-keyword">import</span> PydanticOutputParser
 
-class EventSummary(BaseModel):
+<span class="tok-keyword">class</span> EventSummary(BaseModel):
     title: str
-    audience: Literal["adult"]
+    audience: Literal[<span class="tok-string">&quot;adult&quot;</span>]
 
 typed_parser = PydanticOutputParser(pydantic_object=EventSummary)
 parsed_event = typed_parser.parse(raw_notice)
-print(type(parsed_event).__name__, parsed_event.audience)</code></pre><div class="output"><strong>실행 결과</strong><pre>EventSummary adult</pre></div><p>EventSummary 인스턴스가 만들어졌습니다. audience는 모델이 허용한 adult입니다.</p><h3>OutputParserException으로 허용값 위반 확인</h3><p>앞에서 everyone이 통과했던 문자열을 같은 값 그대로 다시 보냅니다.</p><pre><code>from langchain_core.exceptions import OutputParserException
+print(type(parsed_event).__name__, parsed_event.audience)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">EventSummary adult</pre></div>
+<p>EventSummary 인스턴스가 만들어졌습니다. audience는 모델이 허용한 adult입니다.</p><h3>OutputParserException으로 허용값 위반 확인</h3><p>앞에서 everyone이 통과했던 문자열을 같은 값 그대로 다시 보냅니다.</p>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>OutputParserException으로 허용값 위반 확인</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-26" type="button" aria-label="OutputParserException으로 허용값 위반 확인 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="OutputParserException으로 허용값 위반 확인"><code id="code-26"><span class="tok-keyword">from</span> langchain_core.exceptions <span class="tok-keyword">import</span> OutputParserException
 
-try:
+<span class="tok-keyword">try</span>:
     typed_parser.parse(outside_scope)
-except OutputParserException as error:
-    print(type(error).__name__)</code></pre><div class="output"><strong>실행 결과</strong><pre>OutputParserException</pre></div><p>이번에는 파싱 예외가 발생합니다. Literal에 없는 값이기 때문입니다. 두 파서 모두 원문을 전달받지 않았으므로 행사명이 사실과 맞는지까지 판단하지는 않습니다.</p><p><a href="https://reference.langchain.com/python/langchain-classic/output_parsers/structured/StructuredOutputParser">StructuredOutputParser 공식 문서</a>　<a href="https://reference.langchain.com/python/langchain-core/output_parsers/pydantic/PydanticOutputParser">PydanticOutputParser 공식 문서</a>　</p></section><section id="request" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<span class="tok-keyword">except</span> OutputParserException <span class="tok-keyword">as</span> error:
+    print(type(error).__name__)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">OutputParserException</pre></div>
+<p>이번에는 파싱 예외가 발생합니다. Literal에 없는 값이기 때문입니다. 두 파서 모두 원문을 전달받지 않았으므로 행사명이 사실과 맞는지까지 판단하지는 않습니다.</p><p><a href="https://reference.langchain.com/python/langchain-classic/output_parsers/structured/StructuredOutputParser">StructuredOutputParser 공식 문서</a>　<a href="https://reference.langchain.com/python/langchain-core/output_parsers/pydantic/PydanticOutputParser">PydanticOutputParser 공식 문서</a>　</p></section><section id="request" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>OpenAI의 text.format과 JSON Schema</h2>
 </div>
 </header>

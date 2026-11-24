@@ -33,7 +33,7 @@
 </div>
 </header>
 <p class="concept-intro">백업 파일의 존재만으로는 복구 여부를 알 수 없습니다. 다른 위치에서 사본을 열고 필요한 레코드가 그대로 읽히는지 확인합니다.</p><p>복구 기록 예시　① 가상 세션 파일을 준비 ② 별도 디렉터리에 복구 ③ 복구 직후 원본과 바이트 대조 ④ 새 위치에서 마지막 요청 ID 읽기. 운영 상황에서는 복구 시점과 새 쓰기를 멈췄는지 먼저 확인해야 합니다. 아래 셀은 자신이 만든 임시 폴더 안에서만 파일을 만듭니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>원본과 별도 위치에 복원한 사본</h3><video controls muted playsinline preload="metadata" aria-label="원본과 별도 위치에 복원한 사본" src="concept.mp4"></video><figcaption>왼쪽 보관함에 원본이 남아 있는 동안 오른쪽 사본을 열어 봅니다. 복구 검증은 사본을 실제로 읽고 필요한 값을 대조하는 작업입니다.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 세션 사본의 복원과 재조회</h3>
+<figure class="lesson-clip" id="concept-clip"><h3>원본과 별도 위치에 복원한 사본</h3><video autoplay loop muted playsinline aria-label="원본과 별도 위치에 복원한 사본" src="concept.mp4"></video><figcaption>왼쪽 보관함에 원본이 남아 있는 동안 오른쪽 사본을 열어 봅니다. 복구 검증은 사본을 실제로 읽고 필요한 값을 대조하는 작업입니다.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 세션 사본의 복원과 재조회</h3>
 <div class="cell-before"><p>읽기 확인은 복구 대상에서 수행합니다. 원본 내용으로 답을 출력하면 잘못된 복구 경로도 성공으로 보입니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> pathlib <span class="tok-keyword">import</span> Path

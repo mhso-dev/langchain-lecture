@@ -60,7 +60,7 @@ print(template.format(**inputs))</code></pre></figure>
 </div>
 </header>
 <p>LangChain Expression Language(LCEL)의 |는 앞 구성 요소가 돌려준 값을 다음 요소에 건넵니다. 수업 환경에 langchain-core가 설치되어 있으면 아래 셀로 실제 체인을 만듭니다. FakeListChatModel은 고정 답변을 내는 수업용 모델입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>LCEL의 연속 변환</h3><video controls muted playsinline preload="metadata" aria-label="LCEL의 연속 변환" src="concept.mp4"></video><figcaption>카드가 첫 필터를 통과한 뒤 두 번째 필터로 들어갑니다. 코드에서 각 단계가 반환하는 메시지와 문자열을 차례로 확인하세요.</figcaption></figure><article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · to_messages()의 content</h3>
+<figure class="lesson-clip" id="concept-clip"><h3>LCEL의 연속 변환</h3><video autoplay loop muted playsinline aria-label="LCEL의 연속 변환" src="concept.mp4"></video><figcaption>카드가 첫 필터를 통과한 뒤 두 번째 필터로 들어갑니다. 코드에서 각 단계가 반환하는 메시지와 문자열을 차례로 확인하세요.</figcaption></figure><article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · to_messages()의 content</h3>
 <div class="cell-before"><p>모델을 부르기 전에 ChatPromptTemplate이 만든 값에서 질문을 먼저 꺼내 봅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec

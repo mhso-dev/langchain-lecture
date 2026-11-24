@@ -13,7 +13,7 @@
 | 공통 디자인·조작·이미지·Three.js | `site/assets/` |
 | 이전·다음 장 탐색과 사이트 빌드 | `scripts/build.mjs` |
 
-Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 각 장의 `#practice-space`에 조작부와 수치 해설을 두고, 동영상은 `#concept-clip`에서 학생이 직접 재생한다.
+Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 각 장의 `#practice-space`에 조작부와 수치 해설을 두고, 동영상은 `#concept-clip`에서 컨트롤 없이 무음으로 자동 반복 재생된다.
 
 ## 확인하기
 
