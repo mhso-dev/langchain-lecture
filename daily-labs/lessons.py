@@ -156,13 +156,20 @@ create_file('.codex/config.toml',block)
 print(block)
 print(subprocess.run([sys.executable,'probe.py'],cwd=repo,capture_output=True,text=True,check=True).stdout)""",
 '프로토콜 검사에서 get_task, 2 found, 999 missing이 보인다. 저장소를 신뢰한 로컬 Codex의 새 세션에서 /mcp로 todo_catalog를 확인한다. “등록한 MCP 도구로 2번과 999번을 각각 조회해”라고 요청하고 실제 호출 기록을 연다. 파일을 직접 읽어 답한 경우에는 MCP 연결 검사를 통과한 것으로 세지 않는다.'),
-85:codex('내 하네스로 변경 요청을 처음부터 끝까지 처리하기','80~84일 저장소를 같은 폴더에서 연다. 업무 요청은 “동명 항목이 세 개일 때 3번만 완료한다”이다. 학생이 새 실패 테스트와 스킬의 완료 기준을 먼저 작성한 뒤 Codex에 요청한다. 입력 예시가 바뀌어도 역할·도구·훅이 실제로 작동하는지 확인한다.',"""expected = ['AGENTS.md','.agents/skills/todo-change/SKILL.md','.codex/hooks.json',
+85:codex('내 하네스로 변경 요청을 처음부터 끝까지 처리하기','80~84일 저장소를 같은 폴더에서 연다. 업무 요청은 “동명 항목이 세 개일 때 3번만 완료한다”이다. 학생이 새 실패 테스트와 스킬의 완료 기준을 먼저 작성한 뒤 Codex에 요청한다. 입력 예시가 바뀌어도 역할·도구·훅이 실제로 작동하는지 확인한다.',"""tasks_path = repo/'tasks.json'
+if tasks_path.is_file():
+    items = json.loads(tasks_path.read_text(encoding='utf-8'))
+    if not any(row['id'] == 3 for row in items):
+        items.append(dict(id=3,title=items[0]['title'],done=False))
+        tasks_path.write_text(json.dumps(items,ensure_ascii=False,indent=2),encoding='utf-8')
+    print('작업 원본 ID', [row['id'] for row in items])
+expected = ['AGENTS.md','.agents/skills/todo-change/SKILL.md','.codex/hooks.json',
             '.codex/agents/case_reader.toml','.codex/config.toml','test_todo.py']
 print('준비할 파일', [p for p in expected if not (repo/p).is_file()])
 if (repo/'test_todo.py').exists():
     run = subprocess.run([sys.executable,'-m','unittest','-v'],cwd=repo,capture_output=True,text=True)
     print(run.stderr)""",
-'새 세션의 훅 기록, $todo-change 선택, case_reader 인계, get_task의 기존 ID 조회, 부모의 변경 diff와 회귀 테스트를 한 요청에 연결한다. 승인자 역할은 학생이다. 학생이 변경 계획을 읽고 적용을 승인한 뒤 진행한다. 별도 요청에서는 거절해 diff가 생기지 않는지 본다. 이 대화상 승인과 64일의 프로그램 수준 쓰기 차단은 서로 다른 보장이다.'),
+'새 세션의 훅 기록, $todo-change 선택, case_reader 인계, get_task의 기존 ID 조회, 부모의 변경 diff와 회귀 테스트를 한 요청에 연결한다. 승인자 역할은 학생이다. 학생이 변경 계획을 읽고 적용을 승인한 뒤 진행한다. 거절할 요청에서는 먼저 작업 파일 세 개의 내용을 저장하고 거절 후 동일한지 검사한다. 세션 훅 이벤트는 별도로 증가할 수 있다. 이 대화상 승인과 64일의 프로그램 수준 쓰기 차단은 서로 다른 보장이다.'),
 })
 LINKS = {55:'https://docs.langchain.com/oss/python/langchain/agents',64:'https://docs.langchain.com/oss/python/langchain/human-in-the-loop',81:'https://developers.openai.com/codex/skills',82:'https://developers.openai.com/codex/hooks',83:'https://developers.openai.com/codex/subagents',84:'https://developers.openai.com/codex/mcp'}
 CHARTS = {64:'''flowchart TD

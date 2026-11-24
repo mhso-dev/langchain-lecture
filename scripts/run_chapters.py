@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 import re
 import shutil
+import subprocess
+import sys
 import tempfile
 import traceback
 
@@ -68,14 +70,25 @@ if __name__=='__main__':
     parser.add_argument('days',type=int,nargs='*',default=PENDING)
     parser.add_argument('--full',action='store_true')
     parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--mode',choices=('student','solution'),help=argparse.SUPPRESS)
     args=parser.parse_args()
     args.out.mkdir(exist_ok=True,parents=True)
-    failed=[]
+    if args.mode:
+        day, = args.days
+        r = run(day, args.mode == "solution", args.full)
+        last = r["cells"][-1]
+        (args.out/f"{day:02}-{args.mode}.json").write_text(json.dumps(r,ensure_ascii=False,indent=2))
+        if "error" in last:
+            print(last["error"],flush=True)
+        print(day,args.mode,len(r["cells"]),last["id"],"ERROR" if "error" in last else "OK",flush=True)
+        raise SystemExit(int("error" in last))
+    failed = []
     for day in args.days:
-        for solved in (False,True):
-            r=run(day,solved,args.full); last=r['cells'][-1]
-            if 'error' in last:
-                failed.append((day,last['id']));print(last['error'],flush=True)
-            print(day,r['mode'],len(r['cells']),last.get('id'), 'ERROR' if 'error' in last else 'OK',flush=True)
-            (args.out/f"{day:02}-{r['mode']}.json").write_text(json.dumps(r,ensure_ascii=False,indent=2))
-    if failed:raise SystemExit(str(failed))
+        for mode in ("student","solution"):
+            cmd = [sys.executable,__file__,"--out",str(args.out.resolve()),"--mode",mode,str(day)]
+            if args.full:
+                cmd.append("--full")
+            if subprocess.run(cmd).returncode:
+                failed.append((day,mode))
+    if failed:
+        raise SystemExit(str(failed))
