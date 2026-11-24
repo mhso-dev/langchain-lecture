@@ -1,0 +1,14 @@
+.lesson-note,.math-reading,.workflow-reading{margin:1.25rem 0 1.6rem;padding:clamp(.9rem,2.6vw,1.55rem);color:#1c3742;border-radius:10px;line-height:1.75}
+.lesson-note{border-inline-start:4px solid #d0a31d;background:#fffdf3}
+.lesson-note h3,.math-reading h3,.workflow-reading h3{font-size:1.04rem;line-height:1.5;margin:0 0 .55rem;color:#173840}
+.lesson-note p,.math-reading p,.workflow-reading p{margin:.4rem 0}
+.lesson-note mark{background:linear-gradient(transparent 45%,#ffe394 45%);color:#202f32;font-weight:650;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.lesson-note a,.reuse-note a{color:#23665f;text-underline-offset:.18em}
+.reuse-note{font-size:.93rem;line-height:1.6}
+.workflow-reading,.math-reading{background:#f5f9fa;border:1px solid #cddfdf}
+.workflow-view{max-width:100%;overflow-x:auto;text-align:center}
+.workflow-view svg{display:block;margin:0 auto;height:auto}
+.workflow-reading figcaption,.math-reading figcaption{font-size:.94rem;margin-top:.55rem}
+.math-reading math{font-size:1.13em;margin:.75rem 0;max-width:100%;overflow-x:auto}
+.math-reading svg{display:block;max-width:100%;height:auto;margin:.8rem auto}
+@media print{.lesson-note mark{background:none;text-decoration:underline}.workflow-reading,.math-reading{break-inside:avoid}}
