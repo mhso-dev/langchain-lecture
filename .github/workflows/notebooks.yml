@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'scripts/run_chapters.py'
+      - 'scripts/run_daily.py'
       - '.github/workflows/notebooks.yml'
       - 'daily-labs/**'
       - 'site/chapter*/**'
@@ -62,6 +63,9 @@ jobs:
               ;;
           esac
       - run: python scripts/run_chapters.py --full --out execution $DAYS
+      - name: 개인 과제 셀과 Codex 연속 노트북 실행
+        if: matrix.group == 'lessons'
+        run: python scripts/run_daily.py execution/daily
       - uses: actions/upload-artifact@v4
         if: always()
         with:

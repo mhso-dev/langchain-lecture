@@ -1,9 +1,10 @@
 """Build the private-study assignment section, notebooks and offline download."""
 import csv
 from html import escape
-from studios import NOTES, STARTERS, starter, variation
+from studios import NOTES, starter, variation
 from lessons import READINGS, CHARTS, LINKS
 from project_reference import project_reference
+from execution import publish_results
 import json
 from pathlib import Path
 import re
@@ -34,12 +35,6 @@ else:
     print("자료를 쓰는 과제는 전체 묶음을 풀고 노트북을 daily_resources 옆에서 여세요.")"""
 REQUEST = 'request = dict(branch="서울", audience="개인", as_of="2026-07-01", topic="receipt")'
 START = {
- 1:'request_id = "T01"\nbranch = "서울"\nstatus = "완료"\n# 세 변수로 한 줄 접수증을 작성하세요.',
- 2:'rows = [("T01", "완료", 12), ("T02", "접수", 0), ("T03", "완료", 18), ("T03", "완료", 18), ("T04", "보류", 5), ("T05", "완료", 0)]\n# 중복 ID를 먼저 처리하고 평균을 average_minutes에 저장하세요.',
- 3:'samples = [" 12 ", "0", "", "-3"]\n# parse_minutes(value)를 작성하고 각 입력의 결과 또는 오류를 기록하세요.',
- 4:'requests = ["T01", "T02"]\n# 각 요청의 상태와 기록을 따로 보존하는 클래스를 작성하세요.',
- 5:'normal, duplicates, incomplete = [], [], []\n# tickets의 레코드 6건을 분류하고 파일로 저장하세요.',
- 6:'paths = ["/tickets/T01", "/tickets/T99", "/tickets/slow"]\n# 수업 노트북의 MockTransport 핸들러를 세 경우로 확장하세요.',
  15:REQUEST+'\n# 잘못된 날짜와 누락 필드를 추가해 요청 검증 함수를 작성하세요.',
  20:'pdf_path = data_dir / "documents" / "R02.pdf"\ntext_path = data_dir / "documents" / "R04.txt"\n# pypdf.PdfReader로 두 쪽을 각각 읽고 TXT는 절로 분리하세요.',
  21:'document_ids = ["R02", "R03"]\n# 직접 나눈 각 조각에 문서 ID, 쪽 번호, 문자 범위를 보존하세요.',
@@ -64,10 +59,6 @@ START.update({20:"my_pages = []  # 편람의 36쪽과 메타데이터를 결합�
 for codex_day in range(80,86):
     START[codex_day] = "# 위 예제로 내 저장소를 준비한 뒤 오늘 수정한 파일과 실제 실행 기록을 남기세요."
 ANSWERS = {
- 1:('접수증 예시','print(f"{branch} / {request_id} / {status}")','서울 / T01 / 완료'),
- 2:('평균 검산','unique = {key:(state, minutes) for key,state,minutes in rows}\ncompleted = [m for state,m in unique.values() if state == "완료"]\nprint(sum(completed) / len(completed))','10.0'),
- 3:('입력 검산','def parse_minutes(value):\n    number = int(value.strip())\n    if number < 0:\n        raise ValueError("음수 시간")\n    return number','12와 0 허용, 빈 문자열과 음수는 ValueError'),
- 61:('실제 MCP 연결 예시','import sys\nsys.path.insert(0, str((data_dir / "reference").resolve()))\nfrom mcp_client import sample\nnames, reply = await sample(request)\nprint(names, reply["items"][0]["chunk_id"])',"['lookup_policy'] R02-1"),
  66:('두 역할 호출 예시','import sys\nsys.path.insert(0, str((data_dir / "reference").resolve()))\nfrom roles import run_roles\nprint(run_roles(request)["status"], run_roles(request, ["R01-1"])["status"])','accepted hold'),
  118:('판본 결과 대조','print([r["chunk_id"] for branch,who,day in comparisons for r in chunks if r["branch"]==branch and r["audience"]==who and r["valid_from"]<=day<=r["valid_to"] and r["topic"]=="receipt" and r["section"]==1])',"['R01-1', 'R02-1', 'R04-1']")
 }
@@ -90,11 +81,6 @@ def material(n):
     if n<=85: return '자기 투두 저장소와 해당 장 수업 노트북. 중간에 시작하면 81장 참조 앱으로 초기 상태를 만든다.'
     return '자기 프로젝트 최신판·실행 기록. 독립 연습이 필요하면 공통 정책 문서와 reference/policy.py를 작은 서비스의 시작점으로 쓴다.'
 
-def basecode(n):
-    if n<=19: return '# 오늘의 수업 예제에서 입력 하나를 골라 아래에 변형한 입력을 작성하세요.'
-    if n<=67 or n>=86: return 'case_ids = ["Q01", "Q09", "Q10"]\n# 자기 시나리오의 입력을 정하고, 기대 결과를 실행 전에 적으세요.'
-    return '# 오늘의 앱이나 저장소에서 정상 사례와 실패 사례를 하나씩 준비하세요.'
-
 def build_cells(n, title, first, second, check):
     duration = 60 if n in (8,9,10,43,86,87,88,115,116,117,118,119,120) else 120 if n in (55,56,64,66,67,80,81,82,83,84,85,22,25,34,45,55,61,62,66,71,73,74,77,85,106,112,113) else 90
     mins={60:(10,25,15,10),90:(10,40,25,15),120:(15,50,35,20)}[duration]
@@ -109,7 +95,7 @@ def build_cells(n, title, first, second, check):
     if n in (33,118):
         cells.extend([cell("markdown","bench-title","### 기준 구현과 대조하기\n\n자기 구현을 먼저 실행한 뒤 아래 비교 셀을 사용하세요. 검색 도구는 필터에 맞는 조항을 반환합니다. 검색 순위와 자연어 답변은 별도 검사합니다."),
                       cell("code","bench","import sys\nif data_dir.is_dir():\n    sys.path.insert(0, str((data_dir / 'reference').resolve()))\n    from policy import lookup_policy\n    from check_filter import check_filter\n    print(check_filter(lookup_policy))\n    # 자기 함수를 완성한 뒤 check_filter(내_조회함수)로 교체하세요.")])
-    if n in ANSWERS and n not in (1,2,3,61):
+    if n in ANSWERS:
         label,code,result=ANSWERS[n]
         cells.append(cell("markdown","answer","<details><summary>"+label+"</summary><pre><code>"+escape(code)+"</code></pre><p>"+escape(result)+"</p></details>"))
     return duration,cells
@@ -246,5 +232,16 @@ for day in (*range(43,53),*range(86,117)):
         anchor=match.group(1)
         return route+'#'+(anchor if f'id="{anchor}"' in page else 'workshop')
     history=re.sub(re.escape(route)+r'#([\w-]+)',current_section,history)
-edition='<section class="edition-group"><h2>개인 과제 개정 · 교대 업무와 정책 서비스 운영</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../daily/index.html">78개 작업 의뢰서</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a></p></section>'
+all_changed=[]
+for day in [1]+[int(item[0]) for item in spec]:
+    if day<=116:
+        folder=OUT/f'chapter{day:02}'
+        title=''.join(json.loads((folder/(folder.name+'.ipynb')).read_bytes())['cells'][0]['source']).splitlines()[0].strip('# ')
+        all_changed.append(f'<li><a href="../{folder.name}/index.html#daily-lab">{escape(title)}</a></li>')
+    else:
+        title=next(row[1] for row in spec if int(row[0])==day)
+        all_changed.append(f'<li><a href="../daily/index.html#day{day:03}">{day}일 · {escape(title)}</a></li>')
+edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../daily/index.html">78개 작업 의뢰서</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
 index.write_text(history.replace("<main>","<main>"+edition+news,1))
+
+publish_results(OUT)

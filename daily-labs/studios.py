@@ -108,6 +108,31 @@ print(screens)""",
     79: """actions = ['추가 두 번 클릭','지연 후 정상 응답','서버 실패','재시도']
 # 각 동작에서 개발자 도구 Network의 요청 수, 서버 ID, 화면에 남은 행 수를 기록하세요.""",
 }
+STARTERS.update({
+    80: """tasks = json.loads((repo/'tasks.json').read_text(encoding='utf-8'))
+print([(t['id'],t['title'],t['done']) for t in tasks])
+print('기준 테스트 종료 코드', baseline.returncode)
+# 수정 전 기준 상태를 커밋한 뒤 새 세션에 ID 2의 기대 상태와 실제 상태를 설명해 달라고 요청하세요.""",
+    81: """skill_text = (repo/'.agents/skills/todo-change/SKILL.md').read_text(encoding='utf-8')
+print(skill_text.split('---')[1].strip())
+# ID 999의 처리 원칙을 본문에 추가한 뒤, 새 세션에서 $todo-change로 두 ID를 시험하세요.""",
+    82: """log = repo/'hook-events.jsonl'
+with log.open(encoding='utf-8') as f:
+    recent = [json.loads(line) for line in f if line.strip()]
+print('현재 로그 행 수',len(recent),recent[-1])
+# 이 수를 먼저 기록한 뒤 새 Codex 세션을 열고 셀을 다시 실행하세요.""",
+    83: """print((repo/'.codex/agents/case_reader.toml').read_text(encoding='utf-8'))
+handoff_fields = ['선택 ID','기대 완료 ID','관찰 완료 ID','근거 파일','실행한 명령']
+# 자식이 실제 돌려준 값으로 인계표를 작성한 뒤 부모의 변경 diff를 보세요.""",
+    84: """print((repo/'.codex/config.toml').read_text(encoding='utf-8'))
+for test_id in (2,999):
+    print('Codex에서 get_task를 사용할 item_id',test_id)
+# 두 도구 응답의 원본 JSON을 보관하고 각 응답에 요청 ID를 넣도록 서버를 수정하세요.""",
+    85: """validator = Path('daily_resources/cases/check_saved_todo.py').resolve()
+print('터미널 검사 명령 인자', [sys.executable,str(validator),str(repo)])
+# 먼저 실행해 미구현 함수 오류를 재현합니다. 기능 구현 뒤 같은 명령으로 저장 파일을 검산하세요.""",
+})
+
 def starter(day, existing):
     if day in STARTERS:
         return STARTERS[day]
