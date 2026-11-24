@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 78 / 120</p>
 <span class="sidebar-title">HTML 입력 요소와 반응형 CSS</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-markup"><span>02</span>label의 for와 input의 id</a><a href="#nb-layout"><span>03</span>좁은 화면에서의 CSS 줄바꿈</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-markup"><span>02</span>label의 for와 input의 id</a><a href="#nb-layout"><span>03</span>좁은 화면에서의 CSS 줄바꿈</a><a href="#workshop"><span>04</span>입력 오류를 같은 폼 안에서 설명하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter78.ipynb" download="chapter78.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>78장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 ipython 9.17.1입니다.</p>
+<a class="download" href="chapter78.ipynb" download="chapter78.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>78장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">입력 오류를 같은 폼 안에서 설명하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 ipython 9.17.1입니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
@@ -37,7 +37,7 @@
 <h2>label의 for와 input의 id</h2>
 </div>
 </header>
-<p class="concept-intro">HTML은 입력 요소와 레이블의 관계를 나타내고 CSS는 배치를 정합니다. 마우스로 레이블을 눌렀을 때 어느 입력에 초점이 가는지 확인합니다.</p><p>label의 for 값은 입력 요소의 id를 가리킵니다. placeholder는 입력하면 사라지므로 항상 읽을 수 있는 이름을 대신하지 못합니다. 아래 예제는 78장 wireframe에서 제목, 입력, 버튼만 뽑았습니다.</p>
+<p class="concept-intro">화면의 “할 일 제목”을 누르면 어느 입력칸에 커서가 올까요?</p><p>label의 for 값은 입력 요소의 id를 가리킵니다. placeholder는 입력하면 사라지므로 항상 읽을 수 있는 이름을 대신하지 못합니다. 아래 예제는 78장 wireframe에서 제목, 입력, 버튼만 뽑았습니다.</p>
 <!-- MOTION label-focus -->
 
 <!-- END MOTION -->
@@ -77,6 +77,8 @@ print(fixed)</code></pre></figure>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>라벨을 눌러도 입력칸이 선택되지 않으면</h3><p><mark>label의 for와 input의 id가 같은 요소를 가리켜야 합니다.</mark> 화면에서는 두 글자가 나란히 보여도 연결이 틀릴 수 있습니다. 같은 문구를 가진 입력 두 개를 놓고 어느 칸이 포커스를 받는지 확인하세요.</p></aside>
+
 <span class="lesson-anchor" id="states"></span><span class="lesson-anchor" id="reading-states"></span>
 <span class="lesson-anchor" id="workflow-label-target"></span><span class="lesson-anchor" id="workflow-label-target-caption"></span>
 
@@ -115,7 +117,44 @@ display({<span class="tok-string">"text/html"</span>: style + second, <span clas
 <span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>입력 오류를 같은 폼 안에서 설명하기</h2></div></header>
+<p>앞에서 label과 입력칸을 연결했습니다. 이번에는 사용자가 빈 제목을 제출했을 때 어떤 입력을 고쳐야 하는지 화면에 남깁니다. 같은 입력칸에서 정상 안내와 오류 안내를 함께 읽을 수 있도록 HTML을 바꿉니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 입력칸이 어느 설명을 참조하는지 읽기</h3><div class="cell-before"><p>아래 폼은 제목 칸에 힌트를 연결합니다. 이 예제의 태그를 Python 표준 라이브러리로 읽어 화면에 실제로 존재하는 설명과 참조 ID가 일치하는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from xml.etree import ElementTree as tree
+
+form_source = &quot;&quot;&quot;&lt;form&gt;
+&lt;label for=&quot;new-task&quot;&gt;할 일 제목&lt;/label&gt;
+&lt;input id=&quot;new-task&quot; aria-describedby=&quot;title-help&quot; /&gt;
+&lt;p id=&quot;title-help&quot;&gt;할 일을 한 줄로 적으세요.&lt;/p&gt;
+&lt;button type=&quot;submit&quot;&gt;추가&lt;/button&gt;
+&lt;/form&gt;&quot;&quot;&quot;
+form_tree = tree.fromstring(form_source)
+
+def by_id(form, key):
+    return next(node for node in form.iter() if node.get(&quot;id&quot;) == key)
+title_input = by_id(form_tree, &quot;new-task&quot;)
+hint = by_id(form_tree, title_input.get(&quot;aria-describedby&quot;))
+print(hint.text)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">할 일을 한 줄로 적으세요.</pre></div><div class="cell-after"><p>입력칸의 aria-describedby 값인 title-help로 실제 안내 문장을 찾았습니다. 제출 후 오류를 다른 곳에 표시하더라도 이 참조 목록에 연결해야 입력과 어느 안내가 관계있는지 알 수 있습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 힌트를 보존하며 오류 메시지 연결하기</h3><div class="cell-before"><p>빈 제목을 제출했다고 가정합니다. 폼 복사본에 title-error 문단을 추가하고, 기존 힌트와 새 오류를 모두 aria-describedby에 연결하세요. aria-invalid 값을 설정한 뒤 연결된 두 설명을 차례로 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from copy import deepcopy
+error_form = deepcopy(form_tree)
+field = by_id(error_form, &quot;new-task&quot;)
+# title-error 문단을 추가하고 기존 참조 뒤에 오류 ID를 붙이세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">from copy import deepcopy
+error_form = deepcopy(form_tree)
+field = by_id(error_form, &quot;new-task&quot;)
+error_form.append(tree.fromstring(&#x27;&lt;p id=&quot;title-error&quot;&gt;제목을 입력하세요.&lt;/p&gt;&#x27;))
+field.set(&quot;aria-invalid&quot;, &quot;true&quot;)
+field.set(&quot;aria-describedby&quot;, field.get(&quot;aria-describedby&quot;) + &quot; title-error&quot;)
+print(field.get(&quot;aria-invalid&quot;))
+for ref in field.get(&quot;aria-describedby&quot;).split():
+    print(by_id(error_form, ref).text)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">true
+할 일을 한 줄로 적으세요.
+제목을 입력하세요.</pre></div><p>true 다음에 원래 힌트와 새 오류가 모두 나옵니다. 단순히 input의 테두리 색만 바꾸면 이 두 문장을 입력칸에 연결할 수 없습니다. 화면은 새 노트북 셀에서 display(HTML(tree.tostring(error_form, encoding="unicode", method="html")))로 확인할 수 있습니다. 이때 IPython.display의 HTML과 display를 가져오세요.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>설명의 ID와 설명을 읽어야 할 입력칸을 함께 수정하세요.</mark> 문단만 추가하면 사용자는 문구를 볼 수 있어도 입력칸과 어떤 관계인지 HTML에서 찾을 수 없습니다. 기존 힌트의 ID도 유지해야 평소 입력 방법이 사라지지 않습니다.</p></aside><p>다음 장에서는 서버가 422를 돌려줬을 때 같은 오류 문구를 폼에 붙이고 전송 버튼을 다시 활성화합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>

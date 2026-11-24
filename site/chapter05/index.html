@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 05 / PYTHON</p>
 <span class="sidebar-title">CSV 읽기와 데이터 정제</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-read"><span>02</span>csv.DictReader와 문자열 필드</a><a href="#nb-clean-order"><span>03</span>결측 행 필터링과 ID 중복 제거</a><a href="#nb-table"><span>04</span>pandas의 결측값 판별</a><a href="#nb-save-read"><span>05</span>UTF-8 JSON 파일 쓰기와 읽기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-read"><span>02</span>csv.DictReader와 문자열 필드</a><a href="#nb-clean-order"><span>03</span>결측 행 필터링과 ID 중복 제거</a><a href="#nb-table"><span>04</span>pandas의 결측값 판별</a><a href="#nb-save-read"><span>05</span>UTF-8 JSON 파일 쓰기와 읽기</a><a href="#workshop"><span>06</span>같은 ID의 두 시간이 다를 때 합계에서 보류하기</a><a href="#recap"><span>07</span>복습과 실습 점검</a><a href="#sources"><span>08</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter05.ipynb" download="chapter05.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>5장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 pandas 2.2.3입니다.</p>
+<a class="download" href="chapter05.ipynb" download="chapter05.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>5장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">같은 ID의 두 시간이 다를 때 합계에서 보류하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 pandas 2.2.3입니다.</p>
 </div>
 </section>
 <section id="nb-read" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -54,6 +54,8 @@ print(repr(rows[<span class="tok-number">1</span>][<span class="tok-string">"min
 </div>
 <p id="example-analysis">빈 minutes를 발견하자마자 0으로 저장하면 나중에 ‘0분 공부했다’와 ‘시간을 입력하지 않았다’를 구별할 수 없습니다. 이 예에서는 같은 ID로 20분을 적은 행도 뒤에 있습니다. 중복 제거를 먼저 하면 첫 번째 2번 행을 보존하는 방식에서는 유효한 20분 기록을 잃습니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>빈 칸을 CSV에서 읽으면</h3><p><mark>빈 필드도 문자열로 읽힐 수 있습니다.</mark> 출력의 따옴표 두 개는 길이가 0인 문자열을 보여 줍니다. 시간을 정수로 바꾸기 전에 그 칸이 비었는지 확인하면, 어느 행을 제외했는지도 설명할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter02/index.html">2장 Python의 리스트·딕셔너리와 조건 반복</a></p></aside>
+
 <span class="lesson-anchor" id="formats"></span><div class="lesson-explanation" id="reading-formats"><h3>CSV·JSON 직렬화와 역직렬화</h3><div class="prose"><p>CSV는 쉼표 같은 구분자로 열을 나누는 표 형식입니다. 값 안에도 쉼표가 있을 수 있어 문자열을 split(",")으로 자르지 않고 csv 모듈을 사용합니다. DictReader는 첫 행을 키로 삼아 각 행을 딕셔너리로 읽습니다. 여기서 분 값 "30"도 문자열입니다.</p>
 <p>셀 01의 StringIO(csv_text)는 문자열을 파일처럼 한 줄씩 읽게 합니다. DictReader의 첫 행은 열 이름이어서 데이터 행 수에 포함되지 않습니다. rows에는 여섯 건이 들어 있습니다.</p>
 <p>JSON은 표 외에도 중첩 목록·객체를 담을 수 있습니다. 이번에는 CSV 행 목록을 JSON으로 바꾸고 다시 읽어 값이 같은지 확인합니다. json.dumps와 loads는 문자열을 처리하고, 실제 파일 읽기·쓰기는 Path 메서드가 맡습니다.</p>
@@ -128,7 +130,7 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="challenge"></span><div class="lesson-explanation" id="reading-challenge"><h3>ID 중복을 언제 판정할까요?</h3><p>시간 칸이 빈 ID 2 행 뒤에 20분이 적힌 ID 2 행이 있습니다. 유효한 시간인지 먼저 검사하면 두 번째 행이 살아남습니다. 어느 순서에서 20분까지 사라지는지 두 행을 직접 따라가 보세요.</p></div>
+<span class="lesson-anchor" id="challenge"></span><div class="lesson-explanation" id="reading-challenge"><h3>ID 중복을 언제 판정할까요?</h3><p>ID 2에서 중복을 먼저 제거하면 어느 행이 남을까요? 그 행의 시간 칸을 읽어 보세요.</p></div>
 
 </section>
 <section id="nb-table" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
@@ -192,7 +194,29 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 <span class="lesson-anchor" id="pipeline"></span><div class="lesson-explanation" id="reading-pipeline"><h3>같은 파일에서 UTF-8 JSON 복원</h3><p>문자열을 JSON으로 직렬화한 뒤 임시 폴더의 record.json에 씁니다. 같은 경로에서 다시 읽어 json.loads로 복원하면 첫 번째 유효 행의 ‘Python 기초’와 정수 30을 확인할 수 있습니다.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>같은 ID의 두 시간이 다를 때 합계에서 보류하기</h2></div></header>
+<p>앞에서는 빈 시간을 걸러낸 뒤 ID가 같은 행을 하나로 모았습니다. 이번에는 원래 20분이던 Git 연습이 35분으로도 들어왔습니다. 어느 값이 정정된 것인지 알 수 없는 상황입니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 유효 행 사이에 남은 충돌 찾기</h3><div class="cell-before"><p>clean_row를 통과한 valid에 수정 후보를 한 건 추가합니다. ID 2로 들어온 시간 두 개를 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">with_correction = valid + [{&quot;id&quot;: &quot;2&quot;, &quot;title&quot;: &quot;Git 연습&quot;, &quot;minutes&quot;: 35}]
+print([row[&quot;minutes&quot;] for row in with_correction if row[&quot;id&quot;] == &quot;2&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[20, 35]</pre></div><div class="cell-after"><p>20과 35는 모두 허용 범위입니다. 행 하나씩 검사해서는 어느 시간을 집계에 넣을지 정할 수 없습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 내용이 충돌한 ID를 집계에서 빼기</h3><div class="cell-before"><p>같은 ID로 내용이 같은 행은 한 번만 셉니다. 내용이 다른 행이 한 번이라도 있으면 그 ID를 conflicts에 넣고 전체 집계에서 보류하세요. 보류 ID와 남은 총시간을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">first_by_id = {}
+conflicts = set()
+# with_correction을 읽고 보류할 ID와 나머지 시간의 합을 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">first_by_id = {}
+conflicts = set()
+for row in with_correction:
+    key = row[&quot;id&quot;]
+    if key not in first_by_id:
+        first_by_id[key] = row
+    elif row != first_by_id[key]:
+        conflicts.add(key)
+total = sum(row[&quot;minutes&quot;] for key, row in first_by_id.items() if key not in conflicts)
+print(sorted(conflicts), total)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;2&#x27;] 70</pre></div><p>2번을 보류하고 1번 30분과 4번 40분을 더해 70분이 됩니다. 4번의 두 행은 제목과 시간까지 같아서 한 번만 반영됩니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>중복된 ID를 발견하면 그 ID의 내용까지 대조하세요.</mark> 마지막 행을 그대로 덮어쓰면 2번의 시간이 35분으로 정해집니다. 입력 순서가 정정 시각을 보장하지 않는 이 자료에서는 보류 목록을 따로 두는 편이 근거를 남깁니다.</p></aside><p>팀이 정정 시각을 제공하면 그때 보류 규칙을 바꾸고 같은 세 ID로 전후 합계를 검산하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -200,7 +224,7 @@ print([row[<span class="tok-string">"minutes"</span>] <span class="tok-keyword">
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">08</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

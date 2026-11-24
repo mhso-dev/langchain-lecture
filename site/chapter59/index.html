@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 059</p>
 <span class="sidebar-title">대화 문맥의 최근 턴과 요약 메모리</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>슬라이싱으로 최근 발화 선택</a><a href="#nb-summary"><span>03</span>요약과 원문 기록의 정보 손실 대조</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>슬라이싱으로 최근 발화 선택</a><a href="#nb-summary"><span>03</span>요약과 원문 기록의 정보 손실 대조</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter59.ipynb" download="chapter59.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>59장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter59.ipynb" download="chapter59.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>59장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-window" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -50,6 +50,8 @@ print(recent)</code></pre></figure>
 </div>
 <p id="example-analysis">최근 두 발화만 전달한 결과에는 제출 기한과 슬라이드 수가 남고 발표 장소는 빠졌습니다. 장소를 다시 물었을 때 모델이 대답하지 못한다면 먼저 입력에 회의실 B가 남아 있는지 확인합니다. 저장된 이력과 이번 호출에 포함한 문맥은 다를 수 있습니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>최근 두 발화에서 사라진 단서</h3><p><mark>최근 기록의 길이를 줄이면 앞서 확정한 장소가 문맥 밖으로 밀릴 수 있습니다.</mark> 마지막 두 발화만으로 발표 장소에 답할 수 있는지 보세요. 요약에 장소를 남겼다면 잃어버린 원문이 무엇인지 따로 확인해야 잘못된 요약을 계속 쓰지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter29/index.html">29장 체크포인터와 thread_id를 이용한 대화 저장</a></p></aside>
+
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="turns"></span><span class="lesson-anchor" id="reading-turns"></span>
 <span class="lesson-anchor" id="recent"></span><div class="lesson-explanation" id="reading-recent"><h3>마지막 두 발화가 남기는 단서</h3><p>turns[-2:]에는 제출 기한과 슬라이드 수가 들어갑니다. 이 목록만 읽고 발표 장소를 물으면 회의실 B라는 단서를 찾을 수 없습니다.</p></div>
@@ -65,7 +67,7 @@ print(recent)</code></pre></figure>
 </div>
 </article>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
-<span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>원본 이력과 선택한 입력</h3><p>recent를 만든 뒤에도 turns[0]은 회의실 B라는 문장을 돌려줍니다. 원본에서 예전 발화를 지운 것이 아니라 모델에 전달할 후보를 마지막 두 항목으로 좁혔기 때문입니다.</p></div>
+<span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>원본 이력과 선택한 입력</h3><p>최근 두 항목을 고른 뒤 turns[0]을 다시 읽으면 회의실 B가 남아 있습니다. 이번 입력에서 빠진 발화도 원본에는 보관됩니다.</p></div>
 
 </section>
 <section id="nb-summary" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
@@ -127,7 +129,37 @@ print("\n".join([updated_summary, *recent]))</code></pre></figure>
 슬라이드는 5장으로 준비합니다.</pre></div><div class="cell-after"><p>첫 줄만 바뀝니다. 예전 요약을 그대로 두고 새 장소만 뒤에 덧붙이면 모델 입력 안에 발표 장소가 두 곳이 됩니다. 여기서는 고정된 문장의 장소만 치환했으므로 표현이 다른 대화의 자동 요약까지 해결하지는 않습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</h2></div></header>
+<p>발표 장소를 처음에 알려 준 뒤 마감과 분량을 추가한 상황입니다. 마지막 두 메시지만 보내면 처음 장소가 빠집니다. 29장의 체크포인터에 전체 기록을 남겨 두고, 이번 요청에 건넬 문자열만 작게 만들어 봅니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 같은 스레드에서 전체 할 일 복원하기</h3><div class="cell-before"><p>수업용 대화의 각 문장을 HumanMessage로 저장합니다. 기록을 보관하는 노드는 모델을 호출하지 않습니다. 체크포인트에 어떤 메시지가 보존되는지와 최근 두 메시지에 무엇이 보이는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from langchain_core.messages import HumanMessage
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import StateGraph, MessagesState, START, END
+
+history_builder = StateGraph(MessagesState)
+history_builder.add_node(&quot;keep&quot;, lambda state: {})
+history_builder.add_edge(START, &quot;keep&quot;)
+history_builder.add_edge(&quot;keep&quot;, END)
+history_app = history_builder.compile(checkpointer=InMemorySaver())
+room_config = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;presentation-room&quot;}}
+history_app.invoke({&quot;messages&quot;: [HumanMessage(content=t) for t in turns]}, room_config)
+recorded = history_app.get_state(room_config).values[&quot;messages&quot;]
+print(len(recorded), [m.content for m in recorded[-2:]])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">4 [&#x27;최종 제출 기한은 금요일 18시입니다.&#x27;, &#x27;슬라이드는 5장으로 준비합니다.&#x27;]</pre></div><div class="cell-after"><p>저장된 메시지는 4개인데 최근 두 개에는 금요일 18시와 슬라이드 5장만 있습니다. 여기서 기록을 지우지는 않았습니다. 모델 입력을 만들 때 어디까지 잘라낼지가 별도의 결정입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 요약과 최신 메시지를 합쳐 한 번의 입력 만들기</h3><div class="cell-before"><p>제공된 summary에는 장소와 언어가 있습니다. 기록 전체를 보내지 않고 요약과 마지막 두 메시지만 모델에 보낼 문자열로 조립하세요. 생성한 문자열과 원래 체크포인트의 메시지 개수를 각각 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># summary와 recorded의 마지막 두 메시지 본문을 줄바꿈으로 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def context_for_model(summary_text, messages):
+    recent_lines = [m.content for m in messages[-2:]]
+    return &quot;\n&quot;.join([summary_text, *recent_lines])
+
+print(context_for_model(summary, recorded))
+print(len(history_app.get_state(room_config).values[&quot;messages&quot;]))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">발표 장소는 회의실 B이며 발표 언어는 한국어입니다.
+최종 제출 기한은 금요일 18시입니다.
+슬라이드는 5장으로 준비합니다.
+4</pre></div><p>입력에는 회의실 B와 한국어, 금요일 18시와 5장이 함께 들어갑니다. 다시 읽은 메시지 개수는 여전히 4개입니다. 이 결과는 입력 범위를 시험한 것이며, 모델이 그 사실을 지켜 답하는지는 별도 질문을 보내 확인해야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>모델에 보내는 대화를 줄여도 저장된 대화는 그대로 둘 수 있습니다.</mark> 체크포인트에 남은 사실도 입력 창과 요약에서 모두 빠지면 이번 호출의 모델은 그 사실을 읽을 수 없습니다.</p></aside><p>다른 대화에서도 써야 하는 사용자 선호는 60장에서 별도의 기억 저장소로 옮깁니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

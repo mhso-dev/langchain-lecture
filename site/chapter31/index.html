@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 31 / EVIDENCE</p>
 <span class="sidebar-title">RAG 검색 예외와 인용 검사</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-evidence"><span>02</span>빈 검색 결과와 검색 시간 초과</a><a href="#nb-citation"><span>03</span>검색된 문서 ID로 인용 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-evidence"><span>02</span>빈 검색 결과와 검색 시간 초과</a><a href="#nb-citation"><span>03</span>검색된 문서 ID로 인용 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>연장 질문의 근거가 충분한지 검사하는 단계 만들기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter31.ipynb" download="chapter31.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>31장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter31.ipynb" download="chapter31.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>31장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">연장 질문의 근거가 충분한지 검사하는 단계 만들기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-evidence" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -45,30 +45,7 @@
 <article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 빈 문서 목록의 종료 조건</h3>
 <div class="cell-before"><p>가상 도서관의 주차 질문을 로컬 자료에서 찾습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 25줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
-
-<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
-    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
-        <span class="tok-keyword">return</span> []
-    <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
-    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
-
-found = retrieve(<span class="tok-string">'주차 요금은?'</span>)
+<p class="reuse-note"><a href="../chapter30/index.html#code-1">30장의 검색 함수와 문서 세 건</a>을 노트북의 준비 셀에서 실행한 뒤 아래 코드를 읽으세요.</p><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">found = retrieve(&#x27;주차 요금은?&#x27;)
 print(found)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]</pre></div>
 <div class="cell-after"><p>빈 목록이 돌아왔으므로 화면에는 자료에서 확인할 수 없다고 씁니다. 원문에 없는 가격을 모델에게 추측시키지 않습니다.</p>
@@ -95,6 +72,14 @@ print(found)</code></pre></figure>
 <div class="cell-after"><p>이 셀의 except 블록은 예외 이름과 메시지만 출력합니다. 화면을 연결한다면 검색 실패를 따로 기록하고 재시도를 안내할 수 있습니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>빈 검색 결과와 시간 초과의 처리 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+q["검색 호출"] --> r{"정상 반환?"}
+r -->|빈 목록| n["근거 없음"]
+r -->|문서 있음| y["문서 ID 확인"]
+r -->|TimeoutError| e["except에서 오류 확인"]</script><figcaption>두 셀의 반환 경로를 비교한 그림입니다. slow_search가 예외를 내면 결과 목록을 검사하는 줄까지 도달하지 않습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>빈 목록과 시간 초과를 구별하는 이유</h3><p><mark>빈 목록은 검색을 끝낸 결과이고 TimeoutError는 결과를 받기 전에 일어난 실패입니다.</mark> 주차 질문에는 자료를 보완할 수 있습니다. 시간 초과에는 문서를 더 넣기 전에 검색 호출이 정상으로 돌아왔는지부터 다시 확인해야 합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter30/index.html">30장 LangGraph의 검색 노드와 답변 노드</a></p></aside>
+
 <span class="lesson-anchor" id="search"></span><span class="lesson-anchor" id="reading-search"></span>
 
 </section>
@@ -135,7 +120,30 @@ print(document[&#x27;id&#x27;], document[&#x27;text&#x27;])</code></pre></figure
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>연장 질문의 근거가 충분한지 검사하는 단계 만들기</h2></div></header>
+<p>대출 기간을 검색하면 14일 안내가 돌아옵니다. “대출을 연장하면 며칠 더 쓸 수 있나요?”에는 어떤 근거가 필요한지 따로 판단합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 같은 근거 ID로 서로 다른 질문 읽기</h3><div class="cell-before"><p>연장 질문을 기존 검색기에 넣고 근거 문장 안에 연장에 관한 정보가 있는지 직접 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">extension_question = &quot;대출 연장은 며칠인가요?&quot;
+extension_docs = retrieve(extension_question, 1)
+print(extension_docs[0][&quot;id&quot;], extension_docs[0][&quot;text&quot;])
+print(&quot;연장&quot; in extension_docs[0][&quot;text&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1 도서 대출 기간은 14일입니다.
+False</pre></div><div class="cell-after"><p>library-1은 기본 대출 기간을 설명합니다. 여기서 14일을 뽑아 연장 기간이라고 답하면 질문의 조건을 빠뜨립니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 자료 없음과 조건 미확인을 다르게 돌려주기</h3><div class="cell-before"><p>검색 결과가 없으면 no_documents, 연장 문구가 없으면 missing_condition, 근거가 있으면 supported를 반환하는 함수를 작성하세요. 수업용 조건어 하나로 확인하는 규칙입니다. 두 종류의 실패를 서로 다른 질문으로 검산하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># assess_extension(question, docs)에서 빈 목록과 조건 누락을 차례로 검사하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def assess_extension(question, docs):
+    if not docs:
+        return &quot;no_documents&quot;
+    if &quot;연장&quot; in question and not any(&quot;연장&quot; in row[&quot;text&quot;] for row in docs):
+        return &quot;missing_condition&quot;
+    return &quot;supported&quot;
+
+print(assess_extension(extension_question, extension_docs))
+print(assess_extension(&quot;주차 요금은?&quot;, retrieve(&quot;주차 요금은?&quot;, 1)))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">missing_condition
+no_documents</pre></div><p>첫 값은 자료를 찾았지만 연장 규정을 확인할 수 없다는 뜻입니다. 둘째는 찾은 자료 자체가 없습니다. supported도 이 수업의 한 가지 조건을 통과했다는 의미이므로 일반적인 사실 판정기로 사용할 수는 없습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>문서 ID가 맞더라도 질문 속 조건의 근거까지 있어야 답할 수 있습니다.</mark> 기본 대출 기간과 연장 가능 기간은 같은 단어를 공유하지만 서로 다른 규정입니다.</p></aside><p>평가 질문을 만들 때에는 근거가 비는 사례와 조건이 빠지는 사례를 각각 남기세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

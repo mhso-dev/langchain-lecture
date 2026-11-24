@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 97 / 120</p>
 <span class="sidebar-title">대화 턴의 현재 출처와 이전 기록</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-transition"><span>02</span>질문 전환 시 현재 출처 교체</a><a href="#nb-third"><span>03</span>이력 보존과 다음 답변 갱신</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-transition"><span>02</span>질문 전환 시 현재 출처 교체</a><a href="#nb-third"><span>03</span>이력 보존과 다음 답변 갱신</a><a href="#workshop"><span>04</span>세 턴을 넘긴 뒤 과거 카드의 출처가 그대로인지 검사하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter97.ipynb" download="chapter97.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>97장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter97.ipynb" download="chapter97.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>97장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">세 턴을 넘긴 뒤 과거 카드의 출처가 그대로인지 검사하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-transition" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -62,6 +62,8 @@ RULE-A</pre></div>
 </div>
 <p id="example-analysis">마지막의 RULE-A는 앞선 대화에 보관한 인용입니다. 현재 질문의 no_evidence 옆에 표시할 출처는 빈 목록입니다. 한 변수를 현재 패널과 과거 기록에 함께 쓰면 이전 출처를 잃거나 잘못된 근거를 노출하게 됩니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>지금 보이는 출처와 지난 대화 기록</h3><p><mark>현재 출처를 비워도 이미 답한 턴의 원문 링크는 남겨야 합니다.</mark> A를 물은 뒤 근거 없는 질문, B 질문을 차례로 보내세요. 이력에서는 A의 출처를 다시 열 수 있고 현재 카드에서는 B의 출처만 보여야 합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter41/index.html">41장 Streamlit 세션과 LangGraph 체크포인트</a></p></aside>
+
 </section>
 <section id="nb-third" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>이력 보존과 다음 답변 갱신</h2>
@@ -109,8 +111,32 @@ print(updated_history[-<span class="tok-number">1</span>][<span class="tok-strin
 </div>
 </details>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>세 번째 질문에서 RULE-B는 어느 칸에 들어갈까?</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nsecond["Q03 현재"]
+  nhistory["이력에 보관"]
+  nthird["Q04 현재"]
+  nsource["현재 출처"]
+  nsecond --> nhistory
+  nhistory --> nthird
+  nthird --> nsource</script><figcaption>Q01과 Q03을 지난 다음, 지금 표시할 답과 보관할 기록을 구분합니다. Q03의 빈 출처도 그 턴의 응답에 속합니다.</figcaption></figure>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>세 턴을 넘긴 뒤 과거 카드의 출처가 그대로인지 검사하기</h2></div></header>
+<p>사용자가 Q01 다음에 Q03을 묻고 마지막에 장비 B를 확인합니다. 화면에는 가장 최근 턴만 띄우고 지난 응답은 그때 반환된 내용으로 남겨야 합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 과거 응답과 현재 응답을 별도 사본으로 보관하기</h3><div class="cell-before"><p>first, second, third에는 각각 A의 근거, 빈 근거, B의 근거가 있습니다. 한 화면의 선택 표시를 고쳐도 저장된 이전 카드가 바뀌지 않는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from copy import deepcopy
+
+turns = [deepcopy(item) for item in (first, second, third)]
+active_card = deepcopy(turns[-1])
+active_card[&quot;sources&quot;][0][&quot;selected_on_screen&quot;] = True
+print([[s[&quot;id&quot;] for s in row[&quot;sources&quot;]] for row in turns])
+print(&quot;저장된 카드의 선택 표시&quot;, &quot;selected_on_screen&quot; in turns[-1][&quot;sources&quot;][0])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[[&#x27;RULE-A&#x27;], [], [&#x27;RULE-B&#x27;]]
+저장된 카드의 선택 표시 False</pre></div><div class="cell-after"><p>가운데 턴의 목록은 비고 마지막에만 RULE-B가 남습니다. 선택 표시는 화면 사본에만 추가해 저장된 카드에서는 False입니다. 바깥 사전만 복사하면 안쪽 sources 목록을 공유할 수 있습니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 상태에서 분리할 값 찾기</h3><p>팀 화면에 접힌 상태, 펼친 절 또는 임시 입력이 있다면 한 항목을 바꾼 뒤 저장된 응답을 다시 읽으세요. 언제든 복구해야 하는 업무 기록과 창을 닫으면 버려도 되는 화면 설정의 예를 하나씩 적습니다.</p></section>
+<aside class="lesson-note"><p><mark>과거 근거는 질문 시점의 기록이고 현재 화면의 선택은 바뀔 수 있습니다.</mark> Q03의 현재 출처를 이전 턴의 RULE-A로 메우면 답변 유보의 의미가 사라집니다.</p></aside><p>98장에서는 입출력 기록을 유지한 채 검색을 준비하는 단계의 장비명 표기만 바꿉니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

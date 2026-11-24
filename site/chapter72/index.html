@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 72 / CONTAINERS</p>
 <span class="sidebar-title">Docker Compose 네트워크와 볼륨</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-compose"><span>02</span>서비스 이름과 내부 포트</a><a href="#nb-volume"><span>03</span>볼륨과 컨테이너 교체</a><a href="#nb-reconnect"><span>04</span>연결을 다시 열어 저장 데이터 검증</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-compose"><span>02</span>서비스 이름과 내부 포트</a><a href="#nb-volume"><span>03</span>볼륨과 컨테이너 교체</a><a href="#nb-reconnect"><span>04</span>연결을 다시 열어 저장 데이터 검증</a><a href="#workshop"><span>05</span>DB 준비를 기다리는 Compose 의존성 작성하기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter72.ipynb" download="chapter72.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>72장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 PyYAML 6.0.3입니다.</p>
+<a class="download" href="chapter72.ipynb" download="chapter72.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>72장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">DB 준비를 기다리는 Compose 의존성 작성하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 PyYAML 6.0.3입니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
@@ -35,7 +35,7 @@
 <h2>서비스 이름과 내부 포트</h2>
 </div>
 </header>
-<p class="concept-intro">Compose는 여러 서비스를 하나의 설정에 적습니다. 서비스 사이의 주소, 외부에서 접속할 포트, 데이터를 보관할 볼륨은 서로 다른 설정입니다.</p><p>호스트 컴퓨터에서 보는 127.0.0.1과 API 컨테이너 안에서 보는 127.0.0.1은 각자의 네트워크 공간입니다. Compose의 공통 네트워크에서는 API가 db라는 서비스 이름과 DB의 컨테이너 포트 5432로 접속합니다.</p>
+<p class="concept-intro">같은 DB에 호스트에서는 55432로 접속하는데 api 컨테이너에서는 왜 5432를 쓸까요?</p><p>호스트 컴퓨터에서 보는 127.0.0.1과 API 컨테이너 안에서 보는 127.0.0.1은 각자의 네트워크 공간입니다. Compose의 공통 네트워크에서는 API가 db라는 서비스 이름과 DB의 컨테이너 포트 5432로 접속합니다.</p>
 <!-- MOTION localhost-mirrors -->
 
 <!-- END MOTION -->
@@ -70,6 +70,8 @@ print(connection[<span class="tok-string">"PGHOST"</span>], connection[<span cla
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">db 5432</pre></div>
 <div class="cell-after"><p id="example-analysis">db 5432는 api 컨테이너의 환경 설정에서 읽은 두 값입니다. 호스트에서 노트북을 실행할 때는 db라는 서비스 이름 대신 호스트에 공개된 IP와 포트를 사용합니다.</p></div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>같은 DB인데 접속 주소가 다른 이유</h3><p><mark>다른 컨테이너에서는 서비스 이름과 컨테이너 쪽 포트를 사용합니다.</mark> 호스트에서 쓰는 127.0.0.1:55432를 앱 컨테이너 안에 그대로 넣으면 자기 자신을 가리킵니다. 연결을 여는 프로그램이 어디에서 실행되는지 먼저 표시하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter71/index.html">71장 Dockerfile과 컨테이너 수명 주기</a></p></aside>
+
 <span class="lesson-anchor" id="same-image"></span><span class="lesson-anchor" id="reading-same-image"></span>
 <span class="lesson-anchor" id="start-order"></span><div class="lesson-explanation" id="reading-start-order"><h3>Compose 구성 검사에서 확인한 값</h3><p>docker compose config는 YAML을 해석해 정규화된 설정을 출력합니다. 여기서 DB의 target 경로를 읽은 뒤, 파일을 저장하고 다시 여는 동작은 다음 SQLite 셀에서 따로 실험합니다.</p></div>
 
@@ -156,11 +158,84 @@ print(after[<span class="tok-number">0</span>], before == after)</code></pre></f
 <div class="cell-after"><p>과제함 문장과 True가 함께 나옵니다. 실제 Compose 환경에서는 재시작 전후 같은 요청을 보내 이 세 값, 즉 소유자·문서 ID·원문을 비교합니다. 이전 DB 볼륨이 연결되지 않았다면 이 조회에서 원래 행을 찾을 수 없습니다. 볼륨을 확인할 때는 수업용 Compose 환경에서 한 행의 ID를 기록한 뒤 같은 볼륨을 연결해 DB 서비스를 재시작하세요. 그 ID로 다시 조회한 값을 SQLite 실습 결과와 따로 적으세요.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>연결을 닫은 뒤에도 같은 본문을 읽는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nwrite["INSERT"]
+  nsave["commit"]
+  nclose["close"]
+  nreopen["connect"]
+  nselect["SELECT"]
+  nwrite --> nsave
+  nsave --> nclose
+  nclose --> nreopen
+  nreopen --> nselect</script><figcaption>이 셀은 임시 SQLite 파일로 재연결을 실험합니다. Compose 볼륨의 실제 재생성은 별도 검증 대상입니다.</figcaption></figure>
+
 <span class="lesson-anchor" id="before-after"></span><div class="lesson-explanation" id="reading-before-after"><h3>조회 조건을 고정한 재연결 검사</h3><p>같은 파일에서 재연결 전과 후에 같은 owner와 id로 본문을 읽습니다. before == after가 True라는 출력은 이 경로와 이 키에서 값이 유지되었다는 뜻입니다.</p></div>
 <span class="lesson-anchor" id="failure-restore"></span><span class="lesson-anchor" id="reading-failure-restore"></span>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>DB 준비를 기다리는 Compose 의존성 작성하기</h2></div></header>
+<p>앞에서는 서비스 이름과 볼륨 경로를 읽었습니다. 이번에는 DB 컨테이너가 시작된 직후 API가 먼저 접속하는 상황을 다룹니다. 실행 순서와 DB의 준비 상태를 Compose 파일에 어떻게 적는지 확인합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · DB의 준비 상태를 확인할 명령 추가하기</h3><div class="cell-before"><p>셀 01에서 compose_text를 읽어 config를 만들어 두세요. 앞에서 읽은 Compose 구성을 복사한 뒤 db 서비스에 준비 상태 검사 명령을 붙입니다. 결과는 메모리 안에 만든 Compose 설정입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from copy import deepcopy
+
+ready_config = deepcopy(config)
+ready_config[&quot;services&quot;][&quot;db&quot;][&quot;healthcheck&quot;] = {
+    &quot;test&quot;: [&quot;CMD-SHELL&quot;, &quot;pg_isready -h 127.0.0.1 -U postgres -d postgres&quot;],
+    &quot;interval&quot;: &quot;5s&quot;, &quot;timeout&quot;: &quot;3s&quot;, &quot;retries&quot;: 10,
+}
+print(ready_config[&quot;services&quot;][&quot;db&quot;][&quot;healthcheck&quot;][&quot;test&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;CMD-SHELL&#x27;, &#x27;pg_isready -h 127.0.0.1 -U postgres -d postgres&#x27;]</pre></div><div class="cell-after"><p>CMD-SHELL은 검사 명령을 db 컨테이너 안에서 실행할 형식입니다. pg_isready는 서버가 연결을 받을 수 있는지를 확인합니다. 테이블이나 실습 문서가 준비됐는지는 여기에 포함되지 않습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · API가 기다릴 조건을 Compose YAML로 만들기</h3><div class="cell-before"><p>api 서비스의 depends_on에서 db에 service_healthy 조건을 주고, 실제로 Compose에 전달할 YAML을 만드세요. 직렬화한 문자열을 다시 열어 API가 기다리는 서비스·조건을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from copy import deepcopy
+import yaml
+team_stack = deepcopy(ready_config)
+# api 서비스 아래에 depends_on을 추가하고 YAML로 저장할 문자열을 만드세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">from copy import deepcopy
+import yaml
+
+team_stack = deepcopy(ready_config)
+team_stack[&quot;services&quot;][&quot;api&quot;][&quot;depends_on&quot;] = {&quot;db&quot;: {&quot;condition&quot;: &quot;service_healthy&quot;}}
+compose_input = yaml.safe_dump(team_stack, sort_keys=False)
+loaded_stack = yaml.safe_load(compose_input)
+for service, rule in loaded_stack[&quot;services&quot;][&quot;api&quot;][&quot;depends_on&quot;].items():
+    print(service, rule[&quot;condition&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">db service_healthy</pre></div><p>db service_healthy가 나옵니다. db가 컨테이너 목록에 나타난 시점보다 늦게 API를 시작할 수 있게 했습니다. 수업용 DB의 계정 설정과 API 이미지가 준비된 환경에서는 앞 절의 docker compose config 검사에 compose_input을 넣고, 실제 기동 후에는 저장 자료까지 읽어 보세요.</p></details>
+</article>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-3">셀 08 · 선택 실습 · 컨테이너를 교체한 뒤 같은 DB 행 읽기</h3><div class="cell-before"><p>로컬 Docker 엔진, Compose의 --wait 지원, 앞 예제의 pgvector 이미지가 준비됐다면 run_stack을 켜세요. 외부 포트를 열지 않는 임시 프로젝트에서 한 행을 저장하고 DB 컨테이너만 교체합니다. 마지막에 이 프로젝트의 수업용 볼륨을 지웁니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">import secrets
+import subprocess
+import yaml
+from uuid import uuid4
+
+run_stack = False
+if run_stack:
+    project = &quot;lesson72-&quot; + uuid4().hex[:10]
+    spec = {&quot;services&quot;: {&quot;db&quot;: {
+        &quot;image&quot;: ready_config[&quot;services&quot;][&quot;db&quot;][&quot;image&quot;],
+        &quot;environment&quot;: {&quot;POSTGRES_PASSWORD&quot;: secrets.token_urlsafe(24)},
+        &quot;healthcheck&quot;: ready_config[&quot;services&quot;][&quot;db&quot;][&quot;healthcheck&quot;],
+        &quot;volumes&quot;: [&quot;classdata:/var/lib/postgresql/data&quot;],
+    }}, &quot;volumes&quot;: {&quot;classdata&quot;: {}}}
+    def compose_cmd(*args):
+        cmd = [&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, project, &quot;-f&quot;, &quot;-&quot;, *args]
+        return subprocess.run(cmd, input=yaml.safe_dump(spec), check=True,
+                              text=True, capture_output=True, timeout=120).stdout.strip()
+    def query_db(sql):
+        return compose_cmd(&quot;exec&quot;, &quot;-T&quot;, &quot;db&quot;, &quot;psql&quot;, &quot;-U&quot;, &quot;postgres&quot;,
+                           &quot;-d&quot;, &quot;postgres&quot;, &quot;-At&quot;, &quot;-v&quot;, &quot;ON_ERROR_STOP=1&quot;, &quot;-c&quot;, sql)
+    try:
+        compose_cmd(&quot;up&quot;, &quot;-d&quot;, &quot;--pull&quot;, &quot;never&quot;, &quot;--wait&quot;, &quot;db&quot;)
+        query_db(&quot;CREATE TABLE notes(id TEXT PRIMARY KEY)&quot;)
+        query_db(&quot;INSERT INTO notes VALUES (&#x27;course-guide&#x27;)&quot;)
+        first_id = compose_cmd(&quot;ps&quot;, &quot;-q&quot;, &quot;db&quot;)
+        compose_cmd(&quot;up&quot;, &quot;-d&quot;, &quot;--pull&quot;, &quot;never&quot;, &quot;--force-recreate&quot;, &quot;--wait&quot;, &quot;db&quot;)
+        print(first_id != compose_cmd(&quot;ps&quot;, &quot;-q&quot;, &quot;db&quot;), query_db(&quot;SELECT id FROM notes&quot;))
+    finally:
+        compose_cmd(&quot;down&quot;, &quot;--volumes&quot;)
+else:
+    print(&quot;로컬 이미지와 Compose가 준비되면 run_stack을 켜세요.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">로컬 이미지와 Compose가 준비되면 run_stack을 켜세요.</pre></div><div class="cell-after"><p>True course-guide가 관찰되면 컨테이너 ID가 바뀌어도 같은 볼륨에서 이전 행을 읽은 것입니다. 기본값에서는 엔진이나 DB에 연결하지 않습니다. 이전 절의 설정 검사는 이 저장 실험을 대신하지 않습니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>DB의 준비 상태와 저장한 행의 보존 여부는 서로 다른 요청으로 검사합니다.</mark> pg_isready가 성공한 빈 DB에서도 과제 안내 검색은 실패할 수 있습니다. 재시작 전 문서 ID와 본문을 적어 두고 재시작 후 같은 요청으로 조회해야 볼륨도 확인할 수 있습니다.</p></aside><p>API 이미지는 71장에서 만든 것을, DB에는 수업에서 준비한 계정 설정을 사용합니다. 볼륨과 계정을 연결한 뒤 73장의 벡터 검색을 시험하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -170,7 +245,7 @@ print(after[<span class="tok-number">0</span>], before == after)</code></pre></f
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

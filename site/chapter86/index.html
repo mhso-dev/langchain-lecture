@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 086 / FINAL PROJECT</p>
 <span class="sidebar-title">서비스 문제 정의와 최소 시연 범위</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-problem"><span>02</span>사용자 질문과 기대 답변</a><a href="#nb-decision"><span>03</span>제외 범위와 주제 선정 근거</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-problem"><span>02</span>사용자 질문과 기대 답변</a><a href="#nb-decision"><span>03</span>제외 범위와 주제 선정 근거</a><a href="#workshop"><span>04</span>첫 시연 계약서에 질문과 사용자의 마지막 행동 적기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter86.ipynb" download="chapter86.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>86장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter86.ipynb" download="chapter86.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>86장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">첫 시연 계약서에 질문과 사용자의 마지막 행동 적기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-problem" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -97,8 +97,17 @@ print(f"{other_rule[<span class="tok-string">'text'</span>]} ({other_rule[<span 
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>팀의 첫 시연 질문을 정할 때</h3><p><mark>장비 이름이 바뀌면 정답 문장과 근거 절도 함께 바뀌어야 합니다.</mark> 질문의 단어 하나만 바꾼 짝을 준비하세요. 같은 답을 항상 출력하는 예시도 첫 질문 하나는 맞힐 수 있으므로 두 입력을 번갈아 시연합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter43/index.html">43장 RAG 프로젝트의 문제 정의와 수용 기준</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>첫 시연 계약서에 질문과 사용자의 마지막 행동 적기</h2></div></header>
+<p>규정 검색과 점검 승인 중 무엇을 먼저 개발할지 결정하는 팀 회의입니다. 두 기능 모두 쓸모 있어 보여도 이번 팀이 가진 자료로 확인할 수 있는 행동은 다릅니다.</p>
+<section class="project-example"><h3>가상 장비실 팀의 주제 선정 회의록</h3><div class="workshop-table" tabindex="0" role="region" aria-label="가상 장비실 팀의 주제 선정 회의록"><table><caption>가상 장비실 팀의 주제 선정 회의록</caption><thead><tr><th scope="col">후보</th><th scope="col">손에 있는 자료</th><th scope="col">시연을 끝내는 사용자 행동</th><th scope="col">결정</th></tr></thead><tbody><tr><td>점검 전 확인사항 조회</td><td>가상 규정 A·B의 본문, 절, 개정일</td><td>RULE-A의 2.1절을 열고 화면의 안내와 원문을 대조한다.</td><td>첫 시연에 포함</td></tr><tr><td>점검 승인 요청</td><td>승인자 목록·권한·결재 이력 미확보</td><td>담당자가 요청을 승인하고 이력을 다시 조회한다.</td><td>자료 확보 전 보류</td></tr></tbody></table></div><p>‘점검을 도와준다’는 두 후보에 모두 해당합니다. 마지막 행동을 적으면 조회를 만드는 팀과 실제 업무 상태를 바꾸는 팀의 준비물이 갈립니다.</p></section>
+<section class="project-example"><h3>동료에게 건네는 첫 시연 의뢰</h3><p>“질문은 ‘장비 A의 점검 전 확인 사항은?’입니다. 답변의 ‘전원 표시등’이 어느 절에서 왔는지 찾아 주세요. 찾으면 원문 첫 문장을 소리 내어 읽어 주세요.” 어떤 버튼을 누를지는 알려 주지 않습니다.</p></section>
+<section class="project-example"><h3>팀 주제로 바꾸기</h3><p>문서의 이름과 사용자의 마지막 행동을 한 쌍으로 바꾸세요. 학사 규정이라면 ‘신청 가능 여부를 승인한다’와 ‘해당 학기의 신청 기한이 적힌 절을 찾는다’가 각각 어떤 자료를 요구하는지 비교해 한 쪽을 고릅니다.</p></section>
+<aside class="lesson-note"><p><mark>사용자가 마지막에 직접 할 행동이 시연의 종료 조건입니다.</mark> 답이 화면에 뜬 뒤 원문을 찾을 수 없으면 조회 시연은 아직 끝나지 않았습니다.</p></aside><p>87장에 전달할 것은 선택한 질문 한 문장, 공개할 수 있는 근거 위치, 도움 없이 관찰할 마지막 행동입니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

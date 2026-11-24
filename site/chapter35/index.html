@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 35 / RAG EVALUATION</p>
 <span class="sidebar-title">RAG 평가 데이터셋 구성</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-gold-id"><span>02</span>질문 ID와 기대 근거 ID</a><a href="#nb-split"><span>03</span>개발용·확인용 평가 문항 분리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-gold-id"><span>02</span>질문 ID와 기대 근거 ID</a><a href="#nb-split"><span>03</span>개발용·확인용 평가 문항 분리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>평가 질문을 나누기 전에 원문 겹침 찾기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter35.ipynb" download="chapter35.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>35장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter35.ipynb" download="chapter35.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>35장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">평가 질문을 나누기 전에 원문 겹침 찾기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-gold-id" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -65,6 +65,8 @@ print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span 
 </div>
 <p id="example-analysis">평가 문항에 기대 답 ‘14일’만 남기면 모델이 엉뚱한 문단을 보고 같은 숫자를 말해도 통과할 수 있습니다. 어떤 문서에 그 기간이 적혀 있는지 ID도 함께 적어 두면 검색이 맞았는지 먼저 확인할 수 있습니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>평가 문항을 만들 때 답과 근거 분리하기</h3><p><mark>같은 뜻의 답변이라도 어느 문서를 찾아야 하는지는 따로 기록합니다.</mark> 대출 일수를 맞혔지만 엉뚱한 쪽을 가져온 사례를 생각해 보세요. 기대 답변과 기대 문서 ID가 있어야 검색 실패인지 답변 실패인지 따로 셀 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter24/index.html">24장 LCEL로 구성하는 RAG와 인용 검증</a></p></aside>
+
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="ids"></span><span class="lesson-anchor" id="reading-ids"></span>
 <span class="lesson-anchor" id="scope"></span><div class="lesson-explanation" id="reading-scope"><h3>대표 문항의 적용 범위</h3><div class="prose"><p>대표 질문은 우리가 확인하려는 사용 상황을 드러내는 질문입니다. 여기서는 대출 기간, 휴관 요일, 반납함 이용 시간만 원문에 있습니다. 따라서 이 세 주제와 원문에 없는 질문을 나누어 생각합니다. 질문 수를 늘리는 것보다 어떤 상황을 포함하고 어떤 상황을 아직 다루지 않는지 먼저 기록합니다.</p>
 </div>
@@ -74,7 +76,7 @@ print(by_id[item[<span class="tok-string">'expected_document_ids'</span>][<span 
 <tr><td>이용 가능 시간</td><td>반납함은 몇 시간 이용할 수 있나요?</td><td>library-3의 24시간</td><td>위치·접근 방법</td></tr>
 <tr><td>자료에 없는 정보</td><td>주차 요금은 얼마인가요?</td><td>없음</td><td>실제 기관 요금 추측</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="question-record"></span><div class="lesson-explanation" id="reading-question-record"><h3>문항이 속한 세트 기록</h3><p>question_id는 문항을 다시 불러올 때 사용하고 expected_document_ids는 정답 근거를 가리킵니다. split은 개발 중 반복해 볼 문항과 설정을 확정한 뒤 볼 문항을 나눕니다. 문구만 바꾼 질문을 두 세트에 복사하면 새로운 표현을 얼마나 잘 처리하는지 평가하기 어렵습니다.</p></div>
+<span class="lesson-anchor" id="question-record"></span><div class="lesson-explanation" id="reading-question-record"><h3>문항이 속한 세트 기록</h3><p>여기서 추가할 필드는 split입니다. 문구만 조금 바꾼 질문이 양쪽 세트에 들어가면 개발 중 본 표현으로 최종 설정을 평가하게 됩니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 근거 없는 평가 문항</h3>
 <div class="cell-before"><p>주차 요금 문항의 기대 문서가 왜 비어 있는지 원문 세 쪽과 대조하세요.</p>
@@ -147,7 +149,28 @@ print(check[&#x27;split&#x27;], by_id[check[&#x27;expected_document_ids&#x27;][0
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>평가 질문을 나누기 전에 원문 겹침 찾기</h2></div></header>
+<p>대출 문장을 보고 만든 두 질문이 서로 다른 묶음에 들어갔습니다. 질문 문구는 달라도 정답을 뽑는 원문이 같으면, 이미 연습한 자료로 확인 시험을 치르게 됩니다. 이 실습에서는 새 문서에 적용하는 능력을 보려고 원문 단위로 나눕니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 다른 질문 ID가 같은 정답 문서를 가리키는 경우</h3><div class="cell-before"><p>개발 질문과 확인용 질문의 기대 문서 ID를 집합으로 모아 교집합을 출력하세요. 질문 ID를 서로 다르게 주었는데도 겹치는 값을 확인합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">dev_questions = [item]
+held_questions = [{**item, &quot;question_id&quot;: &quot;check-01&quot;,
+                   &quot;question&quot;: &quot;도서 한 권을 얼마나 빌릴 수 있나요?&quot;, &quot;split&quot;: &quot;check&quot;}]
+def gold_ids(items):
+    return {doc_id for question in items for doc_id in question[&quot;expected_document_ids&quot;]}
+print(sorted(gold_ids(dev_questions) &amp; gold_ids(held_questions)))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;library-1&#x27;]</pre></div><div class="cell-after"><p>library-1이 양쪽에 있습니다. question_id나 질문 문구만 비교했다면 이 중복은 보이지 않습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 확인용 원문을 바꾸고 근거까지 검산하기</h3><div class="cell-before"><p>반납함 문서를 확인용으로 고르세요. 새 질문, 해당 원문 ID, 답변 가능 여부를 넣고 먼저 원문의 답을 읽으세요. 이어서 개발 묶음과 겹치는 ID가 사라졌는지 계산하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># records에서 반납함 근거를 찾고 새 check-02 레코드를 작성하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">return_record = next(row for row in records if &quot;반납함&quot; in row[&quot;text&quot;])
+holdout = {&quot;question_id&quot;: &quot;check-02&quot;, &quot;question&quot;: &quot;반납함은 몇 시간 이용할 수 있나요?&quot;,
+           &quot;expected_document_ids&quot;: [return_record[&quot;id&quot;]], &quot;answerable&quot;: True,
+           &quot;split&quot;: &quot;check&quot;, &quot;source_split&quot;: &quot;check&quot;}
+print(by_id[holdout[&quot;expected_document_ids&quot;][0]][&quot;text&quot;])
+print(sorted(gold_ids(dev_questions) &amp; gold_ids([holdout])))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">무인 반납함은 24시간 이용할 수 있습니다.
+[]</pre></div><p>반납함은 24시간이라는 근거 문장이 나오고 교집합은 비어 있습니다. 같은 안내문의 여러 쪽을 한 문서로 취급하려는 평가라면 쪽별 ID보다 상위의 파일 ID를 나누는 기준으로 써야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>새 문서에 대한 성능을 볼 때는 질문의 이름과 원문의 경계를 따로 확인합니다.</mark> 표현만 바꾼 같은 대출 질문을 확인용에 옮기면 새 원문에 대한 일반화를 확인하기 어렵습니다.</p></aside><p>36장에서는 고정한 확인 질문을 유지한 채 검색 순위와 답변 오류를 따로 측정합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 112 / FINAL PROJECT</p>
 <span class="sidebar-title">배포 설정의 포트·볼륨과 확인 절차</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-configuration"><span>02</span>접속 경로와 볼륨 마운트 해석</a><a href="#nb-release"><span>03</span>배포 전후 검사 항목과 기대값</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-configuration"><span>02</span>접속 경로와 볼륨 마운트 해석</a><a href="#nb-release"><span>03</span>배포 전후 검사 항목과 기대값</a><a href="#workshop"><span>04</span>배포 담당자가 직접 확인할 접속 경로와 데이터 위치</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter112.ipynb" download="chapter112.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>112장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter112.ipynb" download="chapter112.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>112장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">배포 담당자가 직접 확인할 접속 경로와 데이터 위치</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-configuration" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -55,6 +55,14 @@ p1-json:/app/input106/project-ui/backend/runtime-data</pre></div>
 </div>
 <p id="example-analysis">127.0.0.1 바인딩은 호스트 안에서 접속할 포트를, 볼륨 매핑은 컨테이너 교체 뒤에도 유지할 데이터 경로를 나타냅니다. 이 설정을 읽은 것만으로 운영 환경에 같은 이미지가 배포됐는지는 확인할 수 없습니다. 배포 기록에는 이미지 지문과 실제 실행 플랫폼이 필요합니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>이미지 식별자가 없는 배포 후보는 어디에서 멈출까?</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+  candidate["제공된 후보 읽기"] --> identity{"이미지 식별자와 플랫폼이 있는가?"}
+  identity -->|없음| hold["현재 후보 · 확인 대기"]
+  identity -->|있음| boot["담당자가 환경에서 기동"]
+  boot --> health["상태 요청 후 Q01 재조회"]</script><figcaption>이 노트북의 후보에는 이미지 식별자와 플랫폼이 모두 비어 있어 현재 경로는 확인 대기입니다. 오른쪽의 상태 요청과 재조회는 배포 담당자가 나중에 수행할 확인 절차입니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>볼륨 설정을 읽고 확인할 것</h3><p><mark>마운트 대상은 컨테이너 안에서 서비스가 실제로 기록하는 경로와 같아야 합니다.</mark> 포트로 접속되는지만 검사하면 재생성 때 데이터가 사라지는 문제를 놓칩니다. 팀 설정에서 저장 경로와 마운트 경로를 나란히 놓고 같은 레코드를 다시 읽으세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter72/index.html">72장 Docker Compose 네트워크와 볼륨</a></p></aside>
+
 </section>
 <section id="nb-release" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>배포 전후 검사 항목과 기대값</h2>
@@ -76,7 +84,23 @@ print([key <span class="tok-keyword">for</span> key, value <span class="tok-keyw
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>배포 담당자가 직접 확인할 접속 경로와 데이터 위치</h2></div></header>
+<p>112장의 설정 시안은 교육용 API를 같은 컴퓨터에만 엽니다. 팀원이 자신의 노트북에서 접근할 수 있다고 보고하기 전에 호스트 주소, 컨테이너 포트, 저장 경로가 각각 무엇을 뜻하는지 설정값으로 복원합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 설정에서 재조회할 위치 추출하기</h3><div class="cell-before"><p>수업에 제공한 IPv4 포트 매핑 한 건과 이름 있는 볼륨 한 건을 읽습니다. 컨테이너를 시작하거나 외부 자원을 만들지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from pathlib import PurePosixPath
+
+bind_host, public_port, service_port = p1_service[&quot;ports&quot;][0].split(&quot;:&quot;)
+volume_name, mount_path = p1_service[&quot;volumes&quot;][0].split(&quot;:&quot;, 1)
+print(f&quot;같은 컴퓨터의 확인 주소 http://{bind_host}:{public_port}/health&quot;)
+print(&quot;컨테이너 포트&quot;, service_port)
+print(volume_name, PurePosixPath(mount_path).name)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">같은 컴퓨터의 확인 주소 http://127.0.0.1:8104/health
+컨테이너 포트 8104
+p1-json runtime-data</pre></div><div class="cell-after"><p>주소는 127.0.0.1의 8104이고 마지막 경로명은 runtime-data입니다. 이 주소를 다른 컴퓨터의 브라우저에 쓰면 그 컴퓨터 자신의 로컬 주소를 가리킵니다.</p></div>
+</article>
+<section class="project-example"><h3>배포 후 결과를 채울 실행 카드</h3><div class="workshop-table" tabindex="0" role="region" aria-label="배포 후 결과를 채울 실행 카드"><table><caption>배포 후 결과를 채울 실행 카드</caption><thead><tr><th scope="col">시점</th><th scope="col">담당자의 행동</th><th scope="col">남길 근거</th></tr></thead><tbody><tr><td>이미지 준비</td><td>검증한 이미지 식별자와 플랫폼을 후보에 연결한다.</td><td>실제 사용한 식별자·플랫폼. 현재 후보의 값은 미확인</td></tr><tr><td>프로세스 기동 뒤</td><td>같은 호스트에서 /health를 열고 새 세션에서 Q01을 보낸다.</td><td>상태 응답, RULE-A 2.1절과 요청 ID</td></tr><tr><td>같은 볼륨으로 재기동 뒤</td><td>기존 세션·요청으로 기록을 다시 읽는다.</td><td>같은 소유자의 같은 요청·출처가 남아 있는지 대조</td></tr></tbody></table></div><p>팀이 원격 시연을 택했다면 팀 밖에서 실제로 사용한 주소와 관찰 시각을 별도로 기록하세요. 설정만 정리한 날에는 실행 카드의 관찰란을 비워 둡니다.</p></section>
+<aside class="lesson-note"><p><mark>프로세스가 응답하는지와 업무 데이터가 남는지는 별도로 확인합니다.</mark> /health가 응답하더라도 서비스가 기록하는 위치와 마운트 경로가 어긋나면 재기동 후 같은 요청을 읽지 못할 수 있습니다.</p></aside><p>113장은 배포에 필요한 실제 데이터 대신 임시 사본으로 복구 훈련을 수행하고 복구 범위를 표시합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

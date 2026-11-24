@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 110 / PROJECT QUALITY</p>
 <span class="sidebar-title">응답 지연 시간 계산과 호출 비용의 측정 조건</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-measurement"><span>02</span>처리 시간과 대기 시간의 측정 구간</a><a href="#nb-tradeoff"><span>03</span>성능 변경 전후 답변 품질 대조</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-measurement"><span>02</span>처리 시간과 대기 시간의 측정 구간</a><a href="#nb-tradeoff"><span>03</span>성능 변경 전후 답변 품질 대조</a><a href="#workshop"><span>04</span>같은 답을 유지하면서 문서를 준비한 횟수 비교하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter110.ipynb" download="chapter110.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>110장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter110.ipynb" download="chapter110.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>110장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">같은 답을 유지하면서 문서를 준비한 횟수 비교하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-measurement" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -52,6 +52,10 @@ print(elapsed_ms, <span class="tok-string">"ms (합성 시각)"</span>)</code></
 </div>
 <p id="example-analysis">3.5ms는 예제에 미리 넣은 두 시각의 차이입니다. 실제 서비스의 응답 지연을 보고하려면 같은 요청에서 시작과 종료 시각을 관측해야 합니다. 호출 비용도 외부 호출 횟수, 실제 사용량, 적용 단가가 있어야 계산할 수 있습니다.</p>
 </article>
+<figure class="math-reading" id="guided-math"><h3>응답 시간의 측정 구간</h3><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mtext>전체 응답 시간</mtext><mo>=</mo><mtext>대기 시간</mtext><mo>+</mo><mtext>처리 시간</mtext></mrow></math><figcaption>요청 접수부터 처리 시작까지는 대기 시간입니다. 처리 시작부터 종료까지 잰 3.5ms에 대기 시간을 더하면 같은 요청의 전체 시간이 됩니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>3.5ms가 뜻하는 측정 구간</h3><p><mark>합성 시각의 차로 구한 값은 이 예시의 구간 길이입니다.</mark> 시작점이 요청 접수인지 실제 처리 시작인지에 따라 대기 시간이 포함되는지가 달라집니다. 팀 측정값에는 두 시점과 단위를 남겨 서로 다른 구간을 비교하지 않게 하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter49/index.html">49장 검색·인용 품질과 비용 측정 조건</a></p></aside>
+
 <div class="lesson-explanation" id="note-code-1"><h3>두 눈금 사이의 차이를 밀리초로 읽기</h3><p>합성 시각 15,500,000에서 12,000,000을 빼면 차이는 3,500,000나노초입니다. 1밀리초가 1,000,000나노초이므로 결과는 3.5밀리초입니다. 브라우저가 표시를 끝낸 시각까지 재지 않았다면 그 시간은 이 차이에 들어가지 않습니다.</p></div>
 
 </section>
@@ -72,7 +76,32 @@ print(record[<span class="tok-string">"source"</span>], record[<span class="tok-
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>같은 답을 유지하면서 문서를 준비한 횟수 비교하기</h2></div></header>
+<p>Q01을 연달아 물을 때마다 같은 규정을 다시 읽습니다. 준비한 문서를 잠시 재사용하면 읽기 횟수가 줄어드는지 측정하고, 답과 근거가 동일한지도 함께 확인합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 원문 읽기 함수에 카운터 달기</h3><div class="cell-before"><p>아래 자료는 한 판본의 공개 규정 한 건입니다. 반복 측정을 위한 로컬 실험으로 문서 ID·판본·그룹을 키에 넣습니다. 실제 지연 시간이나 모델 요금은 이 횟수에서 추정하지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from functools import lru_cache
+
+rule_rows = {(&quot;RULE-A&quot;, &quot;rules-v1&quot;, &quot;public&quot;): (&quot;점검 전 전원 표시등을 확인합니다.&quot;, &quot;2.1&quot;)}
+read_log = []
+def read_rule(doc_id, version, group):
+    key = (doc_id, version, group)
+    read_log.append(key)
+    return rule_rows[key]
+
+key = (&quot;RULE-A&quot;, &quot;rules-v1&quot;, &quot;public&quot;)
+baseline = [read_rule(*key) for _ in range(2)]
+uncached_reads = len(read_log)
+read_log.clear()
+cached_read = lru_cache(maxsize=2)(read_rule)
+candidate_answers = [cached_read(*key) for _ in range(2)]
+print(&quot;원문 읽기&quot;, uncached_reads, len(read_log))
+print(&quot;문장과 절 일치&quot;, candidate_answers == baseline)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">원문 읽기 2 1
+문장과 절 일치 True</pre></div><div class="cell-after"><p>입력은 두 번 들어왔지만 후보의 원문 읽기는 한 번입니다. 결과의 문장과 절이 같으므로 이 입력에서는 읽기 작업을 줄였습니다. 다른 판본이나 권한 규칙이 바뀌면 캐시를 무효화하는 조건도 필요합니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 측정표에 넣을 단위 고르기</h3><p>실제 지연을 비교하려면 첫 호출과 캐시가 찬 다음 호출을 나누고 같은 질문을 반복 측정하세요. 여기서 측정한 것은 읽기 횟수입니다. “원문 읽기 2회에서 1회”는 관찰한 값이고 “사용자 응답이 두 배 빨라졌다”는 별도 측정이 필요합니다.</p></section>
+<aside class="lesson-note"><p><mark>준비 횟수가 줄었다면 같은 자료와 권한 범위에서 결과도 보존됐는지 확인합니다.</mark> 그룹을 키에서 빼면 접근 범위가 다른 사용자가 같은 결과를 재사용할 수 있습니다. 판본을 구분해도 권한 정책 변경 시 별도 무효화가 필요합니다.</p></aside><p>111장에서는 수정한 기준, 기존에 맞던 입력, 보존해야 할 반례를 한 회귀 묶음으로 실행합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

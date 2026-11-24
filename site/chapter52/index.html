@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 52 / MID PROJECT</p>
 <span class="sidebar-title">실패 사례를 이용한 프로젝트 시연과 회고</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-demo-script"><span>02</span>기준선·수정·재검증 결과 비교</a><a href="#nb-personal-review"><span>03</span>실행 근거와 개인 기여 연결</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-demo-script"><span>02</span>기준선·수정·재검증 결과 비교</a><a href="#nb-personal-review"><span>03</span>실행 근거와 개인 기여 연결</a><a href="#workshop"><span>04</span>질문 한 건으로 수정 전후를 설명하는 팀 시연</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter52.ipynb" download="chapter52.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>52장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter52.ipynb" download="chapter52.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>52장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">질문 한 건으로 수정 전후를 설명하는 팀 시연</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-demo-script" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -52,6 +52,8 @@ print(<span class="tok-string">' → '</span>.join(states))</code></pre></figure
 </div>
 <p id="example-analysis">세 상태를 차례로 발표하면 어떤 문제가 남았는지 드러납니다. 첫 수정으로 검색 근거를 확보했고, 그때부터 잘못된 인용을 검사할 수 있었습니다. 최종 answered만 보여 주면 두 번째 수정이 필요했던 이유가 사라집니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>실패가 어디까지 해결됐는지 시연하기</h3><p><mark>실패 상태가 달라진 것도 수정 범위를 설명하는 단서입니다.</mark> 같은 질문에 대해 검색 실패, 인용 실패, 답변 성공의 기록을 순서대로 놓아 보세요. 팀원이 바꾼 부분과 아직 검증하지 않은 질문을 구별할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter46/index.html">46장 검색 규칙 변경과 실패 단계 진단</a></p></aside>
+
 <div class="lesson-explanation" id="note-code-1"><h3>한 질문을 세 시점에서 시연하기</h3><p>no_evidence에서는 원문을 못 찾았고, invalid_citation에서는 검색이 된 뒤 인용 검사가 실패했습니다. answered까지 도달한 마지막 실행에서는 고친 인용을 원문과 함께 보여 주세요. 세 단어는 한 번의 요청이 밟는 상태가 아니라 서로 다른 버전의 결과입니다.</p></div>
 
 </section>
@@ -64,7 +66,14 @@ print(<span class="tok-string">' → '</span>.join(states))</code></pre></figure
 <p>동료가 무슨 질문을 했는지, 본인이 어떤 셀을 바꿨는지, 새 평가를 했는지는 발표 뒤에 실제 기록으로 채우세요.</p>
 </div>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>질문 한 건으로 수정 전후를 설명하는 팀 시연</h2></div></header>
+<p>발표자는 Q03의 상태 이름 세 개를 순서대로 읽는 대신, 매번 어떤 원문을 찾았고 화면에 어떤 인용이 보였는지 가리킵니다. 동료 한 명이 질문자 역할을 맡습니다.</p>
+<section class="project-example"><h3>Q03 시연 대본</h3><div class="workshop-table" tabindex="0" role="region" aria-label="Q03 시연 대본"><table><caption>Q03 시연 대본</caption><thead><tr><th scope="col">장면</th><th scope="col">발표자의 실제 문장</th><th scope="col">함께 보여 줄 근거</th></tr></thead><tbody><tr><td>질문 입력</td><td>“수강생이 과제 업로드에 실패했습니다. 안내문의 어느 문단을 봐야 할까요?”</td><td>원문 p3에서 오류 화면·시간 기록과 강사 문의를 확인한다.</td></tr><tr><td>검색 변경</td><td>“기준선에서는 후보가 비었습니다. 이번 후보는 p3을 찾았는데 화면에는 p2가 붙었습니다.”</td><td>기준선의 빈 후보와 변경 후 후보 ID·인용 ID를 나란히 연다.</td></tr><tr><td>인용 수정</td><td>“문장과 인용을 같은 검색 결과에서 가져오도록 고쳤습니다. 이제 화면에서 p3을 열어 보세요.”</td><td>동료가 p3의 원문과 답을 비교하고, Q01도 여전히 p2인지 확인한다.</td></tr></tbody></table></div><p>실제 실행에 실패하면 저장해 둔 기록으로 넘어갈 수 있습니다. 이때는 방금 실행한 출력과 기록에서 재생하는 출력을 말로 구분합니다.</p></section>
+<section class="project-example"><h3>발표 뒤 질문에 답하기</h3><p>동료가 “다른 제출 오류도 모두 해결됐나요?”라고 묻습니다. “이번에 다시 확인한 것은 Q03과 기존 회귀 질문입니다. ‘화면이 멈춰요’ 같은 새 표현은 별도 확인 질문으로 남겼습니다”라고 범위를 짚고, 다음 시연에 사용할 질문 하나를 합의하세요.</p></section>
+<section class="project-example"><h3>팀별 시연을 바꿀 때</h3><p>팀의 첫 실패가 화면에 남은 이전 출처였다면 두 번째 질문을 입력하는 순간을 전환점으로 삼으세요. 해당 화면을 고친 사람은 바뀐 코드를, 다른 팀원은 고치기 전후 같은 질문의 출처를 가리키면 개인 기여도 확인할 수 있습니다.</p></section>
+<aside class="lesson-note"><p><mark>시연 결과는 실제로 실행한 질문과 문서 판본의 범위 안에서 설명하세요.</mark> 한 질문의 수정을 원문·후보·답으로 보여 주면, 무엇을 개선했고 새 질문에서 무엇을 더 확인해야 하는지 동료가 판단할 수 있습니다.</p></aside><p>회고에는 팀이 다음에 검증할 질문 한 건과 그 결과를 확인할 담당자를 남기세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 113 / FINAL PROJECT</p>
 <span class="sidebar-title">파일 백업과 세션 데이터 복원</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-restore"><span>02</span>별도 경로로 세션 사본 복원</a><a href="#nb-replay"><span>03</span>복원한 레코드의 내용과 중복 검사</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-restore"><span>02</span>별도 경로로 세션 사본 복원</a><a href="#nb-replay"><span>03</span>복원한 레코드의 내용과 중복 검사</a><a href="#workshop"><span>04</span>파일은 읽히지만 마지막 요청이 빠진 복구본 찾아내기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter113.ipynb" download="chapter113.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>113장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter113.ipynb" download="chapter113.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>113장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">파일은 읽히지만 마지막 요청이 빠진 복구본 찾아내기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-restore" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -88,8 +88,30 @@ print(<span class="tok-string">"운영 자료 실제 복구"</span>, record[<spa
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>복원 성공을 기록할 때</h3><p><mark>가상 사본의 레코드가 복원된 결과와 운영 자료의 복원 여부를 따로 남깁니다.</mark> 건수만 맞아도 잘못된 세션을 되살렸을 수 있습니다. 원본을 보존한 위치와 복원본의 레코드 ID·내용을 함께 기록하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter75/index.html">75장 SQLite 백업과 복구 검증</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>파일은 읽히지만 마지막 요청이 빠진 복구본 찾아내기</h2></div></header>
+<p>백업 파일이 JSON으로 열렸다고 해서 r6까지 복구된 것은 아닙니다. 원본은 보존하고, 오래된 사본을 실수로 고른 경우를 한 번 만들어 복구 인수 기준을 세웁니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 두 복구 후보의 요청 ID 대조</h3><div class="cell-before"><p>별도의 임시 폴더에 최근 기록 사본과 마지막 요청이 빠진 사본을 각각 둡니다. 마지막 요청 하나가 어느 파일에서 빠지는지 비교합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">original_ids = [&quot;r2&quot;, &quot;r3&quot;, &quot;r4&quot;, &quot;r5&quot;, &quot;r6&quot;]
+with TemporaryDirectory() as folder:
+    root = Path(folder)
+    latest = root / &quot;latest.json&quot;
+    older = root / &quot;older.json&quot;
+    latest.write_text(json.dumps(original_ids), encoding=&quot;utf-8&quot;)
+    older.write_text(json.dumps(original_ids[:-1]), encoding=&quot;utf-8&quot;)
+    reopened = json.loads(older.read_text(encoding=&quot;utf-8&quot;))
+    expected_ids = json.loads(latest.read_text(encoding=&quot;utf-8&quot;))
+    missing_ids = [request_id for request_id in expected_ids if request_id not in reopened]
+    print(&quot;사본의 마지막 요청&quot;, reopened[-1])
+    print(&quot;누락된 요청&quot;, missing_ids)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">사본의 마지막 요청 r5
+누락된 요청 [&#x27;r6&#x27;]</pre></div><div class="cell-after"><p>오래된 사본도 정상 JSON이고 네 건을 읽지만 r6이 없습니다. 이 사본을 사용하면 r6부터 다시 처리해야 하는지 먼저 조사해야 합니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 복구 기록에 덧붙일 내용</h3><p>같은 검사에서 소유자와 세션, 보존 기간, 중복 요청 처리도 각각 확인하세요. 복구본의 행 개수만 적으면 다른 사용자의 다섯 턴을 가져온 경우를 가려내지 못합니다. 새 쓰기 허용은 팀이 필요한 범위의 기록을 대조한 뒤 결정합니다.</p></section>
+<aside class="lesson-note"><p><mark>복구 성공을 말할 때는 어느 시점의 어떤 데이터까지 읽혔는지 적습니다.</mark> 이 실험의 오래된 사본으로 확인한 범위는 r5까지입니다. 실제 데이터 손실이나 실서비스 복구 시간을 측정한 값은 없습니다.</p></aside><p>114장에는 원하는 요청 ID를 찾지 못한 인수자가 어디까지 확인했는지 기록하는 예를 실습니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 087 / FINAL PROJECT</p>
 <span class="sidebar-title">사용자 시나리오와 추가 질문 조건</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-scenario"><span>02</span>질문·기대 행동·종료 조건</a><a href="#nb-observation"><span>03</span>사용자별 시나리오 카드</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-scenario"><span>02</span>질문·기대 행동·종료 조건</a><a href="#nb-observation"><span>03</span>사용자별 시나리오 카드</a><a href="#workshop"><span>04</span>한 문장이 빠진 대화로 되묻기와 종료를 구분하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter87.ipynb" download="chapter87.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>87장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter87.ipynb" download="chapter87.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>87장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">한 문장이 빠진 대화로 되묻기와 종료를 구분하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-scenario" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -62,6 +62,17 @@ need_clarification []</pre></div>
 </div>
 <p id="example-analysis">‘점검 전 확인 사항은?’에는 장비 구분이 없습니다. 규정은 있지만 어느 규정을 적용할지 정하지 못한 상태라서 추가 질문이 필요합니다. 공개 자료에 답 자체가 없는 질문과 구분하면 사용자가 정보를 더 주었을 때 처리를 이어 갈 수 있습니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>Q02에서 답변 대신 장비를 되묻는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nq["Q02"]
+  nwhich["장비 식별"]
+  nask["되묻기"]
+  ncite["규정 인용"]
+  nq --> nwhich
+  nwhich --> nask
+  nwhich --> ncite</script><figcaption>시나리오 카드에서 기대하는 화면입니다. 장비를 지정하지 않은 Q02는 근거를 인용하기 전에 추가 질문으로 끝납니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>정보가 빠진 질문과 자료에 없는 질문</h3><p><mark>대상을 특정하지 못한 경우에는 정보를 더 받으면 답할 수 있습니다.</mark> 팀의 카드에서 ‘어느 장비인가요?’에 답하면 진행할 수 있는 질문과, 장비명을 받아도 규정에 없는 질문을 구별하세요. 두 경우의 종료 문구가 달라집니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter14/index.html">14장 분류 함수와 조건부 라우팅</a></p></aside>
+
 </section>
 <section id="nb-observation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>사용자별 시나리오 카드</h2>
@@ -112,7 +123,14 @@ print(public_case[<span class="tok-string">"expected_status"</span>])</code></pr
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>한 문장이 빠진 대화로 되묻기와 종료를 구분하기</h2></div></header>
+<p>86장의 시연 의뢰에 동료가 “어떤 장비를 말하는지 안 적고 물어보면요?”라고 되묻습니다. 이때 추가 질문 한 번으로 복구할 수 있는 상황과 새 자료를 구해야 하는 상황을 대화로 나눕니다.</p>
+<section class="project-example"><h3>화면에 실제로 쓸 대화 초안</h3><div class="workshop-table" tabindex="0" role="region" aria-label="화면에 실제로 쓸 대화 초안"><table><caption>화면에 실제로 쓸 대화 초안</caption><thead><tr><th scope="col">첫 사용자 발화</th><th scope="col">서비스의 첫 응답</th><th scope="col">사용자의 다음 발화와 끝맺음</th></tr></thead><tbody><tr><td>점검 전 무엇을 보죠?</td><td>장비 A와 B 중 어느 장비인가요?</td><td>“B요.” 장비 B 점검 안내와 RULE-B 2.2절을 표시한다.</td></tr><tr><td>장비 A를 다음 달 교체하나요?</td><td>주어진 규정에서는 일정을 확인할 수 없습니다. 담당자에게 확인해 주세요.</td><td>같은 장비명을 다시 물어보지 않고 끝낸다.</td></tr></tbody></table></div><p>첫 줄의 “B요”는 직전에 무엇을 물었는지 기억해야 해석됩니다. 첫 시연에 대화 기억을 넣지 않는 팀은 “장비 B의 점검 전 확인 사항은?”처럼 완성된 후속 질문을 입력받기로 명시하세요.</p></section>
+<section class="project-example"><h3>진행자와 기록자의 역할</h3><p>진행자는 “저 규정으로 답할 수 있나요?”처럼 답을 암시하지 않습니다. 기록자는 참가자가 기입한 장비명, 서비스가 되물은 문장, 최종적으로 열린 절을 순서대로 적습니다. 표의 대화는 관측 전 시안입니다.</p></section>
+<section class="project-example"><h3>팀 자료에 붙여 보기</h3><p>문의 양식에서 자주 비는 필드 하나를 고르세요. 그 필드를 보충한 뒤 같은 자료로 답을 낼 수 있는 질문과, 필드를 다 줘도 답할 수 없는 질문을 각각 만들어 동료에게 읽어 줍니다.</p></section>
+<aside class="lesson-note"><p><mark>되물음이 해결할 수 있는 빈칸이 무엇인지 먼저 정합니다.</mark> Q02의 빈칸은 장비명입니다. Q03에는 장비 A가 이미 있고, 없는 것은 교체 일정을 확인할 문서입니다.</p></aside><p>88장에는 정상·되물음·자료 없음 각각의 기대 문구와 정상일 때 열려야 할 절을 넘깁니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

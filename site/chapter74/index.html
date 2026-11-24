@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 74 / CLOUD DEPLOYMENT</p>
 <span class="sidebar-title">EC2 배포 구성과 프록시 경로</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-network"><span>02</span>공개 포트와 API의 내부 주소</a><a href="#nb-deployment"><span>03</span>배포 주소와 내부 API 경로 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-network"><span>02</span>공개 포트와 API의 내부 주소</a><a href="#nb-deployment"><span>03</span>배포 주소와 내부 API 경로 검증</a><a href="#workshop"><span>04</span>EC2 인스턴스와 실제 서비스 주소를 대조하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter74.ipynb" download="chapter74.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>74장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행 환경은 Python 3.12.15입니다. 로컬 API 과제에는 FastAPI 0.135.0와 httpx 0.28.1를 사용합니다.</p>
+<a class="download" href="chapter74.ipynb" download="chapter74.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>74장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">EC2 인스턴스와 실제 서비스 주소를 대조하기</a></p><div class="prose"><p>실행 환경은 Python 3.12.15입니다. 로컬 API 과제에는 FastAPI 0.135.0와 httpx 0.28.1를 사용합니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="reading-start"></span>
@@ -36,7 +36,7 @@
 <h2>공개 포트와 API의 내부 주소</h2>
 </div>
 </header>
-<p class="concept-intro">외부에서 보낸 요청은 공개 포트와 프록시를 거쳐 내부 API에 도착합니다. 배포 선언에서 예상한 경로와 실제 응답을 구분해 확인합니다.</p><p>배포 예제에서는 HTTPS를 받는 프록시만 호스트의 443번에 연결합니다. 프록시는 Compose 네트워크 안의 api:8000으로 전달하고, API는 내부 db:5432를 사용합니다. DB 접속 정보를 브라우저에 건네지 않습니다.</p>
+<p class="concept-intro">어느 포트로 들어온 요청을 프록시가 어느 주소로 보낼까요?</p><p>배포 예제에서는 HTTPS를 받는 프록시만 호스트의 443번에 연결합니다. 프록시는 Compose 네트워크 안의 api:8000으로 전달하고, API는 내부 db:5432를 사용합니다. DB 접속 정보를 브라우저에 건네지 않습니다.</p>
 <!-- MOTION published-port -->
 
 <!-- END MOTION -->
@@ -75,6 +75,8 @@ print(upstream.scheme, upstream.hostname, upstream.port)</code></pre></figure>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>프록시가 API로 요청을 보낼 때</h3><p><mark>브라우저가 접속할 공개 주소와 프록시가 사용할 내부 주소는 서로 다른 위치에서 해석됩니다.</mark> 내부 주소의 호스트가 api이고 포트가 8000인지 읽으세요. 브라우저에서 그 이름이 직접 보인다면 어느 구성값이 외부에 쓰였는지 추적할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter72/index.html">72장 Docker Compose 네트워크와 볼륨</a></p></aside>
+
 </section>
 <section id="nb-deployment" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>배포 주소와 내부 API 경로 검증</h2>
@@ -138,8 +140,80 @@ print(wrong.status_code, forwarded.status_code, forwarded.json()["application"])
 <div class="cell-after"><p>같은 앱이라도 전달된 경로가 다르면 첫 요청은 등록된 라우트를 찾지 못합니다. 두 번째 요청에서는 응답 본문까지 읽어 어느 앱이 답했는지 확인했습니다. 실제 프록시가 접두어를 어떻게 처리하는지는 프록시 설정과 요청 기록으로 확인합니다.</p></div>
 </details>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>배포 주소가 비어 있을 때 멈추는 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninput["주소 읽기"]
+  nguard["주소 확인"]
+  nskip["검사 생략"]
+  nscheme["HTTPS 검사"]
+  ncall["GET /health"]
+  ninput --> nguard
+  nguard --> nskip
+  nguard --> nscheme
+  nscheme --> ncall</script><figcaption>선택 셀의 기본값은 빈 문자열입니다. 주소를 확인하기 전에는 HTTPS 응답이나 배포 성공을 관찰할 수 없습니다.</figcaption></figure>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>EC2 인스턴스와 실제 서비스 주소를 대조하기</h2></div></header>
+<p>서비스 주소를 받았다면 어느 인스턴스를 검사하는지 먼저 확인합니다. 수업에서는 배정받은 인스턴스를 조회하고, 이어 앞 절의 HTTPS /health 요청으로 애플리케이션까지 확인합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · EC2 조회 응답에서 인스턴스 찾기</h3><div class="cell-before"><p>아래는 describe-instances 응답 모양을 따르는 가상 수업 자료입니다. 같은 조회 결과에 운영용과 수업용 인스턴스가 함께 있을 때 배정 ID로 대상을 찾으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">assigned_id = &quot;i-0123456789abcdef0&quot;
+inventory = {&quot;Reservations&quot;: [{&quot;Instances&quot;: [
+    {&quot;InstanceId&quot;: &quot;i-0fedcba9876543210&quot;, &quot;State&quot;: {&quot;Name&quot;: &quot;running&quot;},
+     &quot;Tags&quot;: [{&quot;Key&quot;: &quot;Environment&quot;, &quot;Value&quot;: &quot;production&quot;}]},
+    {&quot;InstanceId&quot;: assigned_id, &quot;State&quot;: {&quot;Name&quot;: &quot;running&quot;},
+     &quot;Tags&quot;: [{&quot;Key&quot;: &quot;Environment&quot;, &quot;Value&quot;: &quot;classroom&quot;}]},
+]}]}
+machines = [vm for group in inventory[&quot;Reservations&quot;] for vm in group[&quot;Instances&quot;]]
+assigned = next(vm for vm in machines if vm[&quot;InstanceId&quot;] == assigned_id)
+print(assigned[&quot;InstanceId&quot;], assigned[&quot;State&quot;][&quot;Name&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">i-0123456789abcdef0 running</pre></div><div class="cell-after"><p>running은 배정한 EC2 인스턴스의 상태입니다. API 컨테이너가 올라왔는지, 외부에서 HTTPS로 접근할 수 있는지는 이 응답에 없습니다. 이 예제의 ID는 실제 AWS 조회에 사용하지 않습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 배정받은 대상만 조회하는 명령 만들기</h3><div class="cell-before"><p>수업용 인스턴스의 리전을 ap-northeast-2로 가정합니다. 인스턴스 ID와 리전을 명시한 AWS CLI 조회 명령을 인자 목록으로 만들고, 제공된 응답에서 Environment 태그와 상태를 꺼내세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">region = &quot;ap-northeast-2&quot;
+# aws ec2 describe-instances에 --region과 --instance-ids를 전달하는 인자를 만드세요.
+# assigned의 Tags에서 Environment 값을 찾아 상태와 함께 출력하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">region = &quot;ap-northeast-2&quot;
+command = [&quot;aws&quot;, &quot;ec2&quot;, &quot;describe-instances&quot;, &quot;--region&quot;, region,
+           &quot;--instance-ids&quot;, assigned_id, &quot;--output&quot;, &quot;json&quot;]
+tags = {tag[&quot;Key&quot;]: tag[&quot;Value&quot;] for tag in assigned.get(&quot;Tags&quot;, [])}
+print(&quot; &quot;.join(command))
+print(tags.get(&quot;Environment&quot;), assigned[&quot;State&quot;][&quot;Name&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">aws ec2 describe-instances --region ap-northeast-2 --instance-ids i-0123456789abcdef0 --output json
+classroom running</pre></div><p>첫 줄은 리전과 대상 하나를 지정한 조회 명령입니다. 두 번째 줄 classroom running은 가상 조회 자료를 읽은 값입니다. 수업에서 배정한 리전·ID·읽기 권한이 있는 계정을 준비한 뒤 노트북에서 subprocess.run(command, check=True, capture_output=True, text=True)로 실제 조회할 수 있습니다. AWS 응답에서 받은 상태와 앞 절의 /health 결과를 각각 기록하세요.</p></details>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-3">셀 07 · 선택 실습 · 배정된 EC2에서 후보 이미지의 앱 응답 확인하기</h3><div class="cell-before"><p>강사가 배정한 EC2에 Docker가 설치되어 있고, 그 호스트를 가리키는 수업용 SSH Docker context와 후보 이미지가 준비된 경우의 제공 셀입니다. context_name과 image_ref를 모두 입력해야 실행합니다. 이 시험은 외부 포트를 열지 않고 후보 컨테이너 내부에서 /health에 접속합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">import json
+import subprocess
+import time
+
+context_name = &quot;&quot;  # 수업용 EC2를 가리키는 SSH Docker context
+image_ref = &quot;&quot;     # 해당 EC2에 이미 준비한 수업용 API 이미지
+if context_name and image_ref:
+    meta = subprocess.run([&quot;docker&quot;, &quot;context&quot;, &quot;inspect&quot;, context_name],
+                          check=True, capture_output=True, text=True)
+    endpoint = json.loads(meta.stdout)[0][&quot;Endpoints&quot;][&quot;docker&quot;][&quot;Host&quot;]
+    if not endpoint.startswith(&quot;ssh://&quot;):
+        raise ValueError(&quot;배정받은 EC2의 SSH Docker context를 선택하세요.&quot;)
+    prefix = [&quot;docker&quot;, &quot;--context&quot;, context_name]
+    def run_remote(*args, check=True):
+        return subprocess.run(prefix + list(args), check=check, capture_output=True,
+                              text=True, timeout=60)
+    cid = run_remote(&quot;run&quot;, &quot;-d&quot;, &quot;--pull&quot;, &quot;never&quot;, image_ref).stdout.strip()
+    try:
+        probe_code = (&quot;import json, urllib.request as u; &quot;
+                      &quot;print(json.load(u.urlopen(&#x27;http://127.0.0.1:8000/health&#x27;, timeout=2))[&#x27;application&#x27;])&quot;)
+        for attempt in range(20):
+            probe = run_remote(&quot;exec&quot;, cid, &quot;python&quot;, &quot;-c&quot;, probe_code, check=False)
+            if probe.returncode == 0:
+                print(probe.stdout.strip())
+                break
+            if attempt == 19:
+                raise RuntimeError(&quot;후보 앱의 시작 로그와 내부 포트를 확인하세요.&quot;)
+            time.sleep(1)
+    finally:
+        run_remote(&quot;rm&quot;, &quot;-f&quot;, cid)
+else:
+    print(&quot;배정된 EC2 context와 이미지가 있으면 원격 후보를 검사하세요.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">배정된 EC2 context와 이미지가 있으면 원격 후보를 검사하세요.</pre></div><div class="cell-after"><p>후보에서 course-api가 돌아오면 EC2 안의 Docker와 앱 경로를 확인한 것입니다. 외부 프록시와 보안 그룹을 거치는 경로는 앞 절의 배정 HTTPS 주소로 별도 확인하세요. 이 기본 셀에서는 원격 컨테이너를 시작하지 않습니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>인스턴스가 running이어도 애플리케이션은 시작 중일 수 있습니다.</mark> EC2는 실행 중인데 /health가 502를 돌려준다면 인스턴스를 하나 더 만들기 전에 프록시가 가리키는 서비스 이름과 포트, API 컨테이너의 시작 로그를 확인하세요.</p></aside><p>75장 복구 기록에는 배정 인스턴스의 식별자와 복구 뒤 실제로 읽은 문서 ID를 서로 다른 칸에 남깁니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>

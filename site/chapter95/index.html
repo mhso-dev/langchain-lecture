@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 95 / 120</p>
 <span class="sidebar-title">검색 모듈의 권한 필터와 빈 결과</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-retrieve"><span>02</span>retrieve()의 문서 접근 조건</a><a href="#nb-missing"><span>03</span>빈 입력 오류와 미적중 결과</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-retrieve"><span>02</span>retrieve()의 문서 접근 조건</a><a href="#nb-missing"><span>03</span>빈 입력 오류와 미적중 결과</a><a href="#workshop"><span>04</span>조회 함수를 공개용 도구로 감싸고 노출된 인자 확인하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter95.ipynb" download="chapter95.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>95장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter95.ipynb" download="chapter95.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>95장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">조회 함수를 공개용 도구로 감싸고 노출된 인자 확인하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-retrieve" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -88,6 +88,17 @@ print(hit[<span class="tok-string">"text"</span>], hit[<span class="tok-string">
 </div>
 <p id="example-analysis">RULE-A를 반환한 근거에는 장비와 규정 위치가 함께 있습니다. 검색어가 비었을 때 임의의 첫 규정을 돌려주면 정상 결과처럼 보이면서 대상 장비를 잘못 안내할 수 있습니다. 빈 검색어는 별도 입력 오류로 처리합니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>retrieve()에서 공개 범위를 적용한 뒤 검색하는 순서</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ngroup["그룹 검사"]
+  nquery["검색어 검사"]
+  nallowed["공개 범위"]
+  nmatch["본문·장비 대조"]
+  nhit["결과 필드"]
+  ngroup --> nquery
+  nquery --> nallowed
+  nallowed --> nmatch
+  nmatch --> nhit</script><figcaption>장비 A를 검색하는 동안 처음 세 문서가 허용 문서 두 건을 거쳐 결과 한 건으로 줄어듭니다.</figcaption></figure>
+
 </section>
 <section id="nb-missing" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>빈 입력 오류와 미적중 결과</h2>
@@ -108,6 +119,8 @@ print(hit[<span class="tok-string">"text"</span>], hit[<span class="tok-string">
 <div class="cell-after"><p>“검색어를 입력하세요.”가 나옵니다. 호출 전 입력을 고치면 재시도할 수 있고, 문서 내용을 바꿀 필요가 없습니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>빈 검색어와 검색 실패 구별하기</h3><p><mark>유효한 질문을 받았지만 접근 가능한 문서에 근거가 없는 경우를 따로 다룹니다.</mark> 허용 그룹만 바꿔 같은 장비를 질의해 보세요. 권한 밖 문서의 ID나 문장이 빈 결과 안내에 섞이는지도 확인합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter89/index.html">89장 자료 접근 범위와 대체 데이터</a></p></aside>
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 허용 문서 범위</h3>
 <div class="cell-before"><p>공개 그룹으로 관리자 절차를 검색한 결과를 확인하고 사용자에게 보여 줄 다음 문장을 써 보세요.</p>
 </div>
@@ -123,7 +136,26 @@ print(matches)
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>조회 함수를 공개용 도구로 감싸고 노출된 인자 확인하기</h2></div></header>
+<p>독립적으로 동작하던 retrieve를 팀의 메시지 처리기에서 호출하려고 합니다. 공개 시연 경로의 도구가 질문마다 접근 그룹을 다시 입력받으면 그룹을 결정한 주체가 불분명해집니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 공개 경로에서 사용할 검색 도구</h3><div class="cell-before"><p>이 실습에서 public은 서버 측 공개 시연 경로의 고정 그룹입니다. LangChain 도구에는 검색어 한 개만 노출하고 원문 레코드는 artifact에 보관합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from langchain_core.tools import tool
+
+@tool(response_format=&quot;content_and_artifact&quot;)
+def public_rules(query: str):
+    &quot;&quot;&quot;공개 장비 규정에서 검색어와 관련된 절을 찾습니다.&quot;&quot;&quot;
+    matches = retrieve(query, &quot;public&quot;)
+    return &quot;\n&quot;.join(item[&quot;text&quot;] for item in matches), matches
+
+tool_request = {&quot;type&quot;: &quot;tool_call&quot;, &quot;id&quot;: &quot;cap-95&quot;, &quot;name&quot;: public_rules.name,
+                &quot;args&quot;: {&quot;query&quot;: &quot;장비 B&quot;}}
+answer_message = public_rules.invoke(tool_request)
+print(list(public_rules.args), answer_message.tool_call_id, answer_message.artifact[0][&quot;id&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;query&#x27;] cap-95 RULE-B</pre></div><div class="cell-after"><p>query만 인자 목록에 있고 호출 cap-95가 RULE-B를 찾았습니다. 이 예시에서 그룹은 공개 도구 함수 안에서 정해집니다. 서로 다른 사용자를 실제 인증하는 기능은 별도의 서버 경계가 맡습니다.</p></div>
+</article>
+<section class="project-example"><h3>도구의 반환 계약을 팀 자료로 검산하기</h3><p>같은 호출에서 query를 “교체 예정일”로 바꾸세요. 결과 레코드가 비면 첫 항목을 꺼내지 말고 현재 호출 ID와 빈 목록을 함께 기록합니다. 앞쪽의 빈 문자열 오류가 발생한 경우와 이 기록을 나란히 보세요.</p></section>
+<aside class="lesson-note"><p><mark>도구 명세에 쓰는 인자는 호출자가 선택해도 되는 값만 포함합니다.</mark> 질문을 다시 쓰도록 허용해도 조회 그룹까지 요청 본문의 자유 입력으로 정할 필요는 없습니다.</p></aside><p>96장 화면에는 artifact의 첫 문장뿐 아니라 찾아간 규정의 실제 절·쪽·판본을 건넵니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

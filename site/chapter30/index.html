@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 30 / RETRIEVER NODE</p>
 <span class="sidebar-title">LangGraph의 검색 노드와 답변 노드</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-records"><span>02</span>retrieve()의 문서와 출처 반환</a><a href="#nb-required"><span>03</span>StateGraph에 검색·답변 노드 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-records"><span>02</span>retrieve()의 문서와 출처 반환</a><a href="#nb-required"><span>03</span>StateGraph에 검색·답변 노드 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>검색과 답변에서 서로 다른 문서가 쓰이지 않게 연결하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter30.ipynb" download="chapter30.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>30장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
+<a class="download" href="chapter30.ipynb" download="chapter30.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>30장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">검색과 답변에서 서로 다른 문서가 쓰이지 않게 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-records" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -117,6 +117,13 @@ print(result[<span class="tok-string">'answer'</span>], result[<span class="tok-
 <div class="cell-after"><p>월요일이라는 답 뒤에 2가 붙습니다. 검색 함수가 고른 2쪽을 compose가 그대로 읽었습니다. 답 옆의 숫자는 결과 순위가 아닌 원문의 쪽수입니다. result는 실행 결과 전체의 변수 이름입니다. 답은 result["answer"], 원문 쪽수는 result["documents"][0]["page"]에서 읽습니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>근거 레코드를 넘기는 고정 간선</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+s["START"] --> r["search"]
+r -->|documents| c["compose"]
+c -->|answer| e["END"]</script><figcaption>search는 documents를 쓰고 compose는 그 목록을 읽어 answer를 씁니다. 빈 목록을 반환해도 고정 간선은 compose로 이어집니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>검색 함수의 반환값을 그래프에 넘길 때</h3><p><mark>검색 노드가 남긴 레코드의 page는 답변 노드가 answer를 쓴 뒤에도 읽을 수 있습니다.</mark> 최종 답변 문자열만 보면 휴관 안내가 어느 쪽에서 왔는지 사라집니다. 최종 상태의 documents에서 첫 문서를 꺼내 출력의 쪽 번호와 짝지으세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter26/index.html">26장 LangGraph StateGraph의 상태와 노드</a></p></aside>
+
 <span class="lesson-anchor" id="nodes"></span><span class="lesson-anchor" id="reading-nodes"></span>
 
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 빈 검색 결과의 응답 분기</h3>
@@ -152,7 +159,39 @@ def render_answer(state):
 print(render_answer(graph.invoke(request)))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">무인 반납함은 24시간 이용할 수 있습니다. [가상 도서관 이용 안내, 3쪽]</pre></div><div class="cell-after"><p>근거를 찾은 search와 답을 만든 compose를 거친 뒤에만 출처를 표시합니다. 문서가 비면 첫 원소를 꺼내지 않아 주차 질문에도 같은 함수를 쓸 수 있습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>검색과 답변에서 서로 다른 문서가 쓰이지 않게 연결하기</h2></div></header>
+<p>검색 결과에 근거 ID가 들어 있어도 답변을 만들 때 문서를 다시 찾으면 검색 시점의 자료와 어긋날 수 있습니다. 이번에는 검색을 한 번만 하고 그 결과를 다음 노드로 전달합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 한 질문에 검색 노드가 몇 번 불렸는지 세기</h3><div class="cell-before"><p>함수 바깥에 이 실행만 기록할 목록을 두고 검색 노드가 받을 질문을 남깁니다. 검색 노드를 직접 한 번 실행한 뒤 문서 ID를 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">calls_seen = []
+def measured_search(state):
+    calls_seen.append(state[&quot;question&quot;])
+    return search_node(state)
+
+trace_input = {**request, &quot;question&quot;: &quot;무인 반납함 이용 시간은?&quot;}
+delta = measured_search(trace_input)
+print(calls_seen, delta[&quot;documents&quot;][0][&quot;id&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;무인 반납함 이용 시간은?&#x27;] library-3</pre></div><div class="cell-after"><p>질문 하나와 library-3이 나옵니다. 다음 노드에 이미 필요한 레코드가 들어 있습니다. 표시용 출처를 얻기 위해 retrieve를 한 번 더 부를 필요가 없습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 검색 1회로 본문과 쪽수까지 반환하는 그래프 만들기</h3><div class="cell-before"><p>measured_search와 새 인용 노드를 연결하세요. 인용 노드는 documents의 첫 레코드를 사용하고 빈 목록이면 안내를 돌려줍니다. 호출 기록을 비운 다음 한 질문을 보내 검색 횟수와 결과를 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># citation_node를 정의하고 search에서 citation으로 이어지는 그래프를 만드세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def citation_node(state):
+    docs = state[&quot;documents&quot;]
+    if not docs:
+        return {&quot;answer&quot;: &quot;확인할 자료가 없습니다.&quot;}
+    first_doc = docs[0]
+    return {&quot;answer&quot;: f&quot;{first_doc[&#x27;text&#x27;]} [{first_doc[&#x27;id&#x27;]}, {first_doc[&#x27;page&#x27;]}쪽]&quot;}
+
+cited_builder = StateGraph(State)
+cited_builder.add_node(&quot;search&quot;, measured_search)
+cited_builder.add_node(&quot;cite&quot;, citation_node)
+cited_builder.add_edge(START, &quot;search&quot;)
+cited_builder.add_edge(&quot;search&quot;, &quot;cite&quot;)
+cited_builder.add_edge(&quot;cite&quot;, END)
+calls_seen.clear()
+cited_result = cited_builder.compile().invoke(trace_input)
+print(len(calls_seen), cited_result[&quot;answer&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1 무인 반납함은 24시간 이용할 수 있습니다. [library-3, 3쪽]</pre></div><p>출력 앞의 1은 검색 호출 수입니다. 뒤에는 반납함의 24시간 안내와 library-3, 3쪽이 붙습니다. 세 값은 같은 문서 레코드에서 읽었습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>답변 문장과 인용 위치를 같은 검색 결과에서 꺼내세요.</mark> 검색이 한 번인데 화면의 문장이 3쪽, 출처가 2쪽이면 두 값을 조립한 코드를 확인할 수 있습니다.</p></aside><p>다음 장은 검색이 성공해도 답변 보류가 필요한 경우를 구분합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

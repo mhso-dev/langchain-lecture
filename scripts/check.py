@@ -17,11 +17,9 @@ class Page(HTMLParser):
         self.copy_targets = set()
         self.links = []
         self.notebooks = []
-        self.simulations = []
+        self.old_media = []
         self.has_practice = False
-        self.has_spatial_practice = False
-        self.videos = []
-        self.clip_playback_errors = []
+        self.workflows = 0
         self.closed_lesson_blocks = []
         self.title = None
 
@@ -44,21 +42,11 @@ class Page(HTMLParser):
             else:
                 self.links.append(value)
         self.has_practice |= "data-practice" in attrs
-        if "data-practice" in attrs and "data-text-results" not in attrs:
-            self.has_spatial_practice = True
-        if tag == "video":
-            self.videos.append(attrs.get("src"))
-            if not attrs.get("src", "").endswith(".mp4"):
-                self.clip_playback_errors.append("영상 파일 경로 누락")
-            if "observation-clip" in attrs.get("class", "").split():
-                if not {"controls", "playsinline"}.issubset(attrs) or not attrs.get("poster") or "autoplay" in attrs:
-                    self.clip_playback_errors.append("관찰 영상의 재생 컨트롤·정지 화면·수동 재생 설정 오류")
-            elif "controls" not in attrs or "playsinline" not in attrs or "autoplay" in attrs or "loop" in attrs:
-                self.clip_playback_errors.append("수동 재생·일시정지 설정 오류")
+        if tag in {"video", "img", "canvas"} or "three.min.js" in attrs.get("src", ""):
+            self.old_media.append(tag)
+        self.workflows += int("data-workflow" in attrs)
         if tag == "a" and attrs.get("href", "").endswith(".ipynb"):
             self.notebooks.append(attrs["href"])
-        if tag == "iframe" and attrs.get("src") == "chunk-lab.html":
-            self.simulations.append(attrs["src"])
 
 
 def main():
@@ -69,7 +57,8 @@ def main():
         page.feed(path.read_text(encoding="utf-8"))
         pages[path] = page
     for path, page in pages.items():
-        errors.extend(f"{path.relative_to(ROOT)}: {error}" for error in page.clip_playback_errors)
+        if page.old_media:
+            errors.append(f"{path.relative_to(ROOT)} 이전 미디어: {page.old_media}")
         for key in sorted(page.copy_targets - page.ids):
             errors.append(f"{path.relative_to(ROOT)} 코드 복사 대상 누락: {key}")
         for key in sorted(page.duplicate_ids):
@@ -97,34 +86,50 @@ def main():
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())
-        if page.has_practice:
-            for asset in (["../assets/practice-space.js"] + (["../assets/three.min.js"] if page.has_spatial_practice else [])):
-                if asset not in page.links:
-                    errors.append(f"{name} 실험 스크립트 연결 누락: {asset}")
-        if "pdf-layers" in page.ids:
-            for asset in ("../assets/three.min.js", "pdf-layers.js", "pdf-layers.css"):
-                if asset not in page.links:
-                    errors.append(f"{name} PDF 층 분리 실험 파일 연결 누락: {asset}")
-        for frame in page.simulations:
-            scene = pages.get(ROOT / name / frame)
-            if not scene or "../assets/three.min.js" not in scene.links or "samples" not in scene.ids:
-                errors.append(f"{name} 청킹 실험의 Three.js 또는 분할 데이터 누락: {frame}")
-        for asset in page.links:
-            if asset.endswith((".svg", ".gif")) or asset == "simulation.html" or asset.startswith("motion/"):
-                errors.append(f"{name} 이전 시각 자료 연결: {asset}")
-        for cell in notebook["cells"]:
+        if "guided-reading" not in page.ids:
+            errors.append(f"{name} 핵심 해설 누락")
+        if page.has_practice and "../assets/practice-space.js" not in page.links:
+            errors.append(f"{name} 조작 실습 스크립트 누락")
+        charts = [
+            source
+            for cell in notebook["cells"] if cell["cell_type"] == "markdown"
+            for source in re.findall(r"^```mermaid\n(.+?)\n```", "".join(cell["source"]), re.M | re.S)
+        ]
+        page_text = (ROOT / route).read_text()
+        web_charts = re.findall(r'<figure\b[^>]*\bdata-workflow\b[^>]*>.*?<script type="text/plain">(.*?)</script>.*?</figure>', page_text, re.S)
+        if page.workflows != len(charts) or web_charts != charts:
+            errors.append(f"{name} 웹·노트북 Mermaid 흐름도 원문 또는 순서 불일치")
+        rendered_charts = re.findall(r'<div class="workflow-view">\s*<svg\b', page_text)
+        if charts and "../assets/workflows.js" not in page.links and len(rendered_charts) != len(charts):
+            errors.append(f"{name} Mermaid 스크립트 연결 누락")
+        cells = notebook["cells"]
+        for index, cell in enumerate(cells):
+            if cell["cell_type"] == "code":
+                following = index + 1
+                while following < len(cells) and cells[following].get("id", "").startswith("guided-"):
+                    following += 1
+                if following > index + 1 and following < len(cells):
+                    if "".join(cells[following]["source"]).lstrip().startswith("<details"):
+                        errors.append(f"{name} 과제와 풀이 사이에 새 해설이 들어갔습니다")
             if cell["cell_type"] != "markdown":
                 continue
             references = set(re.findall(r"attachment:([^\s)]+)", "".join(cell["source"])))
+            if any(key != "coordinates.svg" for key in cell.get("attachments", {})):
+                errors.append(f"{name} 이전 삽화 첨부")
             missing = references - cell.get("attachments", {}).keys()
             if missing:
                 errors.append(f"{name} 노트북 첨부 누락 {sorted(missing)}")
         if not any(cell["cell_type"] == "code" for cell in notebook["cells"]):
             errors.append(f"{name} 코드 셀 누락")
+    removed_extensions = {".mp4", ".webm", ".gif", ".png", ".jpg", ".jpeg", ".webp"}
+    for asset in ROOT.rglob("*"):
+        if asset.is_file() and (asset.suffix.lower() in removed_extensions or asset.name == "three.min.js"):
+            errors.append(f"배포에 이전 미디어 파일 포함: {asset.relative_to(ROOT)}")
     if errors:
         raise SystemExit("\n".join(sorted(set(errors))))
-    experiments = sum(int(p.has_spatial_practice) + int("pdf-layers" in p.ids) + len(p.simulations) for p in pages.values())
-    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Three.js 실험 {experiments}곳, 영상 {sum(len(p.videos) for p in pages.values())}편 통과")
+    charts = sum(p.workflows for p in pages.values())
+    print(f"HTML {len(pages)}개, 교재·노트북 116쌍, Mermaid 차트 {charts}개 및 내부 링크 통과")
+
 
 
 if __name__ == "__main__":

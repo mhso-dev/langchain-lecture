@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 69 / HTTP API</p>
 <span class="sidebar-title">FastAPI StreamingResponse와 줄 단위 JSON</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-stream"><span>02</span>StreamingResponse의 이벤트 직렬화</a><a href="#nb-partial"><span>03</span>수신한 본문과 완료 이벤트 구분</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-stream"><span>02</span>StreamingResponse의 이벤트 직렬화</a><a href="#nb-partial"><span>03</span>수신한 본문과 완료 이벤트 구분</a><a href="#workshop"><span>04</span>잘려 도착한 NDJSON 응답에서 답변 복원하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,14 +27,14 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter69.ipynb" download="chapter69.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>69장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0입니다.</p>
+<a class="download" href="chapter69.ipynb" download="chapter69.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>69장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">잘려 도착한 NDJSON 응답에서 답변 복원하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0입니다.</p>
 </div>
 </section>
 <section id="nb-stream" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>StreamingResponse의 이벤트 직렬화</h2>
 </div>
 </header>
-<p class="concept-intro">스트리밍 응답은 본문을 여러 조각으로 전달합니다. 이 예제는 줄바꿈으로 JSON 이벤트를 나누고 완료 이벤트를 따로 보냅니다.</p><p>NDJSON에서는 JSON 객체 하나 뒤에 줄바꿈을 둡니다. 실제 네트워크 조각의 끝이 줄의 끝과 일치하지 않을 수 있으므로, 클라이언트는 완성된 줄부터 읽습니다. 아래는 /conversations/{cid}/stream 경로의 줄 단위 전송과 소유자 검사를 축약한 로컬 앱입니다.</p>
+<p class="concept-intro">답변 문장이 모두 보인 순간에도 done 한 줄이 아직 도착하지 않았을 수 있습니다.</p><p>NDJSON에서는 JSON 객체 하나 뒤에 줄바꿈을 둡니다. 실제 네트워크 조각의 끝이 줄의 끝과 일치하지 않을 수 있으므로, 클라이언트는 완성된 줄부터 읽습니다. 아래는 /conversations/{cid}/stream 경로의 줄 단위 전송과 소유자 검사를 축약한 로컬 앱입니다.</p>
 <span class="lesson-anchor" id="concept-clip"></span><!-- MOTION newline-framer -->
 
 <!-- END MOTION -->
@@ -76,7 +76,7 @@ client = TestClient(app)</code></pre></figure>
 <span class="lesson-anchor" id="preflight"></span><span class="lesson-anchor" id="reading-preflight"></span>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-ndjson-commit"><h3>delta 이후 이력을 저장하고 done 전송하기</h3><video controls muted playsinline preload="metadata" src="workflow-ndjson-commit.mp4" aria-label="delta 이후 이력을 저장하고 done 전송하기" aria-describedby="workflow-ndjson-commit-caption"></video><figcaption id="workflow-ndjson-commit-caption">클라이언트가 본 답변 조각, 서버에 생긴 대화 한 건, 완료 신호의 순서를 확인하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>소유자 확인</strong> · X-Course-Token = course-alice</li><li><strong>start 전송</strong> · request_id = demo-1</li><li><strong>delta 전송</strong> · text = 과제함에 제출하세요.</li><li><strong>history 추가</strong> · len(history[&quot;chat-a&quot;]) = 1</li><li><strong>done 전송</strong> · 수신한 이벤트 = start · delta · done</li></ol></figure>
+<p id="workflow-ndjson-commit">클라이언트가 본 답변 조각, 서버에 생긴 대화 한 건, 완료 신호의 순서를 확인하세요.</p>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 줄 단위 JSON과 완료 이벤트</h3>
 <div class="cell-before"><p>질문 한 건을 보내고 이벤트 종류를 받은 순서대로 확인하세요.</p>
 </div>
@@ -90,6 +90,19 @@ print(len(history[<span class="tok-string">"chat-a"</span>]))</code></pre></figu
 1</pre></div>
 <div class="cell-after"><p id="example-analysis">끝까지 수신한 첫 요청에서 history에 한 건이 생깁니다. 같은 셀을 다시 실행하면 이전 기록에 새 턴이 추가됩니다. 반면 다음 과제의 partial은 이미 받은 목록을 잘라낸 값이라서 서버 이력은 그대로입니다.</p></div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>delta 이후 이력을 저장하고 done 전송하기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nowner["소유자 확인"]
+  nstart["start 전송"]
+  ndelta["delta 전송"]
+  nsave["history 추가"]
+  ndone["done 전송"]
+  nowner --> nstart
+  nstart --> ndelta
+  ndelta --> nsave
+  nsave --> ndone</script><figcaption>클라이언트가 본 답변 조각, 서버에 생긴 대화 한 건, 완료 신호의 순서를 확인하세요.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>답변 일부가 도착한 시점</h3><p><mark>delta는 답변의 일부이고 done을 읽어야 마지막 이벤트까지 받은 것입니다.</mark> 연결이 중간에 끊겨도 화면에는 글자가 남을 수 있습니다. 받은 줄의 종류를 순서대로 확인하면 보이는 문장과 완료 여부를 따로 표시할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter68/index.html">68장 FastAPI 요청 모델과 POST 엔드포인트</a></p></aside>
+
 <span class="lesson-anchor" id="ask"></span><span class="lesson-anchor" id="reading-ask"></span>
 <span class="lesson-anchor" id="events"></span><div class="lesson-explanation" id="reading-events"><h3>NDJSON 한 줄과 이벤트 하나</h3><p>line은 JSON 객체 하나에 줄바꿈을 붙입니다. 응답을 받는 쪽은 iter_lines로 한 줄씩 읽고 json.loads로 복원합니다. 이번 delta는 이미 정해진 답변 전체 한 조각이며 모델 토큰이 아닙니다.</p></div>
 <span class="lesson-anchor" id="failure"></span><span class="lesson-anchor" id="reading-failure"></span>
@@ -151,7 +164,42 @@ print(denied.status_code, len(history["chat-a"]) - before)</code></pre></figure>
 <span class="lesson-anchor" id="workflow-stream-owner-denied"></span><span class="lesson-anchor" id="workflow-stream-owner-denied-caption"></span>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>잘려 도착한 NDJSON 응답에서 답변 복원하기</h2></div></header>
+<p>서버가 start, delta, done을 차례로 보냈더라도 수신할 때 바이트가 잘리는 위치는 다를 수 있습니다. 이 실습은 httpx의 줄 단위 읽기를 통해 화면에 보여 줄 문자열과 저장할 시점을 정합니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 한 글자의 UTF-8 바이트 중간에서 자르기</h3><div class="cell-before"><p>먼저 셀 01을 실행해 줄바꿈을 붙이는 line 함수를 준비하세요. 서버 응답을 파일처럼 미리 준비합니다. 과의 첫 바이트 뒤에서 잘라 두 조각으로 보내고 iter_lines가 내주는 첫 delta를 읽습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">import httpx
+import json
+
+wire = (line(&quot;start&quot;) + line(&quot;delta&quot;, text=&quot;과제&quot;) +
+        line(&quot;delta&quot;, text=&quot;함&quot;) + line(&quot;done&quot;, answer=&quot;과제함&quot;)).encode(&quot;utf-8&quot;)
+cut = wire.index(&quot;과&quot;.encode(&quot;utf-8&quot;)) + 1
+
+def training_stream():
+    return httpx.Response(200, headers={&quot;Content-Type&quot;: &quot;application/x-ndjson; charset=utf-8&quot;},
+                          content=iter([wire[:cut], wire[cut:]]))
+
+chunks = [json.loads(row) for row in training_stream().iter_lines()]
+print(chunks[1][&quot;type&quot;], chunks[1][&quot;text&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">delta 과제</pre></div><div class="cell-after"><p>delta 과제가 나옵니다. httpx가 두 조각의 바이트를 디코딩하고 줄바꿈까지 모은 뒤 한 레코드를 건넸습니다. 평범한 바이트 조각마다 JSON 파서를 호출하면 첫 조각에서 문자열 중간이 끊깁니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 완료 직전 끊긴 스트림에서 임시 답 보존하기</h3><div class="cell-before"><p>delta의 text를 누적하고 done이 실제로 도착한 경우에만 완료 값을 True로 돌려주는 함수를 작성하세요. 마지막 레코드 직전에 중단한 경우와 끝까지 읽은 경우를 각각 검사하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># render_events(records)는 (화면 문자열, 완료 여부)를 반환합니다.
+# chunks[:-1]과 chunks를 한 번씩 넣어 같은 문자열의 완료 상태를 비교하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def render_events(records):
+    text = &quot;&quot;
+    finished = False
+    for event in records:
+        if event[&quot;type&quot;] == &quot;delta&quot;:
+            text += event[&quot;text&quot;]
+        elif event[&quot;type&quot;] == &quot;done&quot;:
+            finished = True
+    return text, finished
+
+print(render_events(chunks[:-1]))
+print(render_events(chunks))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;과제함&#x27;, False)
+(&#x27;과제함&#x27;, True)</pre></div><p>두 줄에 모두 과제함이 보이지만 첫 줄은 False입니다. 화면에 단어가 완성돼 보여도 서버의 완료 이벤트를 받았는지는 따로 기록해야 합니다. 이 입력은 네트워크 지연을 측정하는 용도가 아닙니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>답변 글자의 개수로 스트림의 종료를 결정할 수 없습니다.</mark> 이 예제에서는 마지막 델타와 함께 모든 글자가 이미 도착합니다. 그다음 done을 놓치면 읽을 수 있는 문자열이 남아도 완료 표시는 보류합니다.</p></aside><p>기존 TestClient 경로의 iter_lines 결과도 같은 함수에 넘겨, 고정된 바이트 입력과 실제 앱 경로의 처리를 이어 보세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -159,7 +207,7 @@ print(denied.status_code, len(history["chat-a"]) - before)</code></pre></figure>
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

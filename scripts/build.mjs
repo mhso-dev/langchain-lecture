@@ -12,7 +12,12 @@ if (chapters.length !== 116 || chapters.some((name, i) => name !== chapterName(i
 }
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
-cpSync(source, output, { recursive: true, filter: path => basename(path) !== '.DS_Store' });
+// Keep retired teaching media in the source archive and exclude it from the student site.
+const retiredFiles = new Set(['.DS_Store', 'three.min.js', 'pdf-layers.js', 'pdf-layers.css', 'chunk-lab.html']);
+function publishable(path) {
+  return !retiredFiles.has(basename(path)) && !/\.(?:mp4|webm|gif|png|jpe?g|webp)$/i.test(path);
+}
+cpSync(source, output, { recursive: true, filter: publishable });
 
 function courseNav(day) {
   const link = (n, text) => '<a href="../' + chapterName(n) + '/index.html">' + text + '</a>';

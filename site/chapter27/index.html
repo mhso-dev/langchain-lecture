@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 27 / LANGGRAPH</p>
 <span class="sidebar-title">LangGraph 조건부 간선과 재검색</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-decision"><span>02</span>add_conditional_edges()와 라우팅 함수</a><a href="#nb-stop"><span>03</span>질의 재작성과 재검색 횟수 제한</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-decision"><span>02</span>add_conditional_edges()와 라우팅 함수</a><a href="#nb-stop"><span>03</span>질의 재작성과 재검색 횟수 제한</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>검색어가 그대로면 다시 검색하기 전에 끝내기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter27.ipynb" download="chapter27.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>27장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
+<a class="download" href="chapter27.ipynb" download="chapter27.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>27장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">검색어가 그대로면 다시 검색하기 전에 끝내기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-decision" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -121,6 +121,18 @@ print(search(after_search)[<span class="tok-string">'attempts'</span>])</code></
 <div class="cell-after"><p>같은 상태에서 검색을 한 번 더 실행해 횟수가 2가 됐습니다. 이 셀의 함수 정의를 다음 셀에서 사용합니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>문서 유무와 검색 횟수로 다음 노드 고르기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+s["START"] --> q["search"]
+q --> r{"route · 문서가 있는가?"}
+r -->|answer · 있음| a["answer_node"]
+r -->|없음| b{"attempts가 2 미만?"}
+b -->|retry| w["rewrite"] --> q
+b -->|stop| f["fallback"]
+a --> e["END"]
+f --> e</script><figcaption>search가 갱신한 상태를 route가 읽습니다. answer·retry·stop은 조건 함수의 반환값이고, 실제로 등록한 노드 이름은 answer_node·rewrite·fallback입니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>두 번째 검색에서 답을 찾으면</h3><p><mark>검색 횟수가 상한에 닿았어도 문서를 찾았으면 answer 경로로 갑니다.</mark> route는 documents부터 검사합니다. ‘책을 빌리는 기간?’과 ‘주차장은?’은 둘 다 재검색할 수 있지만, 고친 질문에 검색어가 생기는지에 따라 마지막 노드가 갈립니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter26/index.html">26장 LangGraph StateGraph의 상태와 노드</a></p></aside>
+
 <span class="lesson-anchor" id="attempts"></span><div class="lesson-explanation" id="reading-attempts"><h3>상태에 저장하는 시도 횟수</h3><div class="prose"><p>State에 attempts 정수 필드를 추가합니다. 초기 값 0에서 시작해 search가 실제 실행될 때마다 1을 더합니다. 검색 함수 실행 후 route가 읽는 값은 이미 증가한 값입니다. 첫 번째 실패 뒤에는 1이므로 재시도하고, 두 번째 실패 뒤에는 2이므로 종료합니다.</p>
 <p>attempts는 이 예제에서 검색 노드 실행 횟수입니다. 전체 노드 수나 모델 토큰 수가 아닙니다. 답변 노드와 rewrite 실행을 함께 세고 싶다면 별도의 기록을 설계해야 합니다.</p>
 </div></div>
@@ -128,7 +140,7 @@ print(search(after_search)[<span class="tok-string">'attempts'</span>])</code></
 </div></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-rewrite-and-recover"><h3>한 번 고친 질문이 두 번째 검색에서 성공합니다</h3><video controls muted playsinline preload="metadata" src="workflow-rewrite-and-recover.mp4" aria-label="한 번 고친 질문이 두 번째 검색에서 성공합니다" aria-describedby="workflow-rewrite-and-recover-caption"></video><figcaption id="workflow-rewrite-and-recover-caption">route의 retry는 rewrite 노드를 선택합니다. 다음 search가 비어 있지 않은 documents를 돌려주면 answer 경로로 바뀝니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 대출을 빌리는 기간?</li><li><strong>search</strong> · attempts=2 = documents 1건</li><li><strong>answer_node</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
+<p id="workflow-rewrite-and-recover">route의 retry는 rewrite 노드를 선택합니다. 다음 search가 비어 있지 않은 documents를 돌려주면 answer 경로로 바뀝니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · rewrite 노드의 질의 변경</h3>
 <div class="cell-before"><p>질문 한 건의 마지막 상태에서 횟수와 답을 확인하세요.</p>
 </div>
@@ -192,7 +204,48 @@ search 2
 fallback</pre></div><div class="cell-after"><p>첫 번째 빈 검색은 rewrite로 가지만 두 번째 빈 검색은 fallback으로 갑니다. route는 다음 노드를 고르는 조건 함수이므로 실행 노드 이름으로 따로 출력되지 않습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>검색어가 그대로면 다시 검색하기 전에 끝내기</h2></div></header>
+<p>기존 그래프는 검색이 비면 한 번 질의를 바꿉니다. 그런데 주차 질문에는 rewrite가 바꿀 표현이 없어 똑같은 질의를 두 번 검색합니다. 재시도 횟수에 더해 “바뀐 질의가 있는가”를 판단해 봅니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 재조회할 질의가 실제로 달라졌는지 확인하기</h3><div class="cell-before"><p>주차 질문의 첫 검색 직후에 기존 rewrite를 호출합니다. 다음 검색이 받을 문자열을 이전 값과 대조하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">first_search = {**request, **search(request)}
+proposal = rewrite(first_search)[&quot;question&quot;]
+print(repr(first_search[&quot;question&quot;]), repr(proposal), route(first_search))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">&#x27;주차장은?&#x27; &#x27;주차장은?&#x27; retry</pre></div><div class="cell-after"><p>두 문자열은 같지만 기존 route는 retry를 돌려줍니다. attempts가 1이고 자료가 없다는 두 가지 값만 보고 결정했기 때문입니다.</p></div>
+</article>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>질의 변경과 검색 상한으로 재시도 결정하기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ s["search"] --> found{"근거가 있는가?"}
+ found -->|있음| a["answer_node"]
+ found -->|없음| edit{"질의가 바뀌며 상한이 남았는가?"}
+ edit -->|예| r["rewrite"]
+ r --> s
+ edit -->|아니요| f["finish"]
+ a --> done["END"]
+ f --> done</script><figcaption>search 결과를 먼저 살핍니다. 자료가 없을 때에만 다음 질의와 시도 횟수를 확인합니다.</figcaption></figure>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 같은 질의를 반복하지 않는 조건부 간선 만들기</h3><div class="cell-before"><p>찾은 자료가 있으면 answer_node, 바꿀 표현이 있고 검색 상한이 남았으면 rewrite, 나머지는 finish로 보내세요. 종료 문구에는 실제 attempts를 넣습니다. 주차 질문과 “책을 빌리는 기간?”의 시도 횟수를 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># route_once를 정의하고 search 이후에 조건부 간선을 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def route_once(state):
+    if state[&quot;documents&quot;]:
+        return &quot;answer_node&quot;
+    changed = rewrite(state)[&quot;question&quot;] != state[&quot;question&quot;]
+    return &quot;rewrite&quot; if changed and state[&quot;attempts&quot;] &lt; 2 else &quot;finish&quot;
+
+revised = StateGraph(State)
+revised.add_node(&quot;search&quot;, search)
+revised.add_node(&quot;rewrite&quot;, rewrite)
+revised.add_node(&quot;answer_node&quot;, answer)
+revised.add_node(&quot;finish&quot;, lambda s: {&quot;answer&quot;: f&quot;{s[&#x27;attempts&#x27;]}회 검색 후 종료&quot;})
+revised.add_edge(START, &quot;search&quot;)
+revised.add_conditional_edges(&quot;search&quot;, route_once,
+                             {n: n for n in (&quot;answer_node&quot;, &quot;rewrite&quot;, &quot;finish&quot;)})
+revised.add_edge(&quot;rewrite&quot;, &quot;search&quot;)
+revised.add_edge(&quot;finish&quot;, END)
+revised.add_edge(&quot;answer_node&quot;, END)
+smart_search = revised.compile()
+print(smart_search.invoke(request)[&quot;answer&quot;])
+print(smart_search.invoke({**request, &quot;question&quot;: &quot;책을 빌리는 기간?&quot;})[&quot;attempts&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1회 검색 후 종료
+2</pre></div><p>주차는 1회에서 끝납니다. 책은 대출로 바꿀 수 있어서 두 번째 검색에서 문서를 얻습니다. 마지막 시도에서 자료를 찾았을 때도 답하려면 종료 횟수보다 자료 유무를 먼저 확인해야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>다음 검색의 입력이 달라질 때에만 재시도가 새 근거를 찾을 기회를 얻습니다.</mark> 이 예제의 검색 함수는 같은 입력과 같은 문서에서 항상 같은 목록을 반환합니다.</p></aside><p>나중에 모델이 재검색을 선택할 때도 어떤 입력이 달라졌는지 함께 기록하세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

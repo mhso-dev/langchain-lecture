@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY / 083</p>
 <span class="sidebar-title">멱등적인 완료 상태 갱신</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reproduce"><span>02</span>토글 방식과 중복 요청 재현</a><a href="#nb-fix"><span>03</span>목표 상태 대입과 회귀 검사</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reproduce"><span>02</span>토글 방식과 중복 요청 재현</a><a href="#nb-fix"><span>03</span>목표 상태 대입과 회귀 검사</a><a href="#workshop"><span>04</span>삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,14 +25,14 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter83.ipynb" download="chapter83.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>83장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter83.ipynb" download="chapter83.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>83장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-reproduce" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>토글 방식과 중복 요청 재현</h2>
 </div>
 </header>
-<p class="concept-intro">멱등성은 같은 요청을 여러 번 적용해도 최종 상태가 같다는 성질입니다. 완료 여부를 뒤집는 함수와 원하는 값을 지정하는 함수를 비교합니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="switches"><h3>같은 완료 요청의 반복과 멱등성</h3><p>같은 목표 상태를 반복 전송했을 때 두 구현의 최종 completed 값을 비교합니다.</p><label>요청 횟수 <input type="range" min="0" max="4" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">완료 요청을 두 번 보냈을 때 토글 구현의 최종값은 False, 목표값을 대입한 구현은 True입니다.</output></section><!-- MOTION toggle-rocker -->
+<p class="concept-intro">같은 완료 요청을 다시 보냈더니 체크가 풀렸습니다. 재전송 뒤에도 결과가 같아야 하는 조건을 멱등성이라고 합니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="switches"><h3>같은 완료 요청의 반복과 멱등성</h3><p>같은 목표 상태를 반복 전송했을 때 두 구현의 최종 completed 값을 비교합니다.</p><label>요청 횟수 <input type="range" min="0" max="4" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">완료 요청을 두 번 보냈을 때 토글 구현의 최종값은 False, 목표값을 대입한 구현은 True입니다.</output></section><!-- MOTION toggle-rocker -->
 
 <!-- END MOTION -->
 
@@ -55,6 +55,16 @@ print(faulty_update(item, <span class="tok-keyword">True</span>))</code></pre></
 False</pre></div>
 <div class="cell-after"><p id="example-analysis">같은 행에 True를 두 번 전달했는데 두 번째 호출 뒤에 False가 남습니다. 첫 번째 응답을 받지 못해 같은 요청을 다시 보낸 상황에서도 이 문제가 생길 수 있습니다.</p></div><div class="example-table"><table><caption>동일한 완료 요청을 두 번 보낸 결과</caption><thead><tr><th scope="col">수정 방식</th><th scope="col">초기 상태</th><th scope="col">첫 요청</th><th scope="col">재전송</th></tr></thead><tbody><tr><td>현재 값 반전</td><td>False</td><td>True</td><td>False</td></tr><tr><td>목표값 대입</td><td>False</td><td>True</td><td>True</td></tr></tbody></table></div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>같은 완료 요청이 두 번째에 미완료를 만드는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninput["완료 요청"]
+  nflip["상태 반전"]
+  nyes["완료"]
+  nno["미완료"]
+  ninput --> nflip
+  nflip --> nyes
+  nyes --> ninput
+  nflip --> nno</script><figcaption>faulty_update는 전달받은 목표 값 대신 현재 값을 뒤집습니다. 요청이 두 번 들어왔을 때의 실제 출력을 읽어 보세요.</figcaption></figure>
+
 <span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>호출 횟수에 따라 바뀌는 토글</h3><p>faulty_update는 전달된 completed 인자를 사용하지 않습니다. 현재 값에 not을 적용하므로 이미 완료된 행도 같은 요청을 한 번 더 받으면 미완료가 됩니다.</p></div>
 <span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
 <span class="lesson-anchor" id="section-05"></span><span class="lesson-anchor" id="reading-section-05"></span>
@@ -85,6 +95,8 @@ print(update(item, True), item["completed"])</code></pre></figure>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>같은 완료 요청이 두 번 도착하면</h3><p><mark>토글은 두 번 실행하면 원래대로 돌아가지만 목표값 대입은 같은 상태를 유지합니다.</mark> 처음부터 두 번 연속 요청을 보내고 두 번째 응답까지 보세요. 한 번만 시험하면 두 구현 모두 완료로 보여 차이를 놓칩니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter81/index.html">81장 FastAPI로 구현하는 할 일 CRUD</a></p></aside>
+
 <span class="lesson-anchor" id="section-07"></span><div class="lesson-explanation" id="reading-section-07"><h3>목표 상태의 직접 대입</h3><p>수정한 함수는 호출자가 원하는 값을 item[&quot;completed&quot;]에 대입해야 합니다. 같은 True를 여러 번 대입해도 저장값은 True로 유지되고, False를 전달한 경우에만 완료가 해제됩니다.</p></div>
 
 
@@ -117,7 +129,38 @@ last = update(row, <span class="tok-keyword">False</span>)
 <span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</h2></div></header>
+<p>앞에서는 같은 완료 요청을 반복했을 때 값이 뒤집히는 오류를 고쳤습니다. 이번 오류는 응답이 성공인데도 다른 항목이 완료됩니다. 재현 입력을 먼저 만들고 Codex가 제안한 수정이 이웃 항목까지 보존하는지 검사합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · ID를 리스트 위치로 사용한 수정 코드 실행하기</h3><div class="cell-before"><p>삭제가 있었던 목록에는 ID 2와 7만 남았습니다. ID 2를 완료하려고 다음 함수를 호출한 뒤 두 행의 상태를 출력하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">def after_deletion():
+    return [{&quot;id&quot;: 2, &quot;completed&quot;: False}, {&quot;id&quot;: 7, &quot;completed&quot;: False}]
+
+def update_at_position(rows, todo_id, value):
+    rows[todo_id - 1][&quot;completed&quot;] = value
+
+repro = after_deletion()
+update_at_position(repro, 2, True)
+print([(entry[&quot;id&quot;], entry[&quot;completed&quot;]) for entry in repro])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(2, False), (7, True)]</pre></div><div class="cell-after"><p>출력은 2번 False, 7번 True입니다. 2에서 1을 빼면 리스트 위치 1이 되고, 삭제가 있었던 이 목록에서 그 위치는 ID 7입니다. 예외가 발생하지 않는 잘못된 수정입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · ID가 일치하는 행만 바꾸는 회귀 검사 작성하기</h3><div class="cell-before"><p>수정 대상이 있으면 True, 없으면 False를 반환하게 고치세요. ID 2에 두 차례 같은 완료 요청을 보낸 뒤 없는 9번도 시도합니다. 마지막에는 7번이 여전히 미완료인지 assert로 검사하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># change_by_id(rows, todo_id, value)와 회귀 검사를 작성하세요.
+# after_deletion()으로 매번 새 재현 목록을 만드세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def change_by_id(rows, todo_id, value):
+    for row in rows:
+        if row[&quot;id&quot;] == todo_id:
+            row[&quot;completed&quot;] = value
+            return True
+    return False
+
+checked_rows = after_deletion()
+assert change_by_id(checked_rows, 2, True)
+assert change_by_id(checked_rows, 2, True)
+assert not change_by_id(checked_rows, 9, True)
+assert checked_rows == [{&quot;id&quot;: 2, &quot;completed&quot;: True}, {&quot;id&quot;: 7, &quot;completed&quot;: False}]
+print(checked_rows)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[{&#x27;id&#x27;: 2, &#x27;completed&#x27;: True}, {&#x27;id&#x27;: 7, &#x27;completed&#x27;: False}]</pre></div><p>이번에는 2번만 True입니다. 두 번째 요청과 없는 번호에 대한 검사도 통과한 뒤 목록이 출력됐습니다. 수정 전후의 재현 입력을 그대로 유지해야 다른 조건을 우연히 통과한 경우를 가릴 수 있습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>수정 성공 응답과 실제로 바뀐 행의 ID를 대조하세요.</mark> 연속 ID 1, 2만 넣은 테스트는 ID와 위치가 어긋나는 결함을 드러내지 못합니다. 삭제 이후의 목록을 Codex에 재현 입력으로 전달하세요.</p></aside><p>다음 요구 변경에서도 기존 행과 건드리지 않아야 할 이웃 행을 검증 목록에 남깁니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>

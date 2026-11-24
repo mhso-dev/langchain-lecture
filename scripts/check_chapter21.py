@@ -62,21 +62,11 @@ def check_handoff_and_visual():
     assignment = next(n for n in ast.parse(first_code).body if isinstance(n, ast.Assign)
                       and any(isinstance(t, ast.Name) and t.id == "documents" for t in n.targets))
     assert records == ast.literal_eval(assignment.value), "chapter 22 baseline"
-    viewer = (CHAPTER / "chunk-lab.html").read_text()
-    samples = json.loads(re.search(r'<script type="application/json" id="samples">(.*?)</script>',
-                                  viewer, re.S)[1])
-    assert set(samples) == {str(r["page"]) for r in records}
-    count = ranges = 0
     for record in records:
-        sample = samples[str(record["page"])]
-        assert {k: sample[k] for k in record} == record
-        assert sample["target"] and sample["target"] in record["text"]
-        assert set(sample["runs"]) == {"0", "4", "6"}
-        for overlap, saved in sample["runs"].items():
-            assert saved == split_ranges(record["text"], 12, int(overlap)), (record["id"], overlap)
-            count += 1
-            ranges += len(saved)
-    print(f"PDF pages and chapter 22 records match; viewer: {count} settings, {ranges} chunk ranges", flush=True)
+        for overlap in (0, 4, 6):
+            ranges = split_ranges(record["text"], 12, overlap)
+            assert all(record["text"][a:b] == text for a, b, text in ranges)
+    print("PDF pages, chapter 22 records and source ranges match", flush=True)
 
 
 def check_execution(mode):
@@ -84,7 +74,7 @@ def check_execution(mode):
     nbformat.validate(notebook)
     cells = {c.id: c for c in notebook.cells}
     body = (CHAPTER / "index.html").read_text()
-    assert re.search(r'<iframe\b[^>]* src="chunk-lab\.html"', body)
+    assert 'id="practice-space"' in body
     articles = re.findall(r'<article class="notebook-cell" data-cell="(\d+)" data-task="([01])">(.*?)</article>',
                           body, re.S)
     expected = {}

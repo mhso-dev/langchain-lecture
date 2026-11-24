@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 98 / FINAL PROJECT</p>
 <span class="sidebar-title">정규표현식 치환과 경계 조건</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-hypothesis"><span>02</span>re.sub()로 장비명 공백 정규화</a><a href="#nb-guard"><span>03</span>접두어 오인식을 막는 반례</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-hypothesis"><span>02</span>re.sub()로 장비명 공백 정규화</a><a href="#nb-guard"><span>03</span>접두어 오인식을 막는 반례</a><a href="#workshop"><span>04</span>입력 정규화 한 줄이 바꾼 문자 범위 남기기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter98.ipynb" download="chapter98.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>98장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter98.ipynb" download="chapter98.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>98장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">입력 정규화 한 줄이 바꾼 문자 범위 남기기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-hypothesis" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -87,8 +87,27 @@ print(normalize_question(ambiguous))</code></pre></figure>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>장비A의 공백을 고칠 때</h3><p><mark>더 긴 이름인 장비AB에서 같은 치환이 일어나면 다른 장비명을 바꾸게 됩니다.</mark> 수정할 입력과 보존할 입력을 쌍으로 놓으세요. 성공 예시만 늘리는 것보다 어디에서 장비명이 끝나는지 드러내는 반례 하나가 규칙의 범위를 잘 보여 줍니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter94/index.html">94장 텍스트 정규화와 원문 해시</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>입력 정규화 한 줄이 바꾼 문자 범위 남기기</h2></div></header>
+<p>“장비A”를 찾도록 고친 뒤 “장비AB”까지 바뀌면 다른 장비 이름을 만들어 버립니다. 합격 문항 수 이외에 원문에서 어떤 부분이 바뀌었는지 동료가 추적할 기록을 만듭니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 교정 전후에서 바뀐 구간만 추출하기</h3><div class="cell-before"><p>모델이나 검색기를 다시 구성하지 않고 앞 셀의 normalize_question만 사용합니다. 띄어쓰기 한 칸이 실제 어느 위치에 추가됐는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from difflib import SequenceMatcher
+
+before = &quot;장비A의 점검 전 확인 사항은?&quot;
+after = normalize_question(before)
+edits = [(tag, left, before[left:right], after[start:end])
+         for tag, left, right, start, end in SequenceMatcher(None, before, after).get_opcodes()
+         if tag != &quot;equal&quot;]
+print(edits)
+print(&quot;장비AB 보존&quot;, normalize_question(ambiguous) == ambiguous)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;insert&#x27;, 2, &#x27;&#x27;, &#x27; &#x27;)]
+장비AB 보존 True</pre></div><div class="cell-after"><p>insert는 문자 위치 2에 공백 한 칸을 더했음을 뜻합니다. 장비AB는 그대로여야 합니다. 이 결과는 A·B 표기 규칙의 문자 변화만 보여 줍니다. 검색이 맞았는지는 별도로 기대 근거와 대조합니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 용어 경계에서 반례 고르기</h3><p>팀 자료에 모델명 X와 X1이 있다면 두 이름을 따로 찾는 짝을 만드세요. 정규화 전후 문자열과 기대 문서 ID를 한 행에 써서, 이름을 표준화했지만 서로 다른 문서가 합쳐진 경우를 드러냅니다.</p></section>
+<aside class="lesson-note"><p><mark>정규화 실험에는 바꿀 표기와 보존할 표기를 한 쌍으로 둡니다.</mark> 공백을 넣는 동작 하나가 어떠한 이름까지 바꾸는지는 문자 경계 조건으로 확인할 수 있습니다.</p></aside><p>후보판에는 원문 질문과 정규화한 질문을 구분해 기록하고, 111장에서 같은 반례를 재실행합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

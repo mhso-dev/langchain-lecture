@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 54 / SQL</p>
 <span class="sidebar-title">SQL 매개변수 바인딩과 트랜잭션</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-bound-values"><span>02</span>WHERE에 문서 ID와 소유자 조건 결합</a><a href="#nb-tx"><span>03</span>UPDATE와 rollback()</a><a href="#nb-psycopg"><span>04</span>선택 실습 · PostgreSQL 값 바인딩</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-bound-values"><span>02</span>WHERE에 문서 ID와 소유자 조건 결합</a><a href="#nb-tx"><span>03</span>UPDATE와 rollback()</a><a href="#nb-psycopg"><span>04</span>선택 실습 · PostgreSQL 값 바인딩</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>수정 내용을 저장할지 되돌릴지 정하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter54.ipynb" download="chapter54.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>54장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter54.ipynb" download="chapter54.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>54장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">수정 내용을 저장할지 되돌릴지 정하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-bound-values" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -73,7 +73,20 @@ print(get_title(<span class="tok-string">'alice'</span>, doc_id))</code></pre></
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="assignment"></span><div class="lesson-explanation" id="reading-assignment"><h3>문서 ID와 소유자 두 조건의 효과</h3><p>같은 doc_id로 alice와 bob의 조회를 비교해 보세요. ID가 일치해도 owner 조건이 맞지 않으면 행을 얻지 못하고 get_title은 None을 반환합니다.</p></div>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>같은 문서 ID로 소유자만 바꾼 두 조회</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nsame["같은 문서 ID"]
+  nalice["alice 조회"]
+  ntitle["제목 반환"]
+  nbob["bob 조회"]
+  nnone["행 없음"]
+  nsame --> nalice
+  nalice --> ntitle
+  nsame --> nbob
+  nbob --> nnone</script><figcaption>get_title에 같은 doc_id를 넣고 전달하는 사용자만 바꿔 두 번째 조건이 결과에 미치는 영향을 따라갑니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>수정할 행을 찾는 조건</h3><p><mark>문서 ID와 소유자 조건이 같은 행에서 모두 맞아야 합니다.</mark> 다른 소유자의 ID를 넣고 수정 전후의 값을 대조하세요. SQL이 오류 없이 끝났어도 조건에 맞는 행이 없으면 원하는 수정은 일어나지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter53/index.html">53장 SQL SELECT·JOIN·GROUP BY</a></p></aside>
+
+<span class="lesson-anchor" id="assignment"></span><div class="lesson-explanation" id="reading-assignment"><h3>문서 ID와 소유자 두 조건의 효과</h3><p>53장의 사용자 필터에 문서 ID를 더했습니다. 같은 doc_id로 조회해도 bob에게는 None이 돌아옵니다.</p></div>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 
 </section>
@@ -183,7 +196,33 @@ db.rollback()</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">0 초안</pre></div><div class="cell-after"><p>SQL 문장은 정상 실행됐지만 두 조건을 만족한 행이 없습니다. 성공 응답을 만들기 전에 반영된 행 수를 확인하면 엉뚱한 사용자에게 수정 완료를 알리는 일을 막을 수 있습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>수정 내용을 저장할지 되돌릴지 정하기</h2></div></header>
+<p>학습자가 자기 문서의 제목을 수정합니다. 페이지가 열려 있던 사이 다른 사람이 같은 계정에서 제목을 먼저 바꿨다면 새 제목을 덮어쓰지 않도록 해 봅니다. 로컬 연습 DB에서 작은 트랜잭션을 실행합니다.</p>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-1">셀 09 · 수정하기 전에 알고 있던 제목 확인하기</h3><div class="cell-before"><p>전용 문서 edit-54의 현재 제목을 검토 중으로 준비합니다. 화면은 이전 제목인 초안을 기억합니다. 이 값으로 변경하면 몇 행이 바뀔까요?</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">edit_id = &quot;edit-54&quot;
+db.execute(&quot;DELETE FROM course_documents WHERE id = ?&quot;, (edit_id,))
+db.execute(&quot;INSERT INTO course_documents VALUES (?, ?, ?, ?)&quot;,
+           (edit_id, &quot;alice&quot;, &quot;검토 중&quot;, &quot;편집 연습&quot;))
+db.commit()
+rename_sql = &quot;&quot;&quot;
+UPDATE course_documents SET title = ?
+WHERE id = ? AND owner = ? AND title = ?
+&quot;&quot;&quot;
+attempt = db.execute(rename_sql, (&quot;확정본&quot;, edit_id, &quot;alice&quot;, &quot;초안&quot;))
+print(attempt.rowcount, get_title(&quot;alice&quot;, edit_id))
+db.rollback()</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">0 검토 중</pre></div><div class="cell-after"><p>0 검토 중이 나옵니다. id와 owner는 맞았지만 현재 행의 title이 초안과 달랐습니다. 쿼리 실행 자체는 성공했으므로 화면은 rowcount로 수정 성공 여부를 확인해야 합니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 일치하는 제목만 고치고 커밋하기</h3><div class="cell-before"><p>최신 제목을 확인한 alice가 다시 시도합니다. rename_sql에 검토 중을 이전 제목으로 넘기고, 한 행이 바뀌면 커밋하세요. 다른 결과면 되돌리세요. 끝에 실제 저장된 제목을 읽으세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10"># rename_sql에 새 제목, ID, 소유자, 읽었던 제목 순서로 바인딩하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">changed = db.execute(rename_sql, (&quot;확정본&quot;, edit_id, &quot;alice&quot;, &quot;검토 중&quot;))
+if changed.rowcount == 1:
+    db.commit()
+else:
+    db.rollback()
+print(changed.rowcount, get_title(&quot;alice&quot;, edit_id))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1 확정본</pre></div><p>1 확정본이 출력됩니다. 방금 읽은 제목이 조건과 맞았고 커밋 뒤 조회에서도 새 값이 보입니다. 이 과제를 다시 풀 때는 바로 위 제공 셀부터 실행해 검토 중 상태로 돌리세요.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>UPDATE가 오류 없이 끝나도 바뀐 행은 0개일 수 있습니다.</mark> 이전 제목까지 WHERE에 넣으면 다른 편집 결과 위에 내 변경을 조용히 덮어쓰는 일을 피할 수 있습니다.</p></aside><p>서비스의 수정 함수는 변경 건수로 충돌을 알리고, 화면은 최신 문서를 다시 읽을 수 있습니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

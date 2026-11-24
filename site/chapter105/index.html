@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 105 / FINAL PROJECT</p>
 <span class="sidebar-title">RAG 화면의 오류 상태와 안내 문구</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-messages"><span>02</span>근거 없음 상태의 결과 카드</a><a href="#nb-uncertain"><span>03</span>응답 단절과 저장 실패의 구분</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-messages"><span>02</span>근거 없음 상태의 결과 카드</a><a href="#nb-uncertain"><span>03</span>응답 단절과 저장 실패의 구분</a><a href="#workshop"><span>04</span>사용자가 다시 눌러도 되는지 결정하는 오류 문안</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter105.ipynb" download="chapter105.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>105장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter105.ipynb" download="chapter105.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>105장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">사용자가 다시 눌러도 되는지 결정하는 오류 문안</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-messages" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -52,6 +52,15 @@
 </div>
 <p id="example-analysis">근거가 없을 때는 담당자에게 내용을 확인하도록 안내합니다. 저장에 실패한 경우에는 답이 계산됐을 수도 있으므로 무조건 다시 보내라고 안내하면 중복 처리가 생길 수 있습니다. 같은 오류 색상을 쓰더라도 다음 행동은 실패 단계에 맞춰 달라져야 합니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>Q03을 종료하고 담당자 확인을 안내하는 화면</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nresult["결과 수신"]
+  nstate["상태 확인"]
+  nmessage["안내 문구"]
+  naction["다음 행동"]
+  nresult --> nstate
+  nstate --> nmessage
+  nmessage --> naction</script><figcaption>일정 근거를 찾지 못한 Q03은 완료된 질의입니다. 상태를 읽어 진행 표시를 끝내고 다음 행동을 안내합니다.</figcaption></figure>
+
 </section>
 <section id="nb-uncertain" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>응답 단절과 저장 실패의 구분</h2>
@@ -79,8 +88,16 @@
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>저장 실패를 안내하는 문장</h3><p><mark>근거 없음과 저장 실패에서는 사용자가 할 다음 행동이 다릅니다.</mark> 문서를 찾지 못하면 추가 자료를 확인할 수 있습니다. 이미 계산한 답의 저장이 실패했다면 같은 요청을 다시 보내기 전에 저장 기록부터 확인하게 안내하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter69/index.html">69장 FastAPI StreamingResponse와 줄 단위 JSON</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>사용자가 다시 눌러도 되는지 결정하는 오류 문안</h2></div></header>
+<p>104장에서 어떤 요청의 화면인지 정했습니다. 이제 검색 완료, 저장 실패, 응답 단절의 세 상황에서 사용자가 같은 버튼을 눌러도 되는지 판단할 문구를 작성합니다.</p>
+<section class="project-example"><h3>동일한 질문 뒤에 나타날 수 있는 세 안내</h3><div class="workshop-table" tabindex="0" role="region" aria-label="동일한 질문 뒤에 나타날 수 있는 세 안내"><table><caption>동일한 질문 뒤에 나타날 수 있는 세 안내</caption><thead><tr><th scope="col">관찰할 수 있는 사실</th><th scope="col">카드에 표시할 문장</th><th scope="col">다음 조작</th></tr></thead><tbody><tr><td>상태 no_evidence, 출처 0건</td><td>허용된 규정에서는 교체 일정을 확인할 수 없습니다.</td><td>담당자에게 일정 근거를 문의한다.</td></tr><tr><td>답 있음, storage_status=failed</td><td>계산한 답을 보여 드립니다. 이 답은 대화 기록에 저장되지 않았습니다.</td><td>요청 ID로 저장 상태를 확인한다.</td></tr><tr><td>연결 중단, 저장 결과 미수신</td><td>답변 전달이 중단됐습니다. 요청 처리 여부를 확인해 주세요.</td><td>같은 ID의 기록을 먼저 조회한다.</td></tr></tbody></table></div><p>세 번째 상황에서는 서버가 이미 저장했을 수도 있습니다. 자동으로 같은 요청을 새 ID로 보내면 동일한 작업을 두 번 수행할 수 있습니다.</p></section>
+<section class="project-example"><h3>서로의 문안으로 행동 예측하기</h3><p>동료에게 오류 코드와 내부 기록은 가리고 문구만 읽어 주세요. 동료가 “다시 검색한다”, “담당자에게 문의한다”, “같은 요청 기록을 확인한다” 중 어느 행동을 골랐는지 적습니다. 기대와 다르면 내부 오류 이름을 추가하기 전에 다음 행동 문장을 고칩니다.</p></section>
+<aside class="lesson-note"><p><mark>전송이 끊긴 시점에는 저장 성공과 실패 어느 쪽도 단정할 수 없습니다.</mark> 서버가 저장을 마친 직후 연결이 끊겨도 화면에는 응답이 도착하지 않습니다. 접속 오류와 검색 결과 없음은 사용자에게 다른 안내가 필요합니다.</p></aside><p>106장에서는 화면이 받은 요청 ID로 처리·저장·재조회 기록을 실제로 연결합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

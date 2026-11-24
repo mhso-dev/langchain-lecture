@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 14 / ROUTING</p>
 <span class="sidebar-title">분류 함수와 조건부 라우팅</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-classify"><span>02</span>분류 레이블과 복합 의도</a><a href="#nb-route"><span>03</span>route_request()의 분기와 실패 처리</a><a href="#nb-policy"><span>04</span>clarify 경로와 추가 질문</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-classify"><span>02</span>분류 레이블과 복합 의도</a><a href="#nb-route"><span>03</span>route_request()의 분기와 실패 처리</a><a href="#nb-policy"><span>04</span>clarify 경로와 추가 질문</a><a href="#workshop"><span>05</span>복합 문의를 되묻고 선택한 경로로 이어 보내기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter14.ipynb" download="chapter14.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>14장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter14.ipynb" download="chapter14.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>14장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">복합 문의를 되묻고 선택한 경로로 이어 보내기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-classify" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -72,6 +72,20 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 </div>
 </details>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>분류기의 시간 초과는 어느 경로로 돌아올까요?</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nin["질문"]
+  nclassify["분류 호출"]
+  nwrite["작성"]
+  nexcept["예외 처리"]
+  nreturn["결과"]
+  nin --> nclassify
+  nclassify --> nwrite
+  nclassify --> nexcept
+  nexcept --> nreturn
+  nwrite --> nreturn</script><figcaption>timed_out을 분류 함수로 넣으면 결제 단서가 있는 질문도 작성 함수까지 도달하지 못합니다. 여기서 clarify의 원인은 classification_error입니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>두 의도가 함께 들어온 요청</h3><p><mark>분류 레이블 하나가 곧 실행할 작업을 결정합니다.</mark> 결제와 다른 문의가 섞였을 때 먼저 걸린 조건만 따라가면 나머지 의도를 잃을 수 있습니다. clarify가 반환된 경우에는 분류 근거를 확인하고 무엇을 되물을지 정하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter13/index.html">13장 순차 워크플로의 입력·출력 연결</a></p></aside>
+
 <span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>입력 유형별 라우팅 테스트</h3><div class="table-scroll" tabindex="0"><table><caption>기본 모의 결과</caption><thead><tr><th scope="col">질문</th><th scope="col">경로</th><th scope="col">작성 횟수</th></tr>
 </thead><tbody><tr><td>영수증이 필요합니다</td><td>billing</td><td>1</td></tr>
 <tr><td>인증 오류입니다</td><td>technical</td><td>1</td></tr>
@@ -96,7 +110,7 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 <section class="practice-space" id="practice-space" data-text-results data-practice="classify"><h3>문의 유형과 호출 횟수</h3><p>영수증과 오류의 포함 여부로 분류 경로를 선택합니다. 추가 확인이 필요한 입력에서는 안내 작성 함수를 호출하지 않습니다.</p><label>문의 내용 <select><option value="영수증이 필요합니다">영수증이 필요합니다</option><option value="인증 오류입니다">인증 오류입니다</option><option value="영수증 오류입니다">영수증 오류입니다</option><option value="도와주세요">도와주세요</option></select></label><output aria-live="polite">두 단서 중 하나만 있을 때는 해당 경로에서 1회 작성합니다. 둘 다 있거나 모두 없으면 clarify로 이동하고 작성 횟수는 0입니다.</output></section>
 <!-- /lesson-visual practice-space -->
 
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>순차 실행에서 조건부 실행으로</h3><p>13장에서는 정상적인 문의가 요약·분류·작성 단계를 모두 거쳤습니다. 여기서는 먼저 route를 판정한 뒤 작성 호출을 할지 결정합니다. technical이면 해당 작성 규칙을 사용하고 clarify이면 추가 질문을 곧바로 반환합니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>순차 실행에서 조건부 실행으로</h3><p>13장의 작성 단계 앞에 조건이 생겼습니다. technical이면 작성기를 부르고, clarify면 추가 질문을 돌려줍니다.</p></div>
 <span class="lesson-anchor" id="workflow-classifier-timeout"></span><span class="lesson-anchor" id="workflow-classifier-timeout-caption"></span>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · route_request()로 실행 경로 선택</h3>
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
@@ -176,7 +190,36 @@ print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
 </div></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>복합 문의를 되묻고 선택한 경로로 이어 보내기</h2></div></header>
+<p>“영수증 출력 중 오류가 나요”에는 두 가지 단서가 있습니다. 분류기가 추가 질문을 냈을 때 안내문을 먼저 작성하지 않고, 사용자가 결제와 기술 중 하나를 고른 뒤에만 해당 작성 함수를 부릅니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 겹치는 두 단서를 한 요청으로 보내기</h3><div class="cell-before"><p>기존 route_request에 복합 문의를 보냅니다. 사용자에게 보낼 질문과 실제 작성 호출 횟수를 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">mixed_question = &quot;영수증 출력 중 오류가 나요.&quot;
+waiting = route_request(mock_classify, mock_write, mixed_question)
+print(waiting[&quot;reason&quot;], waiting[&quot;writes&quot;])
+print(waiting[&quot;answer&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">needs_clarification 0
+결제 문의인지 기술 문제인지 구체적으로 알려 주세요.</pre></div><div class="cell-after"><p>needs_clarification과 0이 나옵니다. 복합 문의가 어느 쪽인지 아직 정하지 않았으므로 결제 안내와 기술 안내 모두 작성하지 않은 상태입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 사용자 선택으로 원래 문의 이어가기</h3><div class="cell-before"><p>사용자가 “기술 문제”를 눌렀다고 가정하세요. 이 선택을 technical로 해석한 뒤 기존 route_request에 원래 문의를 다시 넘기세요. 작성 함수는 받은 지시문과 문의를 기록해야 합니다. 실제로 선택한 경로와 작성 함수가 받은 문의를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">selection = &quot;기술 문제&quot;
+choice_codes = {&quot;결제 문의&quot;: &quot;billing&quot;, &quot;기술 문제&quot;: &quot;technical&quot;}
+# 분류 함수는 selection에 해당하는 경로를 돌려주고 작성 함수는 받은 문의를 기록하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">selection = &quot;기술 문제&quot;
+choice_codes = {&quot;결제 문의&quot;: &quot;billing&quot;, &quot;기술 문제&quot;: &quot;technical&quot;}
+write_inputs = []
+def use_selection(question):
+    return choice_codes.get(selection, &quot;clarify&quot;)
+
+def record_write(instruction, question):
+    write_inputs.append((instruction, question))
+    return mock_write(instruction, question)
+
+resumed = route_request(use_selection, record_write, mixed_question)
+print(resumed[&quot;route&quot;], len(write_inputs))
+print(write_inputs[0][1])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">technical 1
+영수증 출력 중 오류가 나요.</pre></div><p>technical에서 안내를 한 번 작성했고 작성 함수에는 처음의 복합 문의가 그대로 넘어갔습니다. 선택 문구만 작성자에게 넘기면 영수증 출력 중이었다는 상황이 빠집니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>경로를 고르는 답과 실제로 처리할 문의 원문을 따로 보관하세요.</mark> “기술 문제”는 담당 경로를 가리킵니다. 어떤 오류가 났는지 설명하는 입력은 첫 번째 문의에 남아 있습니다.</p></aside><p>도구 실행 단계에서도 실행할 도구의 이름과 그 도구에 전달할 인자를 따로 확인합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -184,7 +227,7 @@ print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

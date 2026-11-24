@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 18 / REVIEW</p>
 <span class="sidebar-title">도구 요청의 인자 검증과 실행 차단</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inspect"><span>02</span>JSON 객체와 빈 호출 ID 구분</a><a href="#nb-repair"><span>03</span>validate_request()의 필드별 검사</a><a href="#nb-explain"><span>04</span>허용 도구와 거부 원인 기록</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inspect"><span>02</span>JSON 객체와 빈 호출 ID 구분</a><a href="#nb-repair"><span>03</span>validate_request()의 필드별 검사</a><a href="#nb-explain"><span>04</span>허용 도구와 거부 원인 기록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>검사에서 막힌 요청과 자료가 없는 조회 구별하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter18.ipynb" download="chapter18.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>18장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter18.ipynb" download="chapter18.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>18장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">검사에서 막힌 요청과 자료가 없는 조회 구별하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-inspect" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -54,6 +54,19 @@ print(json.loads(item[<span class="tok-string">"arguments"</span>]) == {})</code
 </div>
 <p id="example-analysis">도구에 건넬 인자가 하나도 없더라도 '{}'는 읽을 수 있는 JSON 객체입니다. 반면 call_id가 비어 있으면 실행 뒤 결과를 되돌려 줄 대상을 특정할 수 없습니다. 두 값 모두 화면에서는 ‘빈 값’처럼 보여도 검사하는 지점이 다릅니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>알 수 없는 도구 이름은 인자를 읽기 전에 멈춥니다</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninput["요청 받기"]
+  nname["허용 이름"]
+  nid["ID 검사"]
+  nargs["인자 검사"]
+  nreject["이름 거부"]
+  ninput --> nname
+  nname --> nid
+  nid --> nargs
+  nname --> nreject</script><figcaption>name만 other_lookup으로 바꾼 bad의 call_id는 c1으로 유지됩니다. 실패를 기록할 때 어떤 요청에서 이름 검사가 막혔는지 함께 남길 수 있습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>실행을 막아야 하는 위치</h3><p><mark>도구 함수를 부르기 전에 이름과 인자, 호출 ID를 검사합니다.</mark> 빈 호출 ID로 결과를 만들어 버리면 나중에 어느 요청에 붙일지 결정할 수 없습니다. 잘못된 요청 하나를 넣고 함수가 실제로 실행되는 지점까지 도달했는지 확인하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter15/index.html">15장 Function Calling의 도구 명세와 호출 요청</a></p></aside>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · strip()으로 빈 call_id 검사</h3>
 <div class="cell-before"><p>ID에 공백 세 칸만 들어온 경우를 따로 확인합니다.</p>
 </div>
@@ -181,6 +194,36 @@ def dispatch(request, lookup):
 print(dispatch(request, lookup), lookup.call_count)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">거부 0</pre></div><div class="cell-after"><p>[]는 파싱 가능한 JSON이지만 이 도구가 허용하는 빈 객체와 다릅니다. 모의 함수의 호출 횟수 0이 검사 이후 실제로 실행을 건너뛰었다는 증거입니다.</p></div></details></article>
 </section>
 
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>검사에서 막힌 요청과 자료가 없는 조회 구별하기</h2></div></header>
+<p>학생이 고쳐야 하는 대상은 실패 위치에 따라 달라집니다. 잘못된 인자는 호출한 쪽에서 고치고, 정상 요청에 자료가 없으면 이용자에게 확인 가능한 안내를 돌려줘야 합니다. 조회 함수가 실제로 몇 번 불렸는지 근거로 남깁니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 빈 결과를 돌려주는 정상 조회 한 번 실행하기</h3><div class="cell-before"><p>권수 조회 함수에 연결한 테스트 대역은 수업용 자료가 없어서 None을 돌려줍니다. 빈 결과와 실제 호출 횟수를 함께 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from unittest.mock import Mock
+empty_lookup = Mock(return_value=None)
+value = empty_lookup()
+print(value, empty_lookup.call_count)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None 1</pre></div><div class="cell-after"><p>None이 나왔지만 함수는 한 번 호출됐습니다. 같은 None이 화면에 보이더라도 실행 전 검사에서 중단된 경우에는 호출 횟수가 0입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 호출 전 검사와 빈 결과에 다른 상태 붙이기</h3><div class="cell-before"><p>lookup_rule(request, lookup)을 작성하세요. 도구 이름은 get_loan_rule, 호출 ID는 공백이 아닌 문자열, 인자는 빈 JSON 객체여야 합니다. 어긋나면 lookup을 부르지 말고 invalid_request를 반환하세요. 정상 요청을 실행해 결과가 None이면 no_record, 값이 있으면 ok를 돌려주세요. 잘못된 요청 한 건과 정상 요청 한 건의 상태와 호출 횟수를 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">def lookup_rule(request, lookup):
+    pass  # 검사에 실패하면 조회 전에 반환하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def lookup_rule(request, lookup):
+    call_id = request.get(&quot;call_id&quot;)
+    if request.get(&quot;name&quot;) != &quot;get_loan_rule&quot; or not isinstance(call_id, str) or not call_id.strip():
+        return &quot;invalid_request&quot;
+    try:
+        args = json.loads(request[&quot;arguments&quot;])
+    except (KeyError, ValueError, TypeError):
+        return &quot;invalid_request&quot;
+    if args != {}:
+        return &quot;invalid_request&quot;
+    return &quot;no_record&quot; if lookup() is None else &quot;ok&quot;
+
+no_rows = Mock(return_value=None)
+bad_args = {**item, &quot;arguments&quot;: &quot;[]&quot;}
+print(lookup_rule(bad_args, no_rows), no_rows.call_count)
+print(lookup_rule(item, no_rows), no_rows.call_count)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">invalid_request 0
+no_record 1</pre></div><p>잘못된 요청은 invalid_request 0이고 정상 조회는 no_record 1입니다. []와 {} 모두 JSON으로 읽히지만 여기서 허용한 인자는 빈 객체뿐입니다. None과 달리 숫자 0이 유효한 조회값이라면 이 함수는 ok로 처리합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>자료 없음과 요청 거부는 조회 함수를 불렀는지까지 확인해야 구별할 수 있습니다.</mark> 예외가 나지 않았다는 사실만 검사하면 0회와 1회의 차이를 놓칩니다. 빈 자료를 반환하는 함수와 그 함수가 몇 번 불렸는지를 별도로 기록하세요.</p></aside><p>문서 검색에서도 실행을 생략한 경우와 실행 후 빈 결과가 나온 경우에 서로 다른 안내가 필요합니다.</p>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

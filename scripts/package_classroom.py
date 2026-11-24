@@ -21,7 +21,15 @@ def offline_indexes():
     if not classroom:
         raise ValueError("일반 수업 개정 내역이 없습니다.")
     opening = re.sub(r"<header>(.*?)</header>", lambda m: "<header>" + m[1].split("<p>")[0] + "</header>", opening, flags=re.S)
-    return {"index.html": home, "updates/index.html": opening + "<main>" + classroom[0] + "</main></body></html>"}
+    guided = re.search(r'<section [^>]*id="guided-edition"[^>]*>.*?</section>', body, re.S)
+    if not guided:
+        raise ValueError("장별 해설 목록이 없습니다.")
+    def include_lesson(match):
+        day = int(match[1])
+        return match[0] if day <= 42 or 53 <= day <= 85 else ""
+    lessons = re.sub(r'<li><a href="\.\./chapter([0-9]+)/[^"]*".*?</li>', include_lesson, guided[0], flags=re.S)
+    lessons = lessons.replace("일반 수업과 프로젝트 참고자료", "일반 수업 75장")
+    return {"index.html": home, "updates/index.html": opening + "<main>" + lessons + classroom[0] + "</main></body></html>"}
 
 
 def collect_files(indexes):

@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 77 / CI·CD</p>
 <span class="sidebar-title">컨테이너 이미지 digest와 롤백 기준</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-candidate"><span>02</span>가변 태그와 콘텐츠 지문</a><a href="#nb-rollback"><span>03</span>기능 검사 실패 시 복구 후보 선택</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-candidate"><span>02</span>가변 태그와 콘텐츠 지문</a><a href="#nb-rollback"><span>03</span>기능 검사 실패 시 복구 후보 선택</a><a href="#workshop"><span>04</span>배포 후보와 복귀 버전에 같은 질문 보내기</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter77.ipynb" download="chapter77.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>77장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter77.ipynb" download="chapter77.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>77장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">배포 후보와 복귀 버전에 같은 질문 보내기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>후보가 바뀌었는지 확인하는 두 값</h3><p>검토할 때 승인한 바이트열과 적용 직전의 후보 바이트열을 따로 보관합니다. 화면의 이름이 같아 보여도 계산한 지문이 다르면 서로 다른 내용입니다.</p></div>
@@ -36,7 +36,7 @@
 <h2>가변 태그와 콘텐츠 지문</h2>
 </div>
 </header>
-<p class="concept-intro">태그는 다른 이미지를 가리키도록 옮길 수 있습니다. 배포 후보를 구별하려면 이미지 내용에 대응하는 digest와 기능 검사 결과를 함께 봅니다.</p><p>CI는 검사한 소스와 이미지 후보를 함께 인계합니다. CD는 환경 승인과 현재 배포 상태를 확인하고 그 후보만 적용합니다. 셀 01의 입력은 실제 이미지 파일이 아니라 course-image B와 course-image C라는 두 바이트열입니다. 이 두 값의 SHA-256부터 비교합니다. 실제 레지스트리에서 받은 manifest digest를 대신하는 수업용 값입니다.</p>
+<p class="concept-intro">어제 승인한 태그로 배포했는데 답변의 출처가 사라졌습니다. 어떤 이미지를 실제로 올렸는지 찾아봅니다.</p><p>CI는 검사한 소스와 이미지 후보를 함께 인계합니다. CD는 환경 승인과 현재 배포 상태를 확인하고 그 후보만 적용합니다. 셀 01의 입력은 실제 이미지 파일이 아니라 course-image B와 course-image C라는 두 바이트열입니다. 이 두 값의 SHA-256부터 비교합니다. 실제 레지스트리에서 받은 manifest digest를 대신하는 수업용 값입니다.</p>
 <span class="lesson-anchor" id="concept-clip"></span><!-- MOTION floating-tag -->
 
 <!-- END MOTION -->
@@ -58,6 +58,19 @@ print(approved == candidate)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p id="example-analysis">False는 B와 C의 지문이 다르다는 비교 결과입니다. 태그만 기록했다면 같은 이름이 다른 내용으로 옮겨간 뒤 어느 후보를 승인했는지 구분하기 어렵습니다.</p></div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>승인한 이미지와 후보 이미지가 달라졌을 때</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+napproved["승인본 B"]
+  ncandidate["후보 C"]
+  ncompare["지문 비교"]
+  nhold["적용 보류"]
+  napply["적용 허용"]
+  napproved --> ncandidate
+  ncandidate --> ncompare
+  ncompare --> nhold
+  ncompare --> napply</script><figcaption>수업에서는 두 바이트열의 해시로 후보의 일치 여부를 연습합니다. 실제 레지스트리에서 내려받은 이미지를 검사한 결과와 구별하세요.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>같은 이미지 태그로 되돌릴 수 있을까요?</h3><p><mark>태그가 같은 문자열이어도 그 태그가 가리키는 이미지 내용은 바뀔 수 있습니다.</mark> 롤백 후보는 전에 기능 검사를 통과한 이미지의 digest와 함께 기록하세요. 태그를 다시 적는 일과 검증했던 내용을 복원하는 일을 구분할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter76/index.html">76장 GitHub Actions의 작업 의존성과 실행 조건</a></p></aside>
+
 <span class="lesson-anchor" id="candidate-current"></span><span class="lesson-anchor" id="reading-candidate-current"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 적용 전 조건 검사</h3>
@@ -144,7 +157,43 @@ A True</pre></div>
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>배포 후보와 복귀 버전에 같은 질문 보내기</h2></div></header>
+<p>앞에서는 배포 후보의 지문을 비교했습니다. 이제 상태 경로는 정상인데 실제 질문에서 출처가 사라지는 후보를 검사합니다. 두 FastAPI 앱을 TestClient로 열어 운영 전환 판단에 필요한 요청과 응답을 직접 확인합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 기능이 깨진 후보에서도 상태 검사는 통과할까?</h3><div class="cell-before"><p>두 앱은 같은 상태 경로를 제공합니다. A는 제출 안내의 출처를 보내고 B는 출처 목록을 비워 둔 수업용 후보입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+def release_app(source_ids):
+    service = FastAPI()
+    @service.get(&quot;/health&quot;)
+    def health():
+        return {&quot;status&quot;: &quot;ok&quot;}
+    @service.post(&quot;/ask&quot;)
+    def ask(body: dict):
+        return {&quot;answer&quot;: &quot;과제함에 제출하세요.&quot;, &quot;sources&quot;: source_ids}
+    return service
+
+apps = {&quot;A&quot;: release_app([&quot;course-guide-v1:p2&quot;]), &quot;B&quot;: release_app([])}
+candidate_app = TestClient(apps[&quot;B&quot;])
+print(candidate_app.get(&quot;/health&quot;).status_code,
+      candidate_app.post(&quot;/ask&quot;, json={&quot;question&quot;: &quot;과제는 어디에?&quot;}).json()[&quot;sources&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 []</pre></div><div class="cell-after"><p>200 옆의 빈 목록이 실패를 보여 줍니다. 이 질문의 정답 조건은 HTTP 성공과 기대 출처를 모두 포함합니다. 이 두 앱은 로컬 테스트 대상이며 실제 배포 슬롯은 변경하지 않습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 같은 기능 검사로 복귀 결과 확인하기</h3><div class="cell-before"><p>앱을 받아 /ask에 고정 질문을 보내고 기대 출처가 있는지 반환하는 함수를 작성하세요. B가 실패하면 A에 같은 함수를 실행합니다. 어떤 버전에서 어떤 결과를 확인했는지 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># probe_source(app)에서 POST /ask의 상태와 응답 sources를 검사하세요.
+# B가 실패했을 때만 A를 다시 검사하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def probe_source(app):
+    with TestClient(app) as probe:
+        reply = probe.post(&quot;/ask&quot;, json={&quot;question&quot;: &quot;과제는 어디에?&quot;})
+    return reply.status_code == 200 and &quot;course-guide-v1:p2&quot; in reply.json()[&quot;sources&quot;]
+
+candidate_ok = probe_source(apps[&quot;B&quot;])
+print(&quot;B&quot;, candidate_ok)
+if not candidate_ok:
+    print(&quot;A&quot;, probe_source(apps[&quot;A&quot;]))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">B False
+A True</pre></div><p>B False 뒤에 A True가 나옵니다. 두 번째 True는 복귀 대상에서 실제 요청을 다시 보낸 결과입니다. 운영 배포에서는 같은 확인을 저장된 이전 이미지의 재기동 뒤에 수행해야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>이전 버전을 선택한 기록과 그 버전이 정상 응답한 기록을 따로 남깁니다.</mark> 이미지 태그를 A로 되돌렸어도 새 컨테이너가 DB에 접속하지 못하면 기능은 여전히 실패할 수 있습니다. 같은 질문의 출처를 다시 확인하는 이유입니다.</p></aside><p>팀의 후보 교체 기준에 질문, 기대 출처, 실패 후 재검사 주소를 함께 기록하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -154,7 +203,7 @@ A True</pre></div>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

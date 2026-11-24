@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 100 / FINAL PROJECT</p>
 <span class="sidebar-title">소유자·세션별 기록과 보존 한도</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-ownership"><span>02</span>복합 키로 대화 이력 조회</a><a href="#nb-expiry"><span>03</span>오래된 턴 정리와 선택 삭제</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-ownership"><span>02</span>복합 키로 대화 이력 조회</a><a href="#nb-expiry"><span>03</span>오래된 턴 정리와 선택 삭제</a><a href="#workshop"><span>04</span>세션의 마지막 다섯 턴과 최초 만료 시각을 따로 유지하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter100.ipynb" download="chapter100.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>100장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter100.ipynb" download="chapter100.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>100장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">세션의 마지막 다섯 턴과 최초 만료 시각을 따로 유지하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-ownership" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -44,6 +44,15 @@ print(sessions[(trusted_owner, <span class="tok-string">"main"</span>)])</code><
 </div>
 <p id="example-analysis">세션 이름만 같다고 같은 대화는 아닙니다. 이 예제는 소유자와 세션을 함께 지정해 RULE-B의 이력을 찾습니다. 삭제를 검증할 때도 지울 사용자의 데이터가 없어졌는지와 다른 사용자의 기록이 남았는지를 각각 확인합니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>새 답변이 와도 세션의 만료 시각이 그대로인 이유</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nborn["생성"]
+  nclock["만료 시각 계산"]
+  nturn["새 턴"]
+  nexpire["만료"]
+  nborn --> nclock
+  nclock --> nturn
+  nturn --> nexpire</script><figcaption>보존 정책 예시에서 만료는 생성 후 300초입니다. 최근 다섯 턴을 관리하는 규칙과 만료 시각을 따로 추적하세요.</figcaption></figure>
+
 </section>
 <section id="nb-expiry" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>오래된 턴 정리와 선택 삭제</h2>
@@ -73,8 +82,30 @@ print(remaining.get((<span class="tok-string">"alice"</span>, <span class="tok-s
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>한 사용자의 세션만 지울 때</h3><p><mark>세션 이름만 같아도 소유자가 다르면 다른 기록입니다.</mark> 두 사용자에게 같은 이름의 세션을 만들고 한쪽을 지운 뒤 양쪽을 조회하세요. 남아 있어야 하는 사용자의 RULE-B가 보존됐는지 마지막에 읽습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter60/index.html">60장 사용자별 장기 기억과 SQL 저장</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>세션의 마지막 다섯 턴과 최초 만료 시각을 따로 유지하기</h2></div></header>
+<p>두 사용자가 모두 main이라는 세션 이름을 씁니다. alice의 여섯 번째 질문이 들어올 때 가장 오래된 턴만 비우고, bob의 대화와 alice의 최초 만료 시각을 보존하는지 확인합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 고정한 시각으로 경계 직전과 경계 시각 조회</h3><div class="cell-before"><p>시계 대신 초 단위 숫자를 넣습니다. alice의 대화는 1000초에 만들었고 수명은 300초입니다. 여섯 턴은 모두 만료 전에 도착했다고 가정합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from collections import deque
+store = {(&quot;alice&quot;, &quot;main&quot;): (1300, deque(maxlen=5)),
+         (&quot;bob&quot;, &quot;main&quot;): (1500, deque([&quot;bob-r1&quot;], maxlen=5))}
+for number in range(1, 7):
+    store[(&quot;alice&quot;, &quot;main&quot;)][1].append(f&quot;r{number}&quot;)
+
+def read_turns(owner, session, now):
+    expires, turns = store[(owner, session)]
+    return list(turns) if now &lt; expires else []
+
+print(read_turns(&quot;alice&quot;, &quot;main&quot;, 1299))
+print(read_turns(&quot;alice&quot;, &quot;main&quot;, 1300), read_turns(&quot;bob&quot;, &quot;main&quot;, 1300))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;r2&#x27;, &#x27;r3&#x27;, &#x27;r4&#x27;, &#x27;r5&#x27;, &#x27;r6&#x27;]
+[] [&#x27;bob-r1&#x27;]</pre></div><div class="cell-after"><p>1299초에는 r2부터 r6까지 남고 1300초가 되면 alice의 조회 결과만 빕니다. 이 셀은 만료 후 조회를 막습니다. 저장소에서 물리적으로 지우는 작업은 별도로 시험해야 합니다.</p></div>
+</article>
+<section class="project-example"><h3>팀에서 한도를 고를 때</h3><p>대화 한 턴을 사용자 질문과 답변 한 쌍으로 셀지 먼저 정하세요. 최근 세 턴이 필요한 팀이라면 deque의 한도를 3으로 바꾸고, 마지막 턴을 쓰기 전후에 다른 사용자의 기록과 만료 시각을 각각 다시 확인합니다.</p></section>
+<aside class="lesson-note"><p><mark>새 턴 저장이 보존 기간을 연장할지는 팀이 선택한 정책입니다.</mark> 이 예시에서는 여섯 번째 턴이 들어와도 alice의 만료 시각은 1300초입니다. 최근 다섯 턴만 읽는 규칙은 만료 검사와 독립적으로 작동합니다.</p></aside><p>101장 새 연동 후보에는 꼭 필요한 세션 값만 넘기고, 기록의 소유자나 보존 조건을 임의로 바꾸지 않습니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

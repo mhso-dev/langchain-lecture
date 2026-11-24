@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 16 / TOOL EXECUTION</p>
 <span class="sidebar-title">Function Calling의 실행과 결과 반환</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-execute"><span>02</span>도구 이름과 인자를 함수 호출로 변환</a><a href="#nb-id-match"><span>03</span>function_call_output과 call_id 대응</a><a href="#nb-follow-up"><span>04</span>대화 기록에 호출과 결과 추가</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-execute"><span>02</span>도구 이름과 인자를 함수 호출로 변환</a><a href="#nb-id-match"><span>03</span>function_call_output과 call_id 대응</a><a href="#nb-follow-up"><span>04</span>대화 기록에 호출과 결과 추가</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>대출 권수 조회를 기존 시간표 도구 옆에 연결하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter16.ipynb" download="chapter16.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>16장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter16.ipynb" download="chapter16.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>16장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">대출 권수 조회를 기존 시간표 도구 옆에 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-execute" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -49,7 +49,7 @@ print(get_library_hours(<span class="tok-string">"weekend"</span>)[<span class="
 </div>
 <p id="example-analysis">같은 weekend 조회를 두 번 보내면 두 함수 결과의 시간은 같을 수 있습니다. 이때 10:00~16:00만으로는 어느 요청의 답인지 가릴 수 없습니다. 호출자가 보낸 call_id를 결과에 함께 돌려줘야 각각의 요청과 짝을 지을 수 있습니다.</p>
 </article>
-<span class="lesson-anchor" id="function"></span><div class="lesson-explanation" id="reading-function"><h3>읽기 전용 함수 연결</h3><div class="prose"><p>weekday와 weekend는 시간표의 키입니다. get_library_hours에 Friday를 직접 넘기면 조회할 키가 없어 예외가 납니다. 아래 execute_call은 허용한 요일인지부터 확인합니다.</p>
+<span class="lesson-anchor" id="function"></span><div class="lesson-explanation" id="reading-function"><h3>읽기 전용 함수 연결</h3><div class="prose"><p>15장의 요일 허용 목록을 이번에는 execute_call에서 검사한 뒤 시간표를 조회합니다.</p>
 </div></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · execute_call()과 결과 직렬화</h3>
@@ -82,6 +82,20 @@ print(json.loads(reply[<span class="tok-string">"output"</span>])[<span class="t
 <div class="cell-after"><p>같은 10:00~16:00이 나오지만 이번 값은 reply의 output에 담긴 JSON 문자열에서 읽었습니다. 모델에 보낼 항목의 type은 function_call_output입니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>허용하지 않은 요일에도 요청 ID가 남는 이유</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ncall["요청"]
+  nvalidate["day 검사"]
+  nlookup["시간 조회"]
+  nerror["오류 구성"]
+  noutput["결과 연결"]
+  ncall --> nvalidate
+  nvalidate --> nlookup
+  nvalidate --> nerror
+  nlookup --> noutput
+  nerror --> noutput</script><figcaption>day가 Friday인 요청은 조회 함수를 실행하기 전에 걸러집니다. 결과의 ok는 False이지만 바깥 call_id에는 원래 요청 ID가 남습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>같은 시간표 요청이 두 개라면</h3><p><mark>도구 결과를 원래 요청과 잇는 값은 call_id입니다.</mark> 두 응답이 늦게 또는 다른 순서로 도착할 수 있습니다. 함수 이름이 같아도 각각의 호출 ID를 보관해야 어느 질문에 대한 운영 시간인지 복원할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter15/index.html">15장 Function Calling의 도구 명세와 호출 요청</a></p></aside>
+
 <span class="lesson-anchor" id="validate"></span><div class="lesson-explanation" id="reading-validate"><h3>ID와 인자를 거부하는 방법의 차이</h3><p>execute_call은 호출 ID가 비어 있으면 ValueError를 일으킵니다. ID가 있어 결과를 연결할 수 있지만 이름이나 day가 잘못됐다면, 호출 ID가 포함된 function_call_output에 invalid_tool_request를 담아 반환합니다.</p></div>
 
 </section>
@@ -193,7 +207,46 @@ for request in (call, weekday):
 call_2 09:00~18:00</pre></div><div class="cell-after"><p>먼저 도착한 결과의 ID는 call_2입니다. 위치 0을 첫 요청에 붙이면 주말 질문에 평일 시간을 답하게 됩니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>대출 권수 조회를 기존 시간표 도구 옆에 연결하기</h2></div></header>
+<p>주말 운영 시간과 한 번에 빌릴 수 있는 책의 수는 다른 자료입니다. 기존 execute_call에 새 이름을 보내 어디서 멈추는지 확인한 뒤, 대출 권수 요청을 처리할 함수를 연결하세요. 권수는 수업용 가상 규칙입니다.</p>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-1">셀 09 · 새 요청을 기존 실행기로 보내기</h3><div class="cell-before"><p>대출 권수 도구는 추가 인자를 받지 않습니다. 기존 실행기에 이 이름을 보내고 호출 ID와 결과를 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">limit_call = {&quot;type&quot;: &quot;function_call&quot;, &quot;name&quot;: &quot;get_loan_limit&quot;,
+              &quot;call_id&quot;: &quot;loan-3&quot;, &quot;arguments&quot;: &quot;{}&quot;}
+old_result = execute_call(limit_call)
+print(old_result[&quot;call_id&quot;], json.loads(old_result[&quot;output&quot;]))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">loan-3 {&#x27;ok&#x27;: False, &#x27;error&#x27;: &#x27;invalid_tool_request&#x27;}</pre></div><div class="cell-after"><p>loan-3이라는 ID를 돌려받았지만 ok는 False입니다. 호출이 도착한 것과 등록한 함수가 성공한 것은 다릅니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="0"><h3 id="workshop-step-2">셀 10 · 권수 조회에 필요한 검사와 반환값 준비하기</h3><div class="cell-before"><p>새 실행기가 연결할 함수입니다. 호출 ID가 있어야 하고 인자는 빈 JSON 객체여야 합니다. 함수가 만든 데이터에서 한 번에 빌릴 수 있는 권수를 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">def loan_limit_reply(item):
+    call_id = item.get(&quot;call_id&quot;)
+    if not isinstance(call_id, str) or not call_id.strip():
+        raise ValueError(&quot;호출 ID가 필요합니다.&quot;)
+    try:
+        if json.loads(item[&quot;arguments&quot;]) != {}:
+            raise ValueError(&quot;권수 조회에는 인자가 필요 없습니다.&quot;)
+        result = {&quot;ok&quot;: True, &quot;data&quot;: {&quot;max_books&quot;: 3, &quot;source&quot;: &quot;가상 대출 규칙&quot;}}
+    except (ValueError, KeyError, TypeError):
+        result = {&quot;ok&quot;: False, &quot;error&quot;: &quot;invalid_tool_request&quot;}
+    return {&quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: call_id,
+            &quot;output&quot;: json.dumps(result, ensure_ascii=False)}
+
+print(json.loads(loan_limit_reply(limit_call)[&quot;output&quot;])[&quot;data&quot;][&quot;max_books&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3</pre></div><div class="cell-after"><p>3은 가상 대출 규칙에서 정한 권수입니다. 이 함수는 자신에게 이미 적절한 이름의 호출이 전달됐다고 가정합니다. 이름으로 함수를 고르는 일은 다음 과제에서 맡습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="11" data-task="1"><h3 id="workshop-step-3">과제 11 · 호출 이름으로 두 실행기 연결하기</h3><div class="cell-before"><p>새 이름은 loan_limit_reply에 보내고 나머지는 기존 execute_call에 맡기는 execute_library를 작성하세요. 대출 권수와 기존 주말 시간 요청을 실행해 각각의 요청 ID와 조회값을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-11">복사</button></figcaption><pre tabindex="0"><code id="code-11">def execute_library(item):
+    pass  # 요청의 name을 읽고 연결할 함수를 선택하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-3">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-3">def execute_library(item):
+    if item.get(&quot;name&quot;) == &quot;get_loan_limit&quot;:
+        return loan_limit_reply(item)
+    return execute_call(item)
+
+limit_reply = execute_library(limit_call)
+hours_reply = execute_library(call)
+print(limit_reply[&quot;call_id&quot;], json.loads(limit_reply[&quot;output&quot;])[&quot;data&quot;][&quot;max_books&quot;])
+print(hours_reply[&quot;call_id&quot;], json.loads(hours_reply[&quot;output&quot;])[&quot;data&quot;][&quot;hours&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">loan-3 3
+call_1 10:00~16:00</pre></div><p>loan-3 요청은 3권을, call_1 요청은 주말 시간표를 돌려줍니다. 기존 함수가 모르는 이름을 거절하던 경로도 유지됩니다. 주말 시간이 나오는 줄까지 확인해야 새 도구를 붙이면서 원래 동작을 잃지 않았는지 알 수 있습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>도구 이름은 실행할 함수를 고르고, 호출 ID는 그 실행 결과를 원래 요청에 붙입니다.</mark> 권수 응답을 받아도 시간표를 물은 요청에 붙일 수는 없습니다. 두 도구가 성공했는지 살핀 뒤 각 결과 안에 남은 ID를 요청 쪽 ID와 맞춰 보세요.</p></aside><p>모델이 한 번에 두 도구를 요청하면 같은 방식으로 각각을 실행해 두 결과를 한 대화 이력에 넣을 수 있습니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

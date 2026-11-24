@@ -12,3 +12,11 @@
 .math-reading math{font-size:1.13em;margin:.75rem 0;max-width:100%;overflow-x:auto}
 .math-reading svg{display:block;max-width:100%;height:auto;margin:.8rem auto}
 @media print{.lesson-note mark{background:none;text-decoration:underline}.workflow-reading,.math-reading{break-inside:avoid}}
+
+#workshop .workshop-table{max-width:100%;overflow-x:auto;margin:.75rem 0 1.25rem}
+#workshop .workshop-table:focus-visible{outline:2px solid #28675b;outline-offset:3px}
+#workshop table{width:100%;border-collapse:collapse;text-align:start;line-height:1.55}
+#workshop table caption{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#workshop th,#workshop td{padding:.55rem .7rem;border-bottom:1px solid #cadad8;vertical-align:top}
+#workshop th{background:#edf5f3;color:#183d37}
+#workshop .project-example{margin:1.5rem 0}

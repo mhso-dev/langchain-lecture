@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 44 / MIDTERM PROJECT</p>
 <span class="sidebar-title">평가 문항과 정답 근거 매핑</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-paragraph-map"><span>02</span>문단 ID와 기대 질문</a><a href="#nb-missing-answer"><span>03</span>답변할 수 없는 질문의 기대값</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-paragraph-map"><span>02</span>문단 ID와 기대 질문</a><a href="#nb-missing-answer"><span>03</span>답변할 수 없는 질문의 기대값</a><a href="#workshop"><span>04</span>정답 근거를 달 수 없는 문항을 평가 묶음에서 찾기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter44.ipynb" download="chapter44.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>44장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter44.ipynb" download="chapter44.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>44장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">정답 근거를 달 수 없는 문항을 평가 묶음에서 찾기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-paragraph-map" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -86,8 +86,30 @@ print(by_paragraph[<span class="tok-string">'p1'</span>])</code></pre></figure>
 <div class="cell-after"><p>평일 시작 시각에서 주말 시각을 추측하면 답을 만들어 낸 셈입니다. 자체 문서로 바꿀 때는 원문 버전과 문항 ID를 남겨 다음 실험도 같은 사례로 재현하세요.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>평일 안내문으로 주말 질문을 평가할 때</h3><p><mark>문서가 일정에 관해 말한다는 사실만으로 주말 시간까지 확인되지는 않습니다.</mark> 기대 근거에 평일 시간표를 넣으면 주말 시간을 지어낸 답이 통과할 수 있습니다. 팀 자료에도 적용 범위 밖의 요일이나 대상을 묻는 문항을 하나 남겨 보세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter35/index.html">35장 RAG 평가 데이터셋 구성</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>정답 근거를 달 수 없는 문항을 평가 묶음에서 찾기</h2></div></header>
+<p>자료 담당이 문단을 재편집하며 p3을 삭제했다고 가정합니다. 질문 표만 보면 여전히 답변 가능으로 표시된 Q03을 어떻게 발견할까요? 오늘 인계할 파일의 두 목록을 서로 대조합니다.</p>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="workshop-step-1">셀 03 · 평가표에서 원문으로 이어지는 참조 검사</h3><div class="cell-before"><p>p9는 잘못 입력한 문단 번호입니다. Q04는 의도적으로 정답 문단을 비워 둡니다. 아래 검사가 어느 문항을 보고하는지 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-3">복사</button></figcaption><pre tabindex="0"><code id="code-3">items = {&quot;Q01&quot;: [&quot;p2&quot;], &quot;Q03&quot;: [&quot;p9&quot;], &quot;Q04&quot;: []}
+
+def unknown_evidence(questions, documents):
+    return {qid: [key for key in refs if key not in documents]
+            for qid, refs in questions.items() if any(key not in documents for key in refs)}
+
+print(unknown_evidence(items, by_paragraph))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;Q03&#x27;: [&#x27;p9&#x27;]}</pre></div><div class="cell-after"><p>Q03의 p9는 course-guide-v1에서 열 수 없는 참조입니다. Q04의 빈 목록은 고장 난 링크가 아닙니다. 주말 운영을 뒷받침할 원문이 없다는 기대값입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-2">셀 04 · 원문을 읽고 근거 한 곳 바로잡기</h3><div class="cell-before"><p>오류 대응 절차가 적힌 문단을 원문에서 찾은 뒤 Q03에 그 ID를 넣습니다. 참조 검사와 실제 내용 확인을 차례로 실행하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">fixed_items = {**items, &quot;Q03&quot;: [&quot;p3&quot;]}
+print(unknown_evidence(fixed_items, by_paragraph))
+print(by_paragraph[fixed_items[&quot;Q03&quot;][0]])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{}
+제출 오류가 발생하면 오류 화면과 발생 시간을 기록하고 담당 강사에게 문의합니다. 비밀키가 보이는 화면은 공유하지 않습니다.</pre></div><div class="cell-after"><p>빈 사전은 모든 참조가 열린다는 뜻입니다. 두 번째 출력에서 “담당 강사에게 문의”까지 읽어야 p3이 질문의 정답 근거인지 판단할 수 있습니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 문서가 개정됐다면</h3><p>쪽수가 바뀌어도 찾을 수 있는 문단 ID와 문서 버전을 같이 적으세요. 이전 판에는 있고 새 판에서 사라진 근거는 질문 표에서 임의로 다른 문단과 연결하기 전에 담당자가 다시 읽습니다.</p></section>
+<aside class="lesson-note"><p><mark>참조 검사는 문단의 존재까지만 확인합니다.</mark> p9를 실제로 존재하는 p1로 바꾸면 검사 결과는 비지만, 평일 시작 시각을 읽어도 제출 오류는 해결할 수 없습니다.</p></aside><p>45장의 기준선 실행에는 확인을 마친 질문·문단 쌍과 답변 불가 문항을 함께 건네세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
