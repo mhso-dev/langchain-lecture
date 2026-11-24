@@ -1,0 +1,27 @@
+event,ticket,branch,kind,minutes
+E01,D01,서울,open,
+E02,D02,부산,open,
+E03,D03,서울,open,
+E04,D01,서울,close,12
+E04,D01,서울,close,12
+E05,D04,부산,open,
+E06,D02,부산,close,0
+E07,D05,서울,open,
+E08,D03,서울,close,18
+E09,D06,서울,open,
+E10,D07,부산,open,
+E11,D05,서울,close,9
+E12,D08,부산,open,
+E13,D01,서울,reopen,
+E14,D01,서울,close,7
+E15,D07,부산,close,-2
+E16,D09,,open,
+E17,D10,서울,open,
+E18,D04,부산,close,15
+E19,D08,부산,close, 
+E20,D11,서울,open,
+E21,D12,부산,open,
+E22,D06,서울,close, 11
+E23,D13,부산,open,
+E24,D12,부산,close,8
+E24,D12,부산,close,8

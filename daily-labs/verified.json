@@ -1,0 +1,229 @@
+{
+  "run": 45423032838,
+  "chapters": [
+    {
+      "day": 14,
+      "sha256": "576d66f50d32c185d0656d80dcaef79354e080091484c6bea87fe9f0253c7384",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 15,
+      "sha256": "3574caed4afdd2217478340ba0d2e8e552f1d6581cb7549199662443544e29ae",
+      "job": 138547420911,
+      "student": 8,
+      "solution": 8
+    },
+    {
+      "day": 16,
+      "sha256": "93da7cb8854aa5ef2aac10d7d0271280b20f05f6ba371a10413e649d189617cc",
+      "job": 138547420911,
+      "student": 10,
+      "solution": 10
+    },
+    {
+      "day": 20,
+      "sha256": "2b9c6e3eacea42462507aa848eff83f12ddda13c52b5b783545bc224f140cdcb",
+      "job": 138547420911,
+      "student": 15,
+      "solution": 15
+    },
+    {
+      "day": 22,
+      "sha256": "81e89f99e54109a4f662cd4b759e912c53464adb7c38b847a64b1184394cdcd9",
+      "job": 138547420911,
+      "student": 15,
+      "solution": 15
+    },
+    {
+      "day": 23,
+      "sha256": "f908233532d6193064e1b7babba3413d442ea234dcdc23bef77d61e273400588",
+      "job": 138547420911,
+      "student": 9,
+      "solution": 9
+    },
+    {
+      "day": 24,
+      "sha256": "09ea4e1d3445524436b069717a78577ca00a8c1ba0936e0754d0bfd2984ea9c2",
+      "job": 138547420911,
+      "student": 10,
+      "solution": 10
+    },
+    {
+      "day": 25,
+      "sha256": "36f44cd688b5dc5d2124477c707c9dcc90518dcb426402b76b3b61e0eca5ea48",
+      "job": 138547420911,
+      "student": 10,
+      "solution": 10
+    },
+    {
+      "day": 30,
+      "sha256": "0b767d8c59bb0ba33da9c7df6f010212cc88a2ef14ea834c50c166f33495e3f6",
+      "job": 138547420911,
+      "student": 6,
+      "solution": 6
+    },
+    {
+      "day": 31,
+      "sha256": "b2ab2df47780d5fac6b6ba8ccb14a0a1832a028518d3607895024235913502a0",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 32,
+      "sha256": "ba1c5fc2f5538daf9a7a8c348f3bc9dc0265e2a42a2bca2550ec7010d739c2d5",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 35,
+      "sha256": "e6c4d2365ab32954d014b811bbce2c010a8e70dda79d61c63ff4256225984bbf",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 36,
+      "sha256": "86fa2d2c893927aac9e908ec57a892cc47da5c5b6180dcdfdb494a60bcfae400",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 37,
+      "sha256": "6b914224ad50f4299622d62797fce7d4e10f88030cdeee8c0837ed85a0a110d6",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 38,
+      "sha256": "9af32172c4d482418f46c657415a0693265d1fe6abb4b5b4f74589ff3c69ce30",
+      "job": 138547420404,
+      "student": 8,
+      "solution": 8
+    },
+    {
+      "day": 39,
+      "sha256": "85f48b2c794966444cd38d4a88ef6980d31106de230669e30992cb787dc1d094",
+      "job": 138547420911,
+      "student": 6,
+      "solution": 6
+    },
+    {
+      "day": 40,
+      "sha256": "18519deb8fb9a35d1f2c8c81eddd1a9fd4c19e16d8acff9eccf027d4d11e325f",
+      "job": 138547420911,
+      "student": 9,
+      "solution": 9
+    },
+    {
+      "day": 41,
+      "sha256": "4cef8b69c0f795d334fd63f782efb57f760b1177dfaa33bc26446a92c578b70d",
+      "job": 138547420911,
+      "student": 10,
+      "solution": 10
+    },
+    {
+      "day": 42,
+      "sha256": "234c7d6d2ea49f1c87c24d9bffd5b2e7ed91af0b04bda27e1aaef18860d848d9",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 45,
+      "sha256": "d7933a7346bf47f121eea37cb058ad91803e251b4a3a2378503fb5d9af0875c9",
+      "job": 138547420911,
+      "student": 2,
+      "solution": 2
+    },
+    {
+      "day": 46,
+      "sha256": "170627f819de5a05355579a844ffccf7902947a5a709c65d91785e38c25f3f65",
+      "job": 138547420911,
+      "student": 2,
+      "solution": 2
+    },
+    {
+      "day": 47,
+      "sha256": "9ca23d24bdaa7cb2b5af78746d67dd856f671ec16bd5d30e8dfce36d1262bb06",
+      "job": 138547420911,
+      "student": 2,
+      "solution": 2
+    },
+    {
+      "day": 48,
+      "sha256": "6b55dc14a47c304da876333edc71ead699fe42a22d61333fe9b1e94a846d6f97",
+      "job": 138547420911,
+      "student": 2,
+      "solution": 2
+    },
+    {
+      "day": 53,
+      "sha256": "b6496b1af157acc552ff76377bc08989299d9ee2e769ddcc0988d53f15bac14b",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 54,
+      "sha256": "015da3190c22aa194d5456bbc17a924433df59aaa3d6b3d640db6171131c93f7",
+      "job": 138547420911,
+      "student": 9,
+      "solution": 9
+    },
+    {
+      "day": 60,
+      "sha256": "6a5ca6b59d692a259583ac70c3a850c38d2bd2e2036a163a701e73b7b44dcf0f",
+      "job": 138547420911,
+      "student": 9,
+      "solution": 9
+    },
+    {
+      "day": 61,
+      "sha256": "7293f992fa4f325945bbca86ce04554ee9d7a421c9702ed734690f772cb24c51",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 62,
+      "sha256": "2ca83f10ef6d2157573d3f07e4e8d813a265cb5d20669ca10ef49b8ad00e9c67",
+      "job": 138547420911,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 71,
+      "sha256": "23498992c11842e5e1b083c43984b1daf26f28d21e76d166f748a63ab5d31429",
+      "job": 138547420983,
+      "student": 6,
+      "solution": 6
+    },
+    {
+      "day": 72,
+      "sha256": "875c9371ef1828be16f9813b150a62fdf8f121a2c738f46b6105bfcb33c4bb1f",
+      "job": 138547420983,
+      "student": 7,
+      "solution": 7
+    },
+    {
+      "day": 76,
+      "sha256": "db9e8bab1b09ff790980f2188380d8c59db5c5af0704284bb8bbc6143f34dc97",
+      "job": 138547420911,
+      "student": 6,
+      "solution": 6
+    },
+    {
+      "day": 77,
+      "sha256": "4afea1eac57e44a9f7d437081e672142ef415fc9eabfd616c8a80c4ae90673a5",
+      "job": 138547420911,
+      "student": 6,
+      "solution": 6
+    }
+  ]
+}

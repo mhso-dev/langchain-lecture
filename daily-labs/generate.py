@@ -1,8 +1,10 @@
 """Build the private-study assignment section, notebooks and offline download."""
 import csv
 from html import escape
+from studios import NOTES, starter, variation
 from lessons import READINGS, CHARTS, LINKS
 from project_reference import project_reference
+from execution import publish_results
 import json
 from pathlib import Path
 import re
@@ -33,12 +35,6 @@ else:
     print("자료를 쓰는 과제는 전체 묶음을 풀고 노트북을 daily_resources 옆에서 여세요.")"""
 REQUEST = 'request = dict(branch="서울", audience="개인", as_of="2026-07-01", topic="receipt")'
 START = {
- 1:'request_id = "T01"\nbranch = "서울"\nstatus = "완료"\n# 세 변수로 한 줄 접수증을 작성하세요.',
- 2:'rows = [("T01", "완료", 12), ("T02", "접수", 0), ("T03", "완료", 18), ("T03", "완료", 18), ("T04", "보류", 5), ("T05", "완료", 0)]\n# 중복 ID를 먼저 처리하고 평균을 average_minutes에 저장하세요.',
- 3:'samples = [" 12 ", "0", "", "-3"]\n# parse_minutes(value)를 작성하고 각 입력의 결과 또는 오류를 기록하세요.',
- 4:'requests = ["T01", "T02"]\n# 각 요청의 상태와 기록을 따로 보존하는 클래스를 작성하세요.',
- 5:'normal, duplicates, incomplete = [], [], []\n# tickets의 레코드 6건을 분류하고 파일로 저장하세요.',
- 6:'paths = ["/tickets/T01", "/tickets/T99", "/tickets/slow"]\n# 수업 노트북의 MockTransport 핸들러를 세 경우로 확장하세요.',
  15:REQUEST+'\n# 잘못된 날짜와 누락 필드를 추가해 요청 검증 함수를 작성하세요.',
  20:'pdf_path = data_dir / "documents" / "R02.pdf"\ntext_path = data_dir / "documents" / "R04.txt"\n# pypdf.PdfReader로 두 쪽을 각각 읽고 TXT는 절로 분리하세요.',
  21:'document_ids = ["R02", "R03"]\n# 직접 나눈 각 조각에 문서 ID, 쪽 번호, 문자 범위를 보존하세요.',
@@ -63,10 +59,6 @@ START.update({20:"my_pages = []  # 편람의 36쪽과 메타데이터를 결합�
 for codex_day in range(80,86):
     START[codex_day] = "# 위 예제로 내 저장소를 준비한 뒤 오늘 수정한 파일과 실제 실행 기록을 남기세요."
 ANSWERS = {
- 1:('접수증 예시','print(f"{branch} / {request_id} / {status}")','서울 / T01 / 완료'),
- 2:('평균 검산','unique = {key:(state, minutes) for key,state,minutes in rows}\ncompleted = [m for state,m in unique.values() if state == "완료"]\nprint(sum(completed) / len(completed))','10.0'),
- 3:('입력 검산','def parse_minutes(value):\n    number = int(value.strip())\n    if number < 0:\n        raise ValueError("음수 시간")\n    return number','12와 0 허용, 빈 문자열과 음수는 ValueError'),
- 61:('실제 MCP 연결 예시','import sys\nsys.path.insert(0, str((data_dir / "reference").resolve()))\nfrom mcp_client import sample\nnames, reply = await sample(request)\nprint(names, reply["items"][0]["chunk_id"])',"['lookup_policy'] R02-1"),
  66:('두 역할 호출 예시','import sys\nsys.path.insert(0, str((data_dir / "reference").resolve()))\nfrom roles import run_roles\nprint(run_roles(request)["status"], run_roles(request, ["R01-1"])["status"])','accepted hold'),
  118:('판본 결과 대조','print([r["chunk_id"] for branch,who,day in comparisons for r in chunks if r["branch"]==branch and r["audience"]==who and r["valid_from"]<=day<=r["valid_to"] and r["topic"]=="receipt" and r["section"]==1])',"['R01-1', 'R02-1', 'R04-1']")
 }
@@ -79,6 +71,8 @@ def cell(kind, key, text):
 def material(n):
     if n in (20,21,22,23,24,25,35): return 'handbook/operations.pdf(36쪽), pages.csv, evaluation.csv와 extension의 개정 공지. 날짜·지점·종류를 보존한다.'
     if 80<=n<=85: return '로컬 Codex CLI, Git, Jupyter, daily_resources/codex-kit. 80~85일은 같은 my-codex-desk를 사용한다.'
+    if n<=7: return 'cases/shift.csv의 교대 원장 26행. 전체 실습 묶음의 cases/shift_reference.py로 이전 단계의 처리 결과를 복원할 수 있습니다.'
+    if n in (53,54): return 'tickets.csv 원본 6행, 수업 SQL 예제와 쓰기가 가능한 실습 데이터베이스'
     if n<=10: return 'tickets.csv, R02.pdf, R03.pdf, R04.txt와 해당 장 수업 예제'
     if n<=19: return '해당 장 SDK·LCEL 수업 예제, questions.csv의 Q01·Q09·Q10과 직접 바꾼 질문'
     if n<=54: return 'documents/ 원문, manifest.csv, questions.csv, chunks.json 및 전날 만든 색인·서비스. 처음 시작하면 공통 자료와 해당 장 수업 예제로 기준선을 만든다.'
@@ -87,21 +81,18 @@ def material(n):
     if n<=85: return '자기 투두 저장소와 해당 장 수업 노트북. 중간에 시작하면 81장 참조 앱으로 초기 상태를 만든다.'
     return '자기 프로젝트 최신판·실행 기록. 독립 연습이 필요하면 공통 정책 문서와 reference/policy.py를 작은 서비스의 시작점으로 쓴다.'
 
-def basecode(n):
-    if n<=19: return '# 오늘의 수업 예제에서 입력 하나를 골라 아래에 변형한 입력을 작성하세요.'
-    if n<=67 or n>=86: return 'case_ids = ["Q01", "Q09", "Q10"]\n# 자기 시나리오의 입력을 정하고, 기대 결과를 실행 전에 적으세요.'
-    return '# 오늘의 앱이나 저장소에서 정상 사례와 실패 사례를 하나씩 준비하세요.'
-
 def build_cells(n, title, first, second, check):
-    duration = 60 if n in (1,2,8,9,10,43,86,87,88,115,116,117,118,119,120) else 120 if n in (55,56,64,66,67,80,81,82,83,84,85,22,25,34,45,55,61,62,66,71,73,74,77,85,106,112,113) else 90
+    duration = 60 if n in (8,9,10,43,86,87,88,115,116,117,118,119,120) else 120 if n in (55,56,64,66,67,80,81,82,83,84,85,22,25,34,45,55,61,62,66,71,73,74,77,85,106,112,113) else 90
     mins={60:(10,25,15,10),90:(10,40,25,15),120:(15,50,35,20)}[duration]
     cells=[cell("markdown","intro",f"## 개인 실습 {n:03} · {title}\n\n예상 {duration}분. 자료를 준비하고 입력을 예측하는 데 {mins[0]}분, 첫 구현에 {mins[1]}분, 다른 입력과 실패 사례에 {mins[2]}분, 결과를 다시 확인하는 데 {mins[3]}분을 씁니다.\n\n**준비물** {material(n)}\n\n[전체 실습 묶음]({HOST}/daily/all-labs.zip)을 풀고 이 노트북을 daily_resources 옆에 두세요. "+(f"[오늘의 수업 예제]({HOST}/chapter{n:02}/index.html)" if n<=116 else "특강·현장 일정에 맞춰 개별 수행합니다."))]
-    if n>1: cells.append(cell("code","input",DATA))
-    cells.extend([cell("markdown","part-a","### 1. 구현하기\n\n"+first),cell("code","implementation",START.get(n,basecode(n))),
+    goal, method, probe = NOTES[n]
+    cells.append(cell("code","input",DATA))
+    cells.append(cell("markdown","brief",f"### 납품할 결과\n\n{goal}\n\n**구현 단서** {method}"))
+    cells.extend([cell("markdown","part-a","### 1. 구현하기\n\n"+first),cell("code","implementation",starter(n,START)),
                   cell("markdown","part-b","### 2. 조건을 바꿔 다시 실행하기\n\n"+second),
-                  cell("code","variation","# 첫 실행과 달라진 입력을 적고, 앞에서 만든 함수 또는 서비스를 다시 호출하세요.\n# 코드 밖에서 한 작업은 사용한 파일·버전·관찰값을 이 셀 아래 기록하세요."),
-                  cell("markdown","criteria","### 3. 스스로 확인하기\n\n"+check+"\n\n**내 기록**\n\n- 처음 사용한 입력과 기대값\n- 실제 실행 결과와 달랐던 지점\n- 수정한 줄 또는 설정, 다시 실행한 결과")])
-    if n in (33,57,58,61,62,63,118):
+                  cell("code","variation",variation(n)),
+                  cell("markdown","criteria","### 3. 스스로 확인하기\n\n"+check+"\n\n**실패 원인 좁히기** "+probe+"\n\n**내 기록**\n\n- 처음 사용한 입력과 기대값\n- 실제 실행 결과와 달랐던 지점\n- 수정한 줄 또는 설정, 다시 실행한 결과")])
+    if n in (33,118):
         cells.extend([cell("markdown","bench-title","### 기준 구현과 대조하기\n\n자기 구현을 먼저 실행한 뒤 아래 비교 셀을 사용하세요. 검색 도구는 필터에 맞는 조항을 반환합니다. 검색 순위와 자연어 답변은 별도 검사합니다."),
                       cell("code","bench","import sys\nif data_dir.is_dir():\n    sys.path.insert(0, str((data_dir / 'reference').resolve()))\n    from policy import lookup_policy\n    from check_filter import check_filter\n    print(check_filter(lookup_policy))\n    # 자기 함수를 완성한 뒤 check_filter(내_조회함수)로 교체하세요.")])
     if n in ANSWERS:
@@ -118,10 +109,17 @@ def put(z,name,data):
     z.writestr(info,data)
 
 spec=[line.split("|") for line in (HERE/"assignments.txt").read_text().splitlines() if line]
-if [int(row[0]) for row in spec]!=[n for n in range(1,121) if not (43<=n<=52 or 86<=n<=116)] or any(len(row)!=5 for row in spec):
+if [int(row[0]) for row in spec]!=[n for n in range(2,121) if not (43<=n<=52 or 86<=n<=116)] or any(len(row)!=5 for row in spec):
     raise ValueError("교육일·실습 필드를 확인하세요")
-resources=HERE/"resources.zip"
-shutil.copyfile(resources,DAILY/"resources.zip")
+if set(NOTES) != {int(row[0]) for row in spec}:
+    raise ValueError("개인 과제와 작업 의뢰서의 교육일이 다릅니다")
+resources=DAILY/"resources.zip"
+with ZipFile(HERE/"resources.zip") as original, ZipFile(resources,"w") as packed:
+    for name in original.namelist():
+        put(packed,name,original.read(name))
+    for path in sorted((HERE/"cases").glob("*")):
+        if path.is_file():
+            put(packed,"daily_resources/cases/"+path.name,path.read_bytes())
 links=[]
 with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
     for entry in data.namelist():
@@ -133,6 +131,7 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
     for number,title,first,second,check in spec:
         n=int(number)
         duration,cells=build_cells(n,title,first,second,check)
+        goal,method,probe=NOTES[n]
         extras=[]
         article=''
         if n in READINGS:
@@ -156,7 +155,7 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
         (DAILY/name).write_bytes(raw)
         put(archive,name,raw)
         link=f'<a href="{name}" download>개인 과제 노트북</a>'
-        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
+        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
         if 80<=n<=85:
             section=section.replace("</section>",'<p><a href="../daily/codex-harness.ipynb" download>6일 연속 Codex 하네스 노트북</a></p></section>')
         if n in (20,21,22,23,24,25,35):
@@ -174,11 +173,11 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
             page.write_text(source)
             file=chapter/(chapter.name+".ipynb")
             original=json.loads(file.read_bytes())
-            original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n1. {first}\n2. {second}\n\n**스스로 확인하기** {check}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
+            original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
             original["cells"].extend(extras)
             file.write_bytes(encode(original))
         lesson=f'<a href="../chapter{n:02}/index.html#daily-lab">수업 교재</a> · ' if n<=116 else ''
-        links.append(f'<li id="day{n:03}"><h2>{n}일 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>자기점검</strong> {escape(check)}</p></li>')
+        links.append(f'<li id="day{n:03}"><h2>{n}일 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
 
     combined=[cell("markdown","setup","## 내 Codex 하네스 만들기\n\n80~85일의 학생 작업을 같은 로컬 Git 저장소에서 이어 간다. WSL과 macOS에서 전체 묶음을 풀고 daily_resources 옆에서 노트북을 연다. 설치한 Codex CLI로 로그인하고 git, Python, mcp 패키지를 준비한다. 각 단계는 노트북을 실행한 다음 로컬 Codex에서 직접 시험해야 끝난다.")]
     for number in range(80,86):
@@ -190,6 +189,8 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
     guide=encode(dict(notebook,cells=combined))
     (DAILY/"codex-harness.ipynb").write_bytes(guide)
     put(archive,"codex-harness.ipynb",guide)
+first = OUT/"chapter01"/"index.html"
+first.write_text(first.read_text().replace('<footer class="lesson-footer">','<section class="lesson-section" id="daily-lab"><h2>첫 개인 과제 준비</h2><p>오늘은 수업 예제로 커널과 파일 열기를 익힙니다. 다음 수업부터 26행의 상담 원장으로 교대 인수인계 프로그램을 만듭니다.</p><p><a href="../chapter02/index.html#daily-lab">2일차 교대 원장 열기</a></p></section><footer class="lesson-footer">',1))
 for project_day in list(range(43,53))+list(range(86,117)):
     project_reference(OUT/f"chapter{project_day:02}",encode)
 # Keep the downloadable PDF lab notebook identical to the separately served chapter 20 notebook.
@@ -206,8 +207,8 @@ if pdf_kit.exists():
         for name,raw in contents.items():
             put(updated,name,raw)
 docs=' · '.join(f'<a href="{p.relative_to(DAILY).as_posix()}">{p.name}</a>' for p in sorted((DAILY/"daily_resources").rglob("*")) if p.suffix in (".txt",".pdf"))
-header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>일반 수업 75일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
-page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>80~85일 Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 79개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [1,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
+header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
+page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>80~85일 Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
 (DAILY/"index.html").write_text(page)
 for index in [OUT/"index.html", OUT/"updates/index.html"]:
     s=index.read_text()
@@ -231,4 +232,16 @@ for day in (*range(43,53),*range(86,117)):
         anchor=match.group(1)
         return route+'#'+(anchor if f'id="{anchor}"' in page else 'workshop')
     history=re.sub(re.escape(route)+r'#([\w-]+)',current_section,history)
-index.write_text(history.replace("<main>","<main>"+news,1))
+all_changed=[]
+for day in [1]+[int(item[0]) for item in spec]:
+    if day<=116:
+        folder=OUT/f'chapter{day:02}'
+        title=''.join(json.loads((folder/(folder.name+'.ipynb')).read_bytes())['cells'][0]['source']).splitlines()[0].strip('# ')
+        all_changed.append(f'<li><a href="../{folder.name}/index.html#daily-lab">{escape(title)}</a></li>')
+    else:
+        title=next(row[1] for row in spec if int(row[0])==day)
+        all_changed.append(f'<li><a href="../daily/index.html#day{day:03}">{day}일 · {escape(title)}</a></li>')
+edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../daily/index.html">78개 작업 의뢰서</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
+index.write_text(history.replace("<main>","<main>"+edition+news,1))
+
+publish_results(OUT)

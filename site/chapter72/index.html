@@ -53,7 +53,7 @@
 compose_text = <span class="tok-string">"""name: course-b1
 services:
   db:
-    image: pgvector/pgvector:0.8.7-pg16-trixie
+    image: pgvector/pgvector:pg16
     ports: ["127.0.0.1:55432:5432"]
     volumes: ["course-data:/var/lib/postgresql/data"]
   api:
