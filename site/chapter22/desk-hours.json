@@ -1,0 +1,11 @@
+{
+  "id": "branch-2:225",
+  "document_id": "branch-2",
+  "text": "운영 시간\n장소 | 평일 | 토요일\n안내 데스크 | 10:00~18:00 | 10:00~15:00",
+  "source": "branch-guide.txt",
+  "page": 2,
+  "start": 225,
+  "end": 279,
+  "chunk_size": 70,
+  "chunk_overlap": 12
+}

@@ -4,6 +4,8 @@
 
 ## 한 장 수정하기
 
+교육 내용을 고칠 때는 [노트북 중심 개편 계획](reports/notebook-first-plan.md)과 [116장 작업표](reports/notebook-revision-map.md)에서 그 장의 입력 자료, 학생이 직접 작성할 코드나 문서, 확인할 결과를 먼저 찾는다.
+
 | 내용 | 수정할 파일 |
 | --- | --- |
 | 목차의 제목·분류·검수 상태 | `site/index.html` |

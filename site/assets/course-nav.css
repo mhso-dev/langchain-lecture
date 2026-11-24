@@ -2,3 +2,11 @@
 .course-nav a{color:inherit;text-decoration:underline;text-underline-offset:.18em}
 .course-nav span{margin-right:auto;color:#cfe3d9}
 @media print{.course-nav{display:none}}
+/* The course navigation and reader toolbar each keep a separate row. */
+@media screen{
+  :root{--chapter-navigation-height:2.6rem}
+  .course-nav{position:sticky;top:0;z-index:7;height:var(--chapter-navigation-height);box-sizing:border-box;white-space:nowrap}
+  .course-nav~.topbar{top:var(--chapter-navigation-height)}
+  .course-nav~.sidebar{top:calc(var(--chapter-navigation-height) + var(--top))}
+  .course-nav~main :where([id]){scroll-margin-top:calc(var(--chapter-navigation-height) + var(--top) + 1rem)}
+}
