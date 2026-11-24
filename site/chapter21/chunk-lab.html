@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>청크 경계와 출처 실험</title>
+<style>
+:root { color-scheme: light; --ink:#162f3d; --muted:#4c6068; --blue:#156965; --gold:#ffd282; --line:#c5d4d1; }
+* { box-sizing:border-box }
+body { margin:0; color:var(--ink); font-family:system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif; background:#f5f9f7; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere }
+main { max-width:960px; margin:auto; padding:clamp(13px,3.2vw,28px); border:1px solid var(--line); border-radius:14px }
+h1 { font-size:clamp(1.15rem,3.7vw,1.55rem); margin:0 0 .25rem; letter-spacing:-.035em }
+p { margin:.3rem 0 .65rem }
+.settings { display:flex; align-items:end; gap:clamp(.6rem,3vw,2rem); flex-wrap:wrap; margin:1rem 0 .75rem }
+fieldset { padding:0; margin:0; border:0; min-width:0 }
+legend,.field { display:block; color:var(--muted); font-weight:700; font-size:.84rem; margin-bottom:.2rem }
+select { max-width:100%; height:38px; padding:0 .45rem; color:var(--ink); background:white; border:1px solid #829d99; border-radius:7px; font:inherit }
+.choices { display:flex; gap:.28rem }
+.option { position:relative; display:inline-flex; }
+.option input { appearance:none; position:absolute; inset:0; height:100%; width:100%; cursor:pointer; margin:0; border:0; background:transparent }
+.option span { min-width:43px; padding:.3rem .55rem; border-radius:7px; border:1px solid #829d99; background:white; text-align:center; color:var(--ink) }
+.option input:focus-visible + span { outline:3px solid #166bb8; outline-offset:2px }
+.option input:checked + span { background:var(--blue); color:white; border-color:var(--blue); font-weight:700 }
+select:focus-visible,.part input:focus-visible { outline:3px solid #166bb8; outline-offset:2px }
+.figure { margin:.75rem 0 .3rem; border:1px solid #a6bdb8; border-radius:10px; overflow:hidden; background:#fff }
+.figure-head { padding:.45rem .7rem; display:flex; justify-content:space-between; align-items:center; gap:.5rem; flex-wrap:wrap; color:var(--muted); font-size:.84rem }
+.figure-head label { color:var(--ink); display:flex; align-items:center; gap:.35rem; cursor:pointer }
+input { accent-color:var(--blue) }
+#plot { height:clamp(155px,30vw,205px); position:relative; background:#102b32; overflow:hidden }
+canvas { display:block; height:100%; width:100% }
+#flat { display:grid; gap:11px; padding:14px clamp(12px,4vw,34px); height:100%; align-content:center; color:#e2ece9; font-size:12px }
+.lane { display:grid; grid-template-columns:5em 1fr; gap:.55rem; align-items:center }
+.track { height:13px; position:relative; background:#294649; border-radius:3px }
+.bar { position:absolute; height:100%; border-radius:2px; background:#67969d }
+.bar.selected { background:#60d3ad }
+.bar.target { background:var(--gold) }
+.bar.intersection { background:repeating-linear-gradient(115deg,#ccf5e4 0 3px,#277b67 3px 6px); z-index:1 }
+.legend { padding:.35rem .7rem; display:flex; flex-wrap:wrap; gap:.25rem 1rem; font-size:.79rem; color:var(--muted) }
+.key::before { content:""; display:inline-block; margin-right:.24rem; width:.73em; height:.73em; border-radius:2px; background:var(--swatch); }
+.raw { background:white; border:1px solid var(--line); padding:.58rem .72rem; border-radius:8px; margin:.5rem 0 .32rem }
+#source-ref { display:block; font-size:.78rem; color:var(--muted); font-weight:650 }
+#quote { white-space:pre-wrap; font-weight:620; font-size:1.08rem; line-height:1.9 }
+#quote .selected { border-bottom:3px solid #168267 }
+#quote .target { background:#ffe2a3 }
+#parts { display:grid; gap:.32rem; padding:.15rem 0 .45rem }
+.part { display:flex; align-items:center; gap:.48rem; padding:.32rem .62rem; border:1px solid var(--line); border-radius:7px; background:#fff; cursor:pointer; flex-wrap:wrap }
+.part:has(input:checked) { border-color:var(--blue); box-shadow:inset 3px 0 var(--blue) }
+.part input { margin:.15rem .1rem; }
+.part .index { color:var(--muted); font:600 .8rem ui-monospace,monospace }
+.part .chunk { white-space:pre-wrap; }
+.note { font-size:.83rem; color:var(--muted); margin:.35rem 0 }
+#result { display:block; font-size:.95rem; font-weight:620; }
+[hidden]{ display:none!important }
+@media(max-width:435px){.settings{gap:.4rem 1rem}.part{gap:.3rem}.figure-head{padding:.36rem .45rem}}
+@media print {main{border:0}.settings,.figure{display:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>몇 글자를 겹쳐야 근거 구절이 한 조각에 남을까요?</h1>
+<p>3쪽의 첫 청크에서 ‘24시간’은 이미 읽을 수 있습니다. ‘24시간 이용할 수’라는 구절을 통째로 인용하려면 얼마나 겹쳐야 할까요? 크기는 12자로 두고 겹침만 바꿔 보세요.</p>
+<div class="settings">
+<div><label for="page" class="field">이용 안내 원본</label><select id="page"><option value="3" selected>3쪽 · 반납함</option><option value="1">1쪽 · 대출 기간</option><option value="2">2쪽 · 휴관일</option></select></div>
+<fieldset><legend>chunk_overlap (글자)</legend><div class="choices">
+<label class="option"><input name="overlap" type="radio" value="0" checked><span>0</span></label>
+<label class="option"><input name="overlap" type="radio" value="4"><span>4</span></label>
+<label class="option"><input name="overlap" type="radio" value="6"><span>6</span></label></div></fieldset>
+</div>
+<div class="figure">
+<div class="figure-head"><span id="plot-title">위에서부터 근거 구절, 첫째 청크, 둘째 청크 순서입니다.</span><label id="view-option" hidden><input id="depth" type="checkbox" checked>3D로 보기</label></div>
+<div id="plot" aria-hidden="true"><div id="flat" hidden></div></div>
+<div class="legend"><span class="key" style="--swatch:#f0b64d">근거 구절</span><span class="key" style="--swatch:#219b7c">선택한 청크</span><span class="key" style="--swatch:#668f95">다른 청크</span><span class="key" style="--swatch:repeating-linear-gradient(115deg,#a6dfcd 0 2px,#377b69 2px 4px)">직전 청크와 겹친 구간</span></div>
+</div>
+<div class="raw"><span id="source-ref">library-guide.pdf · 3쪽 · library-3</span><span id="quote">무인 반납함은 24시간 이용할 수 있습니다.</span></div>
+<p class="note">청크를 선택하면 해당 원문에 밑줄이 생깁니다. [시작, 끝)에서 끝 번호는 그 조각의 다음 글자 위치입니다.</p>
+<fieldset><legend>청크별 원문 위치</legend><div id="parts"></div></fieldset>
+<output id="result" aria-live="polite" aria-atomic="true"></output>
+<p class="note">20장의 PDF에서 읽은 세 쪽을 각각 분할했습니다. 화면의 청크는 노트북과 같은 설정의 <code>RecursiveCharacterTextSplitter</code>가 반환한 본문과 <code>start_index</code>를 사용합니다.</p>
+<noscript><p>3쪽의 겹침 0자와 4자에서는 [0, 12), [13, 24) 두 조각이 나옵니다. 겹침 6자에서는 가운데 [8, 18) ‘24시간 이용할 수’가 한 조각에 들어옵니다.</p></noscript>
+</main>
+<script type="application/json" id="samples">{"1":{"id":"library-1","text":"도서 대출 기간은 14일입니다.","source":"가상 도서관 이용 안내","page":1,"target":"기간은 14일입니다.","runs":{"0":[[0,9,"도서 대출 기간은"],[10,17,"14일입니다."]],"4":[[0,9,"도서 대출 기간은"],[6,17,"기간은 14일입니다."]],"6":[[0,9,"도서 대출 기간은"],[6,17,"기간은 14일입니다."]]}},"2":{"id":"library-2","text":"도서관은 월요일에 휴관합니다.","source":"가상 도서관 이용 안내","page":2,"target":"월요일에 휴관합니다.","runs":{"0":[[0,9,"도서관은 월요일에"],[10,16,"휴관합니다."]],"4":[[0,9,"도서관은 월요일에"],[10,16,"휴관합니다."]],"6":[[0,9,"도서관은 월요일에"],[5,16,"월요일에 휴관합니다."]]}},"3":{"id":"library-3","text":"무인 반납함은 24시간 이용할 수 있습니다.","source":"가상 도서관 이용 안내","page":3,"target":"24시간 이용할 수","runs":{"0":[[0,12,"무인 반납함은 24시간"],[13,24,"이용할 수 있습니다."]],"4":[[0,12,"무인 반납함은 24시간"],[13,24,"이용할 수 있습니다."]],"6":[[0,12,"무인 반납함은 24시간"],[8,18,"24시간 이용할 수"],[13,24,"이용할 수 있습니다."]]}}}</script>
+<script src="../assets/three.min.js"></script>
+<script>
+"use strict";
+const samples = JSON.parse(document.getElementById("samples").textContent);
+const get = id => document.getElementById(id);
+const page = get("page"), depth = get("depth"), plot = get("plot"), flat = get("flat");
+const overlapChoices = [...document.querySelectorAll('input[name="overlap"]')];
+let selectedIndex = 0;
+function snapshot() {
+  const doc = samples[page.value];
+  const overlap = overlapChoices.find(input => input.checked).value;
+  const parts = doc.runs[overlap];
+  const left = doc.text.indexOf(doc.target), right = left + doc.target.length;
+  return { doc, overlap, parts, left, right };
+}
+function node(tag, className, content) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (content !== undefined) element.textContent = content;
+  return element;
+}
+function updateSource({doc, left, right, parts}) {
+  get("source-ref").textContent = "library-guide.pdf · " + doc.page + "쪽 · " + doc.id;
+  const piece = parts[selectedIndex];
+  const quote = get("quote");
+  quote.replaceChildren();
+  const boundaries = [...new Set([0, doc.text.length, left, right, piece[0], piece[1]])].sort((a,b) => a-b);
+  for (let i = 1; i < boundaries.length; i++) {
+    const start = boundaries[i-1], end = boundaries[i];
+    const fragment = node("span", "", doc.text.slice(start, end));
+    if (left <= start && end <= right) fragment.classList.add("target");
+    if (piece[0] <= start && end <= piece[1]) fragment.classList.add("selected");
+    quote.append(fragment);
+  }
+}
+function updateParts({parts}) {
+  const group = get("parts");
+  group.replaceChildren();
+  parts.forEach(([start,end,text], i) => {
+    const label = node("label", "part"), input = node("input");
+    input.type = "radio"; input.name = "chunk"; input.value = i; input.checked = i === selectedIndex;
+    label.append(input, node("span", "index", (i+1) + " · [" + start + ", " + end + ")"), node("span", "chunk", text));
+    group.append(label);
+  });
+}
+function lanes({parts,left,right}) {
+  return [[left,right,"target","근거 구절"], ...parts.map(([s,e], i) => [s,e,i === selectedIndex ? "selected" : "normal","청크 " + (i+1)])];
+}
+function overlapOf(parts, index) {
+  if (!index) return null;
+  const start = Math.max(parts[index][0], parts[index-1][0]);
+  const end = Math.min(parts[index][1], parts[index-1][1]);
+  return start < end ? [start,end] : null;
+}
+function drawFlat(data) {
+  const n = data.doc.text.length;
+  flat.replaceChildren();
+  function stripe(track, start, end, kind) {
+    const bar = node("span","bar " + kind);
+    bar.style.left = 100*start/n + "%";
+    bar.style.width = 100*(end-start)/n + "%";
+    track.append(bar);
+  }
+  lanes(data).forEach(([start,end,kind,name], row) => {
+    const lane = node("div","lane"), track = node("div","track");
+    stripe(track, start, end, kind);
+    if (row > 1) {
+      const shared = overlapOf(data.parts, row-1);
+      if (shared) stripe(track, shared[0], shared[1], "intersection");
+    }
+    lane.append(node("span","",name), track); flat.append(lane);
+  });
+}
+let renderer, scene, camera, layer;
+function setUp3D() {
+  if (!window.THREE) return;
+  const T = window.THREE;
+  try {
+    renderer = new T.WebGLRenderer({ antialias:true, alpha:true, powerPreference:"low-power" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
+    renderer.setClearColor(0x102b32,1);
+    renderer.domElement.setAttribute("aria-hidden","true");
+    scene = new T.Scene();
+    camera = new T.OrthographicCamera(-1,1,1,-1,.1,150);
+    camera.position.set(-2,17,26);
+    camera.lookAt(0,0,0);
+    const lamp = new T.DirectionalLight(0xffffff,1.65);
+    lamp.position.set(-5,12,6);
+    scene.add(lamp,new T.HemisphereLight(0xffffff,0x8bafb7,1.45));
+    plot.append(renderer.domElement); get("view-option").hidden = false;
+    renderer.domElement.addEventListener("webglcontextlost", event => {
+      event.preventDefault(); renderer.domElement.hidden = true; renderer = null;
+      get("view-option").hidden = true; draw();
+    });
+  } catch { renderer = null; }
+}
+function draw3D(data) {
+  const T = window.THREE, w = plot.clientWidth, h = plot.clientHeight;
+  if (!w || !h) return;
+  if (layer) {
+    scene.remove(layer);
+    layer.traverse(obj => { if (obj.geometry) obj.geometry.dispose(); if (obj.material) obj.material.dispose(); });
+  }
+  layer = new T.Group();
+  scene.add(layer);
+  const n = data.doc.text.length;
+  const rows = lanes(data);
+  const scale = Math.min(w / 21.6, h / (rows.length * 1.12 + 1.8));
+  camera.left=-w/(2*scale); camera.right=-camera.left; camera.top=h/(2*scale); camera.bottom=-camera.top;
+  camera.updateProjectionMatrix(); renderer.setSize(w,h,false);
+  const step = 18/n, point = pos => -9 + pos*step;
+  function segment(start,end,y,z,height,width,color) {
+    const obj = new T.Mesh(new T.BoxGeometry((end-start)*step,height,width), new T.MeshStandardMaterial({color,roughness:.8}));
+    obj.position.set((point(start)+point(end))/2,y,z); layer.add(obj);
+  }
+  rows.forEach(([start,end,kind], row) => {
+    const z = (row-(rows.length-1)/2)*1.35;
+    const y = ((rows.length-1)/2-row)*.45;
+    segment(0,n,y-.16,z,.09,.76,0x25454b);
+    const color = kind === "target" ? 0xf8c15b : kind === "selected" ? 0x41bd9c : 0x628a94;
+    segment(start,end,y,z,.24,.72,color);
+    for (let k=1;k<n;k++) {
+      const onChunk = k>start && k<end;
+      segment(k-.018,k+.018, onChunk ? y+.125 : y-.108,z,.008,.74,onChunk ? 0x294b50 : 0x66848a);
+    }
+    if (row > 1) {
+      const shared = overlapOf(data.parts,row-1);
+      if (shared) {
+        for(let k=shared[0];k<shared[1];k++) {
+          segment(k+.18,k+.5,y+.14,z,.018,.74,0xcdeddf);
+        }
+      }
+    }
+  });
+  renderer.render(scene,camera);
+}
+function draw() {
+  const data = snapshot();
+  const show3D = Boolean(renderer && depth.checked);
+  drawFlat(data); flat.hidden = show3D;
+  if (renderer) {
+    renderer.domElement.hidden = !show3D;
+    if (show3D) draw3D(data);
+  }
+  get("plot-title").textContent = "위에서부터 근거 구절과 청크 " + data.parts.length + "개가 원문 위치에 맞춰 놓여 있습니다.";
+}
+function refresh(rebuild) {
+  const data = snapshot();
+  if (rebuild) updateParts(data);
+  updateSource(data);
+  const i = data.parts.findIndex(([s,e]) => s <= data.left && data.right <= e);
+  const gaps = data.parts.slice(1).map((_,index) => {
+    const shared = overlapOf(data.parts,index+1);
+    return shared ? shared[1]-shared[0] : 0;
+  });
+  get("result").textContent = i < 0 ?
+      "‘" + data.doc.target + "’ 전체를 담은 청크가 없습니다." :
+      "청크 " + (i+1) + "에 ‘" + data.doc.target + "’ 전체가 있습니다.";
+  get("result").append(document.createTextNode(" 이웃한 청크가 실제로 공유하는 글자 수는 " + gaps.join("자, ") + "자입니다."));
+  draw();
+}
+page.addEventListener("change",() => { selectedIndex=0; refresh(true); });
+overlapChoices.forEach(control => control.addEventListener("change",() => { selectedIndex=0; refresh(true); }));
+get("parts").addEventListener("change",event => { selectedIndex=Number(event.target.value); refresh(false); });
+depth.addEventListener("change",draw);
+if (window.ResizeObserver) new ResizeObserver(draw).observe(plot);
+else window.addEventListener("resize",draw);
+setUp3D();
+refresh(true);
+</script>
+</body>
+</html>
