@@ -9,11 +9,11 @@
 | 목차의 제목·분류·검수 상태 | `site/index.html` |
 | 학생이 읽는 설명·예시·접이식 풀이 | `site/chapterNN/index.html` |
 | 예제 코드와 셀 출력 | 같은 폴더의 `chapterNN.ipynb` |
-| 무음 개념 영상 | 해당 장의 `concept.mp4`와 본문의 영상 설명 |
+| 무음 개념 영상 | 해당 절의 `visual-*.mp4`, `detail-*.mp4` 또는 `concept.mp4`와 노트북에 첨부한 GIF |
 | 공통 디자인·조작·이미지·Three.js | `site/assets/` |
 | 이전·다음 장 탐색과 사이트 빌드 | `scripts/build.mjs` |
 
-Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 각 장의 `#practice-space`에 조작부와 수치 해설을 두고, 동영상은 `#concept-clip`에서 컨트롤 없이 무음으로 자동 반복 재생된다.
+Three.js 실험의 입력과 계산은 `site/assets/practice-space.js`에 있다. 실험이 있는 장에서는 `#practice-space`로 바로 이동할 수 있다. 무음 영상은 개념을 배우는 절에서 자동 반복 재생된다. [장별 시각 자료 검토 기록](reports/visual-lessons.md)에서 각 장면의 위치와 예시를 확인할 수 있다. 새 영상의 작화와 웹·노트북 반영 스크립트는 `artwork/visual_lessons/`에 있다.
 
 ## 확인하기
 

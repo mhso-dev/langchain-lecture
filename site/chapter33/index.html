@@ -102,6 +102,11 @@ print(call[<span class="tok-string">'args'</span>])</code></pre></figure>
 
 <!-- END MOTION -->
 
+<!-- lesson-visual visual-send-back -->
+<figure class="lesson-clip" id="visual-send-back"><h3>ToolMessage가 모델에게 돌아가는 길</h3>
+<video autoplay loop muted playsinline aria-label="ToolMessage가 모델에게 돌아가는 길" src="visual-send-back.mp4"></video>
+<figcaption>검색 도구의 출력에 원래 요청의 ID를 붙입니다. 모델은 tool_call_id로 어느 요청에서 온 결과인지 연결할 수 있습니다.</figcaption></figure>
+<!-- /lesson-visual visual-send-back -->
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · ToolMessage와 요청 ID</h3>
 <div class="cell-before"><p>call을 도구로 실행한 뒤 tool_call_id와 첫 문서의 id를 표시하세요.</p>
 <p>이 셀의 content에는 검색한 문서의 본문이 일반 문자열로 들어갑니다. artifact에는 id·text·source·page를 보관합니다. 참고 구현은 content를 JSON 문자열로 만들지만 여기서는 도서관 안내 문장을 그대로 읽으세요.</p>

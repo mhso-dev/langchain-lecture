@@ -38,6 +38,11 @@
 <!-- END MOTION -->
 
 
+<!-- lesson-visual visual-network -->
+<figure class="lesson-clip" id="visual-network"><h3>공개 포트에서 내부 API로 넘어가는 요청</h3>
+<video autoplay loop muted playsinline aria-label="공개 포트에서 내부 API로 넘어가는 요청" src="visual-network.mp4"></video>
+<figcaption>배포 구성 예시에서 외부에 공개한 포트는 프록시의 443입니다. 프록시는 내부 서비스 이름 api와 포트 8000으로 요청을 넘깁니다.</figcaption></figure>
+<!-- /lesson-visual visual-network -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 공개 포트 매핑 해석</h3>
 <div class="cell-before"><p>기존 배포 설정에서 포트 관련 부분만 가져왔습니다. 어떤 서비스가 외부 요청의 첫 번째 목적지인가요?</p>
 <p>EC2는 클라우드에서 빌려 쓰는 가상 컴퓨터입니다. 학생 브라우저에서 접속하는 주소와 그 컴퓨터 안에서 프록시가 API로 연결하는 주소는 서로 다른 접속점입니다. 연결표에서 브라우저가 출발점인 줄을 먼저 보세요.</p>

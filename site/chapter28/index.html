@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -88,6 +88,9 @@ print([(m.id, m.type) <span class="tok-keyword">for</span> m <span class="tok-ke
 <!-- END MOTION -->
 
 
+<!-- lesson-visual practice-space -->
+<section class="practice-space" id="practice-space" data-practice="messageIds"><h3>수정 답변의 ID를 바꾸면 새 턴이 생길까요?</h3><p>초기 목록에 h1과 a1이 있습니다. 같은 수정 답변을 보내면서 리듀서와 ID를 바꾸고 어느 칸이 남는지 보세요.</p><label>업데이트 방식 <select><option value="same">add_messages · 기존 a1</option><option value="new">add_messages · 새 a2</option><option value="plain">리듀서 없음 · a1</option></select></label><div class="practice-stage" role="img" aria-label="수정 답변의 ID를 바꾸면 새 턴이 생길까요?"></div><output aria-live="polite">add_messages에서 같은 a1은 기존 칸을 고쳐 2개, 새 a2는 추가되어 3개입니다. 기본 덮어쓰기에서는 받은 a1만 남습니다.</output></section>
+<!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 메시지 ID로 기존 질문 교체</h3>
 <div class="cell-before"><p>h1의 내용을 ‘반납 방법은?’으로 바꿔 보세요. 수정 후 사용자 메시지의 개수와 내용을 표시하세요.</p>
 <p>이번에 수정하는 initial에는 사용자 메시지 h1 하나만 있습니다. 같은 ID로 고치면 한 자리의 내용만 바뀝니다. h1과 a1이 모두 있는 combined를 입력했다면 a1도 그대로 남습니다.</p>

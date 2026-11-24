@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -39,6 +39,11 @@
 
 <!-- END MOTION -->
 
+<!-- lesson-visual detail-persist -->
+<figure class="lesson-clip" id="detail-persist"><h3>연결을 닫은 뒤에도 1번 행을 읽는 이유</h3>
+<video autoplay loop muted playsinline aria-label="연결을 닫은 뒤에도 1번 행을 읽는 이유" src="detail-persist.mp4"></video>
+<figcaption>with 블록이 정상 종료되며 todos.db에 저장된 1번 행을 새 연결이 다시 읽습니다. 예시는 임시 작업 폴더가 유지되는 동안의 결과입니다.</figcaption></figure>
+<!-- /lesson-visual detail-persist -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · SQLite 파일에 INSERT</h3>
 <div class="cell-before"><p>저장한 행의 ID를 기록합니다. 커널이 살아 있는 동안만 임시 폴더를 유지합니다.</p>
 <p>저장 결과가 사라진 것 같으면 파일 경로 → 테이블 존재 → 필터 없는 행 순서로 확인하세요. 새 파일에는 테이블이 없어 조회 오류가 나고, 빈 테이블에는 0행이 있습니다. 원래 파일에서 필터만 풀었을 때 ID 1이 보인다면 행은 남아 있습니다.</p>
@@ -74,6 +79,9 @@ print(db.execute(<span class="tok-string">"SELECT id,title,completed FROM todos 
 </div>
 </header>
 <p>검색창에 %를 입력한 사용자는 그 기호가 제목에 들어간 할 일을 찾으려 합니다. PostgreSQL 제공 구현은 strpos로 부분 문자열을 검사합니다. SQLite의 비슷한 함수 instr는 찾은 위치를 1부터 세며, 없으면 0을 돌려줍니다.</p>
+<!-- lesson-visual practice-space -->
+<section class="practice-space" id="practice-space" data-practice="substring"><h3>퍼센트 기호가 들어간 행만 어떻게 찾을까요?</h3><p>원래 두 행에 같은 검색어를 넣습니다. SQLite의 instr()가 찾은 첫 위치를 표시합니다. 0은 해당 글자가 없다는 뜻입니다.</p><label>검색 문자열 <select><option value="%">%</option><option value="복습">복습</option><option value="마무리">마무리</option><option value="_">_</option></select></label><div class="practice-stage" role="img" aria-label="퍼센트 기호가 들어간 행만 어떻게 찾을까요?"></div><output aria-live="polite">퍼센트 기호는 ‘복습 50%’의 여섯 번째 글자입니다. %를 찾으면 이 행만, ‘복습’을 찾으면 두 행이 모두 남습니다.</output></section>
+<!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · instr()로 부분 문자열 위치 찾기</h3>
 <div class="cell-before"><p>비교할 일반 제목 한 건을 더 넣은 뒤 검색합니다.</p>
 </div>

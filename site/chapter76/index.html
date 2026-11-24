@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -34,6 +34,9 @@
 </div>
 </header>
 <p class="concept-intro">워크플로의 needs는 선행 작업을, if는 작업을 실행할 조건을 지정합니다. 앞선 검사의 종료 코드도 이후 단계 실행에 영향을 줍니다.</p><p>step은 한 작업 안에서 차례로 진행합니다. job끼리 결과를 이어 쓰려면 needs로 의존 관계를 명시합니다. 아래는 실제 배포 양식에서 실행 조건을 뽑은 연습용 YAML입니다. 외부 저장소나 레지스트리를 변경하지 않습니다.</p>
+<!-- lesson-visual practice-space -->
+<section class="practice-space" id="practice-space" data-practice="publish"><h3>어떤 이벤트에서 publish가 실행될까요?</h3><p>워크플로의 needs와 if를 함께 적용합니다. 이벤트가 같아도 브랜치나 검사 결과가 다르면 어느 작업이 생략되는지 확인하세요.</p><label>워크플로 입력 <select><option value="pull_request|main|pass">PR · 검사 성공</option><option value="push|main|pass">main 푸시 · 검사 성공</option><option value="push|topic|pass">작업 브랜치 푸시 · 검사 성공</option><option value="push|main|fail">main 푸시 · 검사 실패</option></select></label><div class="practice-stage" role="img" aria-label="어떤 이벤트에서 publish가 실행될까요?"></div><output aria-live="polite">네 조합 중 main에 푸시하고 선행 검사가 성공한 경우에만 publish가 실행됩니다. 실제 이미지는 발행하지 않는 조건 실험입니다.</output></section>
+<!-- /lesson-visual practice-space -->
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · needs의 선행 작업</h3>
 <div class="cell-before"><p>check는 코드를 검사하고 publish는 검사한 코드의 이미지 후보를 담당합니다. 어느 작업이 다른 작업을 기다리는지 보세요.</p>
 <p>아래 YAML은 needs로 검사와 게시 순서를 정하고 if로 게시 조건을 좁히는 발췌입니다. 여기에는 저장소 checkout이나 실제 이미지 빌드·발행 단계가 없습니다. 커밋 문자열 출력과 이미지 발행 성공은 구별해 기록하세요.</p>
