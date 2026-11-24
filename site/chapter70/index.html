@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 70 / HTTP API</p>
 <span class="sidebar-title">SQLite 문서 상태와 대화 턴 저장</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-upload"><span>02</span>문서 접수와 검색 가능 상태 전이</a><a href="#nb-turn"><span>03</span>답변·출처 저장과 소유자별 조회</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-upload"><span>02</span>문서 접수와 검색 가능 상태 전이</a><a href="#nb-turn"><span>03</span>답변·출처 저장과 소유자별 조회</a><a href="#workshop"><span>04</span>문서 업로드에서 공개 가능한 본문까지 한 요청으로 잇기</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,14 +25,14 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter70.ipynb" download="chapter70.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>70장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter70.ipynb" download="chapter70.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>70장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">문서 업로드에서 공개 가능한 본문까지 한 요청으로 잇기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-upload" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>문서 접수와 검색 가능 상태 전이</h2>
 </div>
 </header>
-<p class="concept-intro">파일 접수와 검색 준비 완료는 다른 상태입니다. 처리 상태를 저장하고, 답변이 끝나면 한 턴의 본문과 출처를 함께 기록합니다.</p><p>아래는 70장의 소유자·문서·상태 셋을 남긴 SQLite 실습입니다. 실제 PostgreSQL 버전은 UUID와 복합 외래키로 문서·대화·출처를 연결합니다. 여기서는 업로드 본문 한 건의 변화를 관찰합니다.</p>
+<p class="concept-intro">접수한 문서 ID로 바로 검색했는데 왜 본문이 비어 있을까요?</p><p>아래는 70장의 소유자·문서·상태 셋을 남긴 SQLite 실습입니다. 실제 PostgreSQL 버전은 UUID와 복합 외래키로 문서·대화·출처를 연결합니다. 여기서는 업로드 본문 한 건의 변화를 관찰합니다.</p>
 <!-- MOTION ready-index -->
 
 <!-- END MOTION -->
@@ -73,6 +73,8 @@ print(db.execute(<span class="tok-string">"SELECT status, body FROM docs WHERE i
 ('ready', '과제는 학습 관리 페이지의 과제함에 제출합니다.')</pre></div>
 <div class="cell-after"><p id="example-analysis">이 UPDATE는 디코딩한 body와 ready를 같은 행에 기록합니다. 디코딩이 실패하면 SQL을 호출하기 전에 예외가 납니다. 같은 셀을 다시 실행했을 때 변경 수가 0이라면 새로 처리한 행이 없었다는 뜻입니다.</p></div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>접수한 문서가 검색되지 않을 때</h3><p><mark>저장된 행이 있는지와 그 행의 상태가 ready인지 따로 확인합니다.</mark> 상태 변경에 성공한 행 수를 보고 같은 문서의 본문을 다시 조회하세요. 변경 건수가 0이면 준비 상태를 붙일 문서 ID부터 확인합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter54/index.html">54장 SQL 매개변수 바인딩과 트랜잭션</a></p></aside>
+
 <span class="lesson-anchor" id="mapping"></span><span class="lesson-anchor" id="reading-mapping"></span>
 <span class="lesson-anchor" id="scope"></span><div class="lesson-explanation" id="reading-scope"><h3>UPDATE의 세 조건</h3><p>doc-1이라는 ID, alice라는 소유자, received라는 이전 상태가 모두 맞아야 UPDATE가 한 행을 바꿉니다. 첫 갱신 직후 같은 UPDATE를 다시 실행한다면 상태가 이미 ready이므로 변경한 행 수는 0이 됩니다.</p></div>
 
@@ -101,6 +103,17 @@ print(json.loads(saved[<span class="tok-number">0</span>])[<span class="tok-stri
 <div class="cell-after"><p>다시 조회한 행에도 원문이 남습니다. 이 코드는 저장까지 성공했습니다. 답변 생성 뒤 저장에 실패했다면 응답이 생성된 사실과 이력이 남았는지를 별도로 표시해야 합니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>준비된 문서가 저장된 답변의 출처가 되기까지</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+naccept["접수"]
+  nindex["본문 등록"]
+  nread["문서 조회"]
+  nstore["턴 저장"]
+  nrestore["출처 복원"]
+  naccept --> nindex
+  nindex --> nread
+  nread --> nstore
+  nstore --> nrestore</script><figcaption>doc-1이 ready가 된 뒤, alice가 chat-a에서 다시 읽는 문장이 어디서 왔는지 따라가세요.</figcaption></figure>
+
 <span class="lesson-anchor" id="store"></span><div class="lesson-explanation" id="reading-store"><h3>한 대화 턴에 답변과 출처를 함께 저장하기</h3><p>먼저 답변에 쓴 원문과 페이지를 source에 넣습니다. 둘을 포함한 결과를 JSON 문자열 하나로 저장하므로, 다시 불러올 때 어떤 본문으로 답했는지도 복원할 수 있습니다.</p></div>
 <span class="lesson-anchor" id="readback"></span><div class="lesson-explanation" id="reading-readback"><h3>소유자와 대화 이름을 함께 조회하기</h3><p>alice의 chat-a에는 결과가 한 건 있습니다. 대화 이름을 그대로 두고 소유자만 bob으로 바꾸면 두 조건을 모두 만족하는 행이 없어 fetchone()이 None을 돌려줍니다.</p></div>
 
@@ -124,7 +137,51 @@ None</pre></div>
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>문서 업로드에서 공개 가능한 본문까지 한 요청으로 잇기</h2></div></header>
+<p>앞 실습은 이미 접수한 문서를 SQL로 처리했습니다. 이번에는 요청 본문을 받는 FastAPI 경로가 바이트를 해석한 뒤에만 문서를 저장하게 합니다. 별도 임시 DB로 같은 ID가 새로 등록되는 순간을 확인합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 문서 원문을 받는 업로드 경로</h3><div class="cell-before"><p>수업용 입력은 UTF-8 일반 텍스트입니다. /docs/{doc_id}가 전송받은 원문을 해석한 뒤 저장하도록 구성하고 한 건을 직접 보내세요. 이 앱은 한 수강생의 로컬 실습용입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from pathlib import Path
+from tempfile import TemporaryDirectory
+from contextlib import closing
+import sqlite3
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.testclient import TestClient
+
+upload_area = TemporaryDirectory()
+upload_db = Path(upload_area.name) / &quot;upload.db&quot;
+with closing(sqlite3.connect(upload_db)) as con:
+    con.execute(&quot;CREATE TABLE docs (id TEXT PRIMARY KEY, body TEXT NOT NULL)&quot;)
+    con.commit()
+
+upload_app = FastAPI()
+
+@upload_app.put(&quot;/docs/{doc_id}&quot;)
+async def put_doc(doc_id: str, request: Request):
+    raw = await request.body()
+    try:
+        text = raw.decode(&quot;utf-8&quot;)
+    except UnicodeDecodeError:
+        raise HTTPException(422, &quot;UTF-8 텍스트가 필요합니다.&quot;)
+    with closing(sqlite3.connect(upload_db)) as con:
+        con.execute(&quot;INSERT OR REPLACE INTO docs VALUES (?, ?)&quot;, (doc_id, text))
+        con.commit()
+    return {&quot;id&quot;: doc_id, &quot;characters&quot;: len(text)}
+
+uploader = TestClient(upload_app)
+saved = uploader.put(&quot;/docs/doc-2&quot;, content=&quot;제출 장소&quot;.encode())
+print(saved.status_code, saved.json())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 {&#x27;id&#x27;: &#x27;doc-2&#x27;, &#x27;characters&#x27;: 5}</pre></div><div class="cell-after"><p>doc-2와 길이 5는 ‘제출 장소’의 공백을 포함한 글자 수입니다. 이 경로는 원시 바이트를 그대로 받습니다. multipart 파일 업로드나 검색 인덱싱은 수행하지 않습니다. DB 연결을 요청 안에서 새로 열어도 같은 파일을 읽습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 처리 실패가 기존 문서를 덮어썼는지 조회하기</h3><div class="cell-before"><p>같은 doc-2에 UTF-8로 해석할 수 없는 바이트를 보내세요. 응답 상태와 DB에 남은 본문을 함께 출력해 기존 문서의 보존 여부를 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">broken_body = bytes([255])
+# 기존 doc-2에 이 본문을 보낸 뒤 같은 파일을 열어 저장값을 확인하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">broken_body = bytes([255])
+bad_upload = uploader.put(&quot;/docs/doc-2&quot;, content=broken_body)
+with closing(sqlite3.connect(upload_db)) as con:
+    old_text = con.execute(&quot;SELECT body FROM docs WHERE id=?&quot;, (&quot;doc-2&quot;,)).fetchone()[0]
+print(bad_upload.status_code, old_text)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">422 제출 장소</pre></div><p>422와 제출 장소가 나옵니다. 디코딩이 저장문보다 먼저 실패해서 기존 행이 보존됐습니다. 오류 메시지만 보았다면 데이터가 언제 바뀌었는지는 알 수 없었을 것입니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>업로드 실패를 검사할 때는 응답과 기존 저장값을 함께 보세요.</mark> 문서 번호를 새로 만들면 실패한 갱신이 기존 내용을 덮어쓰는 경우를 놓칩니다. 성공했던 doc-2를 다시 쓰는 이유입니다.</p></aside><p>팀 서비스에 연결할 때는 앞 절의 owner와 doc_id를 함께 키로 사용하고, 같은 기준으로 업로드와 조회를 검사하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -135,7 +192,7 @@ None</pre></div>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 041</p>
 <span class="sidebar-title">Streamlit 세션과 LangGraph 체크포인트</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thread-ui"><span>02</span>화면 상태와 그래프 저장 상태</a><a href="#nb-new-session"><span>03</span>사용자와 thread_id로 대화 분리</a><a href="#nb-wire-form"><span>04</span>Streamlit 폼에서 그래프 호출</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thread-ui"><span>02</span>화면 상태와 그래프 저장 상태</a><a href="#nb-new-session"><span>03</span>사용자와 thread_id로 대화 분리</a><a href="#nb-wire-form"><span>04</span>Streamlit 폼에서 그래프 호출</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>새 대화를 눌렀을 때 화면과 체크포인트의 연결 확인하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter41.ipynb" download="chapter41.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>41장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16, langgraph-checkpoint 4.3.0입니다.</p>
+<a class="download" href="chapter41.ipynb" download="chapter41.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>41장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">새 대화를 눌렀을 때 화면과 체크포인트의 연결 확인하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16, langgraph-checkpoint 4.3.0입니다.</p>
 </div>
 </section>
 <section id="nb-thread-ui" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -40,59 +40,36 @@
 <article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 체크포인터가 있는 그래프 구성</h3>
 <div class="cell-before"><p>history에는 누적 규칙을 붙이고 sources에는 현재 결과만 덮어쓰도록 합니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 47줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
+<p class="reuse-note"><a href="../chapter30/index.html#code-1">30장의 검색 함수와 문서 세 건</a>을 노트북의 준비 셀에서 실행한 뒤 아래 코드를 읽으세요.</p><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">from typing import Annotated, TypedDict
+from operator import add
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
 
-<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
-    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
-        <span class="tok-keyword">return</span> []
-    <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
-    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
-
-<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Annotated, TypedDict
-<span class="tok-keyword">from</span> operator <span class="tok-keyword">import</span> add
-<span class="tok-keyword">from</span> langgraph.graph <span class="tok-keyword">import</span> StateGraph, START, END
-<span class="tok-keyword">from</span> langgraph.checkpoint.memory <span class="tok-keyword">import</span> InMemorySaver
-
-<span class="tok-keyword">class</span> Session(TypedDict):
+class Session(TypedDict):
     question: str
     sources: list[dict]
     history: Annotated[list[str], add]
 
-<span class="tok-keyword">def</span> process(state):
-    <span class="tok-keyword">return</span> {<span class="tok-string">'sources'</span>: retrieve(state[<span class="tok-string">'question'</span>], <span class="tok-number">1</span>), <span class="tok-string">'history'</span>: [state[<span class="tok-string">'question'</span>]]}
+def process(state):
+    return {&#x27;sources&#x27;: retrieve(state[&#x27;question&#x27;], 1), &#x27;history&#x27;: [state[&#x27;question&#x27;]]}
 
 builder = StateGraph(Session)
-builder.add_node(<span class="tok-string">'process'</span>, process)
-builder.add_edge(START, <span class="tok-string">'process'</span>)
-builder.add_edge(<span class="tok-string">'process'</span>, END)
+builder.add_node(&#x27;process&#x27;, process)
+builder.add_edge(START, &#x27;process&#x27;)
+builder.add_edge(&#x27;process&#x27;, END)
 engine = builder.compile(checkpointer=InMemorySaver())
 
-<span class="tok-keyword">def</span> send(thread, question):
-    <span class="tok-keyword">return</span> engine.invoke({<span class="tok-string">'question'</span>: question}, {<span class="tok-string">'configurable'</span>: {<span class="tok-string">'thread_id'</span>: thread}})
+def send(thread, question):
+    return engine.invoke({&#x27;question&#x27;: question}, {&#x27;configurable&#x27;: {&#x27;thread_id&#x27;: thread}})
 
-first = send(<span class="tok-string">'A'</span>, <span class="tok-string">'대출 기간은?'</span>)
-print(first[<span class="tok-string">'sources'</span>][<span class="tok-number">0</span>][<span class="tok-string">'id'</span>])</code></pre></figure>
+first = send(&#x27;A&#x27;, &#x27;대출 기간은?&#x27;)
+print(first[&#x27;sources&#x27;][0][&#x27;id&#x27;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1</pre></div>
 <div class="cell-after"><p>A의 현재 결과는 library-1입니다. 반복 실행으로 새 엔진을 만들면 메모리 저장소도 다시 만들어집니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="documents"></span><span class="lesson-anchor" id="reading-documents"></span>
-<span class="lesson-anchor" id="graph"></span><div class="lesson-explanation" id="reading-graph"><h3>process 하나로 구성한 그래프</h3><p>START 다음에 실행되는 노드는 process 하나입니다. retrieve는 이 노드 안에서 부르는 함수입니다. process가 현재 질문의 sources와 한 항목짜리 history를 반환하면 그래프가 각 필드의 규칙에 맞춰 갱신하고 END에 도착합니다.</p></div>
+<span class="lesson-anchor" id="graph"></span><div class="lesson-explanation" id="reading-graph"><h3>process 하나로 구성한 그래프</h3><p>26장의 부분 갱신을 process에 적용하면 새 질문 한 건은 history에 붙고 이번 출처 목록은 sources에 덮어써집니다. retrieve는 process 안에서 호출하므로 실행 기록에는 process 노드가 한 번 나타납니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 현재 대화 출처 초기화</h3>
 <div class="cell-before"><p>A가 주차 질문을 보낸 직후의 기록과 출처를 읽으세요.</p>
@@ -106,6 +83,14 @@ print(second[<span class="tok-string">'sources'</span>])</code></pre></figure>
 </div>
 <p id="example-analysis">질문 이력에는 대출 기간과 주차 요금이 둘 다 남았는데 현재 출처 목록은 비었습니다. 화면이 되살려야 할 두 상태의 수명이 다르기 때문입니다. 대화 목록은 이어 가되, 출처 패널은 방금 처리한 질문의 결과로 교체하세요.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>폼 제출과 대화 복원을 구분하기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+f["폼 제출"] --> i["thread_id로 그래프 호출"]
+i --> p["process · 검색과 응답"]
+p --> a["현재 답변과 출처 표시"]
+p --> b["대화 체크포인트 보관"]</script><figcaption>질문을 제출하면 선택한 thread_id로 그래프를 호출합니다. 화면에는 이번 답변의 출처를 쓰고 대화 기록은 스레드별로 이어집니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>화면 기록과 대화 체크포인트</h3><p><mark>화면에 예전 질문이 남아 있어도 이번 답변의 출처는 비어 있을 수 있습니다.</mark> 대출 질문 뒤에 주차 질문을 보내고 대화 이력과 현재 sources를 각각 보세요. 화면을 다시 그리는 일과 그래프가 어느 스레드를 복원하는 일도 따로 점검합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter29/index.html">29장 체크포인터와 thread_id를 이용한 대화 저장</a></p></aside>
+
 <span class="lesson-anchor" id="reading-sources"></span>
 <span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
 
@@ -294,7 +279,44 @@ print(current[&#x27;sources&#x27;])</code></pre></figure><div class="output"><p 
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>새 대화를 눌렀을 때 화면과 체크포인트의 연결 확인하기</h2></div></header>
+<p>지난 질문을 화면에서 지워도 그래프에 예전 thread_id를 보내면 이전 대화가 이어집니다. 이번에는 화면에 보관할 작은 상태와 그래프의 저장 기록을 구분하고 초기화 함수를 작성합니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 화면만 지우고 같은 스레드로 보낸 결과</h3><div class="cell-before"><p>이미 연결한 실제 LangGraph 엔진과 send를 사용합니다. 첫 질문 뒤 화면의 current만 비우고 새 질문을 제출합니다. 스레드 이름은 이 셀을 다시 실행해도 과거 실습과 겹치지 않게 생성합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">ui_state = {&quot;thread&quot;: str(uuid4()), &quot;current&quot;: None}
+ui_state[&quot;current&quot;] = send(ui_state[&quot;thread&quot;], &quot;대출 기간은?&quot;)
+ui_state[&quot;current&quot;] = None
+ui_state[&quot;current&quot;] = send(ui_state[&quot;thread&quot;], &quot;반납함은?&quot;)
+print(ui_state[&quot;current&quot;][&quot;history&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;대출 기간은?&#x27;, &#x27;반납함은?&#x27;]</pre></div><div class="cell-after"><p>화면을 비웠지만 대출과 반납 두 질문이 모두 나옵니다. 체크포인터가 같은 thread_id에서 첫 질문의 기록을 읽어 현재 질문에 더했기 때문입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 새 스레드에서 첫 질문을 보내고 이전 기록도 보존하기</h3><div class="cell-before"><p>새 대화 버튼이 사용할 new_chat 함수를 작성하세요. 새 ID와 빈 화면 상태를 반환한 뒤 휴관일을 묻습니다. 기존 thread_id의 체크포인트는 get_state로 읽어 원래 두 질문이 남았는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># new_chat은 새 딕셔너리의 thread, current를 채웁니다.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def new_chat():
+    return {&quot;thread&quot;: str(uuid4()), &quot;current&quot;: None}
+
+previous_thread = ui_state[&quot;thread&quot;]
+ui_state = new_chat()
+ui_state[&quot;current&quot;] = send(ui_state[&quot;thread&quot;], &quot;휴관일은?&quot;)
+previous = engine.get_state({&quot;configurable&quot;: {&quot;thread_id&quot;: previous_thread}})
+print(ui_state[&quot;current&quot;][&quot;history&quot;])
+print(previous.values[&quot;history&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;휴관일은?&#x27;]
+[&#x27;대출 기간은?&#x27;, &#x27;반납함은?&#x27;]</pre></div><p>새 대화에는 휴관 질문만, 예전 대화에는 앞선 두 질문이 남습니다. 현재 대화의 ID를 교체하는 일과 저장한 기록을 삭제하는 일은 서로 다른 기능입니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="0"><h3 id="workshop-step-3">셀 10 · 선택 실습 · 새 대화 버튼 전후 실제 폼 기록 비교</h3><div class="cell-before"><p>Streamlit을 설치한 경우 셀에서 제공한 ui_source를 AppTest로 열어 새 대화 버튼을 누릅니다. 버튼을 누른 직후에는 이전 답의 출처가 사라져야 합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">from importlib.util import find_spec
+if find_spec(&quot;streamlit&quot;) is not None:
+    from streamlit.testing.v1 import AppTest
+    screen_check = AppTest.from_string(ui_source).run()
+    screen_check.text_input[0].set_value(&quot;대출 기간은?&quot;)
+    screen_check.button[1].click().run()
+    print(screen_check.caption[0].value)
+    screen_check.button[0].click().run()
+    assert not screen_check.exception
+    print(&quot;새 대화에 표시된 출처&quot;, len(screen_check.caption))
+else:
+    print(&quot;Streamlit 미설치 · 새 대화 버튼 검사는 건너뜁니다.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Streamlit 미설치 · 새 대화 버튼 검사는 건너뜁니다.</pre></div><div class="cell-after"><p>설치한 환경에서는 대출 문서의 1쪽 출처가 한 번 보이고 새 대화의 출처 수는 0이어야 합니다. 이 검사는 화면에서 옛 자료를 숨겼는지를 봅니다. 저장소에 무엇이 남았는지는 바로 앞 get_state 결과로 읽습니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>새 대화의 상태는 화면에서 보이는 값과 그래프가 조회하는 thread_id를 함께 바꿉니다.</mark> 기존 ID를 다시 사용하면 화면에 아무것도 보이지 않던 시점 이후에도 이전 대화가 이어집니다.</p></aside><p>중간 프로젝트 데모에서는 새 대화의 첫 질문과 이전 대화 복귀를 별개의 시나리오로 확인하세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

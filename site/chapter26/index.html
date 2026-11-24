@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 26 / LANGGRAPH</p>
 <span class="sidebar-title">LangGraph StateGraph의 상태와 노드</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-three-fields"><span>02</span>TypedDict와 노드의 부분 갱신</a><a href="#nb-run-graph"><span>03</span>add_node()·add_edge()·compile()로 그래프 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-three-fields"><span>02</span>TypedDict와 노드의 부분 갱신</a><a href="#nb-run-graph"><span>03</span>add_node()·add_edge()·compile()로 그래프 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>문서 수를 세는 노드를 그래프에 끼워 넣기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter26.ipynb" download="chapter26.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>26장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
+<a class="download" href="chapter26.ipynb" download="chapter26.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>26장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">문서 수를 세는 노드를 그래프에 끼워 넣기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-three-fields" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -93,6 +93,8 @@ print(normalized)</code></pre></figure>
 <div class="cell-after"><p>documents와 answer의 빈 값이 남습니다. 두 필드는 이제 검색과 답변 노드가 채울 자리입니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>노드 하나의 반환값과 그래프의 상태</h3><p><mark>normalize가 question만 반환해도 기존 documents와 answer는 상태에 남습니다.</mark> 직접 호출한 결과와 다음 셀의 병합 결과를 나란히 보세요. 그래프에서는 간선을 따라 다음 노드가 실행될 때 이미 갱신한 질문을 읽습니다. compile()은 연결을 준비하고 첫 실행은 invoke(initial)에서 시작합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter24/index.html">24장 LCEL로 구성하는 RAG와 인용 검증</a></p></aside>
+
 <span class="lesson-anchor" id="nodes"></span><div class="lesson-explanation" id="reading-nodes"><h3>노드 함수의 부분 갱신</h3><div class="prose"><p>normalize가 반환한 딕셔너리에는 question 하나만 있습니다. 반환에서 빠진 documents와 answer를 지우라는 뜻이 아닙니다. 이번처럼 별도 갱신 규칙을 지정하지 않은 필드는 해당 키가 반환되면 새 값으로 바뀌며, 반환하지 않은 필드는 유지됩니다.</p>
 <p>lookup은 documents만, compose는 answer만 반환합니다. 양쪽이 입력 상태를 직접 바꾸지 않으므로 각 함수를 따로 호출해 어떤 필드를 썼는지 확인할 수 있습니다.</p>
 </div></div>
@@ -138,11 +140,17 @@ print(graph.invoke(initial)[<span class="tok-string">'answer'</span>])</code></p
 <div class="cell-after"><p>14일이라는 문장이 나옵니다. lookup이 대출 문장을 골라 documents에 넣었고 compose는 그대로 이어 붙였습니다. 모델에 날짜를 묻는 과정은 없습니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>invoke 한 번에서 바뀌는 상태 필드</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+s["START"] --> n["normalize · 질문 공백 정리"]
+n --> l["lookup · 문서 검색"]
+l --> c["compose · 답변 작성"]
+c --> e["END"]</script><figcaption>normalize는 question, lookup은 documents, compose는 answer를 반환합니다. 앞 노드가 써 둔 나머지 필드도 최종 상태에 남습니다.</figcaption></figure>
+
 <span class="lesson-anchor" id="edges"></span><div class="lesson-explanation" id="reading-edges"><h3>노드·간선 등록과 컴파일</h3><div class="prose"><p>StateGraph는 그래프를 만드는 빌더입니다. add_node의 첫 인자는 그래프에서 사용하는 이름이고 두 번째 인자는 실행할 함수입니다. add_edge는 등록한 이름으로 연결합니다. START는 입력을 받은 시작 위치, END는 종료 위치입니다.</p>
 <p>compile()은 등록된 노드와 간선을 실행 가능한 그래프로 묶습니다. 이때 lookup의 본문은 아직 실행되지 않습니다. 어느 문장을 골랐는지는 invoke() 뒤의 documents에서 확인합니다.</p>
 </div></div>
 <span class="lesson-anchor" id="observe"></span><span class="lesson-anchor" id="reading-observe"></span>
-<figure class="lesson-clip workflow-clip" id="workflow-question-to-answer"><h3>같은 상태에서 세 노드가 한 칸씩 채웁니다</h3><video controls muted playsinline preload="metadata" src="workflow-question-to-answer.mp4" aria-label="같은 상태에서 세 노드가 한 칸씩 채웁니다" aria-describedby="workflow-question-to-answer-caption"></video><figcaption id="workflow-question-to-answer-caption">실행 중인 노드가 바뀔 때 반환 키도 바뀝니다. lookup이 찾은 문장은 compose가 answer를 쓴 뒤에도 documents에 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = &quot;  대출 기간은?  &quot;</li><li><strong>normalize</strong> · question = &quot;대출 기간은?&quot;</li><li><strong>lookup</strong> · documents[0] = 도서 대출 기간은 14일입니다.</li><li><strong>compose</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 최종 상태 = question · documents · answer</li></ol></figure>
+<span id="workflow-question-to-answer"></span>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · invoke() 결과의 근거 확인</h3>
 <div class="cell-before"><p>질문을 ‘휴관 요일은?’로 바꾸어 실행하고 최종 상태에서 documents만 표시하세요.</p>
@@ -185,7 +193,35 @@ print(result["answer"])</code></pre></figure><div class="output"><p class="eyebr
 도서관은 월요일에 휴관합니다.</pre></div><div class="cell-after"><p>마지막 노드가 돌려준 딕셔너리는 answer 한 칸입니다. 최종 상태에는 lookup이 찾은 documents 두 건도 남으므로 실제로 어떤 자료를 요약했는지 대조할 수 있습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>문서 수를 세는 노드를 그래프에 끼워 넣기</h2></div></header>
+<p>앞에서 lookup은 문서 목록을, compose는 답변을 만들었습니다. 검색과 답변 사이에 “근거 몇 건을 읽었는가”라는 값을 남기되 이미 동작하는 두 함수를 재사용합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 노드별 반환값에 남은 필드 읽기</h3><div class="cell-before"><p>대출과 휴관을 함께 묻습니다. stream의 updates에서 노드가 이번 차례에 쓴 필드 이름만 꺼내 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">both = {**initial, &quot;question&quot;: &quot;대출 기간과 휴관일은?&quot;}
+for update in graph.stream(both, stream_mode=&quot;updates&quot;):
+    name, delta = next(iter(update.items()))
+    print(name, list(delta))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">normalize [&#x27;question&#x27;]
+lookup [&#x27;documents&#x27;]
+compose [&#x27;answer&#x27;]</pre></div><div class="cell-after"><p>normalize는 question, lookup은 documents, compose는 answer만 씁니다. 어떤 단계도 문서 수를 따로 저장하지 않았습니다. 마지막 단계만 보면 문서가 몇 건 있었는지 알려면 다시 목록을 세어야 합니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 기존 노드 사이에 evidence_count 기록하기</h3><div class="cell-before"><p>State를 상속해 evidence_count 정수 필드를 추가하세요. lookup 직후에 count 노드를 두고, 같은 질문에 대한 최종 개수와 답변을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># class AuditedState(State)와 count 노드를 정의한 뒤 기존 함수들을 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">class AuditedState(State):
+    evidence_count: int
+
+def count_evidence(state):
+    return {&quot;evidence_count&quot;: len(state[&quot;documents&quot;])}
+
+audit_builder = StateGraph(AuditedState)
+audit_builder.add_sequence([(&quot;normalize&quot;, normalize), (&quot;lookup&quot;, lookup),
+                           (&quot;count&quot;, count_evidence), (&quot;compose&quot;, compose)])
+audit_builder.add_edge(START, &quot;normalize&quot;)
+audit_builder.add_edge(&quot;compose&quot;, END)
+audit_graph = audit_builder.compile()
+audit_result = audit_graph.invoke({**both, &quot;evidence_count&quot;: 0})
+print(audit_result[&quot;evidence_count&quot;], audit_result[&quot;answer&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 도서 대출 기간은 14일입니다. / 도서관은 월요일에 휴관합니다.</pre></div><p>값은 2이고 두 안내 문장이 이어집니다. count는 documents를 다시 반환하지 않았지만 앞 노드의 문서가 상태에 남아 compose도 읽을 수 있습니다. count를 lookup 앞에 두면 처음 넣었던 빈 목록을 세게 됩니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>노드가 읽을 수 있는 값은 연결 순서에 따라 달라집니다.</mark> count의 코드를 그대로 두고 실행 위치만 앞당겨도 기록되는 숫자가 달라집니다.</p></aside><p>27장은 노드의 실행 순서를 상태값이 바꾸는 경우를 다룹니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 07 / PYTHON</p>
 <span class="sidebar-title">Python 디버깅과 Git 변경 이력</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-find-reset"><span>02</span>for 반복문과 누적 변수의 초기화 위치</a><a href="#nb-review-change"><span>03</span>unified_diff()로 변경 줄 비교</a><a href="#nb-merge-conflict"><span>04</span>Git 병합 충돌 표시와 해결</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-find-reset"><span>02</span>for 반복문과 누적 변수의 초기화 위치</a><a href="#nb-review-change"><span>03</span>unified_diff()로 변경 줄 비교</a><a href="#nb-merge-conflict"><span>04</span>Git 병합 충돌 표시와 해결</a><a href="#workshop"><span>05</span>고친 코드와 커밋할 코드가 다른 경우</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter07.ipynb" download="chapter07.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>7장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter07.ipynb" download="chapter07.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>7장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">고친 코드와 커밋할 코드가 다른 경우</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-find-reset" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -55,6 +55,8 @@ print(total)</code></pre></figure>
 </div>
 <p id="example-analysis">두 번째 반복 직전의 합은 30입니다. 반복문 안에서 total = 0을 다시 실행하므로 두 번째 반복의 결과는 20입니다. 반복 전 초기화는 유지하고 반복문 안의 초기화만 빼면 두 번째 반복의 합이 50이 됩니다. 마지막 값 90이 우연히 맞은 것인지도 이 중간값으로 확인할 수 있습니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>마지막 시간만 합계에 남는 이유</h3><p><mark>누적 변수를 반복문 안에서 0으로 만들면 이전 항목의 시간이 지워집니다.</mark> 첫 반복에서 더한 값을 종이에 적고 다음 반복의 첫 줄을 따라가 보세요. 초기화를 반복문 앞으로 옮기면 각 항목의 시간은 그대로이고 합계만 달라집니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter02/index.html">2장 Python의 리스트·딕셔너리와 조건 반복</a></p></aside>
+
 <span class="lesson-anchor" id="debug"></span><div class="lesson-explanation" id="reading-debug"><h3>누적 변수의 마지막 값을 추적하기</h3><p>한 번만 실행해야 하는 초기화는 for 위에, 매번 실행해야 하는 덧셈은 for 안에 둡니다. 한 행만 넣으면 두 구현의 결과가 같으므로, 두 번째 행까지 읽은 시점의 값이 고친 줄을 검증하는 단서입니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · total_minutes() 반환값 검증</h3>
@@ -147,7 +149,39 @@ print(conflict)</code></pre></figure>
 <span class="lesson-anchor" id="conflict"></span><div class="lesson-explanation" id="reading-conflict"><h3>충돌 마커 안의 두 지시 합치기</h3><p>HEAD 쪽 문장은 ‘전체 셀을 실행하세요.’이고 partner 쪽 문장은 ‘새 커널에서 시작하세요.’입니다. 실행 순서를 생각해 새 커널을 먼저 시작하고 전체 셀을 실행하라는 한 문장으로 합치세요. 결과 문장에는 충돌 마커를 넣지 않습니다.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>고친 코드와 커밋할 코드가 다른 경우</h2></div></header>
+<p>합계 계산을 고쳐 두고 테스트 한 줄을 더 쓴 상황입니다. 실제 Git 저장소를 임시 폴더에 만들고, 파일에 있는 줄과 다음 커밋에 담길 줄을 따로 읽어 보겠습니다. Git이 설치된 수업 커널에서 실행하세요.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · add 이후의 편집이 어디에 남는지 확인하기</h3><div class="cell-before"><p>메모에 첫 줄을 쓰고 git add를 한 뒤 두 번째 줄을 붙입니다. show :notes.txt는 Git의 스테이징 영역에 들어 있는 파일을 읽습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from pathlib import Path
+from tempfile import TemporaryDirectory
+import subprocess
+
+def inspect_stage(stage_again):
+    with TemporaryDirectory() as folder:
+        def git(*args):
+            return subprocess.run([&quot;git&quot;, &quot;-C&quot;, folder, *args], check=True,
+                                  capture_output=True, text=True).stdout
+        git(&quot;init&quot;, &quot;-q&quot;)
+        note = Path(folder) / &quot;notes.txt&quot;
+        note.write_text(&quot;합계 90분\n&quot;, encoding=&quot;utf-8&quot;)
+        git(&quot;add&quot;, &quot;notes.txt&quot;)
+        note.write_text(&quot;합계 90분\n빈 목록도 검사\n&quot;, encoding=&quot;utf-8&quot;)
+        if stage_again:
+            git(&quot;add&quot;, &quot;notes.txt&quot;)
+        return git(&quot;show&quot;, &quot;:notes.txt&quot;).splitlines(), note.read_text(encoding=&quot;utf-8&quot;).splitlines()
+
+staged, working = inspect_stage(False)
+print(staged)
+print(working)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;합계 90분&#x27;]
+[&#x27;합계 90분&#x27;, &#x27;빈 목록도 검사&#x27;]</pre></div><div class="cell-after"><p>파일에는 ‘빈 목록도 검사’가 보이지만 스테이징 영역에는 첫 줄만 남았습니다. git add는 실행한 시점의 파일 내용을 가져갑니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 동료가 받을 두 줄을 검산하기</h3><div class="cell-before"><p>같은 실험에서 수정 후 add까지 실행하도록 함수를 호출하세요. 커밋 대상의 마지막 줄과 두 목록의 일치 여부를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># inspect_stage에 어느 값을 넣을지 고르세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">staged, working = inspect_stage(True)
+print(staged[-1], staged == working)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">빈 목록도 검사 True</pre></div><p>‘빈 목록도 검사 True’가 나옵니다. 수정한 파일을 한 번 더 올리면서 두 번째 줄이 커밋 대상에 포함됐습니다. 아직 커밋을 만들거나 원격에 보낸 단계는 아닙니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>커밋할 파일 내용은 마지막 git add를 실행한 시점에 정해집니다.</mark> 실험에서 파일명은 그대로인데 두 목록의 길이가 달랐습니다. 검사 코드를 저장한 뒤 그 줄까지 올라갔는지는 스테이징된 내용을 읽어 확인하세요.</p></aside><p>팀원이 같은 수정을 재현하려면 고친 줄과 그 줄을 검사하는 예제를 한 커밋에서 확인할 수 있어야 합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -155,7 +189,7 @@ print(conflict)</code></pre></figure>
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

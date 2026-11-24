@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 089 / FINAL PROJECT</p>
 <span class="sidebar-title">자료 접근 범위와 대체 데이터</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inventory"><span>02</span>공개 범위별 문서 목록</a><a href="#nb-fallback"><span>03</span>연동 실패 시 사용할 대체 자료</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inventory"><span>02</span>공개 범위별 문서 목록</a><a href="#nb-fallback"><span>03</span>연동 실패 시 사용할 대체 자료</a><a href="#workshop"><span>04</span>공개 시연용 파일에 넣을 열과 행 고르기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter89.ipynb" download="chapter89.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>89장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter89.ipynb" download="chapter89.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>89장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">공개 시연용 파일에 넣을 열과 행 고르기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-inventory" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -100,8 +100,28 @@ print(locator[<span class="tok-string">"source"</span>], locator[<span class="to
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>대체 자료로 시연할 때</h3><p><mark>대체 문서의 접근 범위와 원문 위치도 기록해야 합니다.</mark> 연동이 막혀 RULE-B 예시를 쓴다면 학생이 어디까지 실제로 조회했는지 분명히 하세요. 대체 문서에 없는 필드까지 원래 서비스에서 확인한 것으로 쓰면 안 됩니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter88/index.html">88장 인수 기준과 작업 분해</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>공개 시연용 파일에 넣을 열과 행 고르기</h2></div></header>
+<p>88장에서 확인한 원본에는 화면에 필요한 출처 외에 접근 그룹도 있습니다. 팀 밖의 동료에게 조회 샘플을 줄 때 공개할 레코드와 전달할 열을 차례로 고릅니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 공개 규정 두 건으로 인계 파일 만들기</h3><div class="cell-before"><p>노트북의 세 규정을 JSON Lines 형식으로 바꿉니다. 한 줄은 문서 한 건입니다. 만든 문자열을 다시 열어 파일을 받는 사람이 볼 수 있는 문서와 쪽을 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">import json
+
+public_fields = (&quot;id&quot;, &quot;text&quot;, &quot;source&quot;, &quot;page&quot;, &quot;section&quot;, &quot;revised_on&quot;, &quot;version&quot;)
+public_lines = [
+    json.dumps({key: row[key] for key in public_fields}, ensure_ascii=False)
+    for row in documents if &quot;public&quot; in row[&quot;groups&quot;]
+]
+package = &quot;\n&quot;.join(public_lines)
+reopened = [json.loads(line) for line in package.splitlines()]
+print([(row[&quot;id&quot;], row[&quot;page&quot;]) for row in reopened])
+assert all(set(row) == set(public_fields) for row in reopened)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;RULE-A&#x27;, 1), (&#x27;RULE-B&#x27;, 2)]</pre></div><div class="cell-after"><p>받는 쪽에는 RULE-A의 1쪽, RULE-B의 2쪽만 있습니다. 행을 추릴 때 groups를 썼지만 전달한 열에는 groups가 없습니다.</p></div>
+</article>
+<section class="project-example"><h3>연동이 다시 가능해질 때 대조할 것</h3><p>실제 원문 접근이 열리면 ID별로 쪽, 절, 개정일을 대조합니다. 대체 샘플을 먼저 받은 동료는 파일 앞의 두 ID와 자료판 rules-v1을 기록해 두세요. 다른 판본이면 평가 결과를 한 표에 합치기 전에 바뀐 문서부터 확인합니다.</p></section>
+<aside class="lesson-note"><p><mark>어느 행을 읽을 수 있는지와 그 행의 어느 열을 전달할지는 별도로 정합니다.</mark> 공개 규정 두 건을 골라도 내부 메모 열까지 그대로 복사하면 시연에 필요 없는 정보가 함께 나갑니다.</p></aside><p>90장에서는 이 두 공개 문서의 ID를 기대 출처로 쓰고, 자료 밖 질문에는 기대 출처를 비워 둡니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

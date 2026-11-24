@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 102 / FINAL PROJECT</p>
 <span class="sidebar-title">POST 요청·응답 계약과 저장 상태</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>POST /p1/ask의 JSON 요청</a><a href="#nb-storage"><span>03</span>답변 생성과 저장 성공 여부 구분</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>POST /p1/ask의 JSON 요청</a><a href="#nb-storage"><span>03</span>답변 생성과 저장 성공 여부 구분</a><a href="#workshop"><span>04</span>API 소비자가 전송 실패와 답변 유보를 다르게 처리하는지 시험하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter102.ipynb" download="chapter102.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>102장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter102.ipynb" download="chapter102.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>102장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">API 소비자가 전송 실패와 답변 유보를 다르게 처리하는지 시험하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -80,6 +80,19 @@ RULE-A</pre></div>
 </div>
 <p id="example-analysis">200은 요청이 처리됐다는 HTTP 상태이고 committed는 서비스가 기록한 저장 결과입니다. 사용자가 다음 접속에서도 답을 볼 수 있어야 한다면 같은 요청 ID로 저장 기록을 다시 읽는 검사가 필요합니다. 답변 생성과 저장 성공을 구분할 수 있는 응답 예입니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>HTTP 200에서 실제 답과 출처 ID까지 내려가기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nhttp["전송 기록"]
+  nbody["python_response"]
+  nresult["답변 결과"]
+  nid["첫 출처"]
+  nstored["저장 상태"]
+  nhttp --> nbody
+  nbody --> nresult
+  nresult --> nid
+  nbody --> nstored</script><figcaption>저장된 전송 예시의 겉 상태와 안쪽 값을 읽는 경로입니다. HTTP 상태 코드만으로 인용한 문서까지 알 수는 없습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>응답 상태가 200일 때의 후속 확인</h3><p><mark>HTTP 응답, 답변 생성, 저장 완료는 서로 다른 지점에서 확인합니다.</mark> 같은 요청 ID를 따라 answered와 committed를 찾아 보세요. 답을 계산했지만 저장하지 못한 경우까지 기록해야 재전송해도 될지 판단할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter68/index.html">68장 FastAPI 요청 모델과 POST 엔드포인트</a></p></aside>
+
 </section>
 <section id="nb-storage" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>답변 생성과 저장 성공 여부 구분</h2>
@@ -145,7 +158,31 @@ storage_failure</pre></div>
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>API 소비자가 전송 실패와 답변 유보를 다르게 처리하는지 시험하기</h2></div></header>
+<p>준비 계약에서 Q01 응답은 HTTP 200이고 저장까지 마쳤습니다. 반면 unsaved는 계산한 답이 있어도 저장 오류로 503을 보냅니다. 화면 개발자가 이 두 응답을 실제 HTTP 클라이언트로 읽는 작은 계약 시험을 만듭니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 같은 클라이언트로 저장 실패 응답 읽기</h3><div class="cell-before"><p>이 셀은 서버의 저장 기능을 다시 만들지 않습니다. 제공된 실패 응답을 httpx의 테스트 전송 계층으로 보내, HTTP 상태와 본문에 동시에 접근하는 클라이언트를 시험합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">import httpx
+
+def fixture_response(http_request):
+    incoming = json.loads(http_request.content)
+    if incoming[&quot;request_id&quot;] == failed[&quot;request_id&quot;]:
+        return httpx.Response(503, json={**transport_row[&quot;body&quot;], &quot;python_response&quot;: failed})
+    return httpx.Response(200, json=transport_row[&quot;body&quot;])
+
+with httpx.Client(transport=httpx.MockTransport(fixture_response),
+                  base_url=&quot;https://lesson.invalid&quot;) as client:
+    outgoing = {**request, &quot;request_id&quot;: &quot;unsaved&quot;,
+                &quot;question&quot;: &quot;장비 B의 점검 전 확인 사항은?&quot;}
+    response = client.post(&quot;/p1/ask&quot;, json=outgoing)
+message = response.json()[&quot;python_response&quot;]
+print(response.status_code, message[&quot;result&quot;][&quot;sources&quot;][0][&quot;id&quot;])
+print(message[&quot;storage_status&quot;], message[&quot;error&quot;][&quot;stage&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">503 RULE-B
+failed session_commit</pre></div><div class="cell-after"><p>503 본문에 RULE-B가 있고 저장 상태는 failed입니다. 예외 처리에서 HTTP 코드만 보고 본문을 통째로 버리면, 사용자에게 꼭 알려야 할 “답은 계산됐지만 저장하지 못했다”는 정보도 사라집니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 API의 계약 시험으로 바꾸기</h3><p>정상 request로 같은 클라이언트를 호출해 200과 committed를 확인하세요. 다음에는 fixture_response 대신 팀의 로컬 서버에 같은 요청을 보내기 전에 세션과 접근 주체를 준비합니다. 위 시험은 URL에 인터넷 요청을 보내지 않습니다.</p></section>
+<aside class="lesson-note"><p><mark>서비스 응답의 실패 단계는 HTTP 번호와 업무 본문을 함께 읽어야 알 수 있습니다.</mark> 저장 실패 뒤 검색을 반복해도 저장소의 문제가 해결되지는 않습니다. 오류의 stage가 session_commit인지부터 확인합니다.</p></aside><p>103장에서는 같은 오류를 동료가 화면에서 읽은 후 어떤 다음 행동을 고르는지 관찰합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

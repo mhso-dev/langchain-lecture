@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 038</p>
 <span class="sidebar-title">재정렬과 다중 질의 검색</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reorder"><span>02</span>sorted()를 이용한 후보 재정렬</a><a href="#nb-variant"><span>03</span>질의 확장과 청크 ID 중복 제거</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reorder"><span>02</span>sorted()를 이용한 후보 재정렬</a><a href="#nb-variant"><span>03</span>질의 확장과 청크 ID 중복 제거</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>실제 재정렬기가 ‘예약 3일’을 ‘대출 14일’보다 높게 고른 경우</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter38.ipynb" download="chapter38.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>38장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter38.ipynb" download="chapter38.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>38장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">실제 재정렬기가 ‘예약 3일’을 ‘대출 14일’보다 높게 고른 경우</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-reorder" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -70,6 +70,15 @@ print(ranked[<span class="tok-number">0</span>][<span class="tok-string">'id'</s
 </div>
 <p id="example-analysis">재정렬의 효과를 확인하려면 후보 목록에서 library-1:0을 잠시 빼 보세요. 남은 마침표를 아무리 정렬해도 ‘14일’은 돌아오지 않습니다. 이 셀의 점수는 ‘대출’이 들어 있는지를 나타내는 불리언 값입니다. 학습된 재정렬 모델이 질문과 문장의 뜻을 얼마나 잘 비교하는지는 별도 실험에서 측정해야 합니다.</p><div class="example-table"><table><caption>같은 후보 두 건의 재정렬</caption><thead><tr><th scope="col">청크 ID</th><th scope="col">청크 본문</th><th scope="col">검색 순위</th><th scope="col">키워드 정렬 후</th></tr></thead><tbody><tr><td>library-1:1</td><td>.</td><td>1</td><td>2</td></tr><tr><td>library-1:0</td><td>도서 대출 기간은 14일입니다</td><td>2</td><td>1</td></tr></tbody></table></div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>마침표와 대출 문장의 순서가 뒤집히는 이유</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninitial["입력 순위"]
+  nkey["정렬 키"]
+  nsort["내림차순"]
+  ninitial --> nkey
+  nkey --> nsort</script><figcaption>첫 검색 결과를 그대로 고정하고 각 본문에 ‘대출’이 들어 있는지만 정렬 키로 사용합니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>재정렬로 고칠 수 있는 범위</h3><p><mark>재정렬은 이미 뽑힌 후보의 순서만 바꿉니다.</mark> 마침표 한 글자짜리 조각과 대출 기간이 들어간 조각 중 무엇이 앞으로 왔는지 보세요. 정답 청크가 후보에 없다면 순위 기준을 바꿔도 그 청크는 등장하지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter37/index.html">37장 청크 크기·중첩·top-k 비교 실험</a></p></aside>
+
 <span class="lesson-anchor" id="rerank"></span><span class="lesson-anchor" id="reading-rerank"></span>
 
 <div class="worked-case" id="flow-3"><h3>같은 후보 두 건에서 1위가 바뀌는 과정</h3>
@@ -161,7 +170,49 @@ print(find_chunks(&#x27;대출 기간&#x27;))</code></pre></figure><div class="o
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>실제 재정렬기가 ‘예약 3일’을 ‘대출 14일’보다 높게 고른 경우</h2></div></header>
+<p>도서관을 이용하는 사람은 “대출 기간” 대신 “책을 빌리면 며칠 동안 볼 수 있나요?”라고 묻기도 합니다. 점 하나뿐인 조각과 대출 안내에 예약 도서 공지를 한 건 더 넣고, 같은 세 후보를 실제 CrossEncoder가 어떤 순서로 골랐는지 읽습니다.</p>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-1">셀 07 · 실측한 점수를 원래 후보 ID와 짝짓기</h3><div class="cell-before"><p>BAAI/bge-reranker-v2-m3에 (질문, 후보 본문) 세 쌍을 넣어 CPU에서 얻은 점수입니다. 기본 셀은 저장한 값을 읽으므로 모델 없이도 실행할 수 있습니다. 후보를 정렬하기 전에는 점수가 들어온 입력 순서를 유지하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">pool_for_rerank = [*candidates, {&quot;id&quot;: &quot;reserve-1&quot;, &quot;text&quot;: &quot;예약한 책은 도착 안내를 받은 뒤 3일 이내에 찾아가세요.&quot;}]
+reader_question = &quot;책을 빌리면 며칠 동안 볼 수 있나요?&quot;
+catalog_question = &quot;도서 대출 기간은 며칠입니까?&quot;
+measured_scores = {
+    reader_question: [0.0000324154, 0.0150453150, 0.0165906642],
+    catalog_question: [0.0000296412, 0.9921278954, 0.0099714696],
+}
+for row, score in zip(pool_for_rerank, measured_scores[reader_question], strict=True):
+    print(row[&quot;id&quot;], f&quot;{score:.5f}&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1:1 0.00003
+library-1:0 0.01505
+reserve-1 0.01659</pre></div><div class="cell-after"><p>일상 표현 질문에서 예약 공지 reserve-1의 점수가 대출 문서 library-1:0보다 조금 높습니다. 둘 다 책과 기간을 말하지만 3일은 예약 도서를 찾아갈 기한입니다. 이 예에서 가장 높은 점수가 곧 정답이라는 결론은 맞지 않습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="8" data-task="1"><h3 id="workshop-step-2">과제 08 · 질문 표현만 바꾸고 기대 근거의 순위 검산하기</h3><div class="cell-before"><p>질문마다 해당 질문의 실측 점수로 후보를 내림차순 정렬하세요. 각 질문의 1위 ID와 정답 library-1:0의 순위(1부터 시작)를 출력합니다. 같은 후보를 유지해야 질의 표현의 영향만 볼 수 있습니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8"># 함수 ranking_for(question)는 pool_for_rerank와 그 질문의 measured_scores를 사용합니다.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def ranking_for(question):
+    scored = zip(pool_for_rerank, measured_scores[question], strict=True)
+    ordered = sorted(scored, key=lambda pair: pair[1], reverse=True)
+    return [row[&quot;id&quot;] for row, score in ordered]
+
+for query in (reader_question, catalog_question):
+    ordered = ranking_for(query)
+    print(ordered[0], ordered.index(&quot;library-1:0&quot;) + 1)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">reserve-1 2
+library-1:0 1</pre></div><p>일상 표현에서는 reserve-1이 1위이고 기대 근거는 2위입니다. 대출 기간을 명시한 표현에서는 기대 근거가 1위입니다. 질의 확장으로 후자의 검색 결과를 더할 수 있지만, 두 질의로 후보를 찾는 횟수와 최종 정렬 점수는 별도로 기록해야 합니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-3">셀 09 · 선택 실습 · 로컬 CrossEncoder로 세 쌍 다시 채점하기</h3><div class="cell-before"><p>sentence-transformers와 해당 모델 파일을 준비한 수업 커널에서 model_dir에 로컬 모델 폴더를 지정하세요. 정확한 점수는 환경에 따라 조금 달라질 수 있으므로 먼저 상위 ID를 비교합니다. 모델을 준비하기 전에는 이 셀이 외부에서 내려받지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">from pathlib import Path
+model_dir = None  # 모델을 준비했다면 Path(&quot;수업에서 준비한 모델 폴더&quot;)로 변경
+if model_dir is None:
+    print(&quot;위 예제는 저장된 실측 점수입니다. 모델을 연결하면 다시 계산합니다.&quot;)
+else:
+    from sentence_transformers import CrossEncoder
+    encoder = CrossEncoder(str(Path(model_dir)), local_files_only=True, device=&quot;cpu&quot;)
+    for query in (reader_question, catalog_question):
+        pairs = [(query, row[&quot;text&quot;]) for row in pool_for_rerank]
+        scores = encoder.predict(pairs, show_progress_bar=False)
+        best = max(range(len(scores)), key=lambda pos: float(scores[pos]))
+        print(pool_for_rerank[best][&quot;id&quot;], round(float(scores[best]), 5))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">위 예제는 저장된 실측 점수입니다. 모델을 연결하면 다시 계산합니다.</pre></div><div class="cell-after"><p>이 셀에서 실행하는 predict는 실제 후보 문장과 질의를 한 쌍씩 함께 읽습니다. 실측에는 sentence-transformers 6.1.0과 모델 리비전 953dc6f6의 로컬 파일을 썼습니다. 기본 안내만 출력되었다면 이번 커널에서는 재채점하지 않은 상태입니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>재정렬기는 검색된 후보 안에서만 순서를 바꾸며, 남은 후보 중에서도 틀릴 수 있습니다.</mark> 반납 질문의 근거가 애초에 pool_for_rerank에 없다면 예제의 세 점수를 어떻게 정렬해도 그 안내문은 나오지 않습니다. 근거가 후보에 있는데 2위가 된 대출 질문과 따로 기록하세요.</p></aside><p>39장에서는 기대 근거가 실제로 올라간 문항과 새로 틀린 문항을 기준선과 나란히 놓고 채택 여부를 정합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

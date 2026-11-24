@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 71 / CONTAINERS</p>
 <span class="sidebar-title">Dockerfile과 컨테이너 수명 주기</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-dockerfile"><span>02</span>Dockerfile의 RUN과 CMD</a><a href="#nb-lifecycle"><span>03</span>선택 실습 · 컨테이너 중지와 재시작</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-dockerfile"><span>02</span>Dockerfile의 RUN과 CMD</a><a href="#nb-lifecycle"><span>03</span>선택 실습 · 컨테이너 중지와 재시작</a><a href="#workshop"><span>04</span>이미지 시작 명령과 FastAPI 모듈 연결하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter71.ipynb" download="chapter71.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>71장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter71.ipynb" download="chapter71.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>71장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">이미지 시작 명령과 FastAPI 모듈 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
@@ -35,7 +35,7 @@
 <h2>Dockerfile의 RUN과 CMD</h2>
 </div>
 </header>
-<p class="concept-intro">Dockerfile은 이미지를 만드는 지시와 컨테이너가 시작될 때 실행할 기본 명령을 담습니다. 빌드와 실행 중 어느 때 쓰는 줄인지 구분합니다.</p><p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
+<p class="concept-intro">Dockerfile의 두 줄을 골라 보세요. 패키지 설치와 API 서버 시작은 각각 언제 일어날까요?</p><p>Dockerfile의 RUN은 이미지를 만들 때 필요한 명령입니다. CMD는 그 이미지에서 컨테이너를 시작할 때 실행할 기본 명령입니다. EXPOSE는 컨테이너가 사용하는 포트를 설명합니다. 호스트에서 접속할 포트의 공개 설정은 별개입니다.</p>
 <span class="lesson-anchor" id="concept-clip"></span><!-- MOTION image-imprint -->
 
 <!-- END MOTION -->
@@ -72,6 +72,8 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>이미지를 만들 때와 컨테이너를 시작할 때</h3><p><mark>RUN은 이미지 빌드 중에, CMD의 기본 명령은 컨테이너 시작 시 실행됩니다.</mark> 설치 오류와 앱 시작 오류는 보는 로그가 다릅니다. requirements 설치 줄과 uvicorn 실행 줄을 나눠 읽으면 어느 과정에서 수정한 파일이 필요한지 알 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter68/index.html">68장 FastAPI 요청 모델과 POST 엔드포인트</a></p></aside>
+
 </section>
 <section id="nb-lifecycle" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>선택 실습 · 컨테이너 중지와 재시작</h2>
@@ -111,11 +113,98 @@ image_id = <span class="tok-string">""</span>  <span class="tok-comment"># 준�
 <div class="cell-after"><p>기본값이면 이미지가 준비되지 않았다는 안내만 나옵니다. 엔진에서 실행했을 때 확인할 상태는 running, exited, running입니다. 매번 같은 cid를 inspect하므로 ‘새 컨테이너를 하나 더 만들었다’는 설명과 구분할 수 있습니다. 수업에서는 강사가 로컬에 준비한 Python 이미지 ID를 image_id에 넣습니다. 차례로 running, exited, running이 나와야 같은 컨테이너의 정지와 재시작을 관찰한 것입니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>중지했던 컨테이너를 다시 시작하면</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ncreate["create"]
+  nstart["start"]
+  nstop["stop"]
+  ninspect["inspect"]
+  ncleanup["rm"]
+  ncreate --> nstart
+  nstart --> ninspect
+  ninspect --> nstop
+  nstop --> ninspect
+  ninspect --> nstart
+  ninspect --> ncleanup</script><figcaption>로컬 이미지 ID를 제공한 선택 실습의 조건부 경로입니다. create 뒤의 세 상태는 같은 컨테이너 ID를 가리킵니다.</figcaption></figure>
+
 <span class="lesson-anchor" id="ports-logs"></span><div class="lesson-explanation" id="reading-ports-logs"><h3>포트 인자와 포트 공개</h3><p>CMD의 마지막 8000은 컨테이너 안에서 앱이 사용할 포트입니다. EXPOSE는 포트 정보를 표시합니다. 호스트에서도 접속하려면 실행 시 별도로 포트를 연결해야 합니다.</p></div>
 <span class="lesson-anchor" id="same-contract"></span><span class="lesson-anchor" id="reading-same-contract"></span>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>이미지 시작 명령과 FastAPI 모듈 연결하기</h2></div></header>
+<p>컨테이너가 실행 직후 종료될 때는 Dockerfile이 복사한 파일과 uvicorn이 찾는 모듈 이름부터 맞춥니다. 노트북이 임시 폴더에 수업용 앱을 준비하므로 학생이 별도 Python 파일을 작성할 필요는 없습니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 시작 명령이 찾는 모듈을 빌드 문맥에서 확인하기</h3><div class="cell-before"><p>셀 01의 directive에 시작 명령이 들어 있습니다. 아래 수업 앱 파일의 이름은 api.py입니다. 작업 폴더에 이 파일을 복사하는 Dockerfile이 셀 01의 시작 명령과 맞는지 확인해 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from pathlib import Path
+from tempfile import TemporaryDirectory
+import json
+
+build_area = TemporaryDirectory()
+context_dir = Path(build_area.name)
+app_source = &quot;&quot;&quot;from fastapi import FastAPI
+app = FastAPI()
+@app.get(&quot;/health&quot;)
+def health():
+    return {&quot;application&quot;: &quot;course-api&quot;}
+&quot;&quot;&quot;
+(context_dir / &quot;api.py&quot;).write_text(app_source, encoding=&quot;utf-8&quot;)
+base_lines = [&quot;FROM python:3.12-slim&quot;, &quot;WORKDIR /app&quot;,
+              &quot;RUN python -m pip install fastapi uvicorn&quot;, &quot;COPY api.py ./&quot;]
+start_args = json.loads(directive.removeprefix(&quot;CMD &quot;))
+module_name = start_args[3].split(&quot;:&quot;)[0]
+print(module_name, (context_dir / (module_name + &quot;.py&quot;)).is_file())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">main False</pre></div><div class="cell-after"><p>main False가 나옵니다. WORKDIR /app에서 uvicorn은 main:app의 앞 단어로 가져올 모듈을 찾습니다. 이 빌드 문맥에서 복사하는 파일은 api.py이므로 기존 시작 명령으로는 앱을 불러올 수 없습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 컨테이너 시작 명령을 고치고 같은 앱의 응답 확인하기</h3><div class="cell-before"><p>기존 인자 배열에서 main:app을 api:app으로 바꾸고 Dockerfile을 완성하세요. 임시 폴더에서 바로 그 파일을 불러와 /health를 요청하고 응답의 서비스 이름을 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># start_args를 복사해 모듈 부분을 고치세요.
+# base_lines에 JSON 배열 형식의 CMD를 붙이고 context_dir에 Dockerfile을 저장하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">import runpy
+from fastapi.testclient import TestClient
+
+fixed_args = start_args.copy()
+fixed_args[3] = &quot;api:app&quot;
+dockerfile = &quot;\n&quot;.join(base_lines + [&quot;CMD &quot; + json.dumps(fixed_args)])
+(context_dir / &quot;Dockerfile&quot;).write_text(dockerfile + &quot;\n&quot;, encoding=&quot;utf-8&quot;)
+module, app_name = fixed_args[3].split(&quot;:&quot;)
+loaded = runpy.run_path(str(context_dir / (module + &quot;.py&quot;)))
+with TestClient(loaded[app_name]) as probe:
+    reply = probe.get(&quot;/health&quot;)
+print(fixed_args[3], reply.status_code, reply.json()[&quot;application&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">api:app 200 course-api</pre></div><p>api:app 200 course-api가 나옵니다. 파일과 앱 객체를 찾았고 FastAPI 경로가 동작했습니다. 이 확인은 현재 커널에서 이루어졌습니다. 이미지 빌드와 컨테이너 실행은 Docker 엔진에서 따로 확인합니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-3">셀 07 · 선택 실습 · 만든 이미지에서 실제 /health 읽기</h3><div class="cell-before"><p>앞 과제의 Dockerfile을 완성하고 로컬 Docker 엔진이 실행 중일 때만 run_image를 켜세요. 셀이 이미지를 빌드해 컨테이너를 띄우고, Docker가 배정한 로컬 포트로 /health를 요청합니다. 첫 빌드에는 패키지를 다운로드할 연결이 필요합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">import json
+import time
+import subprocess
+from urllib.request import urlopen
+from urllib.error import URLError
+from uuid import uuid4
+
+run_image = False
+if run_image and (context_dir / &quot;Dockerfile&quot;).is_file():
+    tag = &quot;course-api:ch71-&quot; + uuid4().hex[:10]
+    def engine(*args):
+        return subprocess.run([&quot;docker&quot;, *args], check=True, capture_output=True,
+                              text=True, timeout=300).stdout.strip()
+    engine(&quot;build&quot;, &quot;-t&quot;, tag, str(context_dir))
+    cid = None
+    try:
+        cid = engine(&quot;run&quot;, &quot;-d&quot;, &quot;-p&quot;, &quot;127.0.0.1::8000&quot;, tag)
+        address = engine(&quot;port&quot;, cid, &quot;8000/tcp&quot;)
+        for attempt in range(30):
+            try:
+                with urlopen(&quot;http://&quot; + address + &quot;/health&quot;, timeout=2) as reply:
+                    print(reply.status, json.load(reply)[&quot;application&quot;])
+                break
+            except (URLError, ConnectionError):
+                if attempt == 29:
+                    raise
+                time.sleep(1)
+    finally:
+        if cid:
+            engine(&quot;rm&quot;, &quot;-f&quot;, cid)
+        engine(&quot;image&quot;, &quot;rm&quot;, tag)
+else:
+    print(&quot;Dockerfile과 로컬 엔진이 준비되면 run_image를 켜세요.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Dockerfile과 로컬 엔진이 준비되면 run_image를 켜세요.</pre></div><div class="cell-after"><p>실제로 200 course-api를 받으면 컨테이너 안의 시작 명령과 앱, 호스트 포트까지 연결됐습니다. 셀은 이번에 만든 컨테이너와 임시 태그만 정리합니다. 기본 출력은 실행 조건 안내입니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>이미지 빌드가 끝나도 CMD가 올바른 앱을 가리키는지는 컨테이너 시작 때 드러납니다.</mark> Dockerfile의 COPY가 성공해도 CMD에 적힌 모듈이 다르면 서버가 뜨지 않습니다. 선택 셀에서 앱 응답을 받아야 빌드 문맥 확인과 컨테이너 실행을 구분할 수 있습니다.</p></aside><p>다음 장의 api 서비스에는 성공적으로 빌드한 이미지의 태그를 넣으세요. Compose에서 사용하는 컨테이너 포트는 여전히 8000입니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -126,7 +215,7 @@ image_id = <span class="tok-string">""</span>  <span class="tok-comment"># 준�
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

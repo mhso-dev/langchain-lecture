@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 091 / FINAL PROJECT</p>
 <span class="sidebar-title">키워드 조회 함수의 최소 구현</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thin"><span>02</span>thin_lookup()의 장비명·그룹 조건</a><a href="#nb-wrong-answer"><span>03</span>검색 의도 불일치와 오답</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thin"><span>02</span>thin_lookup()의 장비명·그룹 조건</a><a href="#nb-wrong-answer"><span>03</span>검색 의도 불일치와 오답</a><a href="#workshop"><span>04</span>검색 함수를 요청 한 건을 받는 API에 붙이기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter91.ipynb" download="chapter91.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>91장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter91.ipynb" download="chapter91.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>91장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">검색 함수를 요청 한 건을 받는 API에 붙이기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-thin" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -82,6 +82,17 @@ print(reply[<span class="tok-string">"answer"</span>], reply[<span class="tok-st
 <div class="cell-after"><p>전원 표시등과 RULE-A가 찍힙니다. 아직 화면에서 2.1절이나 개정일을 찾을 수 없습니다. 88장에서 합의한 출처 기준을 충족하려면 응답에 그 값도 담아야 합니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>thin_lookup()이 장비 A의 규정 하나를 고르는 과정</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninput["입력 검사"]
+  nfilter["공개 장비 검색"]
+  ncount["후보 수"]
+  nask["추가 질문"]
+  nreply["규정 반환"]
+  ninput --> nfilter
+  nfilter --> ncount
+  ncount --> nask
+  ncount --> nreply</script><figcaption>공개 문서에서 장비 이름이 일치하는 항목을 셉니다. 일치한 문서가 정확히 한 건일 때만 그 문장을 답에 담습니다.</figcaption></figure>
+
 </section>
 <section id="nb-wrong-answer" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>검색 의도 불일치와 오답</h2>
@@ -106,6 +117,8 @@ print(thin_lookup(question)[<span class="tok-string">"answer"</span>])</code></p
 </div>
 <p id="example-analysis">질문의 의도를 바꿔도 ‘전원 표시등’이라는 점검 안내가 그대로 나옵니다. 정상 예제 한 건이 성공한 것으로는 이 함수가 사용자의 의도를 구분한다고 말할 수 없습니다. 최소 시연을 만든 다음에는 장비는 같고 요청만 다른 입력을 붙여 처리 범위를 드러냅니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>규칙에 맞는 문장을 찾고도 오답이 되는 경우</h3><p><mark>장비명이 맞는 것과 질문의 의도가 맞는 것은 별개의 조건입니다.</mark> 같은 장비에 대해 점검 방법과 교체 일정을 각각 물어 보세요. 두 질문에 같은 규정 문장을 반환했다면 검색 성공으로 셀 질문은 어느 쪽인지 정합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter45/index.html">45장 질문 전체 일치 검색의 기준선과 빈 결과</a></p></aside>
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 장비명 누락 처리</h3>
 <div class="cell-before"><p>어느 장비인지 묻는 경로로 들어가려면 어떤 입력을 주면 될까요? 상태값까지 확인하세요.</p>
 </div>
@@ -117,7 +130,30 @@ print(thin_lookup(question)[<span class="tok-string">"answer"</span>])</code></p
 </details>
 </article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>검색 함수를 요청 한 건을 받는 API에 붙이기</h2></div></header>
+<p>thin_lookup에서 Q01이 동작했습니다. 이번에는 같은 함수가 반환한 답이 HTTP 응답의 어느 칸에 오는지 확인합니다. 서버를 외부에 띄우지 않고 노트북 안에서 FastAPI의 테스트 클라이언트를 사용합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 테스트 클라이언트로 Q01 요청</h3><div class="cell-before"><p>수업 환경에 FastAPI와 호환되는 httpx가 필요합니다. 아래의 question은 요청 본문, reply는 서버가 보낸 JSON입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from pydantic import BaseModel
+
+class InspectionQuery(BaseModel):
+    question: str
+
+demo_api = FastAPI()
+@demo_api.post(&quot;/inspection&quot;)
+def inspect_rule(query: InspectionQuery):
+    return thin_lookup(query.question)
+
+with TestClient(demo_api) as client:
+    http_reply = client.post(&quot;/inspection&quot;, json={&quot;question&quot;: &quot;장비 A의 점검 전 확인 사항은?&quot;})
+body = http_reply.json()
+print(http_reply.status_code, body[&quot;answer&quot;], body[&quot;sources&quot;][0][&quot;id&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 점검 전 전원 표시등을 확인합니다. RULE-A</pre></div><div class="cell-after"><p>200 옆의 점검 문장과 RULE-A는 HTTP 클라이언트가 실제 응답 본문에서 꺼낸 값입니다. 다만 이 기준선은 출처의 절·개정일과 질문 목적을 아직 검사하지 않습니다.</p></div>
+</article>
+<section class="project-example"><h3>팀별 경계 정하기</h3><p>팀의 기존 조회 함수를 다른 함수로 감싸고 테스트 요청을 보내세요. 질문 필드를 통째로 뺀 요청과 빈 문자열을 넣은 요청을 비교합니다. 처음 것은 모델 검증에서, 두 번째 것은 thin_lookup 안에서 처리됩니다.</p></section>
+<aside class="lesson-note"><p><mark>HTTP 요청 성공과 업무 기준 통과를 다른 칸에 기록합니다.</mark> 같은 경로로 Q03을 보내도 이 기준선은 200을 반환하면서 잘못된 점검 안내를 줄 수 있습니다.</p></aside><p>92장은 HTTP 코드와 별도로 평가표에서 어떤 문항의 상태·출처가 맞았는지 셉니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 66 / AGENTIC SERVICE</p>
 <span class="sidebar-title">역할별 함수 분리와 호출 비용</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-handoff"><span>02</span>근거 수집 함수와 답변 함수의 인계값</a><a href="#nb-observations"><span>03</span>단일 경로와 역할 분리 경로 비교</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-handoff"><span>02</span>근거 수집 함수와 답변 함수의 인계값</a><a href="#nb-observations"><span>03</span>단일 경로와 역할 분리 경로 비교</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>두 역할 사이에서 근거가 잘못 넘어온 지점 찾기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter66.ipynb" download="chapter66.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>66장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter66.ipynb" download="chapter66.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>66장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">두 역할 사이에서 근거가 잘못 넘어온 지점 찾기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-handoff" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -58,7 +58,16 @@ print(answer_role(handoff))</code></pre></figure>
 </div>
 <p id="example-analysis">두 역할 사이에서 최종 문장만 전달하면 두 번째 역할은 p2의 어느 구절을 읽었는지 확인하기 어렵습니다. 원래 질문과 근거 ID를 함께 넘겨야 인계 전후의 요청이 같은지, 답변이 같은 근거를 사용했는지 대조할 수 있습니다.</p>
 </article>
-<span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>두 역할 사이의 인계값</h3><p>evidence_role의 출력은 question·id·text를 담은 딕셔너리입니다. answer_role은 그중 text와 id를 읽어 한 문장으로 묶습니다. 이 셀의 역할은 일반 Python 함수입니다.</p></div>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>두 함수가 같은 근거를 넘기는 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ninput["질문"]
+  nlookup["evidence_role"]
+  nhandoff["인계 객체"]
+  nwrite["answer_role"]
+  ninput --> nlookup
+  nlookup --> nhandoff
+  nhandoff --> nwrite</script><figcaption>이 셀은 모델을 호출하지 않습니다. 근거 함수가 만든 딕셔너리에서 답변 함수가 어떤 값을 이어받는지 볼 수 있습니다.</figcaption></figure>
+
+<span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>두 역할 사이의 인계값</h3><p>근거 담당이 넘긴 question·id·text 중 답변 함수가 쓰는 값은 text와 id입니다. 새 질문의 근거가 맞는지도 확인해 보세요.</p></div>
 <span class="lesson-anchor" id="meaning"></span><span class="lesson-anchor" id="reading-meaning"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 인계 시 질문 보존 검사</h3>
@@ -73,6 +82,8 @@ print(question == handoff[<span class="tok-string">'question'</span>])</code></p
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>역할을 나눈 뒤 무엇이 달라졌을까요?</h3><p><mark>근거 수집 결과에는 다음 함수가 쓸 본문과 출처가 함께 있어야 합니다.</mark> 두 경로의 마지막 문장이 같아도 역할 사이에 넘긴 값과 호출 수는 다를 수 있습니다. 같은 질문으로 비교하고 실제로 추가된 일을 기록하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter63/index.html">63장 RAG 서비스 함수와 응답 계약</a></p></aside>
+
 <span class="lesson-anchor" id="two-roles"></span><div class="lesson-explanation" id="reading-two-roles"><h3>질문이 다음 역할까지 같은지 확인하기</h3><p>인계받은 근거가 다른 질문의 것이라면 형식이 맞아도 답변을 만들 수 없습니다. answer_role을 부르기 전에 handoff[&quot;question&quot;]과 원래 질문을 대조합니다.</p></div>
 <span class="lesson-anchor" id="plan"></span><span class="lesson-anchor" id="reading-plan"></span><div class="worked-case" id="flow-5"><h3>역할 사이에 전달되는 딕셔너리</h3><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span><p>evidence_role은 질문·문서 ID·원문을 한 객체에 넣고 answer_role은 그중 text와 id로 답을 만듭니다. 두 함수는 모델을 호출하지 않습니다. 뒤의 model_calls 2회와 4회는 셀에 따로 제공한 두 경로의 관찰 기록입니다.</p></div>
 <span class="lesson-anchor" id="failure"></span><span class="lesson-anchor" id="reading-failure"></span>
@@ -119,7 +130,93 @@ print(parking["text"])</code></pre></figure>
 과제는 학습 관리 페이지의 과제함에 제출합니다.</pre></div><div class="cell-after"><p>넘겨받은 질문은 정확하지만 근거는 과제 제출 안내입니다. evidence_role이 어떤 질문에도 같은 문서를 반환하기 때문입니다. 이 경우에는 근거를 새로 찾거나 빈 근거로 종료해야 하며, 같은 자료를 다른 역할에 한 번 더 넘겨도 주차비를 알 수 없습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>두 역할 사이에서 근거가 잘못 넘어온 지점 찾기</h2></div></header>
+<p>앞의 evidence_role은 모든 질문에 과제 제출 문서를 돌려줬습니다. 답변 역할을 늘려도 이 문제가 남아 있으면 주차 질문에 과제 제출 안내가 나옵니다. 역할 간 전달 형식을 먼저 고치고 오류가 사라지는지 다시 실행합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 정상 근거와 보류 상태를 받는 인계 함수 만들기</h3><div class="cell-before"><p>이 자료에는 과제 제출 방법만 있습니다. 작은 재현 예에서는 질문에 과제와 제출이 함께 있을 때만 근거를 사용합니다. 새로운 주제나 표현을 다룰 때는 이 단어 규칙의 한계도 점검해야 합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">def lookup_handoff(question):
+    if &quot;과제&quot; not in question or &quot;제출&quot; not in question:
+        return {&quot;question&quot;: question, &quot;status&quot;: &quot;no_evidence&quot;, &quot;evidence&quot;: None}
+    matched = evidence_role(question)
+    return {&quot;question&quot;: question, &quot;status&quot;: &quot;matched&quot;, &quot;evidence&quot;: matched}
+
+miss = lookup_handoff(&quot;주차비는 얼마인가요?&quot;)
+print(miss)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;주차비는 얼마인가요?&#x27;, &#x27;status&#x27;: &#x27;no_evidence&#x27;, &#x27;evidence&#x27;: None}</pre></div><div class="cell-after"><p>질문은 보존됐고 상태는 no_evidence, evidence는 None입니다. 여기까지는 조회 역할의 책임입니다. 답변 역할에 다시 자료를 찾게 하기보다, 넘겨받은 상태로 답할 수 있는지 판단하게 합니다.</p></div>
+</article>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>조회 에이전트의 도구 결과가 작성 에이전트에 도착하는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    research["조회 에이전트의 모델"] --> choice{"새 도구 요청이 있는가?"}
+    choice -->|있음| lookup["assignment_source 실행"]
+    lookup --> result["ToolMessage를 조회 기록에 추가"]
+    result --> research
+    choice -->|없음| done["조회 에이전트 종료"]
+    done --> handoff["첫 ToolMessage의 content 읽기"]
+    handoff --> writer["작성 에이전트의 모델"]
+    writer --> finish["도구 호출 없이 답변 반환"]</script><figcaption>조회 모델이 처음에는 source-1을 요청하고, 도구 결과를 받은 뒤 호출 없는 메시지를 보내면 조회 그래프가 끝납니다. 바깥 코드가 조회 기록에서 첫 ToolMessage의 content를 꺼내 작성 에이전트의 사용자 메시지로 건넵니다. 작성 에이전트에는 도구가 없습니다. 이 예제의 next는 조회 도구가 한 번 실행됐다는 조건에 기대고 있어, 호출을 생략하는 대본에서는 빈 결과를 따로 처리해야 합니다.</figcaption></figure>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 답변 역할을 연결해 같은 실패 사례 재실행하기</h3><div class="cell-before"><p>정상 근거가 있을 때는 기존 answer_role에 evidence를 넘기고, 근거가 없으면 안내를 보류하는 render_handoff를 작성하세요. RunnableLambda 두 개를 연결해 주차 질문과 과제 제출 질문을 각각 보내세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from langchain_core.runnables import RunnableLambda
+# def render_handoff(packet): ...
+# lookup_handoff와 새 함수를 순서대로 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">from langchain_core.runnables import RunnableLambda
+def render_handoff(packet):
+    if packet[&quot;status&quot;] == &quot;no_evidence&quot;:
+        return &quot;관련 안내를 찾지 못했습니다.&quot;
+    return answer_role(packet[&quot;evidence&quot;])
+
+service = RunnableLambda(lookup_handoff) | RunnableLambda(render_handoff)
+print(service.invoke(&quot;주차비는 얼마인가요?&quot;))
+print(service.invoke(&quot;과제를 어디에 제출하나요?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">관련 안내를 찾지 못했습니다.
+과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div><p>첫 질문은 보류되고 두 번째에는 과제함 안내와 출처 ID가 나옵니다. 두 역할을 각각 호출해 보면 어떤 단계에서 no_evidence가 생겼는지 찾을 수 있습니다. 이 체인은 Python 함수를 연결했으므로 역할의 경계를 확인하는 데 모델 호출 비용이 들지 않습니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-3">셀 07 · 한 에이전트의 검색 요청과 근거 확인하기</h3><div class="cell-before"><p>이번에는 실제 create_agent 그래프를 실행합니다. 검색 요청을 만드는 모델의 응답 순서만 고정하고, 도구는 방금 작성한 조회 함수를 호출합니다. 최종 문장을 읽기 전에 근거가 든 도구 메시지를 따로 꺼내세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from langchain.agents import create_agent
+from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.tools import tool
+from langsmith import tracing_context
+
+@tool
+def assignment_source(question: str) -&gt; str:
+    &quot;&quot;&quot;수업 자료에서 과제 제출 안내와 문서 ID를 찾습니다.&quot;&quot;&quot;
+    packet = lookup_handoff(question)
+    if packet[&quot;evidence&quot;] is None:
+        return &quot;자료 없음&quot;
+    return answer_role(packet[&quot;evidence&quot;])
+
+class ResearchModel(FakeMessagesListChatModel):
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+query = &quot;과제를 어디에 제출하나요?&quot;
+request_source = AIMessage(content=&quot;&quot;, tool_calls=[{
+    &quot;name&quot;: &quot;assignment_source&quot;, &quot;args&quot;: {&quot;question&quot;: query}, &quot;id&quot;: &quot;source-1&quot;,
+}])
+research_agent = create_agent(ResearchModel(responses=[
+    request_source, AIMessage(content=&quot;문서에서 제출 방법을 확인했습니다.&quot;),
+]), tools=[assignment_source])
+with tracing_context(enabled=False):
+    research_log = research_agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, query)]})[&quot;messages&quot;]
+evidence_line = next(m.content for m in research_log if m.type == &quot;tool&quot;)
+print([m.type for m in research_log], evidence_line)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;human&#x27;, &#x27;ai&#x27;, &#x27;tool&#x27;, &#x27;ai&#x27;] 과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div><div class="cell-after"><p>한 그래프에서 human → ai → tool → ai가 기록됩니다. 첫 ai는 조회 요청이고 마지막 ai는 조회를 마친 대본의 문장입니다. 다음 역할이 문서 ID까지 확인하려면 마지막 인사말 대신 실제 도구 결과인 evidence_line을 넘겨야 합니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-4">셀 08 · 두 번째 에이전트가 받아 본 문자열 검산하기</h3><div class="cell-before"><p>작성 역할은 전달받은 문장을 그대로 반환하는 로컬 테스트 모델에 연결합니다. 두 그래프를 거친 기록에서 실제로 붙은 ai 메시지 수를 세세요. 문장을 다듬는 성능은 이 테스트에서 평가하지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from langchain_core.language_models.chat_models import SimpleChatModel
+
+class ReadBack(SimpleChatModel):
+    @property
+    def _llm_type(self):
+        return &quot;handoff-readback&quot;
+    def _call(self, messages, **kwargs):
+        return messages[-1].content
+
+writer_agent = create_agent(ReadBack(), tools=[])
+with tracing_context(enabled=False):
+    writer_log = writer_agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, evidence_line)]})[&quot;messages&quot;]
+print(writer_log[-1].content)
+print(sum(m.type == &quot;ai&quot; for m in research_log),
+      sum(m.type == &quot;ai&quot; for m in research_log + writer_log))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]
+2 3</pre></div><div class="cell-after"><p>출처 ID가 포함된 문장이 두 번째 역할까지 전달됩니다. 조회 에이전트만 쓴 기록에서는 ai 메시지가 두 개이고 작성 역할까지 더하면 세 개입니다. 이 사례에서 한 번 더 실행할 이유가 있으려면, 실제 서비스의 작성 역할이 근거 검토나 표현 수정 등 어떤 일을 맡을지 먼저 정해야 합니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>역할을 둘로 나눌 때는 근거를 못 찾은 경우도 인계 형식에 넣으세요.</mark> 문서 ID만 넘기도록 설계하면 검색이 실패했을 때 답변 역할이 상태를 구별하기 어렵습니다. status가 있으면 응답을 만들기 전에 보류할 수 있습니다.</p></aside><p>다음 장에서는 같은 실패 사례를 수정 전후에 반복해 답과 근거를 함께 평가합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

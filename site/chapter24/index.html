@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 24 / FIRST RAG</p>
 <span class="sidebar-title">LCEL로 구성하는 RAG와 인용 검증</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-prepare"><span>02</span>검색 문서를 프롬프트 문맥으로 변환</a><a href="#nb-citation"><span>03</span>검색 ID와 생성 답변의 인용 대조</a><a href="#nb-empty"><span>04</span>빈 검색 결과의 생성 생략</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-prepare"><span>02</span>검색 문서를 프롬프트 문맥으로 변환</a><a href="#nb-citation"><span>03</span>검색 ID와 생성 답변의 인용 대조</a><a href="#nb-empty"><span>04</span>빈 검색 결과의 생성 생략</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>생성 단계 직전에 빈 문맥 우회하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter24.ipynb" download="chapter24.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>24장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12입니다.</p>
+<a class="download" href="chapter24.ipynb" download="chapter24.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>24장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">생성 단계 직전에 빈 문맥 우회하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12입니다.</p>
 </div>
 </section>
 <section id="nb-prepare" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -43,68 +43,50 @@ context = format_context(hits)</code></pre><p>셀 01의 마지막 세 줄입니�
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · format_context()로 문맥 조립</h3>
 <div class="cell-before"><p>셀 맨 아래의 question 한 줄에서 질문을 고릅니다. 먼저 휴관 질문을 실행해 첫 줄의 문서 ID와 둘째 줄의 원문을 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 64줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [
-  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-1"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서 대출 기간은 14일입니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">1</span>},
-  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-2"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서관은 월요일에 휴관합니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">2</span>},
-  {<span class="tok-string">"id"</span>:<span class="tok-string">"library-3"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"무인 반납함은 24시간 이용할 수 있습니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">3</span>}
-]
-
-<span class="tok-keyword">import</span> re
-
-<span class="tok-keyword">class</span> DataContractError(ValueError):
-    <span class="tok-string">"""저장된 근거 또는 검색 결과의 형태가 잘못되었습니다."""</span>
-
-<span class="tok-keyword">def</span> validate_request(question, k=<span class="tok-number">2</span>):
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(question, str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> question.strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"질문은 비어 있지 않은 문자열이어야 합니다."</span>)
-    <span class="tok-keyword">if</span> isinstance(k, bool) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> isinstance(k, int) <span class="tok-keyword">or</span> k &lt; <span class="tok-number">1</span>:
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"k는 양의 정수여야 합니다."</span>)
-    <span class="tok-keyword">return</span> question.strip()
-
-<span class="tok-keyword">def</span> validate_documents(documents):
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(documents, list):
-        <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"검색 결과는 문서 목록이어야 합니다."</span>)
+<p class="reuse-note"><a href="../chapter23/index.html">23장 문서와 질문 검증 함수</a>를 노트북의 준비 셀에서 실행하고 아래 코드를 읽으세요.</p><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 46줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">def validate_documents(documents):
+    if not isinstance(documents, list):
+        raise DataContractError(&quot;검색 결과는 문서 목록이어야 합니다.&quot;)
     rows, seen = [], set()
-    <span class="tok-keyword">for</span> item <span class="tok-keyword">in</span> documents:
-        <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> isinstance(item, dict):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"출처 객체가 필요합니다. 문자열 상태는 먼저 변환하세요."</span>)
-        <span class="tok-keyword">if</span> any(<span class="tok-keyword">not</span> isinstance(item.get(key), str) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> item[key].strip()
-               <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">"id"</span>, <span class="tok-string">"text"</span>, <span class="tok-string">"source"</span>)):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"id·본문·출처가 필요합니다."</span>)
-        page = item.get(<span class="tok-string">"page"</span>)
-        <span class="tok-keyword">if</span> isinstance(page, bool) <span class="tok-keyword">or</span> <span class="tok-keyword">not</span> isinstance(page, int) <span class="tok-keyword">or</span> page &lt; <span class="tok-number">1</span>:
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"페이지는 1 이상의 정수여야 합니다."</span>)
-        <span class="tok-keyword">if</span> item[<span class="tok-string">"id"</span>] <span class="tok-keyword">in</span> seen:
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"문서 ID가 중복되었습니다."</span>)
-        <span class="tok-comment"># 인용 문법 [id]와 충돌하는 ID는 입력 단계에서 막습니다.</span>
-        <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> re.fullmatch(<span class="tok-string">r"[A-Za-z0-9_.:-]+"</span>, item[<span class="tok-string">"id"</span>]):
-            <span class="tok-keyword">raise</span> DataContractError(<span class="tok-string">"문서 ID는 영문·숫자·_ . : -만 사용합니다."</span>)
-        seen.add(item[<span class="tok-string">"id"</span>])
-        rows.append({key: item[key] <span class="tok-keyword">for</span> key <span class="tok-keyword">in</span> (<span class="tok-string">"id"</span>, <span class="tok-string">"text"</span>, <span class="tok-string">"source"</span>, <span class="tok-string">"page"</span>)})
-    <span class="tok-keyword">return</span> rows
+    for item in documents:
+        if not isinstance(item, dict):
+            raise DataContractError(&quot;출처 객체가 필요합니다. 문자열 상태는 먼저 변환하세요.&quot;)
+        if any(not isinstance(item.get(key), str) or not item[key].strip()
+               for key in (&quot;id&quot;, &quot;text&quot;, &quot;source&quot;)):
+            raise DataContractError(&quot;id·본문·출처가 필요합니다.&quot;)
+        page = item.get(&quot;page&quot;)
+        if isinstance(page, bool) or not isinstance(page, int) or page &lt; 1:
+            raise DataContractError(&quot;페이지는 1 이상의 정수여야 합니다.&quot;)
+        if item[&quot;id&quot;] in seen:
+            raise DataContractError(&quot;문서 ID가 중복되었습니다.&quot;)
+        # 인용 문법 [id]와 충돌하는 ID는 입력 단계에서 막습니다.
+        if not re.fullmatch(r&quot;[A-Za-z0-9_.:-]+&quot;, item[&quot;id&quot;]):
+            raise DataContractError(&quot;문서 ID는 영문·숫자·_ . : -만 사용합니다.&quot;)
+        seen.add(item[&quot;id&quot;])
+        rows.append({key: item[key] for key in (&quot;id&quot;, &quot;text&quot;, &quot;source&quot;, &quot;page&quot;)})
+    return rows
 
-<span class="tok-keyword">def</span> format_context(documents):
-    <span class="tok-keyword">return</span> <span class="tok-string">"\n\n"</span>.join(f"[{d[<span class="tok-string">'id'</span>]}] {d[<span class="tok-string">'source'</span>]} / p.{d[<span class="tok-string">'page'</span>]}\n{d[<span class="tok-string">'text'</span>]}"
-                       <span class="tok-keyword">for</span> d <span class="tok-keyword">in</span> validate_documents(documents))
+def format_context(documents):
+    return &quot;\n\n&quot;.join(f&quot;[{d[&#x27;id&#x27;]}] {d[&#x27;source&#x27;]} / p.{d[&#x27;page&#x27;]}\n{d[&#x27;text&#x27;]}&quot;
+                       for d in validate_documents(documents))
 
-terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
+terms = (&quot;대출&quot;, &quot;휴관&quot;, &quot;반납&quot;)
 
-<span class="tok-keyword">def</span> teaching_vector(text):
-    <span class="tok-keyword">return</span> [float(term <span class="tok-keyword">in</span> text) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
+def teaching_vector(text):
+    return [float(term in text) for term in terms]
 
-<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">2</span>, page=<span class="tok-keyword">None</span>):
+def retrieve(question, k=2, page=None):
     question = validate_request(question, k)
     query = teaching_vector(question)
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
-        <span class="tok-keyword">return</span> []
-    pool = [d <span class="tok-keyword">for</span> d <span class="tok-keyword">in</span> documents <span class="tok-keyword">if</span> page <span class="tok-keyword">is</span> <span class="tok-keyword">None</span> <span class="tok-keyword">or</span> d[<span class="tok-string">"page"</span>] == page]
-    <span class="tok-keyword">def</span> rank(doc):
-        stored = teaching_vector(doc[<span class="tok-string">"text"</span>])
-        <span class="tok-keyword">return</span> (sum((a - b) ** <span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, stored)), doc[<span class="tok-string">"id"</span>])
-    <span class="tok-keyword">return</span> sorted(pool, key=rank)[:k]
+    if not any(query):
+        return []
+    pool = [d for d in documents if page is None or d[&quot;page&quot;] == page]
+    def rank(doc):
+        stored = teaching_vector(doc[&quot;text&quot;])
+        return (sum((a - b) ** 2 for a, b in zip(query, stored)), doc[&quot;id&quot;])
+    return sorted(pool, key=rank)[:k]
 
-question = <span class="tok-string">"휴관 요일은 언제인가요?"</span>
-hits = retrieve(question, k=<span class="tok-number">1</span>)
+question = &quot;휴관 요일은 언제인가요?&quot;
+hits = retrieve(question, k=1)
 context = format_context(hits)
 print(context)</code></pre></figure>
 
@@ -139,6 +121,19 @@ print(context)</code></pre></figure>
 <div class="cell-after"><p>휴관 질문에는 월요일과 [library-2]가 나옵니다. 셀 01의 질문을 ‘대출 기간은?’으로 바꾸고 두 셀을 다시 실행하면 14일과 [library-1]이 나옵니다. ‘주차 요금은?’에는 근거가 없다는 안내가 나옵니다. 이 모델은 준비된 답 한 줄을 돌려줍니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>검색 결과가 비었을 때 생성 호출 수 추적</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nq["질문"]
+  nsearch["검색"]
+  ncheck["근거 검사"]
+  ngenerate["답변 생성"]
+  nnone["근거 없음"]
+  nq --> nsearch
+  nsearch --> ncheck
+  ncheck --> ngenerate
+  ncheck --> nnone</script><figcaption>주차 요금 질문에 no_hits가 빈 목록을 돌려줍니다. 생성기로 넘긴 함수가 무엇이든 이 실행에서는 한 번도 불리지 않습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>인용 ID가 보일 때 할 검사</h3><p><mark>검색한 ID와 인용한 ID가 일치한 뒤에도 문장 내용은 원문과 대조해야 합니다.</mark> 휴관 문서를 인용하면서 다른 요일을 쓰는 답도 만들 수 있습니다. 같은 ID로 원문을 다시 열어 요일이 맞는지 확인하면 검색 오류와 답변 오류를 구별할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter23/index.html">23장 Retriever의 검색 입력과 반환 형식</a></p></aside>
+
 <span class="lesson-anchor" id="connect"></span><div class="lesson-explanation" id="reading-connect"><h3>검색 단계와 생성 단계</h3><div class="prose"><p>RAG는 검색한 근거를 질문과 함께 모델 입력에 넣어 답변을 생성합니다. 검색과 생성을 나누어 관찰하면 어느 단계의 문제인지 찾기 쉽습니다.</p>
 <p>search(question, k)는 23장의 네 필드 문서 목록을 반환합니다. 기본 실행은 같은 교육용 벡터를 계산하는 로컬 검색과 고정 응답 모델입니다. prompt | model | parser는 실제 LCEL 라이브러리로 연결하지만 외부 LLM에 요청하지 않습니다.</p>
 </div>
@@ -272,7 +267,31 @@ print(result["answer"])</code></pre></figure><div class="output"><p class="eyebr
 도서관은 화요일에 휴관합니다. [library-2]</pre></div><div class="cell-after"><p>ID 검사에는 통과했습니다. 원문과 답의 요일이 다르다는 오류는 답변 문장을 근거 문장과 대조해야 발견됩니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>생성 단계 직전에 빈 문맥 우회하기</h2></div></header>
+<p>앞에서 프롬프트와 모델을 연결했습니다. 이번에는 검색 결과가 없을 때 답변 생성 함수를 건너뛰는 조건을 LCEL로 옮깁니다. 원문과 출처를 조합하는 함수로 분기가 실행되는 위치를 확인합니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 검색 단계를 재사용하는 Runnable 만들기</h3><div class="cell-before"><p>질문 하나를 받아 검색 결과와 질문을 함께 남기는 RunnableLambda를 만드세요. 주차 질문을 보냈을 때 다음 단계에 무엇이 남는지 봅니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from langchain_core.runnables import RunnableLambda, RunnableBranch
+
+lookup_stage = RunnableLambda(lambda q: {&quot;question&quot;: q, &quot;rows&quot;: retrieve(q, k=1)})
+print(lookup_stage.invoke(&quot;주차 요금은?&quot;))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;주차 요금은?&#x27;, &#x27;rows&#x27;: []}</pre></div><div class="cell-after"><p>질문은 보존되고 rows가 비어 있습니다. 다음 단계가 빈 목록을 검사할 수 있으므로 무관한 문맥을 생성기에 넘길 필요가 없습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 빈 검색 출력을 받는 분기 직접 연결하기</h3><div class="cell-before"><p>RunnableBranch에 rows가 비었는지 검사하는 조건과 그때의 안내를 넣으세요. 기본 경로는 첫 원문과 인용 ID를 조합합니다. 연결한 체인에 휴관 질문과 주차 질문을 각각 보내세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># lookup_stage 뒤에 RunnableBranch를 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def cite_first(state):
+    doc = state[&quot;rows&quot;][0]
+    return f&quot;{doc[&#x27;text&#x27;]} [{doc[&#x27;id&#x27;]}]&quot;
+
+response_stage = RunnableBranch(
+    (lambda state: not state[&quot;rows&quot;], RunnableLambda(lambda state: &quot;확인할 자료가 없습니다.&quot;)),
+    RunnableLambda(cite_first),
+)
+guarded_chain = lookup_stage | response_stage
+print(guarded_chain.invoke(&quot;휴관일은?&quot;))
+print(guarded_chain.invoke(&quot;주차 요금은?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서관은 월요일에 휴관합니다. [library-2]
+확인할 자료가 없습니다.</pre></div><p>휴관 질문은 library-2를 인용합니다. 주차 질문에서는 cite_first가 실행되면 빈 목록의 첫 행에서 오류가 나야 합니다. 실제로 안내가 출력되는 것은 두 경로 중 빈 목록을 맡는 함수만 실행됐기 때문입니다. 이 실습의 답변 함수는 원문을 조합하며 외부 모델을 호출하지 않습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>분기는 빈 문맥을 읽기 전에 결정해야 합니다.</mark> rows[0]을 계산한 후에 빈 목록을 검사하면 이미 IndexError가 납니다.</p></aside><p>25장에서 답이 이상하면 검색이 잘못됐는지, 분기 이후에 잘못 조합했는지 나누어 확인합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

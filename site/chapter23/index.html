@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 23 / RETRIEVER</p>
 <span class="sidebar-title">Retriever의 검색 입력과 반환 형식</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-nested-results"><span>02</span>검색 결과의 중첩 목록</a><a href="#nb-search"><span>03</span>retrieve()의 k와 메타데이터 필터</a><a href="#nb-context"><span>04</span>문서 본문과 출처를 묶어 반환</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-nested-results"><span>02</span>검색 결과의 중첩 목록</a><a href="#nb-search"><span>03</span>retrieve()의 k와 메타데이터 필터</a><a href="#nb-context"><span>04</span>문서 본문과 출처를 묶어 반환</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>두 문서가 검색됐을 때 답변용 문맥 고르기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter23.ipynb" download="chapter23.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>23장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter23.ipynb" download="chapter23.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>23장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">두 문서가 검색됐을 때 답변용 문맥 고르기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-nested-results" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -62,6 +62,8 @@ print(row)</code></pre></figure>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>첫 결과의 본문과 출처를 짝지을 때</h3><p><mark>같은 질문의 같은 순위에서 ID·본문·메타데이터를 꺼냅니다.</mark> 질문이 한 건이어도 결과가 질문별 목록으로 묶일 수 있습니다. 첫 대괄호는 질문을, 다음 대괄호는 그 질문의 몇 번째 후보를 고르는지 확인하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter22/index.html">22장 벡터 거리와 Chroma·FAISS 검색</a></p></aside>
+
 <span class="lesson-anchor" id="fixture"></span><span class="lesson-anchor" id="reading-fixture"></span>
 
 </section>
@@ -195,7 +197,28 @@ for query_index, ids in enumerate(batch["ids"]):
 library-2 2 도서관은 월요일에 휴관합니다.</pre></div><div class="cell-after"><p>둘째 줄의 ID와 쪽 번호는 모두 질의 번호 1에서 읽습니다. 본문 인덱스만 [0][0]으로 두면 휴관 문서에 대출 규정이 붙습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>두 문서가 검색됐을 때 답변용 문맥 고르기</h2></div></header>
+<p>반납 질문에 k=2를 주면 검색기가 한 건 더 가져옵니다. 문서 수를 늘렸을 때 질문과 관계없는 자료가 들어오는지 답변에 넣기 전에 확인합니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 상위 두 건이 선택된 이유 읽기</h3><div class="cell-before"><p>질문의 세 좌표와 후보 문서의 세 좌표에서 동시에 1인 항목 수를 셉니다. 앞에서 사용한 낱말 벡터에만 적용하는 검사입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">question_for_context = &quot;반납함은 몇 시간 이용할 수 있나요?&quot;
+top_rows = retrieve(question_for_context, k=2)
+q_vector = teaching_vector(question_for_context)
+def shared_terms(row):
+    return sum(a * b for a, b in zip(q_vector, teaching_vector(row[&quot;text&quot;])))
+for row in top_rows:
+    print(row[&quot;id&quot;], int(shared_terms(row)))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-3 1
+library-1 0</pre></div><div class="cell-after"><p>반납함 문서에는 질문과 겹치는 낱말이 하나 있습니다. 함께 반환된 다른 문서는 0입니다. 이 검색기는 k개까지 가까운 문서를 돌려주므로 관련 없는 문서도 두 번째에 들어옵니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 근거가 있는 줄만 프롬프트로 넘기기</h3><div class="cell-before"><p>점수가 양수인 문서만 골라 [문서 ID / 쪽] 본문 형식으로 이어 붙이세요. 처음 가져온 두 문서 중 어느 문장을 모델이 읽게 되는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># top_rows와 shared_terms로 근거 문맥을 작성하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">relevant = [row for row in top_rows if shared_terms(row) &gt; 0]
+context_for_model = &quot;\n&quot;.join(
+    f&quot;[{row[&#x27;id&#x27;]} / {row[&#x27;page&#x27;]}쪽] {row[&#x27;text&#x27;]}&quot; for row in relevant
+)
+print(context_for_model)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[library-3 / 3쪽] 무인 반납함은 24시간 이용할 수 있습니다.</pre></div><p>library-3 / 3쪽이라는 위치와 반납함 안내 문장이 함께 남습니다. 다른 자료형의 임베딩에 이 규칙을 그대로 적용할 수 있을지는 그 검색기의 점수와 평가 질문을 보고 정합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>k는 최대 몇 건을 읽을지 정합니다. 그중 어느 문장을 답변 근거로 쓸지는 따로 확인하세요.</mark> 두 번째 후보는 실제로 존재하는 도서관 안내문이지만 반납함 이용 시간의 근거는 아닙니다.</p></aside><p>24장의 프롬프트에는 이처럼 본문과 출처 식별자가 함께 든 문맥을 넘깁니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

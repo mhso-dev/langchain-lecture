@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 55 / AGENT FOUNDATION</p>
 <span class="sidebar-title">create_agent의 도구 등록과 메시지 왕복</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>create_agent가 검색 도구를 다시 부르는 순간</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter55.ipynb" download="chapter55.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>55장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
+<a class="download" href="chapter55.ipynb" download="chapter55.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>55장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">create_agent가 검색 도구를 다시 부르는 순간</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
 </div>
 </section>
 <section id="nb-tool-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -51,7 +51,7 @@ print(result[<span class="tok-string">"hours"</span>])</code></pre></figure>
 <div class="cell-after"><p>10:00~16:00은 함수가 시간표에서 꺼낸 값입니다. 요청의 c1은 시간이 들어갈 칸이 아니라 도구 결과를 원래 요청과 짝지을 식별자입니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="responsibility"></span><div class="lesson-explanation" id="reading-responsibility"><h3>요청에서 함수 인자 꺼내기</h3><p>request 전체에는 이름과 ID도 있습니다. get_hours에 넘기는 값은 request[&quot;args&quot;] 안의 day 하나입니다. ID는 결과를 돌려줄 요청을 찾을 때 씁니다.</p></div>
+<span class="lesson-anchor" id="responsibility"></span><span id="reading-responsibility"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 요청과 결과의 ID 연결</h3>
 <div class="cell-before"><p>두 번째 요청 c2의 응답에서 대출 기간을 꺼내세요. 목록 위치 대신 호출 ID를 쓰세요.</p>
@@ -131,12 +131,12 @@ print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-key
 <div class="cell-after"><p>bind_tools가 대본 모델을 그대로 돌려줍니다. 네트워크나 결제 계정 없이 같은 요청 순서를 반복해서 볼 수 있습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>모델과 도구 사이에서 누가 함수를 실행할까?</h3><p>모델이 내보낸 tool_calls에는 함수 이름과 인자, 요청 ID가 들어갑니다. create_agent는 등록한 Python 함수를 실행하고 그 결과를 대화에 붙여 다시 모델을 부릅니다. 마지막 모델 응답에 도구 요청이 없으면 이번 실행이 끝납니다.</p></div>
+<span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>모델과 도구 사이에서 누가 함수를 실행할까?</h3><p>33장에서 직접 연결한 도구 실행과 다음 모델 호출을 create_agent가 이어 줍니다. 이번에는 마지막 AIMessage의 tool_calls가 비는 시점까지 따라가세요.</p></div>
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
 <span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>같은 도구 요청을 다시 관찰하기</h3><p>ClassroomModel이 내놓을 세 응답은 코드에 미리 적혀 있습니다. 그래서 노트북을 다시 실행해도 첫 도구는 get_hours, 두 번째 도구는 get_loan_rule입니다. 여기서 비교할 수 있는 것은 실행 순서입니다.</p></div>
 
 
-<figure class="lesson-clip workflow-clip" id="workflow-tool-id-roundtrip"><h3>같은 모델로 돌아가는 두 도구 요청</h3><video controls muted playsinline preload="metadata" src="workflow-tool-id-roundtrip.mp4" aria-label="같은 모델로 돌아가는 두 도구 요청" aria-describedby="workflow-tool-id-roundtrip-caption"></video><figcaption id="workflow-tool-id-roundtrip-caption">두 도구는 차례로 실행됩니다. 결과를 모델에게 돌려줄 때까지 c1과 c2가 각각 어느 요청의 ID인지 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>고정 모델</strong> · 첫 요청 ID = c1</li><li><strong>get_hours</strong> · c1 반환 = 10:00~16:00</li><li><strong>고정 모델</strong> · 다음 요청 ID = c2</li><li><strong>get_loan_rule</strong> · c2 반환 = 14</li><li><strong>고정 모델</strong> · 다음 도구 요청 수 = 0</li><li><strong>최종 응답</strong> · 답변의 두 값 = 10:00~16:00 · 14일</li></ol></figure>
+<p id="workflow-tool-id-roundtrip">두 도구는 차례로 실행됩니다. 결과를 모델에게 돌려줄 때까지 c1과 c2가 각각 어느 요청의 ID인지 따라가세요.</p>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · create_agent의 도구 왕복</h3>
 <div class="cell-before"><p>각 도구가 실제로 불렸을 때의 반환값을 호출 ID와 함께 읽습니다.</p>
 <p>셀 01의 같은 이름 함수는 사전을 반환해서 hours 키를 읽었습니다. 여기에서 새로 정의하는 도구는 문자열을 돌려줍니다. 메시지에서 호출 ID를 먼저 찾은 뒤 그 ID와 짝을 이룬 ToolMessage의 content를 읽으세요.</p>
@@ -166,7 +166,19 @@ c2 14</pre></div>
 </div>
 <p id="example-analysis">이 예제의 테스트 모델에는 도구 호출이 미리 지정돼 있습니다. 반환된 메시지에서 검증할 수 있는 것은 요청이 실제 함수 실행으로 이어졌는지, 그 결과가 같은 호출 ID로 돌아왔는지입니다. 새 질문에 어떤 도구를 고를지는 이 기록만으로 평가할 수 없습니다.</p>
 </article>
-<span class="lesson-anchor" id="roundtrip"></span><div class="lesson-explanation" id="reading-roundtrip"><h3>tool_call_id로 결과 찾기</h3><p>첫 번째 ToolMessage의 c1은 주말 시간에 대한 결과를, 두 번째 메시지의 c2는 대출 일수에 대한 결과를 가리킵니다. 도구 두 개를 등록해도 어느 요청의 결과인지 ID로 찾아낼 수 있습니다.</p></div>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>create_agent의 두 번의 도구 왕복</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+s["사용자 질문"] --> m["모델 호출"]
+m --> d{"이번 AIMessage의 tool_calls?"}
+d -->|c1| h["get_hours · 주말 시간"]
+d -->|c2| l["get_loan_rule · 대출 일수"]
+h --> t["ToolMessage · 호출 ID와 결과"]
+l --> t
+t --> m
+d -->|없음| e["최종 AIMessage"]</script><figcaption>이 테스트 모델이 보낸 순서는 c1, c2, 최종 답변입니다. 함수가 반환한 값은 ToolMessage로 대화에 들어가고 모델이 그 대화를 다시 읽습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>도구 두 개를 등록하면 둘 다 실행될까요?</h3><p><mark>등록은 호출할 수 있는 함수 목록을 정하고 실제 순서는 모델 메시지의 tool_calls가 정합니다.</mark> 이 실습의 테스트 모델은 c1으로 주말 시간, c2로 대출 일수를 차례로 요청합니다. 마지막 AI 메시지에는 새 요청이 없어 반복이 끝납니다. 결과 메시지 두 개와 마지막 답변에 쓰인 값을 짝지어 보세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter33/index.html">33장 LangChain 검색 도구와 ToolMessage</a></p></aside>
+
+<span class="lesson-anchor" id="roundtrip"></span><span id="reading-roundtrip"></span>
 <span class="lesson-anchor" id="exit"></span><span class="lesson-anchor" id="reading-exit"></span>
 
 <div class="worked-case" id="flow-9"><h3>셀 06에서 두 도구의 반환값은 어디로 갈까요?</h3>
@@ -190,7 +202,54 @@ c2 14</pre></div>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">get_loan_rule 14</pre></div><div class="cell-after"><p>c2가 가리키는 도구는 대출 규정을 조회했습니다. 마지막 AI 메시지의 문장을 바꾸더라도 이 ToolMessage에는 실행한 함수의 반환값이 남습니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>create_agent가 검색 도구를 다시 부르는 순간</h2></div></header>
+<p>33장에서는 조건 간선과 도구 노드를 직접 연결했습니다. 여기서는 create_agent로 만든 실제 그래프에 한 번 질문한 뒤, 모델과 도구 중 어느 쪽이 다음 메시지를 붙였는지 노드 업데이트에서 찾습니다. ClassroomModel은 질문마다 선택 순서를 재현하는 수업용 대역입니다.</p>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-1">셀 09 · 도구 호출 전후의 노드 업데이트 읽기</h3><div class="cell-before"><p>주말 시간과 대출 기간을 물었던 agent를 같은 입력으로 실행합니다. 최종 상태 한 덩어리를 읽었던 invoke와 달리 stream의 updates에서는 방금 일한 노드 이름이 보입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">question_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;주말 시간과 대출 기간은?&quot;)]}
+with tracing_context(enabled=False):
+    for update in agent.stream(question_input, stream_mode=&quot;updates&quot;):
+        for node_name, change in update.items():
+            message = change[&quot;messages&quot;][-1]
+            if message.type == &quot;tool&quot;:
+                print(node_name, message.tool_call_id, message.content)
+            elif message.tool_calls:
+                print(node_name, message.tool_calls[0][&quot;name&quot;])
+            else:
+                print(node_name, message.content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">model get_hours
+tools c1 10:00~16:00
+model get_loan_rule
+tools c2 14
+model 주말은 10:00~16:00이며 대출은 14일입니다.</pre></div><div class="cell-after"><p>처음에는 model이 get_hours를 요청하고 tools가 c1의 운영 시간을 돌려줍니다. 이어 model이 get_loan_rule을 요청하고 tools가 c2에 14를 붙입니다. 마지막 model의 메시지에는 새 호출 요청이 없어 실행이 끝납니다. 도구 이름은 실행 전 요청에도 보이므로 실제 실행 여부는 tools의 결과로 확인하세요.</p></div>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 같은 도구를 등록하고도 검색 없이 끝내기</h3><div class="cell-before"><p>인사 한 건에는 도구 요청이 없는 AIMessage 한 건만 준비하세요. 기존 도구 두 개를 똑같이 등록한 새 에이전트를 만들고, 인사를 보낸 뒤 전체 메시지 타입과 마지막 문장을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">greeting_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;안녕하세요!&quot;)]}
+# 응답 한 건만 준비한 ClassroomModel과 기존 도구로 새 에이전트를 만드세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">greeting_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;안녕하세요!&quot;)]}
+greeting_model = ClassroomModel(responses=[AIMessage(content=&quot;도서관 안내입니다.&quot;)])
+greeting_agent = create_agent(greeting_model, tools=[get_hours, get_loan_rule])
+with tracing_context(enabled=False):
+    history = greeting_agent.invoke(greeting_input)[&quot;messages&quot;]
+print([message.type for message in history])
+print(history[-1].content)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;human&#x27;, &#x27;ai&#x27;]
+도서관 안내입니다.</pre></div><p>human, ai 두 메시지가 남고 도서관 안내입니다가 출력됩니다. 같은 도구 두 개를 등록해도 모델 응답이 호출을 요청하지 않으면 tools 노드를 지나지 않습니다. 이 대역은 대본대로 답하므로 인사 의도를 얼마나 잘 분류하는지 평가하는 데는 쓸 수 없습니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="11" data-task="0"><h3 id="workshop-step-3">셀 11 · 실제 모델의 선택을 확인하는 선택 셀</h3><div class="cell-before"><p>도구 호출을 지원하는 수업용 채팅 모델을 준비했다면 class_chat에 넣으세요. OpenAI 계정으로 실습할 때는 커널에 langchain-openai와 OPENAI_API_KEY를 설정하고 주석의 모델 이름을 수업에서 쓰는 값으로 바꾸세요. 기본 설정에서는 외부 요청을 보내지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-11">복사</button></figcaption><pre tabindex="0"><code id="code-11">class_chat = None
+# from langchain_openai import ChatOpenAI
+# class_chat = ChatOpenAI(model=&quot;수업에서 지정한 모델명&quot;)
+if class_chat is None:
+    print(&quot;채팅 모델을 연결하면 도구 선택을 확인할 수 있습니다.&quot;)
+else:
+    live_agent = create_agent(class_chat, tools=[get_hours, get_loan_rule])
+    with tracing_context(enabled=False):
+        run = live_agent.invoke(question_input)
+    for message in run[&quot;messages&quot;]:
+        if message.type == &quot;tool&quot;:
+            print(message.name, message.content)
+    print(run[&quot;messages&quot;][-1].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">채팅 모델을 연결하면 도구 선택을 확인할 수 있습니다.</pre></div><div class="cell-after"><p>실제 모델을 연결했다면 최종 문장에 운영 시간이 있는지와 get_hours의 결과가 기록에 있는지를 각각 확인하세요. 답에 시간이 있어도 도구를 거쳤다는 증거는 그 앞의 ToolMessage에서 찾아야 합니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>도구를 등록한 횟수와 도구를 실행한 횟수는 다른 값입니다.</mark> 대본을 바꿔도 등록 목록은 같습니다. 두 실습에서 달라진 것은 모델이 반환한 AIMessage의 tool_calls와 그 결과로 지나간 노드입니다.</p></aside><p>56장에서는 모델이 요청한 호출 중 정책이 실제 함수 실행을 허용한 건수를 따로 확인합니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

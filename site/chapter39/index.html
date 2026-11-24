@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 039</p>
 <span class="sidebar-title">RAG 개선안의 품질과 비용 비교</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pair"><span>02</span>기준선과 후보의 답변·출처 비교</a><a href="#nb-adopt"><span>03</span>작업량과 적용 기준 기록</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pair"><span>02</span>기준선과 후보의 답변·출처 비교</a><a href="#nb-adopt"><span>03</span>작업량과 적용 기준 기록</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>평균이 같은 두 설정에서 새로 틀린 문항 찾아내기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter39.ipynb" download="chapter39.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>39장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter39.ipynb" download="chapter39.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>39장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">평균이 같은 두 설정에서 새로 틀린 문항 찾아내기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-pair" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -71,6 +71,8 @@ print(baseline[<span class="tok-string">'answer'</span>] == candidate[<span clas
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>개선안을 채택하기 전</h3><p><mark>같은 질문에서 답변과 출처를 함께 비교해야 합니다.</mark> 후보가 새 문항 하나를 맞혀도 기존에 맞던 문항을 놓칠 수 있습니다. 두 결과를 문항별로 짝짓고, 늘어난 작업량에 비해 어떤 실패가 줄었는지 판단하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter36/index.html">36장 검색 평가 지표와 답변 근거 검증</a></p></aside>
+
 <span class="lesson-anchor" id="failure"></span><span class="lesson-anchor" id="reading-failure"></span>
 <span class="lesson-anchor" id="time"></span><span class="lesson-anchor" id="reading-time"></span>
 
@@ -117,7 +119,26 @@ print(base_total, rerank_total, rerank_total - base_total)</code></pre></figure>
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>평균이 같은 두 설정에서 새로 틀린 문항 찾아내기</h2></div></header>
+<p>앞에서 재정렬을 한 번 더 호출해도 대출 질문의 답은 같았습니다. 이번에는 모아 둔 세 문항의 검색 기록에서 좋아진 질문과 나빠진 질문을 각각 찾아, 어느 설정을 유지할지 판단해 봅니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 두 설정의 맞힌 문항 수가 같은 경우 만들기</h3><div class="cell-before"><p>출력은 수업용 실험 기록에서 직접 계산합니다. 값은 각 문항의 상위 1건에 기대 원문이 있었는지를 뜻합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">comparisons = [
+    {&quot;id&quot;: &quot;check-loan&quot;, &quot;before&quot;: True, &quot;after&quot;: True},
+    {&quot;id&quot;: &quot;check-closed&quot;, &quot;before&quot;: False, &quot;after&quot;: True},
+    {&quot;id&quot;: &quot;check-return&quot;, &quot;before&quot;: True, &quot;after&quot;: False},
+]
+print(sum(row[&quot;before&quot;] for row in comparisons), sum(row[&quot;after&quot;] for row in comparisons))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 2</pre></div><div class="cell-after"><p>두 설정 모두 세 질문 중 두 건을 맞혔습니다. 전체 합계에는 휴관 질문의 개선과 반납 질문의 악화가 서로 상쇄되어 나타납니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · 개선 문항과 회귀 문항을 남겨 채택 판단하기</h3><div class="cell-before"><p>before와 after가 바뀐 질문을 두 목록으로 나누세요. 이 팀은 기존 성공 문항의 실패가 하나라도 생기면 새 설정을 보류합니다. 이 기준에 따른 결과를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># improved와 regressed를 만들고 이 팀의 채택 기준을 적용하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">improved = [row[&quot;id&quot;] for row in comparisons if not row[&quot;before&quot;] and row[&quot;after&quot;]]
+regressed = [row[&quot;id&quot;] for row in comparisons if row[&quot;before&quot;] and not row[&quot;after&quot;]]
+print(improved, regressed)
+print(&quot;보류&quot; if regressed else &quot;다음 점검으로&quot;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;check-closed&#x27;] [&#x27;check-return&#x27;]
+보류</pre></div><p>check-closed는 새로 성공했고 check-return은 새로 실패했습니다. 이 팀의 기준에서는 보류입니다. 다음에 상세 로그를 열 질문은 평균을 대표하는 문항이 아니라 방금 실패한 반납 질문입니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>맞힌 총수가 같을 때에도 사람이 받는 답의 품질은 질문별로 달라질 수 있습니다.</mark> 평균을 유지하면서 꼭 지켜야 하는 반납 질문을 잃었다면 팀의 수용 기준을 만족하지 못합니다.</p></aside><p>40장의 화면에는 점검에서 통과한 설정을 연결하고 출처가 없는 경우도 실제로 눌러 봅니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

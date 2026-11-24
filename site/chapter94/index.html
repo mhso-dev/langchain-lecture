@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 094 / FINAL PROJECT</p>
 <span class="sidebar-title">텍스트 정규화와 원문 해시</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-record"><span>02</span>검색용 문자열과 원문 메타데이터</a><a href="#nb-rebuild"><span>03</span>hashlib로 원문 변경 판별</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-record"><span>02</span>검색용 문자열과 원문 메타데이터</a><a href="#nb-rebuild"><span>03</span>hashlib로 원문 변경 판별</a><a href="#workshop"><span>04</span>재처리한 문서가 검색 테이블에 중복되는지 확인하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter94.ipynb" download="chapter94.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>94장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter94.ipynb" download="chapter94.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>94장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">재처리한 문서가 검색 테이블에 중복되는지 확인하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-record" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -87,8 +87,29 @@ True</pre></div>
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>줄바꿈 하나가 바뀐 두 문서</h3><p><mark>해시는 입력 바이트를 비교하므로 검색용으로 정리한 본문이 같아도 원문 해시는 달라질 수 있습니다.</mark> 두 개의 불리언이 무엇을 비교했는지 먼저 읽으세요. 팀 자료에서는 원문 판본 확인용 지문과 검색용 문자열을 서로 다른 필드에 보관합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter21/index.html">21장 문서 청킹과 원문 오프셋</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>재처리한 문서가 검색 테이블에 중복되는지 확인하기</h2></div></header>
+<p>RULE-A를 어제와 오늘 두 번 읽었습니다. 새 줄을 무조건 추가하면 같은 절이 검색 후보를 두 칸 차지할 수 있습니다. 여기서는 한 판본 안의 문서·절 조합을 저장 키로 정합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 같은 문서·절·판본을 두 번 적재하기</h3><div class="cell-before"><p>앞 셀의 prepared는 공백을 정리한 본문과 원문 지문을 보관합니다. 임시 SQLite 테이블에 똑같은 레코드를 두 번 넣고 실제 남은 행을 확인합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">import sqlite3
+from contextlib import closing
+
+with closing(sqlite3.connect(&quot;:memory:&quot;)) as db:
+    db.execute(&quot;&quot;&quot;CREATE TABLE sections (
+        doc TEXT, section TEXT, version TEXT, body TEXT, fingerprint TEXT,
+        PRIMARY KEY(doc, section, version))&quot;&quot;&quot;)
+    fields = tuple(prepared[k] for k in (&quot;id&quot;, &quot;section&quot;, &quot;version&quot;, &quot;text&quot;, &quot;source_sha256&quot;))
+    for _ in range(2):
+        db.execute(&quot;INSERT OR IGNORE INTO sections VALUES (?, ?, ?, ?, ?)&quot;, fields)
+    row = db.execute(&quot;SELECT doc, section, version, COUNT(*) FROM sections GROUP BY doc, section, version&quot;).fetchone()
+    print(*row)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">RULE-A 2.1 rules-v1 1</pre></div><div class="cell-after"><p>RULE-A 2.1 rules-v1이 한 행 남습니다. 이 삽입 방식은 같은 키에서 본문이 바뀌어도 무시합니다. 원문 지문이 달라지면 기존 값을 조용히 덮기 전에 새 판본인지 확인해야 합니다.</p></div>
+</article>
+<section class="project-example"><h3>같은 ID 안에서 바뀐 내용 처리하기</h3><p>자료 담당자는 개정 내용을 받았는데 판본 표기가 그대로인 경우를 등록 보류로 두고 두 지문을 기록합니다. 판본을 새로 부여했다면 두 행을 보관하고 현재 검색 대상 판본을 명시하세요. 검색 단계에서는 그룹 필터도 다시 적용합니다.</p></section>
+<aside class="lesson-note"><p><mark>중복 적재를 막는 키가 원문 변경까지 알려 주지는 않습니다.</mark> 문서와 절이 같아도 판본이 다르면 과거 답변이 가리키는 원문을 찾기 위해 두 버전이 필요합니다.</p></aside><p>95장 검색 결과는 레코드에 남긴 문서 ID·쪽·절·판본으로 원문을 다시 찾을 수 있어야 합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

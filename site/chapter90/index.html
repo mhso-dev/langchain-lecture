@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 090 / FINAL PROJECT</p>
 <span class="sidebar-title">평가 기준선과 보류 문항</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pairs"><span>02</span>기대 답변·근거·무응답 설정</a><a href="#nb-split"><span>03</span>개발 문항과 확인용 문항 분리</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-pairs"><span>02</span>기대 답변·근거·무응답 설정</a><a href="#nb-split"><span>03</span>개발 문항과 확인용 문항 분리</a><a href="#workshop"><span>04</span>답은 유보했지만 출처가 남은 응답 채점하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter90.ipynb" download="chapter90.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>90장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter90.ipynb" download="chapter90.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>90장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">답은 유보했지만 출처가 남은 응답 채점하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-pairs" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -69,6 +69,15 @@ True</pre></div>
 </div>
 <p id="example-analysis">두 True를 한 점수로 합치기 전에 무엇을 비교한 값인지 구분합니다. 근거 ID가 같아도 답변 문장이 원문과 어긋날 수 있고, 문장이 같아도 다른 판본을 인용할 수 있습니다. 팀 평가표에는 두 실패를 따로 남길 수 있는 열이 필요합니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>Q01의 정답표를 원문으로 확인하는 두 검사</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ncase["Q01 정답표"]
+  ndoc["규정 식별"]
+  nfact["원문 대조"]
+  nok["두 검사 결과"]
+  ncase --> ndoc
+  ndoc --> nfact
+  nfact --> nok</script><figcaption>규정 ID와 답에 들어갈 사실을 각각 확인합니다. 일치하는 규정에서 기대 문장을 실제로 읽을 수 있어야 합니다.</figcaption></figure>
+
 </section>
 <section id="nb-split" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>개발 문항과 확인용 문항 분리</h2>
@@ -101,8 +110,27 @@ print(missing_case[<span class="tok-string">"expected_status"</span>], missing_c
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>답할 수 없는 문항의 기대값</h3><p><mark>근거가 없을 때 안내하고 출처를 비우는 것도 평가할 행동입니다.</mark> 답이 있는 질문만 모으면 서비스가 매번 답을 만들어도 결함이 드러나지 않습니다. 팀 자료 밖 질문 하나를 보류 문항에 넣고 기대 상태와 빈 출처를 함께 기록하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter35/index.html">35장 RAG 평가 데이터셋 구성</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>답은 유보했지만 출처가 남은 응답 채점하기</h2></div></header>
+<p>Q03을 만든 동료가 “일정을 모른다고 썼으니 정답”이라고 했습니다. 화면 아래에 점검 규정이 남아 있을 때도 같은 점수를 줄지 기준선 평가 전에 결정합니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 예상 출처와 관찰 출처 대조</h3><div class="cell-before"><p>missing_case는 이미 합의한 Q03의 기대값입니다. 화면에 남은 RULE-A가 어느 검사에 걸리는지 살펴보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">observed = {&quot;status&quot;: &quot;no_evidence&quot;,
+            &quot;answer&quot;: &quot;문서에서 확인할 수 없습니다. 담당자에게 확인하세요.&quot;,
+            &quot;sources&quot;: [{&quot;id&quot;: &quot;RULE-A&quot;}]}
+observed_ids = [doc[&quot;id&quot;] for doc in observed[&quot;sources&quot;]]
+checks = {
+    &quot;상태&quot;: observed[&quot;status&quot;] == missing_case[&quot;expected_status&quot;],
+    &quot;필수 내용&quot;: all(word in observed[&quot;answer&quot;] for word in missing_case[&quot;expected_answer_facts&quot;]),
+    &quot;출처&quot;: observed_ids == missing_case[&quot;expected_source_ids&quot;],
+}
+print(&quot;고칠 항목&quot;, [field for field, passed in checks.items() if not passed])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">고칠 항목 [&#x27;출처&#x27;]</pre></div><div class="cell-after"><p>출력은 출처 한 항목입니다. 일정 자료가 없다는 문장이 맞아도 RULE-A를 붙이면 사용자는 점검 규정을 일정의 근거로 받아들일 수 있습니다.</p></div>
+</article>
+<section class="project-example"><h3>새 질문을 평가용으로 받는 방법</h3><p>장비 교체 대신 임의의 날짜를 답으로 삼는 질문을 개발자가 만들고 튜닝에 사용했다면 그 질문은 개발 묶음에 넣습니다. 실제 확인용 질문은 다른 사람이 원문과 정답을 짝지어 보관하고 후보를 정한 뒤에 처음 실행하세요.</p></section>
+<aside class="lesson-note"><p><mark>답변 유보 문항은 본문과 빈 출처 목록을 함께 채점합니다.</mark> 점검 규정에서 찾을 수 없는 일정이라면 문서 번호 하나가 추가되는 것만으로도 결과가 달라집니다.</p></aside><p>91장에는 Q01과 Q03의 문장·기대 상태·기대 출처를 그대로 넘겨 첫 구현에 넣습니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 104 / FINAL PROJECT</p>
 <span class="sidebar-title">답변 카드와 요청 대기 상태</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-screen"><span>02</span>본문과 원문 위치의 표시 규칙</a><a href="#nb-progress"><span>03</span>대기 중 이전 답변과 출처 초기화</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-screen"><span>02</span>본문과 원문 위치의 표시 규칙</a><a href="#nb-progress"><span>03</span>대기 중 이전 답변과 출처 초기화</a><a href="#workshop"><span>04</span>늦게 도착한 응답이 새 화면을 덮어쓰지 못하게 하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter104.ipynb" download="chapter104.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>104장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter104.ipynb" download="chapter104.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>104장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">늦게 도착한 응답이 새 화면을 덮어쓰지 못하게 하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-screen" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -98,8 +98,30 @@ print(view[<span class="tok-string">"message"</span>], view[<span class="tok-str
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>새 요청의 대기 화면</h3><p><mark>아직 응답이 없을 때 직전 답변의 출처를 현재 질문에 붙이지 않습니다.</mark> 정상 답변 뒤 다른 요청을 보내고 대기 중인 순간의 제목·문구·출처를 읽으세요. 이전 대화 기록은 보존하면서 현재 카드만 초기화되는지 확인합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter97/index.html">97장 대화 턴의 현재 출처와 이전 기록</a></p></aside>
+
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>늦게 도착한 응답이 새 화면을 덮어쓰지 못하게 하기</h2></div></header>
+<p>검색 버튼을 두 번 눌렀고 첫 번째 응답이 더 늦게 도착했습니다. 기다리는 동안 새 출처 목록을 비웠더라도, 이전 응답이 마지막에 그 목록을 다시 채울 수 있습니다.</p>
+<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 응답의 요청 ID와 현재 화면의 요청 ID 대조</h3><div class="cell-before"><p>r-A 다음에 r-B를 보냈다고 가정합니다. 네트워크 대신 호출 순서를 직접 정해 두 번째 화면에서 첫 답변이 무시되는지 확인합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">def apply_response(view, request_id, answer, sources):
+    if view[&quot;active_request&quot;] != request_id:
+        return view
+    return {**view, &quot;pending&quot;: False, &quot;answer&quot;: answer,
+            &quot;sources&quot;: [item[&quot;id&quot;] for item in sources]}
+
+view = {&quot;active_request&quot;: &quot;r-B&quot;, &quot;pending&quot;: True, &quot;answer&quot;: &quot;&quot;, &quot;sources&quot;: []}
+ignored = apply_response(view, &quot;r-A&quot;, result[&quot;answer&quot;], result[&quot;sources&quot;])
+print(ignored[&quot;pending&quot;], ignored[&quot;sources&quot;])
+finished = apply_response(ignored, &quot;r-B&quot;, &quot;점검 전 고정 장치를 확인합니다.&quot;,
+                          [{&quot;id&quot;: &quot;RULE-B&quot;}])
+print(finished[&quot;pending&quot;], finished[&quot;sources&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True []
+False [&#x27;RULE-B&#x27;]</pre></div><div class="cell-after"><p>첫 응답을 받은 뒤에도 r-B는 기다리는 중이고 출처가 비어 있습니다. 두 번째 응답이 도착한 뒤에야 RULE-B를 그립니다. 과거 r-A의 내용을 대화 이력에 저장할지는 별도의 저장 정책입니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 화면에서 같은 순서를 재현하기</h3><p>두 입력의 응답 도착 순서를 바꿔 보세요. 두 번째 요청이 먼저 끝난 뒤 첫 번째 요청이 도착하는 경우에도 완료된 카드와 출처가 B로 남아야 합니다. 화면의 로딩 표시와 출처를 같은 요청 ID에 묶어 검사합니다.</p></section>
+<aside class="lesson-note"><p><mark>마지막에 도착한 메시지가 지금 사용자가 기다리는 요청의 메시지인지 확인합니다.</mark> 응답 시각이 늦어도 그 답변이 가리키는 요청은 r-A입니다. r-B 화면에는 r-B의 자료만 표시합니다.</p></aside><p>105장은 현재 요청의 결과가 검색 근거 없음, 저장 실패, 전달 여부 미확인일 때 안내 문구를 정합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

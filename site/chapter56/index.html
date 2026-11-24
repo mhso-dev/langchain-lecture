@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 56 / AGENT FOUNDATION</p>
 <span class="sidebar-title">에이전트 입력 검증과 도구 호출 제한</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-input"><span>02</span>검색 인자의 타입과 범위 검사</a><a href="#nb-citation"><span>03</span>인용 ID와 검색 결과 대조</a><a href="#nb-limit"><span>04</span>미들웨어로 도구 호출 수 제한</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-input"><span>02</span>검색 인자의 타입과 범위 검사</a><a href="#nb-citation"><span>03</span>인용 ID와 검색 결과 대조</a><a href="#nb-limit"><span>04</span>미들웨어로 도구 호출 수 제한</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>모델이 요청한 검색과 실행한 검색 대조하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter56.ipynb" download="chapter56.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>56장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
+<a class="download" href="chapter56.ipynb" download="chapter56.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>56장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">모델이 요청한 검색과 실행한 검색 대조하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
 </div>
 </section>
 <section id="nb-input" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -56,7 +56,7 @@
 </article>
 <span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>실행 전후에 검사할 값</h3><p>도구를 부르기 전에는 요청한 k가 허용되는지 확인합니다. 답변을 돌려줄 때에는 실제로 찾은 문서와 초안에 적힌 문서가 일치하는지 따로 확인합니다.</p></div>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
-<span class="lesson-anchor" id="tool"></span><div class="lesson-explanation" id="reading-tool"><h3>양의 정수 k 판별하기</h3><p>이 함수는 type(value) is int와 1 이상의 값이라는 두 조건을 모두 봅니다. 문자열 &quot;2&quot;는 숫자처럼 보여도 통과하지 않고, True도 bool이므로 통과하지 않습니다.</p></div>
+<span class="lesson-anchor" id="tool"></span><span id="reading-tool"></span>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · k의 허용 범위 검증</h3>
 <div class="cell-before"><p>요청을 고쳐 문서 두 장까지 검색할 수 있게 하세요.</p>
@@ -84,7 +84,7 @@ print(sorted(draft_ids - returned_ids))</code></pre></figure>
 <div class="cell-after"><p>library-9는 현재 검색에서 받은 적이 없습니다. 이 경우에는 자료가 없었다고 기록하면 안 됩니다. 검색은 성공했고 초안의 인용 검사에서 막혔습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="structured"></span><div class="lesson-explanation" id="reading-structured"><h3>검색 결과에 없는 인용 ID</h3><p>draft_ids에서 returned_ids를 빼면 검색에서 돌려주지 않은 출처만 남습니다. library-9가 보이면 초안에 등장한 그 ID를 검색 결과에서 확인할 수 없다는 뜻입니다. 문장 자체가 원문과 맞는지는 따로 읽어야 합니다.</p></div>
+<span class="lesson-anchor" id="structured"></span><span id="reading-structured"></span>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 검색 결과 내 인용 검사</h3>
 <div class="cell-before"><p>초안이 반환된 문서만 인용하는지 집합으로 검사하세요.</p>
@@ -157,7 +157,16 @@ print(executed)</code></pre></figure>
 <div class="cell-after"><p>['대출'] 한 건만 남습니다. 두 번째 요청도 대본에 있었지만 미들웨어가 실행 상한을 먼저 검사했습니다. 검색 함수 안에 append를 둔 덕분에 모델이 요청한 횟수와 실제 실행한 횟수를 구분할 수 있습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="policy"></span><div class="lesson-explanation" id="reading-policy"><h3>도구 요청과 실제 실행 횟수</h3><p>모델 대본에는 s1과 s2 두 요청이 있지만 run_limit은 1입니다. executed에는 함수 본문에 들어갈 때만 문자열이 추가되므로 [&#x27;대출&#x27;]은 두 번째 검색이 실행되지 않았다는 증거입니다.</p></div>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>호출 제한이 함수 실행을 막는 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+m["모델 응답"] --> q{"도구 호출 요청?"}
+q -->|없음| e["최종 답변"]
+q -->|있음| g{"실행 한도 남음?"}
+g -->|s1 · 허용| t["검색 실행 · executed에 기록"] --> m
+g -->|s2 · 초과| x["검색 생략 · 제어를 모델로"] --> m</script><figcaption>s2는 대본에 있지만 search_documents 본문에 들어가지 않습니다. continue 설정은 모델이 다음 응답을 작성할 기회를 남깁니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>요청 두 번과 실행 한 번</h3><p><mark>run_limit=1은 이 실행에서 도구 함수에 들어갈 수 있는 횟수를 제한합니다.</mark> 테스트 모델은 s1과 s2를 차례로 요청하지만 executed에는 첫 질문 ‘대출’만 남습니다. exit_behavior가 continue이므로 두 번째 호출을 막은 뒤 모델은 최종 답을 낼 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter55/index.html">55장 create_agent의 도구 등록과 메시지 왕복</a></p></aside>
+
+<span class="lesson-anchor" id="policy"></span><span id="reading-policy"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 
 </section>
@@ -180,7 +189,37 @@ except ValueError as error:
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">최대 5건까지 조회할 수 있습니다.</pre></div><div class="cell-after"><p>k의 상한은 한 번의 검색이 반환할 수 있는 문서 수를 제한합니다. run_limit=1은 같은 실행에서 도구를 부를 수 있는 횟수를 제한합니다. 호출을 한 번으로 제한해도 그 한 번에 요청할 문서 수는 따로 정해야 합니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>모델이 요청한 검색과 실행한 검색 대조하기</h2></div></header>
+<p>앞에서 호출 상한을 1로 정했습니다. 이번에는 검색 함수의 실행 기록과 모델이 남긴 요청을 나란히 읽습니다. 모델이 두 번 검색을 요청했는데 관찰된 함수 호출은 왜 한 번인지 학생이 코드로 찾아냅니다.</p>
+<article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-1">셀 09 · 두 번째 요청이 남긴 결과 확인하기</h3><div class="cell-before"><p>현재 state에서 반환된 tool 메시지를 골라 호출 ID와 상태를 출력하세요. executed에는 통과한 검색의 질문만 남아 있습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">tool_messages = [m for m in state[&quot;messages&quot;] if m.type == &quot;tool&quot;]
+for m in tool_messages:
+    print(m.tool_call_id, m.status)
+print(&quot;함수 실행&quot;, executed)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">s1 success
+s2 error
+함수 실행 [&#x27;대출&#x27;]</pre></div><div class="cell-after"><p>s1과 s2 모두 결과 메시지가 있지만 s2는 제한에 걸렸습니다. executed에는 첫 질문 대출만 남습니다. 차단을 설명하는 도구 메시지도 있으므로 메시지 수만 보고 검색 횟수를 세면 실제 함수가 일한 횟수와 어긋날 수 있습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 등록은 그대로 두고 실행 상한 바꾸기</h3><div class="cell-before"><p>같은 검색 두 건에 대해 이번 실행의 한도를 2로 설정하세요. 이전 로그의 영향을 막으려고 실행 기록을 비운 뒤, 새 테스트 모델과 새 에이전트로 다시 실행하세요. 검색 함수가 받은 두 질문을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">two_requests = [
+    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;대출&quot;}, &quot;s1&quot;),
+    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;다시 검색&quot;}, &quot;s2&quot;),
+    AIMessage(content=&quot;확인을 마칩니다.&quot;),
+]
+# run_limit=2인 미들웨어를 새 에이전트에 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">two_requests = [
+    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;대출&quot;}, &quot;s1&quot;),
+    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;다시 검색&quot;}, &quot;s2&quot;),
+    AIMessage(content=&quot;확인을 마칩니다.&quot;),
+]
+executed.clear()
+relaxed = create_agent(ClassroomModel(responses=two_requests), tools=[search_documents],
+                       middleware=[ToolCallLimitMiddleware(run_limit=2, exit_behavior=&quot;continue&quot;)])
+with tracing_context(enabled=False):
+    relaxed.invoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;대출 규정을 확인해 주세요.&quot;)]})
+print(executed)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;대출&#x27;, &#x27;다시 검색&#x27;]</pre></div><p>대출과 다시 검색이 차례로 남습니다. 두 그래프에 등록한 함수와 요청은 같고 이번에 바꾼 값은 run_limit입니다. 로그를 비우지 않으면 이전 실행의 대출이 한 건 더 섞입니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>실행 제한을 확인하려면 요청 ID와 함수 안에서 남긴 기록을 함께 보세요.</mark> s2라는 ID는 요청에 붙은 표식입니다. 도구 본문에서만 기록하는 executed까지 읽으면 s2가 실제 검색에 도달했는지 구분할 수 있습니다.</p></aside><p>서비스를 평가할 때 모델 요청 횟수와 실제 검색 비용을 따로 집계할 근거가 됩니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

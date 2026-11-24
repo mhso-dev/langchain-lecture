@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 042</p>
 <span class="sidebar-title">RAG 화면의 출처 추적과 회귀 검사</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-trace-evidence"><span>02</span>검색 결과와 표시 출처 대조</a><a href="#nb-repair-view"><span>03</span>동일 질의로 출처 수정 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-trace-evidence"><span>02</span>검색 결과와 표시 출처 대조</a><a href="#nb-repair-view"><span>03</span>동일 질의로 출처 수정 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>고정한 질문으로 팀원의 첫 RAG를 인수하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter42.ipynb" download="chapter42.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>42장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter42.ipynb" download="chapter42.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>42장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">고정한 질문으로 팀원의 첫 RAG를 인수하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-trace-evidence" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -37,35 +37,12 @@
 <div class="cell-before"><p>자료 세 쪽에서 질문 한 건을 다시 실행해 처음 찾은 문서를 읽습니다.</p>
 <p>화면에 보여 줄 출처는 이번 질문에서 받은 문서만 사용하세요. 검색 결과가 비었거나 답에 붙은 인용 ID가 검색 문서와 다르면 현재 출처를 비우고 확인을 요청합니다. 지난 질문의 출처를 대신 붙이지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 29줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
-
-<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
-    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
-        <span class="tok-keyword">return</span> []
-    <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
-    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
-
-question = <span class="tok-string">'대출 기간은 며칠인가요?'</span>
-found = retrieve(question, <span class="tok-number">1</span>)
-<span class="tok-keyword">if</span> found:
-    print(found[<span class="tok-number">0</span>][<span class="tok-string">'id'</span>], found[<span class="tok-number">0</span>][<span class="tok-string">'text'</span>])
-<span class="tok-keyword">else</span>:
-    print(<span class="tok-string">'이번 질문의 검색 결과가 없습니다.'</span>)</code></pre></figure>
+<p class="reuse-note"><a href="../chapter30/index.html#code-1">30장의 검색 함수와 문서 세 건</a>을 노트북의 준비 셀에서 실행한 뒤 아래 코드를 읽으세요.</p><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">question = &#x27;대출 기간은 며칠인가요?&#x27;
+found = retrieve(question, 1)
+if found:
+    print(found[0][&#x27;id&#x27;], found[0][&#x27;text&#x27;])
+else:
+    print(&#x27;이번 질문의 검색 결과가 없습니다.&#x27;)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1 도서 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>검색 직후에는 library-1과 14일이 맞아떨어집니다. 검색 입력을 바꾸기 전에 답과 화면 사이를 살펴볼 차례입니다.</p>
 </div>
@@ -85,6 +62,8 @@ print(screen[<span class="tok-string">'source'</span>][<span class="tok-string">
 <div class="cell-after"><p>화면은 library-2의 2쪽을 가리킵니다. 답의 인용과 검색은 대출인데 화면에만 지난 휴관 문서가 남았습니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>답변은 맞지만 출처 표시가 틀릴 때</h3><p><mark>검색이 반환한 문서와 화면이 선택한 문서를 같은 질문으로 대조합니다.</mark> 휴관 답변 옆의 쪽 번호가 대출 문서를 가리킨다면 검색부터 다시 짤 필요는 없습니다. 화면이 이전 결과의 첫 문서를 붙였는지 확인하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter40/index.html">40장 Streamlit 폼으로 만드는 RAG 질의 화면</a></p></aside>
+
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="session"></span><span class="lesson-anchor" id="reading-session"></span>
 <span class="lesson-anchor" id="diagnosis"></span><div class="lesson-explanation" id="reading-diagnosis"><h3>같은 요청에서 처음 달라진 값</h3><p>검색 결과와 답의 인용은 모두 library-1인데 화면의 source만 library-2입니다. 화면에 남아 있는 records[1]을 새 검색 결과와 대조하세요. 여기서 질의나 검색 설정까지 바꾸면 출처를 고친 뒤 같은 조건으로 비교하기 어렵습니다.</p></div>
@@ -147,6 +126,36 @@ print(source)</code></pre></figure><div class="output"><p class="eyebrow">실행
 </div>
 </section>
 
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>고정한 질문으로 팀원의 첫 RAG를 인수하기</h2></div></header>
+<p>팀원이 보낸 서비스가 답변에 근거를 붙였다고 합니다. 앞의 인용 오류를 고친 뒤, 검색·답변·화면 출처가 같은 문서를 가리키는지 작은 인수 시험으로 확인합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 출처 레코드만 바뀐 오류를 검출하기</h3><div class="cell-before"><p>동료가 보낸 오류 화면을 그대로 재현하려고 아래에 답변과 출처를 따로 적어 두었습니다. 앞 과제를 고친 뒤에도 같은 사례로 시작할 수 있게 이 기록과 새 검색 결과를 비교합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">reported_view = {&quot;answer&quot;: &quot;도서 대출 기간은 14일입니다. [library-1]&quot;,
+                 &quot;source&quot;: next(row for row in records if row[&quot;id&quot;] == &quot;library-2&quot;)}
+actual_hits = retrieve(&quot;대출 기간은?&quot;, 1)
+expected_id = actual_hits[0][&quot;id&quot;]
+print(expected_id, reported_view[&quot;source&quot;][&quot;id&quot;])
+print(f&quot;[{expected_id}]&quot; in reported_view[&quot;answer&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">library-1 library-2
+True</pre></div><div class="cell-after"><p>검색 결과와 답변에는 library-1이 들어 있지만 화면의 source는 library-2입니다. 팀원에게 “RAG가 틀렸다”고만 전하면 검색기를 다시 고칠 수 있습니다. 화면 조립 단계의 ID를 함께 보여 주세요.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 답변 가능·불가 질문을 같은 인터페이스로 인수 시험하기</h3><div class="cell-before"><p>질문을 받으면 retrieve를 한 번 호출해 answer와 sources를 반환하는 함수를 작성하세요. 대출 질문은 답 안의 인용과 첫 출처 ID가 일치해야 하고, 주차 질문은 빈 목록과 안내 문장을 반환해야 합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># build_view(question)를 작성한 뒤 대출과 주차 두 입력으로 검산하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def build_view(question):
+    docs = retrieve(question, 1)
+    if not docs:
+        return {&quot;answer&quot;: &quot;자료를 확인할 수 없습니다.&quot;, &quot;sources&quot;: []}
+    first = docs[0]
+    return {&quot;answer&quot;: f&quot;{first[&#x27;text&#x27;]} [{first[&#x27;id&#x27;]}]&quot;, &quot;sources&quot;: [first]}
+
+loan_view = build_view(&quot;대출 기간은?&quot;)
+citation = loan_view[&quot;sources&quot;][0][&quot;id&quot;]
+assert citation == &quot;library-1&quot; and f&quot;[{citation}]&quot; in loan_view[&quot;answer&quot;]
+empty_view = build_view(&quot;주차 요금은?&quot;)
+assert empty_view[&quot;sources&quot;] == []
+print(loan_view[&quot;answer&quot;])
+print(empty_view[&quot;answer&quot;], empty_view[&quot;sources&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">도서 대출 기간은 14일입니다. [library-1]
+자료를 확인할 수 없습니다. []</pre></div><p>첫 출력은 대출 근거의 본문과 실제 문서 ID를, 두 번째는 안내와 빈 출처를 보여 줍니다. 검색 함수나 화면을 교체한 뒤에도 이 두 입력을 다시 실행하면 어느 약속을 깨뜨렸는지 빠르게 좁힐 수 있습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>답변, 검색 기록, 표시한 출처가 모두 같은 요청을 설명하는지 확인하세요.</mark> 화면에 그럴듯한 자료명이 보이는 것만으로는 인수 시험을 마칠 수 없습니다. 대출 답변 옆에 휴관 안내가 붙은 앞 예제를 떠올리세요.</p></aside><p>43장에서 팀이 고른 서비스에도 답변 가능한 질문 한 건과 보류할 질문 한 건을 남기세요.</p>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

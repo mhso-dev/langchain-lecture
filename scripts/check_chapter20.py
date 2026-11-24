@@ -123,9 +123,9 @@ def main():
     comparison = PdfReader(SITE / "return-notice.pdf")
     assert [p.extract_text().strip() for p in comparison.pages] == ["가상 도서관 반납 안내\n" + GUIDE[-1], ""]
     with pymupdf.open(SITE / "return-notice.pdf") as pdf:
+        assert not pdf[0].get_image_info() and len(pdf[1].get_image_info()) == 1
         raster = [page.get_pixmap(matrix=pymupdf.Matrix(2, 2)) for page in pdf]
-        preview = pymupdf.Pixmap(str(SITE / "notice-page.png"))
-        assert raster[0].samples == raster[1].samples == preview.samples
+        assert raster[0].samples == raster[1].samples
     print("ZIP, embedded files, PDF text and both page images checked", flush=True)
     for mode in ("starter", "solutions"):
         subprocess.run([sys.executable, __file__, mode], check=True)

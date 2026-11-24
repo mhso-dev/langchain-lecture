@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 63 / AGENTIC SERVICE</p>
 <span class="sidebar-title">RAG 서비스 함수와 응답 계약</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-document"><span>02</span>search()의 입력 문서와 조회 결과</a><a href="#nb-envelope"><span>03</span>answer()의 상태·답변·출처</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-document"><span>02</span>search()의 입력 문서와 조회 결과</a><a href="#nb-envelope"><span>03</span>answer()의 상태·답변·출처</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>필수 근거 검색에 선택 도구 하나 연결하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter63.ipynb" download="chapter63.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>63장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter63.ipynb" download="chapter63.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>63장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">필수 근거 검색에 선택 도구 하나 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-document" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -92,6 +92,20 @@ print(row[<span class="tok-string">"result"</span>][<span class="tok-string">"so
 </div>
 <p id="example-analysis">답변을 펼치는 화면에서는 sources의 id로 인용을 찾고 page로 원문을 엽니다. answer는 검색한 문서 한 건을 그대로 두 필드의 재료로 씁니다. 모델 호출 수나 검색 호출 수를 출력하는 셀은 아닙니다.</p>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>소유자 확인을 지나 원문과 인용이 답변이 될 때</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nowner["소유자 확인"]
+  nsearch["문서 검색"]
+  nhit["근거 선택"]
+  nnone["근거 없음"]
+  nresult["응답 반환"]
+  nowner --> nsearch
+  nsearch --> nhit
+  nsearch --> nnone
+  nhit --> nresult
+  nnone --> nresult</script><figcaption>이 예제의 answer는 로컬 함수입니다. 답변과 generation_calls 필드를 노트북에서 어떻게 만드는지 보세요.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>근거를 찾지 못한 서비스 응답</h3><p><mark>답변 문구만 읽으면 검색이 비었는지 생성에 실패했는지 구분하기 어렵습니다.</mark> 같은 응답에서 status와 출처 목록을 함께 확인하세요. 팀이 화면을 만들 때에도 근거 없는 답 옆에 이전 문서가 붙는 일을 막을 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter24/index.html">24장 LCEL로 구성하는 RAG와 인용 검증</a></p></aside>
+
 <span class="lesson-anchor" id="envelope"></span><div class="lesson-explanation" id="reading-envelope"><h3>처리 결과와 답변 상태를 따로 읽기</h3><p>run_status는 요청 처리가 끝났는지를, result.status는 문서로 답할 수 있었는지를 나타냅니다. 주차 질문은 처리가 끝나도 no_evidence입니다.</p></div>
 <span class="lesson-anchor" id="owner"></span><div class="lesson-explanation" id="reading-owner"><h3>검색보다 먼저 확인하는 소유자</h3><p>answer는 owners에서 대화의 소유자를 조회해 전달받은 owner와 비교합니다. 일치하지 않으면 PermissionError가 발생하므로 search가 그 요청의 자료를 읽지 않습니다.</p></div>
 <span class="lesson-anchor" id="limited-agent"></span><span class="lesson-anchor" id="reading-limited-agent"></span>
@@ -109,7 +123,7 @@ print(missing[<span class="tok-string">'status'</span>], missing[<span class="to
 </div>
 </details>
 </article>
-<span class="lesson-anchor" id="mandatory-search"></span><div class="lesson-explanation" id="reading-mandatory-search"><h3>근거가 없을 때의 분기</h3><p>주차 질문에는 ‘과제’가 없어 search가 빈 리스트를 돌려줍니다. answer는 즉시 sources=[]와 generation_calls=0을 반환합니다. 원문 없이 제출 방법을 추측하는 단계는 없습니다.</p><div class="worked-case" id="flow-5"><h3>소유자 확인 뒤에 나뉘는 검색 경로</h3><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span><p>answer는 대화 소유자가 다르면 search를 호출하기 전에 PermissionError를 냅니다. alice가 chat-a에서 과제 질문을 하면 문서 course-guide-v1:p2를 담아 answered를 반환합니다. 같은 대화에 주차 질문을 보내면 빈 검색 결과에서 즉시 no_evidence와 generation_calls=0을 반환합니다.</p></div></div>
+<span class="lesson-anchor" id="mandatory-search"></span><div class="lesson-explanation" id="reading-mandatory-search"><h3>근거가 없을 때의 분기</h3><p>주차 질문을 받은 answer가 돌려준 sources와 generation_calls를 먼저 확인하세요.</p><div class="worked-case" id="flow-5"><h3>소유자 확인 뒤에 나뉘는 검색 경로</h3><span class="lesson-anchor" id="flow-5-step-0"></span><span class="lesson-anchor" id="flow-5-step-1"></span><span class="lesson-anchor" id="flow-5-step-2"></span><span class="lesson-anchor" id="flow-5-step-3"></span><p>answer는 대화 소유자가 다르면 search를 호출하기 전에 PermissionError를 냅니다. alice가 chat-a에서 과제 질문을 하면 문서 course-guide-v1:p2를 담아 answered를 반환합니다. 같은 대화에 주차 질문을 보내면 빈 검색 결과에서 즉시 no_evidence와 generation_calls=0을 반환합니다.</p></div></div>
 <span class="lesson-anchor" id="run-all"></span><span class="lesson-anchor" id="reading-run-all"></span>
 <span class="lesson-anchor" id="failure"></span><span class="lesson-anchor" id="reading-failure"></span>
 <span class="lesson-anchor" id="practice"></span><span class="lesson-anchor" id="reading-practice"></span>
@@ -130,7 +144,72 @@ except PermissionError as error:
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">conversation_not_owned</pre></div><div class="cell-after"><p>소유자 확인은 search보다 앞에 있습니다. 자료가 없는 질문에는 no_evidence가 돌아오지만 다른 사람의 대화에는 result 자체를 반환하지 않습니다. 화면에서도 두 상황을 구분해야 합니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>필수 근거 검색에 선택 도구 하나 연결하기</h2></div></header>
+<p>학생이 과제 제출 방법과 제출 오류를 문의할 창구를 함께 묻습니다. 제출 방법은 앞에서 쓰던 문서가 알려 주고, 문의 창구는 별도의 도구가 알려 줍니다. 사용자 확인과 필수 검색은 서비스 함수에서, 선택 도구 실행은 create_agent에서 맡습니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 서로 다른 두 출처를 준비하기</h3><div class="cell-before"><p>담당 창구를 알려 주는 도구를 하나 만듭니다. 이 셀은 문서 자료와 도구의 반환값을 직접 확인합니다. 다음 셀에서 두 출처를 한 요청에 연결하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from langchain.agents import create_agent
+from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.tools import tool
+from langsmith import tracing_context
+
+@tool
+def support_desk() -&gt; str:
+    &quot;&quot;&quot;가상 과정의 제출 오류 문의 창구를 확인합니다.&quot;&quot;&quot;
+    return &quot;운영 지원 창구&quot;
+
+class HelpdeskModel(FakeMessagesListChatModel):
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+print(document[&quot;id&quot;], support_desk.invoke({}))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">course-guide-v1:p2 운영 지원 창구</pre></div><div class="cell-after"><p>문서 ID와 문의 창구가 출력됩니다. 제출 장소와 문의 창구를 다른 사실로 취급하면, 어느 답이 틀렸을 때 어떤 자료부터 고쳐야 할지 정할 수 있습니다.</p></div>
+</article>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>문서 근거와 문의 도구가 한 응답에 모이는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    start["대화 소유자 확인"] --> owner{"일치?"}
+    owner -->|아니요| stop["오류로 종료"]
+    owner -->|예| docs{"검색 근거가 있는가?"}
+    docs -->|없음| empty["자료 없음"]
+    docs -->|있음| model["문서를 읽는 모델"]
+    model --> choice{"도구 요청?"}
+    choice -->|있음| desk["문의 창구 조회"]
+    desk --> model
+    choice -->|없음| answer["답과 문서 ID 반환"]</script><figcaption>대화 권한과 필수 검색은 ask_service가 결정합니다. 근거를 넣은 뒤에만 에이전트가 실행되며, 선택 도구를 쓴 경우 그 결과가 다시 모델에 전달됩니다.</figcaption></figure>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-2">셀 06 · 근거를 먼저 찾고 선택 도구의 결과 받기</h3><div class="cell-before"><p>ask_service는 대화 소유자를 검사하고 같은 검색 함수를 실행합니다. 근거가 있으면 문서 내용을 에이전트에 전달합니다. 이 에이전트의 테스트 모델은 지원 창구를 한 번 요청하도록 정해 두었습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">def ask_service(question, user_id, chat_id, agent):
+    if chat_id not in owners or owners[chat_id] != user_id:
+        raise PermissionError(&quot;conversation_not_owned&quot;)
+    docs = search(question)
+    if not docs:
+        return {&quot;status&quot;: &quot;no_evidence&quot;, &quot;sources&quot;: [], &quot;messages&quot;: []}
+    prompt = question + &quot;\n문서 근거: &quot; + docs[0][&quot;text&quot;]
+    with tracing_context(enabled=False):
+        history = agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, prompt)]})[&quot;messages&quot;]
+    return {&quot;status&quot;: &quot;answered&quot;, &quot;sources&quot;: [docs[0][&quot;id&quot;]], &quot;messages&quot;: history}
+
+desk_request = AIMessage(content=&quot;&quot;, tool_calls=[{&quot;name&quot;: &quot;support_desk&quot;, &quot;args&quot;: {}, &quot;id&quot;: &quot;desk-1&quot;}])
+service_agent = create_agent(HelpdeskModel(responses=[
+    desk_request, AIMessage(content=&quot;과제함에 제출하고 오류는 운영 지원 창구에 문의하세요.&quot;),
+]), tools=[support_desk])
+response = ask_service(&quot;과제 제출 방법과 오류 문의 창구는?&quot;, &quot;alice&quot;, &quot;chat-a&quot;, service_agent)
+print(response[&quot;sources&quot;])
+print([(m.name, m.content) for m in response[&quot;messages&quot;] if m.type == &quot;tool&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;course-guide-v1:p2&#x27;]
+[(&#x27;support_desk&#x27;, &#x27;운영 지원 창구&#x27;)]</pre></div><div class="cell-after"><p>첫 줄은 검색한 문서의 ID이고 두 번째 줄은 도구 이름과 실제 반환값입니다. 지원 창구라는 문장이 답변에 보이는지만 검사하면 자료의 출처를 구별하기 어렵습니다. 이 예제에서는 문서 ID와 도구 결과를 따로 꺼낼 수 있습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-3">과제 07 · 근거가 없을 때도 열 수 있는 응답 화면 구성하기</h3><div class="cell-before"><p>status가 no_evidence면 “자료 없음”과 빈 출처 목록을 반환하세요. answered면 마지막 메시지 본문과 문서 ID 목록을 반환하는 함수 한 개를 작성하세요. 주차 질문과 앞의 정상 응답에 각각 적용하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">parking = ask_service(&quot;주차는 어떻게 하나요?&quot;, &quot;alice&quot;, &quot;chat-a&quot;, service_agent)
+# def show_answer(row): ...</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-3">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-3">parking = ask_service(&quot;주차는 어떻게 하나요?&quot;, &quot;alice&quot;, &quot;chat-a&quot;, service_agent)
+def show_answer(row):
+    if row[&quot;status&quot;] == &quot;no_evidence&quot;:
+        return &quot;자료 없음&quot;, []
+    return row[&quot;messages&quot;][-1].content, row[&quot;sources&quot;]
+
+print(show_answer(parking))
+print(show_answer(response))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;자료 없음&#x27;, [])
+(&#x27;과제함에 제출하고 오류는 운영 지원 창구에 문의하세요.&#x27;, [&#x27;course-guide-v1:p2&#x27;])</pre></div><p>주차 질문은 빈 messages를 돌려주므로 무조건 [-1]을 읽으면 IndexError가 납니다. 자료 없음 분기를 먼저 처리하면 필수 근거가 없을 때도 화면이 정상적으로 이어집니다. 정상 요청에서는 답과 course-guide-v1:p2가 함께 보입니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>서비스가 반드시 수행하는 검색과 에이전트가 선택하는 도구를 각기 다른 기록에서 확인하세요.</mark> 문서 ID는 search에서 만들고, support_desk의 실행 결과는 ToolMessage에 남습니다. 이 로컬 대본은 두 경로가 이어지는지 검사할 때 씁니다.</p></aside><p>확인 절차가 필요한 도구를 추가할 때는 데이터를 저장하는 지점을 따로 나누게 됩니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

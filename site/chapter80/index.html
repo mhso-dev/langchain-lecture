@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 80 / CODEX</p>
 <span class="sidebar-title">Codex 요청의 수용 기준과 JavaScript 상태 변경</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>할 일 추가 함수와 빈 입력 검증</a><a href="#nb-review"><span>03</span>diff 검토와 ID별 완료 처리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>할 일 추가 함수와 빈 입력 검증</a><a href="#nb-review"><span>03</span>diff 검토와 ID별 완료 처리</a><a href="#workshop"><span>04</span>동일한 제목의 할 일을 구분해 삭제하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter80.ipynb" download="chapter80.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>80장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter80.ipynb" download="chapter80.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>80장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">동일한 제목의 할 일을 구분해 삭제하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
@@ -35,7 +35,7 @@
 <h2>할 일 추가 함수와 빈 입력 검증</h2>
 </div>
 </header>
-<p class="concept-intro">Codex에 코드 변경을 요청하기 전에 정상 입력과 빈 입력에서 기대할 동작을 적습니다. 변경 내역과 실행 결과를 그 조건에 맞춰 검토합니다.</p><p>Codex 요청 예시입니다. ‘단일 사용자용 투두 화면에서 제목 양끝의 공백을 제거하고 새 항목을 추가해 줘. 빈 제목은 거절하고 ID는 저장소가 발급해. 같은 제목 두 건을 각각 완료할 수 있어야 해. 변경할 함수와 확인할 사례를 먼저 설명해 줘.’ 아래 코드는 이 요청의 수용 조건을 검토할 수 있도록 마련한 수업용 예시입니다. Codex가 실제로 돌려준 코드는 직접 실행한 세션에서 확인하세요.</p>
+<p class="concept-intro">같은 제목인 복습을 두 번 등록하면 버튼은 어느 항목을 가리켜야 할까요?</p><p>Codex 요청 예시입니다. ‘단일 사용자용 투두 화면에서 제목 양끝의 공백을 제거하고 새 항목을 추가해 줘. 빈 제목은 거절하고 ID는 저장소가 발급해. 같은 제목 두 건을 각각 완료할 수 있어야 해. 변경할 함수와 확인할 사례를 먼저 설명해 줘.’ 아래 코드는 이 요청의 수용 조건을 검토할 수 있도록 마련한 수업용 예시입니다. Codex가 실제로 돌려준 코드는 직접 실행한 세션에서 확인하세요.</p>
 
 <span class="lesson-anchor" id="goal"></span><div class="lesson-explanation" id="reading-goal"><h3>요구한 동작을 출력으로 확인하기</h3><p>추가 함수가 완성되었다는 기준을 값으로 정해 보세요. 앞뒤에 공백이 있는 복습을 넣으면 제목은 복습, ID는 1, 완료는 false여야 합니다. 공백만 넣었을 때는 배열 길이가 증가하지 않아야 합니다.</p></div>
 <span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>ID로 같은 제목 구분하기</h3><p>서로 다른 항목에 복습이라는 제목을 두 번 넣어도 ID는 1과 2로 나뉩니다. 완료 변경의 대상을 정할 때는 제목을 비교하기보다 ID로 해당 행을 찾으세요.</p></div>
@@ -78,6 +78,8 @@ catch (error) { console.log(error.message + " " + items.length); }
 <div class="cell-after"><p>INVALID_TITLE 0입니다. 저장 전에 검사해서 빈 항목과 불필요한 ID가 생기지 않았습니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>빈 제목이 들어온 경우의 수용 기준</h3><p><mark>오류 메시지뿐 아니라 목록 길이가 그대로인지 검사합니다.</mark> 공백만 있는 제목을 보내고 INVALID_TITLE과 항목 수를 함께 읽으세요. 오류를 표시하면서 목록에는 빈 할 일이 추가되는 결함까지 찾을 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter79/index.html">79장 JavaScript 폼 이벤트와 fetch 응답 처리</a></p></aside>
+
 <span class="lesson-anchor" id="add"></span><div class="lesson-explanation" id="reading-add"><h3>검증이 ID 발급보다 먼저인 이유</h3><p>add는 입력이 문자열이고 trim 결과가 비어 있지 않은지 먼저 확인합니다. 조건을 어기면 nextId++와 items.push에 도달하기 전에 예외를 던지므로 빈 입력은 목록에 나타나지 않습니다.</p></div>
 <span class="lesson-anchor" id="fix"></span><span class="lesson-anchor" id="reading-fix"></span>
 
@@ -117,7 +119,36 @@ console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
 <span class="lesson-anchor" id="diff"></span><div class="lesson-explanation" id="reading-diff"><h3>완료 수정의 범위 검토하기</h3><p>두 번째 항목을 완료로 바꾼 뒤 두 행의 ID와 완료 값을 함께 출력해 보세요. 목표는 ID 2의 완료 값 하나를 바꾸는 것입니다. 제목이 같은 ID 1까지 바뀌었다면 대상을 찾는 조건부터 살펴보세요.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>동일한 제목의 할 일을 구분해 삭제하기</h2></div></header>
+<p>Codex에 “삭제 버튼을 만들어 줘”라고만 하면 제목으로 첫 항목을 찾아 지우는 코드도 요구를 만족한 것처럼 보입니다. 같은 제목 두 건을 넣어 사용자가 선택한 항목만 지워지는지 직접 검사합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 항목 두 개가 같은 제목을 가진 경우 재현하기</h3><div class="cell-before"><p>셀 01을 실행하면 run_js와 초기 저장 코드 store_source가 준비됩니다. 두 번째 복습을 선택했는데 제목으로 첫 일치 항목을 삭제하는 구현을 실행해 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">run_js(store_source + &quot;&quot;&quot;
+const first = add(&quot;복습&quot;);
+const selected = add(&quot;복습&quot;);
+const position = items.findIndex(item =&gt; item.title === selected.title);
+items.splice(position, 1);
+console.log([&quot;선택&quot;, selected.id, &quot;남은 ID&quot;, items.map(item =&gt; item.id).join(&quot;,&quot;)].join(&quot; &quot;));
+&quot;&quot;&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">선택 2 남은 ID 2</pre></div><div class="cell-after"><p>2번을 선택했는데 남은 ID가 2입니다. 실제로 지운 항목은 제목이 먼저 일치한 1번입니다. 목록에 제목 한 종류만 출력하면 화면만 보면서 이 오류를 발견하기 어렵습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · Codex에게 전달할 요구를 ID 기반 삭제로 구현하기</h3><div class="cell-before"><p>“행의 삭제 버튼은 그 행의 ID 한 건만 제거한다. 없는 ID는 목록을 유지한다.” 이 요구를 removeById 함수로 작성하세요. 두 번째 복습을 두 번 삭제하고 반환값과 남은 ID를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># store_source 뒤에 removeById(id)를 작성하세요.
+# 같은 제목의 두 번째 항목 ID로 두 차례 호출하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">run_js(store_source + &quot;&quot;&quot;
+function removeById(id) {
+  const at = items.findIndex(item =&gt; item.id === id);
+  if (at &lt; 0) return false;
+  items.splice(at, 1);
+  return true;
+}
+add(&quot;복습&quot;);
+const second = add(&quot;복습&quot;);
+console.log([removeById(second.id), removeById(second.id)].join(&quot; &quot;));
+console.log(items.map(item =&gt; item.id).join(&quot;,&quot;));
+&quot;&quot;&quot;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">true false
+1</pre></div><p>첫 줄은 true false이고 남은 번호는 1입니다. 두 번째 삭제에서는 findIndex가 -1을 돌려줍니다. 이때 그대로 splice(-1, 1)을 부르면 마지막 항목까지 지워지므로 먼저 반환해야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>사용자가 선택한 행은 제목이 같아도 ID로 구별됩니다.</mark> 코드 검토에서는 제목이 같을 때와 이미 삭제한 ID를 다시 받을 때를 모두 확인하세요. 두 번째 삭제가 남은 행을 보존한다는 조건까지 있어야 합니다.</p></aside><p>81장의 DELETE 요청 주소에 제목 대신 선택한 행의 ID를 넣고, 서버 응답을 받은 뒤 화면 목록을 갱신합니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -127,7 +158,7 @@ console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

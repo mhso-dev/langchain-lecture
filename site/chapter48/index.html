@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 48 / MIDTERM PROJECT</p>
 <span class="sidebar-title">RAG 결과 화면과 출처 초기화</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-answer-panel"><span>02</span>문단 ID와 원문 쪽 번호 표시</a><a href="#nb-empty-panel"><span>03</span>질문 변경 시 현재 출처 초기화</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-answer-panel"><span>02</span>문단 ID와 원문 쪽 번호 표시</a><a href="#nb-empty-panel"><span>03</span>질문 변경 시 현재 출처 초기화</a><a href="#workshop"><span>04</span>다음 질문에는 이전 답변의 출처가 남지 않게 하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter48.ipynb" download="chapter48.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>48장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter48.ipynb" download="chapter48.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>48장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">다음 질문에는 이전 답변의 출처가 남지 않게 하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-answer-panel" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -82,10 +82,28 @@ print(current[<span class="tok-string">'result'</span>][<span class="tok-string"
 </div>
 <p id="example-analysis">첫 답변의 근거 p2가 화면에 남아 있으면 두 번째 답변의 ‘근거 없음’ 안내와 충돌합니다. 대화 이력에서는 이전 답변과 인용을 보존하고, 현재 출처 패널에는 이번 응답의 빈 목록을 반영합니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>새 질문에 지난 출처가 남을 때</h3><p><mark>현재 상태가 no_evidence이면 현재 답변 카드의 출처도 비어야 합니다.</mark> 첫 질문의 출처가 잘 보인 직후에 근거 없는 질문을 보내 보세요. 그 출처가 화면에 남으면 학생이 어느 답을 읽고 있는지 혼동할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter42/index.html">42장 RAG 화면의 출처 추적과 회귀 검사</a></p></aside>
+
 <div class="lesson-explanation" id="note-code-2"><h3>응답 상태와 실행 상태 읽기</h3><p>execution_status는 completed이고 이번 result.status는 no_evidence입니다. 질문 처리는 끝났지만 보여 줄 근거가 없으므로 현재 출처 목록은 비어 있어야 합니다. 이전 질문의 p2 카드를 그대로 두면 이 화면의 답변을 잘못 설명하게 됩니다.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>다음 질문에는 이전 답변의 출처가 남지 않게 하기</h2></div></header>
+<p>시연자가 Q01을 묻고 출처를 펼친 뒤 Q03을 묻습니다. 새 답은 보류인데 바로 밑에 p2가 남아 있으면 사용자는 그 문단이 보류 답변의 출처라고 읽습니다. 앞에서 받은 두 응답으로 화면에 건넬 값을 직접 만듭니다.</p>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="workshop-step-1">셀 03 · 응답 한 건에서 표시할 출처 목록 만들기</h3><div class="cell-before"><p>첫 질문과 다음 질문을 같은 함수에 차례로 넣습니다. 카드를 이전 화면에 덧붙일지, 지금 들어온 응답으로 다시 만들지 결정할 지점입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-3">복사</button></figcaption><pre tabindex="0"><code id="code-3">def source_cards(reply):
+    return [(row[&quot;id&quot;], row[&quot;page&quot;], row[&quot;text&quot;]) for row in reply[&quot;sources&quot;]]
+
+visible_sources = source_cards(result)
+print([(doc_id, page) for doc_id, page, text in visible_sources])
+visible_sources = source_cards(current[&quot;result&quot;])
+print(visible_sources)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;course-guide-v1:p2&#x27;, 1)]
+[]</pre></div><div class="cell-after"><p>두 번째 값은 빈 목록입니다. 첫 응답에서 읽은 p2를 지우고 새 응답의 sources로 목록 전체를 교체했습니다.</p></div>
+</article>
+<section class="project-example"><h3>동료에게 줄 화면 시험 절차</h3><div class="workshop-table" tabindex="0" role="region" aria-label="동료에게 줄 화면 시험 절차"><table><caption>동료에게 줄 화면 시험 절차</caption><thead><tr><th scope="col">순서</th><th scope="col">동료의 행동</th><th scope="col">화면에서 확인할 것</th></tr></thead><tbody><tr><td>1</td><td>Q01을 보내고 출처를 펼친다.</td><td>p2 원문에 제출 뒤 확인할 두 항목이 보인다.</td></tr><tr><td>2</td><td>같은 화면에서 Q03을 보낸다.</td><td>이전 출처가 닫히고 현재 질문에는 근거 없음 안내가 보인다.</td></tr><tr><td>3</td><td>이전 대화의 Q01을 다시 펼친다.</td><td>저장한 Q01 메시지 안에서는 여전히 그 메시지의 p2가 보인다.</td></tr></tbody></table></div><p>현재 답의 출처와 과거 대화의 출처를 별도로 검사합니다. 세 번째 줄은 팀 화면에 대화 기록 기능이 있을 때 수행할 사용자 시험입니다.</p></section>
+<section class="project-example"><h3>Streamlit 화면에서 확인할 곳</h3><p>각 답변을 그릴 때 해당 메시지의 sources를 source_cards에 넘기세요. 페이지에 하나뿐인 전역 목록을 모든 답변 아래에 그리면 이전 대화까지 함께 바뀝니다.</p></section>
+<aside class="lesson-note"><p><mark>출처 카드의 주인은 그 답을 만든 한 번의 응답입니다.</mark> 현재 답변에서 p2를 지우는 일과 이전 대화 기록에서 p2까지 지우는 일은 사용자가 보는 결과가 다릅니다.</p></aside><p>49장 평가표에 검색 결과와 화면에 실제로 보인 출처를 각각 기록하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

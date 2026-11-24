@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 68 / HTTP API</p>
 <span class="sidebar-title">FastAPI 요청 모델과 POST 엔드포인트</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>Pydantic 요청 모델과 입력 검증</a><a href="#nb-errors"><span>03</span>HTTP 검증 오류와 빈 근거 응답</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request"><span>02</span>Pydantic 요청 모델과 입력 검증</a><a href="#nb-errors"><span>03</span>HTTP 검증 오류와 빈 근거 응답</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>검색 개수 k를 서비스 함수까지 전달하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,14 +25,14 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter68.ipynb" download="chapter68.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>68장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0, pydantic 2.14.1입니다.</p>
+<a class="download" href="chapter68.ipynb" download="chapter68.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>68장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">검색 개수 k를 서비스 함수까지 전달하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 fastapi 0.135.0, pydantic 2.14.1입니다.</p>
 </div>
 </section>
 <section id="nb-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>Pydantic 요청 모델과 입력 검증</h2>
 </div>
 </header>
-<p class="concept-intro">FastAPI는 HTTP 요청을 경로 함수에 전달합니다. 요청 모델에서 거부된 입력과 서비스까지 도착해 근거를 찾지 못한 입력의 결과를 비교합니다.</p><p>Pydantic 모델은 question과 k를 파싱합니다. 질문 앞뒤 공백은 정리하고 공백만 남은 질문은 거절합니다. k에는 1~10 범위의 정수만 받습니다. 아래의 수업용 서비스는 고정 문서 한 건에서 A1 결과를 만듭니다.</p>
+<p class="concept-intro">과제 안내를 JSON으로 요청할 때, 공백 질문과 자료가 없는 질문을 서버가 어떻게 구별할까요?</p><p>Pydantic 모델은 question과 k를 파싱합니다. 질문 앞뒤 공백은 정리하고 공백만 남은 질문은 거절합니다. k에는 1~10 범위의 정수만 받습니다. 아래의 수업용 서비스는 고정 문서 한 건에서 A1 결과를 만듭니다.</p>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · FastAPI 앱과 요청 모델</h3>
 <div class="cell-before"><p>이 셀은 앱과 AskRequest 클래스를 만듭니다. 다음 셀의 @app.post가 경로와 입력 모델을 연결합니다.</p>
 </div>
@@ -80,6 +80,8 @@ print(response.status_code, response.json()[<span class="tok-string">"result"</s
 </div>
 <p id="example-analysis">응답 상태 200과 p2는 서로 다른 검사를 뒷받침합니다. 200은 요청 처리가 끝났다는 신호이고, p2는 답변의 근거를 추적할 식별자입니다. 요청 처리 테스트가 성공했더라도 문서 질문에 맞는 문단인지 확인하는 검사는 별도로 필요합니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>422가 반환됐을 때</h3><p><mark>요청 모델 검증에서 실패하면 정상 요청을 처리하던 함수 본문까지 도달하지 않습니다.</mark> 유효한 요청에 근거가 없는 경우는 서비스가 검색을 마친 뒤의 결과입니다. HTTP 상태와 응답 안의 상태를 함께 읽어 어느 입력을 수정할지 정하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter12/index.html">12장 구조화된 출력이란?</a></p></aside>
+
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="response"></span><div class="lesson-explanation" id="reading-response"><h3>HTTP 200 안의 답변 상태</h3><p>200은 이 요청에 대한 HTTP 처리가 성공했다는 뜻입니다. 실제 근거를 찾았는지는 result.status와 sources를 보고 판별합니다.</p></div>
 <span class="lesson-anchor" id="route"></span><span class="lesson-anchor" id="reading-route"></span>
@@ -109,6 +111,17 @@ print(bad.status_code)</code></pre></figure>
 <div class="cell-after"><p>422입니다. 질문을 검사하는 단계에서 멈춰 서비스 함수에는 도달하지 않았습니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>공백 질문이 검색 함수에 닿지 않는 이유</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+npost["POST /ask"]
+  ncheck["AskRequest"]
+  nreject["HTTP 422"]
+  nask["ask 함수"]
+  nservice["answer 함수"]
+  npost --> ncheck
+  ncheck --> nreject
+  ncheck --> nask
+  nask --> nservice</script><figcaption>공백 요청과 올바른 요청이 갈라지는 위치는 FastAPI의 본문 검증 단계입니다.</figcaption></figure>
+
 <span class="lesson-anchor" id="errors"></span><div class="lesson-explanation" id="reading-errors"><h3>검증 실패가 끝나는 지점</h3><p>공백만 보낸 요청의 422는 검색이 실패했다는 표시가 아닙니다. 입력 모델이 요청을 거부해 서비스 함수 answer에 질문이 전달되지 않았습니다.</p></div>
 
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 유효한 요청의 빈 검색 결과</h3>
@@ -139,7 +152,42 @@ print(invalid.status_code, problem["loc"][-1])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">422 k</pre></div><div class="cell-after"><p>JSON에서 2와 "2"는 서로 다른 값입니다. 이 요청은 StrictInt 검사에서 거부되며 정상 응답의 result 필드가 없습니다. k를 정수 2로 보내면 셀 02에서 본 답변 경로에 도달합니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>검색 개수 k를 서비스 함수까지 전달하기</h2></div></header>
+<p>앞에서 /ask는 k를 검사했지만 실제 검색 함수에는 질문만 건넸습니다. 안내문 두 건을 쓰는 작은 경로를 만들어, 클라이언트가 요청한 검색 개수가 응답의 출처 목록에 반영되는지 확인합니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 검색 함수에서 출처 묶음 만들기</h3><div class="cell-before"><p>과제 안내 두 건 중 질문의 첫 단어가 들어간 자료를 찾습니다. 질문이 같을 때 k=1이면 어떤 문서가 먼저 올까요?</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">source_rows = [
+    {&quot;id&quot;: &quot;guide:p1&quot;, &quot;text&quot;: &quot;과제 제출은 과제함에서 합니다.&quot;},
+    {&quot;id&quot;: &quot;guide:p2&quot;, &quot;text&quot;: &quot;과제 수정은 마감 전까지 가능합니다.&quot;},
+]
+
+def lookup_sources(question, k):
+    needle = question.split()[0]
+    return [doc for doc in source_rows if needle in doc[&quot;text&quot;]][:k]
+
+print([doc[&quot;id&quot;] for doc in lookup_sources(&quot;과제 안내&quot;, 1)])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;guide:p1&#x27;]</pre></div><div class="cell-after"><p>guide:p1이 나옵니다. 두 문장 모두 과제를 언급하지만 이 함수는 자료 순서를 유지하고 앞에서 한 건만 자릅니다. 질문 전체의 의미나 문서 관련도를 평가하는 검색기는 아닙니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 요청 모델과 검색 함수를 경로로 잇기</h3><div class="cell-before"><p>이 과제에 쓰는 AskRequest는 이 장 셀 01에서 정의합니다. 새 FastAPI 앱의 POST /sources에 AskRequest를 받는 함수를 작성하세요. 앞 셀의 검색 함수에 두 값을 모두 넘기고, 같은 과제 질문에 k=2를 넣어 실제 HTTP 상태와 문서 ID 목록을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+source_app = FastAPI()
+# POST /sources에서 question과 k를 lookup_sources에 전달하세요.
+# TestClient(source_app)로 응답을 확인하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+source_app = FastAPI()
+
+@source_app.post(&quot;/sources&quot;)
+def get_sources(body: AskRequest):
+    return {&quot;sources&quot;: lookup_sources(body.question, body.k)}
+
+with TestClient(source_app) as source_client:
+    reply = source_client.post(&quot;/sources&quot;, json={&quot;question&quot;: &quot;과제 안내&quot;, &quot;k&quot;: 2})
+print(reply.status_code, [doc[&quot;id&quot;] for doc in reply.json()[&quot;sources&quot;]])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">200 [&#x27;guide:p1&#x27;, &#x27;guide:p2&#x27;]</pre></div><p>200 뒤에 서로 다른 ID 두 개가 보이면 요청 모델에서 검색 함수까지 k=2가 전달됐습니다. k를 1로 고정한 구현은 똑같이 200을 돌려줘도 두 번째 문서를 잃습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>상태 코드가 200이어도 응답 본문에서 검색 개수를 확인해야 합니다.</mark> 자료 두 건 모두 맞는 질문을 쓰면 k가 실제로 전달되는지 드러납니다. 주차 질문처럼 맞는 자료가 없는 입력만으로는 두 구현을 구별하기 어렵습니다.</p></aside><p>같은 경로에 k=1과 k=2를 보내, 응답 본문의 자료 수까지 비교하는 회귀 검사를 남겨 보세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

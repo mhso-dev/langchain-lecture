@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 34 / RAG TOOLS</p>
 <span class="sidebar-title">LangGraph의 선택적 도구 호출과 반복</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-choose"><span>02</span>조건부 간선으로 검색 생략</a><a href="#nb-one-trip"><span>03</span>도구 호출 후 재분기와 종료 한도</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-choose"><span>02</span>조건부 간선으로 검색 생략</a><a href="#nb-one-trip"><span>03</span>도구 호출 후 재분기와 종료 한도</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>도구 결과를 모델 노드로 되돌려 루프 완성하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter34.ipynb" download="chapter34.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>34장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
+<a class="download" href="chapter34.ipynb" download="chapter34.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>34장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">도구 결과를 모델 노드로 되돌려 루프 완성하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langgraph 1.2.16입니다.</p>
 </div>
 </section>
 <section id="nb-choose" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -46,61 +46,46 @@
 <article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 조건부 도구 호출 그래프</h3>
 <div class="cell-before"><p>decide에서 finish를 돌려주는 두 조건을 찾아보세요. 주차 요금 한 건을 넣습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 50줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">records = [{<span class="tok-string">'id'</span>: <span class="tok-string">'library-1'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서 대출 기간은 14일입니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">1</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-2'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'도서관은 월요일에 휴관합니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">2</span>},
- {<span class="tok-string">'id'</span>: <span class="tok-string">'library-3'</span>,
-  <span class="tok-string">'text'</span>: <span class="tok-string">'무인 반납함은 24시간 이용할 수 있습니다.'</span>,
-  <span class="tok-string">'source'</span>: <span class="tok-string">'가상 도서관 이용 안내'</span>,
-  <span class="tok-string">'page'</span>: <span class="tok-number">3</span>}]
-terms = (<span class="tok-string">"대출"</span>, <span class="tok-string">"휴관"</span>, <span class="tok-string">"반납"</span>)
-
-<span class="tok-keyword">def</span> retrieve(question, k=<span class="tok-number">1</span>):
-    query = [int(term <span class="tok-keyword">in</span> question) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> any(query):
-        <span class="tok-keyword">return</span> []
-    <span class="tok-keyword">def</span> distance(row):
-        vector = [int(term <span class="tok-keyword">in</span> row[<span class="tok-string">"text"</span>]) <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms]
-        <span class="tok-keyword">return</span> sum((a-b)**<span class="tok-number">2</span> <span class="tok-keyword">for</span> a, b <span class="tok-keyword">in</span> zip(query, vector)), row[<span class="tok-string">"id"</span>]
-    <span class="tok-keyword">return</span> sorted(records, key=distance)[:k]
-
-<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> TypedDict
-<span class="tok-keyword">from</span> langgraph.graph <span class="tok-keyword">import</span> StateGraph, START, END
-<span class="tok-keyword">class</span> Loop(TypedDict):
+<p class="reuse-note"><a href="../chapter30/index.html#code-1">30장의 검색 함수와 문서 세 건</a>을 노트북의 준비 셀에서 실행한 뒤 아래 코드를 읽으세요.</p><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 27줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+class Loop(TypedDict):
     question: str
     rounds: int
     documents: list[dict]
 
-<span class="tok-keyword">def</span> decide(state):
-    <span class="tok-keyword">if</span> state[<span class="tok-string">"rounds"</span>] &gt;= <span class="tok-number">1</span>:
-        <span class="tok-keyword">return</span> <span class="tok-string">"finish"</span>
-    <span class="tok-keyword">if</span> any(term <span class="tok-keyword">in</span> state[<span class="tok-string">"question"</span>] <span class="tok-keyword">for</span> term <span class="tok-keyword">in</span> terms):
-        <span class="tok-keyword">return</span> <span class="tok-string">"search"</span>
-    <span class="tok-keyword">return</span> <span class="tok-string">"finish"</span>
+def decide(state):
+    if state[&quot;rounds&quot;] &gt;= 1:
+        return &quot;finish&quot;
+    if any(term in state[&quot;question&quot;] for term in terms):
+        return &quot;search&quot;
+    return &quot;finish&quot;
 
-<span class="tok-keyword">def</span> run_tool(state):
-    <span class="tok-keyword">return</span> {<span class="tok-string">"documents"</span>: retrieve(state[<span class="tok-string">"question"</span>], <span class="tok-number">1</span>), <span class="tok-string">"rounds"</span>: state[<span class="tok-string">"rounds"</span>] + <span class="tok-number">1</span>}
+def run_tool(state):
+    return {&quot;documents&quot;: retrieve(state[&quot;question&quot;], 1), &quot;rounds&quot;: state[&quot;rounds&quot;] + 1}
 
 builder = StateGraph(Loop)
-builder.add_node(<span class="tok-string">"model"</span>, <span class="tok-keyword">lambda</span> state: {})
-builder.add_node(<span class="tok-string">"tool"</span>, run_tool)
-builder.add_edge(START, <span class="tok-string">"model"</span>)
-builder.add_conditional_edges(<span class="tok-string">"model"</span>, decide, {<span class="tok-string">"search"</span>: <span class="tok-string">"tool"</span>, <span class="tok-string">"finish"</span>: END})
-builder.add_edge(<span class="tok-string">"tool"</span>, <span class="tok-string">"model"</span>)
+builder.add_node(&quot;model&quot;, lambda state: {})
+builder.add_node(&quot;tool&quot;, run_tool)
+builder.add_edge(START, &quot;model&quot;)
+builder.add_conditional_edges(&quot;model&quot;, decide, {&quot;search&quot;: &quot;tool&quot;, &quot;finish&quot;: END})
+builder.add_edge(&quot;tool&quot;, &quot;model&quot;)
 agent = builder.compile()
 
-request = {<span class="tok-string">'question'</span>:<span class="tok-string">'주차 요금은 얼마인가요?'</span>, <span class="tok-string">'rounds'</span>:<span class="tok-number">0</span>, <span class="tok-string">'documents'</span>:[]}
-print(agent.invoke(request)[<span class="tok-string">'rounds'</span>])</code></pre></figure>
+request = {&#x27;question&#x27;:&#x27;주차 요금은 얼마인가요?&#x27;, &#x27;rounds&#x27;:0, &#x27;documents&#x27;:[]}
+print(agent.invoke(request)[&#x27;rounds&#x27;])</code></pre></figure>
 
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">0</pre></div>
 <div class="cell-after"><p>0은 검색을 실행하지 않았다는 기록입니다. 검색을 했지만 결과가 빈 경우도 문서 목록은 []이므로 목록만 봐서는 두 상황을 구별하기 어렵습니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>decide가 검색 또는 종료를 고르는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+s["START"] --> m["model"]
+m --> d{"rounds가 1 미만이고 검색어가 있는가?"}
+d -->|search| t["tool · documents와 rounds 갱신"] --> m
+d -->|finish| e["END"]</script><figcaption>model이라는 노드 이름을 사용하지만 이 예제는 로컬 조건 함수로 분기합니다. tool이 rounds를 올리고 돌아온 뒤에는 검색어가 있어도 종료합니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>검색을 건너뛴 경로를 읽는 법</h3><p><mark>이 셀의 model 노드는 빈 갱신을 반환하고 decide가 질문과 rounds로 다음 노드를 정합니다.</mark> ‘주차 요금’에는 지정한 검색어가 없어 rounds가 0인 채 끝납니다. 검색어가 있으면 tool이 한 번 실행되고 model로 돌아옵니다. 두 번째 판단은 횟수 제한에 걸립니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter27/index.html">27장 LangGraph 조건부 간선과 재검색</a></p></aside>
+
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="routing"></span><div class="lesson-explanation" id="reading-routing"><h3>decide()가 반환하는 두 경로</h3><p>model 노드는 빈 변경분을 반환합니다. model 뒤의 조건 함수 decide가 rounds와 질문을 읽어 search 또는 finish를 반환합니다. 등록한 대응표에 따라 search는 tool로, finish는 END로 이어집니다.</p></div>
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
@@ -136,7 +121,7 @@ print(fixed_result[<span class="tok-string">"rounds"</span>], fixed_result[<span
 <span class="lesson-anchor" id="visual-one-trip"></span>
 <!-- /lesson-visual visual-one-trip -->
 
-<figure class="lesson-clip workflow-clip" id="workflow-return-to-model"><h3>도구가 돌려준 뒤 같은 model에서 종료 경로를 고릅니다</h3><video controls muted playsinline preload="metadata" src="workflow-return-to-model.mp4" aria-label="도구가 돌려준 뒤 같은 model에서 종료 경로를 고릅니다" aria-describedby="workflow-return-to-model-caption"></video><figcaption id="workflow-return-to-model-caption">model → tool → model로 한 바퀴 도는 동안 rounds가 0에서 1로 바뀝니다. 두 번째 decide가 finish를 반환하므로 tool에 다시 들어가지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = 대출 기간은 며칠인가요?</li><li><strong>model</strong> · decide의 반환 = search</li><li><strong>tool</strong> · documents[0].id = library-1</li><li><strong>model</strong> · decide의 반환 = finish</li><li><strong>END</strong> · 출력 = 1 library-1</li></ol></figure>
+<p id="workflow-return-to-model">model → tool → model로 한 바퀴 도는 동안 rounds가 0에서 1로 바뀝니다. 두 번째 decide가 finish를 반환하므로 tool에 다시 들어가지 않습니다.</p>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 도구 요청과 상태 추적</h3>
 <div class="cell-before"><p>같은 초기 상태에 대출 질문을 넣어 결과와 검색 횟수를 확인합니다.</p>
 <p>이 그래프에서 대출 질문은 model → tool → model → END를 지납니다. model 노드는 실제 언어 모델 호출 없이 조건 분기에 제어를 넘깁니다.</p>
@@ -183,7 +168,98 @@ print(required[&#x27;rounds&#x27;], required[&#x27;documents&#x27;])</code></pre
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>도구 결과를 모델 노드로 되돌려 루프 완성하기</h2></div></header>
+<p>33장 그래프는 도구를 한 번 실행하고 끝났습니다. 이번 그래프는 도구 결과가 상태에 붙으면 모델 노드로 돌아갑니다. 같은 경로를 여러 번 관찰할 수 있도록 모델의 선택과 최종 문장은 수업용 함수로 고정하고, 도구와 조건부 간선은 실제 LangGraph에서 실행합니다.</p>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-1">셀 07 · 모델 노드가 서로 다른 두 메시지를 내는 자리</h3><div class="cell-before"><p>처음에는 사용자 질문을 읽고, 도구가 실행된 뒤에는 ToolMessage의 결과를 읽습니다. 테스트용 모델 함수가 대출 질문에 보낸 첫 메시지에서 호출 이름을 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_core.tools import tool
+from langgraph.graph import MessagesState
+from langgraph.prebuilt import ToolNode, tools_condition
+
+@tool
+def find_notice(question: str) -&gt; str:
+    &quot;&quot;&quot;가상 도서관의 대출·휴관·반납 안내를 한 건 찾습니다.&quot;&quot;&quot;
+    docs = retrieve(question, 1)
+    return docs[0][&quot;text&quot;] if docs else &quot;확인할 자료가 없습니다.&quot;
+
+def scripted_decision(state):
+    last = state[&quot;messages&quot;][-1]
+    if isinstance(last, ToolMessage):
+        reply = AIMessage(content=last.content)
+    elif any(term in last.content for term in terms):
+        reply = AIMessage(content=&quot;&quot;, tool_calls=[{
+            &quot;id&quot;: &quot;lookup-1&quot;, &quot;name&quot;: find_notice.name,
+            &quot;args&quot;: {&quot;question&quot;: last.content}, &quot;type&quot;: &quot;tool_call&quot;,
+        }])
+    else:
+        reply = AIMessage(content=&quot;검색 요청이 없습니다.&quot;)
+    return {&quot;messages&quot;: [reply]}
+
+loan_input = {&quot;messages&quot;: [HumanMessage(content=&quot;대출 기간은?&quot;)]}
+first_choice = scripted_decision(loan_input)[&quot;messages&quot;][0]
+print(first_choice.tool_calls[0][&quot;name&quot;], first_choice.tool_calls[0][&quot;id&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">find_notice lookup-1</pre></div><div class="cell-after"><p>find_notice와 lookup-1이 나옵니다. 아직 검색이 실행되지는 않았습니다. 두 번째로 이 함수를 방문할 때에는 마지막 메시지가 ToolMessage라서 도구 요청이 없는 최종 답변을 만듭니다.</p></div>
+</article>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>모델 재호출과 종료 시점</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ begin["START"] --> m["model · 마지막 메시지 읽기"]
+ m --> has{"도구 요청이 있는가?"}
+ has -->|있음| t["tools · find_notice 실행"]
+ t -->|ToolMessage 추가| m
+ has -->|없음| finish["END · 마지막 답변"]</script><figcaption>도구 호출을 작성한 model은 아직 최종 답변을 쓰지 않았습니다. tools가 돌려준 메시지를 읽은 다음 방문에서 호출이 비면 종료합니다.</figcaption></figure>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-2">셀 08 · 모델을 두 번 지나는 간선 연결하기</h3><div class="cell-before"><p>모델 노드에서 tools_condition을 확인하고 tools를 지나면 model로 돌아오게 합니다. 대출 질문 한 건에서 나온 노드 이름의 순서를 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">def build_dialog(decision):
+    g = StateGraph(MessagesState)
+    g.add_node(&quot;model&quot;, decision)
+    g.add_node(&quot;tools&quot;, ToolNode([find_notice]))
+    g.add_edge(START, &quot;model&quot;)
+    g.add_conditional_edges(&quot;model&quot;, tools_condition, {&quot;tools&quot;: &quot;tools&quot;, &quot;__end__&quot;: END})
+    g.add_edge(&quot;tools&quot;, &quot;model&quot;)
+    return g.compile()
+
+dialog = build_dialog(scripted_decision)
+trace = list(dialog.stream(loan_input, stream_mode=&quot;updates&quot;))
+print([next(iter(update)) for update in trace])
+print(trace[-1][&quot;model&quot;][&quot;messages&quot;][0].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;model&#x27;, &#x27;tools&#x27;, &#x27;model&#x27;]
+도서 대출 기간은 14일입니다.</pre></div><div class="cell-after"><p>model, tools, model이 차례로 나옵니다. 두 번째 model에서 최종 문장을 썼기 때문에 END에서 이용자에게 전할 대출 기간 안내가 남습니다. 요청이 없는 인사말은 첫 번째 model에서 끝납니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-3">과제 09 · 별칭을 검색 도구의 인자로 바꾸기</h3><div class="cell-before"><p>“책을 빌리는 기간은?”에는 대출이라는 낱말이 없어 기존 판단 함수가 검색을 생략합니다. 이 표현을 만난 첫 차례에만 검색용 질문을 “대출 기간은?”으로 바꾸는 노드를 만드세요. 원래의 사용자 메시지는 보존하고, 실행 뒤 사용자 질문·도구에 보낸 질문·최종 문장을 비교하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">alias_input = {&quot;messages&quot;: [HumanMessage(content=&quot;책을 빌리는 기간은?&quot;)]}
+# HumanMessage일 때만 검색용 질문을 바꾸고 기존 scripted_decision을 재사용하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-3">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-3">alias_input = {&quot;messages&quot;: [HumanMessage(content=&quot;책을 빌리는 기간은?&quot;)]}
+def alias_decision(state):
+    latest = state[&quot;messages&quot;][-1]
+    if isinstance(latest, HumanMessage) and &quot;빌리&quot; in latest.content:
+        lookup_state = {&quot;messages&quot;: [HumanMessage(content=&quot;대출 기간은?&quot;)]}
+        return scripted_decision(lookup_state)
+    return scripted_decision(state)
+
+alias_graph = build_dialog(alias_decision)
+history = alias_graph.invoke(alias_input)[&quot;messages&quot;]
+print(history[0].content)
+print(history[1].tool_calls[0][&quot;args&quot;][&quot;question&quot;])
+print(history[-1].content)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">책을 빌리는 기간은?
+대출 기간은?
+도서 대출 기간은 14일입니다.</pre></div><p>사용자가 물은 문장은 그대로 남고, 도구가 받은 질문만 대출 기간으로 바뀝니다. 마지막에는 14일 안내가 나옵니다. 검색을 하겠다는 결정과 검색기가 알아볼 질의를 만드는 작업이 모두 맞아야 이 경로가 완성됩니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="0"><h3 id="workshop-step-4">셀 10 · 선택 실습 · 실제 모델 노드로 같은 그래프 실행하기</h3><div class="cell-before"><p>33장 선택 실습에서 연결한 도구 호출 지원 채팅 모델을 이 노트북에도 준비한 뒤 live_model에 넣으세요. 호출 요청을 담은 AIMessage가 두 번 나오면 다음 차례에는 도구를 연결하지 않은 모델로 답변을 작성합니다. 실제 모델은 검색을 쓸지와 도구 인자를 다르게 선택할 수 있습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">live_model = None  # 준비한 채팅 모델 객체로 교체
+if live_model is None:
+    print(&quot;모델을 연결하면 이 셀에서 실제 선택 경로를 실행합니다.&quot;)
+else:
+    bound_model = live_model.bind_tools([find_notice])
+    def live_decision(state):
+        messages = state[&quot;messages&quot;]
+        rounds = sum(isinstance(m, AIMessage) and bool(m.tool_calls) for m in messages)
+        current_model = live_model if rounds &gt;= 2 else bound_model
+        return {&quot;messages&quot;: [current_model.invoke(messages)]}
+
+    live_graph = build_dialog(live_decision)
+    for update in live_graph.stream(loan_input, config={&quot;recursion_limit&quot;: 12}, stream_mode=&quot;updates&quot;):
+        node, delta = next(iter(update.items()))
+        last_message = delta[&quot;messages&quot;][-1]
+        print(node, last_message.type, last_message.content or &quot;도구 요청&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">모델을 연결하면 이 셀에서 실제 선택 경로를 실행합니다.</pre></div><div class="cell-after"><p>첫 model이 도구를 선택하면 tools 뒤에 model이 다시 나옵니다. 이때 실제 제공자의 호출량이 늘어나는 지점은 model 노드에서 채팅 모델을 부를 때입니다. find_notice는 로컬 자료를 읽습니다. 출력의 도구 요청 묶음 수와 도구 실행 횟수가 꼭 같지는 않습니다. 모델 한 차례가 여러 호출을 요청할 수 있기 때문입니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>도구 뒤의 간선이 모델로 돌아가야 도구 결과를 읽은 답변이 생깁니다.</mark> 같은 model 노드를 두 번 지나지만 첫 방문의 출력은 도구 요청, 두 번째 방문의 출력은 최종 답변입니다.</p></aside><p>평가할 때에는 답 문장과 함께 실제로 거친 노드와 검색 호출 수를 보관하세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

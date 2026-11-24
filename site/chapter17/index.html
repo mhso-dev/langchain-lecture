@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 17 / AGENT LOOP</p>
 <span class="sidebar-title">도구 호출 루프와 종료 조건</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-tools"><span>02</span>도구 결과를 대화 기록에 누적</a><a href="#nb-loop"><span>03</span>최종 응답과 최대 호출 횟수</a><a href="#nb-duplicate"><span>04</span>call_id 중복 검사</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-tools"><span>02</span>도구 결과를 대화 기록에 누적</a><a href="#nb-loop"><span>03</span>최종 응답과 최대 호출 횟수</a><a href="#nb-duplicate"><span>04</span>call_id 중복 검사</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>한 번의 모델 응답에 도구 요청이 두 개라면?</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter17.ipynb" download="chapter17.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>17장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter17.ipynb" download="chapter17.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>17장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">한 번의 모델 응답에 도구 요청이 두 개라면?</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-two-tools" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -66,7 +66,7 @@ print(json.loads(first_result[&quot;output&quot;])[&quot;hours&quot;])</code></p
 </div>
 <p id="example-analysis">원래 질문은 주말 운영 시간과 대출 기간을 함께 요구합니다. 첫 도구 결과에는 10:00~16:00만 있습니다. 이 시점에 루프를 끝내면 대출 기간은 비어 있습니다. 실제 에이전트에서는 모델이 다음 호출을 결정합니다. 이 실습에서는 미리 정해 둔 두 번째 요청 c2로 대출 기간을 조회합니다.</p>
 </article>
-<span class="lesson-anchor" id="tools"></span><div class="lesson-explanation" id="reading-tools"><h3>서로 다른 두 도구의 인자</h3><p>get_hours는 day가 weekday 또는 weekend인지 확인한 후 hours를 반환합니다. get_loan_rule은 빈 인자 객체를 받아 loan_days에 14를 넣습니다. 한 도구의 인자 규칙을 다른 도구에 그대로 적용할 수 없습니다.</p></div>
+<span class="lesson-anchor" id="tools"></span><div class="lesson-explanation" id="reading-tools"><h3>서로 다른 두 도구의 인자</h3><p>16장의 시간표에 대출 규칙을 더했습니다. 시간표는 day를 받지만 대출 규칙은 빈 객체를 받습니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 연속 도구 호출과 대화 이력</h3>
 <div class="cell-before"><p>먼저 처리한 c1의 요청·응답 뒤에 c2의 요청과 결과를 넣습니다.</p>
@@ -80,6 +80,16 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 <div class="cell-after"><p>마지막 도구에서 반환한 값은 14일입니다. 아직 최종 안내는 기록에 없습니다. 모델은 두 결과를 본 뒤 답을 쓰기 위해 한 번 더 호출돼야 합니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>도구 요청을 처리하는 반복</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+m["모델 응답"] --> q{"새 도구 요청?"}
+q -->|없음| e["최종 답변"]
+q -->|있음| g{"실행 여유?"}
+g -->|없음| s["한도 종료"]
+g -->|있음| t["도구 실행"]
+t --> h["결과를 이력에 추가"] --> m</script><figcaption>호출 한도가 남았을 때만 도구를 실행합니다. 모델에 다시 보낼 이력에는 도구 결과와 원래 호출 ID가 함께 들어갑니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>도구가 값을 돌려준 다음</h3><p><mark>도구 실행이 끝나도 모델에 넘길 대화 기록이 한 번 더 바뀝니다.</mark> 조회한 시간이나 대출 일수를 호출 결과로 추가하고 다음 응답을 읽으세요. 새 도구 요청이 있는 경우와 최종 답변만 있는 경우를 구별해야 같은 호출을 되풀이하지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter16/index.html">16장 Function Calling의 실행과 결과 반환</a></p></aside>
+
 <span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>도구 요청과 결과가 쌓이는 이력</h3><p>history의 첫 항목은 사용자 질문입니다. 그 뒤에는 c1의 호출과 결과가 한 쌍으로 들어 있고, 이어서 c2의 호출과 결과가 추가됩니다. 마지막 결과 안쪽의 loan_days를 읽으면 14입니다.</p></div>
 <span class="lesson-anchor" id="trace"></span><span class="lesson-anchor" id="reading-trace"></span><span class="lesson-anchor" id="flow-8"></span><span class="lesson-anchor" id="flow-8-step-0"></span><span class="lesson-anchor" id="flow-8-step-1"></span><span class="lesson-anchor" id="flow-8-step-2"></span><span class="lesson-anchor" id="flow-8-step-3"></span><span class="lesson-anchor" id="flow-8-step-4"></span>
 
@@ -183,7 +193,43 @@ def run_once_per_id(items):
 print(run_once_per_id(replayed))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['c1']</pre></div><div class="cell-after"><p>두 번째 c1은 이미 저장한 결과와 연결됩니다. break 뒤의 c2에도 결과가 없습니다. 이 예제의 기록은 함수 호출이 끝나면 사라집니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>한 번의 모델 응답에 도구 요청이 두 개라면?</h2></div></header>
+<p>기존 예제에서는 모델 응답 한 개마다 도구 요청이 하나씩 왔습니다. 이제 첫 응답에 주말 시간과 대출 기간 요청이 같이 들어옵니다. 모델이 답한 횟수와 프로그램이 도구를 실행한 횟수를 따로 세어 보세요.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 두 도구를 요청하는 첫 응답 읽기</h3><div class="cell-before"><p>수업용 결정 함수는 아직 도구 결과가 없으면 요청 두 건을 한꺼번에 돌려줍니다. 결과가 오면 두 요청 ID를 찾아 조회값으로 최종 문장을 만듭니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">def decide_turn(history):
+    results = {m[&quot;call_id&quot;]: json.loads(m[&quot;output&quot;])
+               for m in history if m.get(&quot;type&quot;) == &quot;function_call_output&quot;}
+    if not results:
+        return [first, second]
+    hours = results[&quot;c1&quot;][&quot;hours&quot;]
+    days = results[&quot;c2&quot;][&quot;loan_days&quot;]
+    return [{&quot;type&quot;: &quot;message&quot;, &quot;text&quot;: f&quot;주말 {hours}, 대출 {days}일&quot;}]
+
+opening = decide_turn([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}])
+print([item[&quot;call_id&quot;] for item in opening])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;c1&#x27;, &#x27;c2&#x27;]</pre></div><div class="cell-after"><p>첫 응답 한 번에 c1과 c2가 들어 있습니다. 두 도구는 아직 실행되지 않았습니다. decide_turn은 재현을 위해 응답을 정한 함수이며 실제 모델을 호출하지 않습니다.</p></div>
+</article>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>도구 두 건을 처리한 뒤 다음 모델 응답 읽기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    first_turn["첫 모델 응답 · 요청 두 건"] --> more{"아직 읽을 요청이 있는가?"}
+    more -->|있음| run_tool["요청을 기록하고 도구 실행"]
+    run_tool --> record["결과를 이력에 추가"]
+    record --> more
+    more -->|없음| final_turn["두 번째 모델 응답 · 최종 답변"]</script><figcaption>for문이 요청 하나와 그 결과 하나를 이력에 붙인 뒤 다음 요청으로 넘어갑니다. 두 건을 처리하고 반복문을 빠져나와야 decide_turn을 다시 부릅니다.</figcaption></figure>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 두 도구 결과를 넣은 뒤 다시 판단하기</h3><div class="cell-before"><p>첫 응답의 요청을 각각 execute로 실행해 요청과 결과를 기록하세요. 그 기록으로 decide_turn을 한 번 더 호출하고, 모델 응답 수·도구 결과 수·최종 문장을 출력하세요. 첫 응답과 최종 응답은 각각 한 번으로 셉니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">history_batch = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}]
+# opening의 요청과 결과를 기록하고 두 번째 모델 응답을 받으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">history_batch = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}]
+turns = [opening]
+for item in opening:
+    history_batch.extend([item, execute(item)])
+closing = decide_turn(history_batch)
+turns.append(closing)
+tool_count = sum(m.get(&quot;type&quot;) == &quot;function_call_output&quot; for m in history_batch)
+print(len(turns), tool_count)
+print(closing[0][&quot;text&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 2
+주말 10:00~16:00, 대출 14일</pre></div><p>첫 응답이 도구 둘을 요청했고 두 번째 응답이 답을 썼습니다. 그래서 모델 응답 수와 도구 결과 수가 모두 2입니다. 첫 응답의 요청이 하나만 늘어도 도구 수가 먼저 달라집니다. 이 예에서는 두 결과가 모두 모인 뒤에만 최종 문장을 만들 수 있습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>호출 상한을 둘 때는 모델 응답 횟수와 도구 실행 횟수 중 무엇을 제한할지 먼저 정하세요.</mark> 이 예에서 모델 응답을 두 번 허용하면 답까지 받습니다. 도구를 하나만 실행하도록 제한하면 나머지 요청의 결과가 비므로 같은 답을 만들 수 없습니다.</p></aside><p>새 도구를 추가할 때는 요청별 ID 대조와 반복 종료 조건을 각각 시험하세요.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

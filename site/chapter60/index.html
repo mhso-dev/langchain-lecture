@@ -6,7 +6,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 060</p>
 <span class="sidebar-title">사용자별 장기 기억과 SQL 저장</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>새 대화에서 같은 사람의 선호만 불러오기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,7 +27,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter60.ipynb" download="chapter60.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>60장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter60.ipynb" download="chapter60.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>60장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">새 대화에서 같은 사람의 선호만 불러오기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-key" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -65,6 +65,8 @@ print(memory.get((owner, <span class="tok-string">"language"</span>)))</code></p
 </div>
 <p id="example-analysis">다른 사용자에게 같은 설정 이름으로 조회했을 때 None이 반환됩니다. 설정 이름만 키로 사용하면 먼저 저장한 언어가 다른 사용자에게도 적용될 수 있습니다. 사용자 식별자까지 키에 포함해야 값의 소유 범위가 보존됩니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>같은 선호 키를 여러 사람이 쓸 때</h3><p><mark>조회 조건에는 설정 이름과 사용자 ID가 모두 필요합니다.</mark> 두 사용자가 각각 언어를 저장한 뒤 한 사람의 값만 지워 보세요. 다른 사용자의 선호가 남아야 개인 설정의 수정 범위가 맞습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter54/index.html">54장 SQL 매개변수 바인딩과 트랜잭션</a></p></aside>
+
 <span class="lesson-anchor" id="identity"></span><div class="lesson-explanation" id="reading-identity"><h3>같은 설정 이름과 다른 소유자</h3><p>alice의 language가 저장되어 있어도 (&quot;bob&quot;, &quot;language&quot;)는 다른 키입니다. 빈 조회의 None을 다른 사용자의 값으로 채우면 소유자 분리가 깨집니다.</p></div>
 <span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
 
@@ -125,6 +127,18 @@ print(row[<span class="tok-number">0</span>])</code></pre></figure>
 <div class="cell-after"><p>한국어는 두 조건을 모두 만족한 행에서 읽었습니다. PostgreSQL 확인 환경에서는 같은 두 사용자를 준비한 뒤 새 연결에서 조회하고 앱을 재시작해 다시 읽습니다. 이 셀의 메모리 DB는 연결을 닫으면 사라집니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>두 사용자의 language 중 하나만 조회하기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+ntable["기억 테이블"]
+  nfilter["WHERE 조건"]
+  nalice["alice 행"]
+  nbob["bob 행"]
+  nvalue["fetchone"]
+  ntable --> nfilter
+  nfilter --> nalice
+  nfilter --> nbob
+  nalice --> nvalue
+  nbob --> nvalue</script><figcaption>SQLite가 두 조건을 동시에 만족하는 행에서 value를 가져옵니다.</figcaption></figure>
+
 <span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
 <span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>복합 기본 키와 조회 조건</h3><p>PRIMARY KEY(owner, memory_key)는 같은 사용자의 같은 설정이 두 행이 되는 것을 막습니다. SELECT의 WHERE에도 같은 두 열을 써서 같은 이름의 남의 설정을 제외합니다.</p></div>
 <span class="lesson-anchor" id="local"></span><span class="lesson-anchor" id="reading-local"></span>
@@ -149,7 +163,47 @@ db.execute("RELEASE check_delete")</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[('bob', '영어')]</pre></div><div class="cell-after"><p>삭제와 조회에 같은 연결을 써서 변경 직후의 상태를 확인했습니다. DELETE의 조건을 memory_key 하나로 줄이면 bob의 행까지 사라집니다. SAVEPOINT로 돌아가면 이 과제에서 수행한 삭제만 취소됩니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>새 대화에서 같은 사람의 선호만 불러오기</h2></div></header>
+<p>대화방을 바꿔도 답변 언어는 유지돼야 합니다. 59장의 thread_id 대신 서비스가 확인한 사용자 ID로 선호를 찾습니다. 저장 함수가 다른 사람의 같은 이름 설정에 영향을 주는지도 살펴봅니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 사용자별로 같은 language 키 보관하기</h3><div class="cell-before"><p>LangGraph의 InMemoryStore에 alice와 bob의 기본 언어를 따로 저장하세요. 아래 함수는 어느 대화방에서 불러도 사용자와 기억 종류로 같은 공간을 찾습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from langgraph.store.memory import InMemoryStore
+
+profile_store = InMemoryStore()
+def preference_space(user_id):
+    return (&quot;users&quot;, user_id, &quot;preferences&quot;)
+
+profile_store.put(preference_space(&quot;alice&quot;), &quot;language&quot;, {&quot;value&quot;: &quot;한국어&quot;})
+profile_store.put(preference_space(&quot;bob&quot;), &quot;language&quot;, {&quot;value&quot;: &quot;영어&quot;})
+def preferred_language(user_id):
+    item = profile_store.get(preference_space(user_id), &quot;language&quot;)
+    return item.value[&quot;value&quot;] if item else None
+
+print(preferred_language(&quot;alice&quot;), preferred_language(&quot;bob&quot;))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">한국어 영어</pre></div><div class="cell-after"><p>두 키의 이름이 language로 같아도 결과는 한국어와 영어입니다. user_id가 다른 네임스페이스를 읽었기 때문입니다. 이 저장소는 같은 Python 프로세스에서 대화 사이에 재사용할 수 있고, 커널을 끄면 사라집니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 기억을 고친 뒤 한 사람의 설정만 삭제하기</h3><div class="cell-before"><p>alice의 언어를 일본어로 수정하고 다시 읽으세요. alice가 이 설정을 지워 달라고 하면 해당 네임스페이스의 language만 삭제하세요. 삭제 뒤 alice와 bob의 값을 각각 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># put으로 한 사람의 값을 바꾸고, delete에 같은 네임스페이스와 키를 넘기세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">profile_store.put(preference_space(&quot;alice&quot;), &quot;language&quot;, {&quot;value&quot;: &quot;일본어&quot;})
+print(preferred_language(&quot;alice&quot;))
+profile_store.delete(preference_space(&quot;alice&quot;), &quot;language&quot;)
+print(preferred_language(&quot;alice&quot;), preferred_language(&quot;bob&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">일본어
+None 영어</pre></div><p>첫 줄은 일본어이고 마지막 줄은 None과 영어입니다. alice의 새 값과 삭제가 모두 같은 키를 대상으로 했고 bob의 설정은 유지됐습니다. 네임스페이스에 넣을 사용자 ID는 로그인 결과 등 서비스가 신뢰하는 값으로 정합니다.</p></details>
+</article>
+<article class="notebook-cell" data-cell="10" data-task="0"><h3 id="workshop-step-3">셀 10 · 선택 실습 · PostgreSQL의 복합 키에 같은 갱신 적용하기</h3><div class="cell-before"><p>53장의 PostgreSQL 접속 환경과 psycopg가 준비된 수업에서 실행할 수 있습니다. 임시 테이블에서 사용자와 설정명이 같은 데이터를 다시 저장하고, 행이 몇 개 남았는지 읽습니다. 기본 설정에서는 접속하지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">run_profile_db = False
+if run_profile_db:
+    import psycopg
+    with psycopg.connect(connect_timeout=3) as conn:
+        conn.execute(&quot;CREATE TEMP TABLE pref_demo (owner text, key text, val text, PRIMARY KEY(owner, key))&quot;)
+        upsert = &quot;&quot;&quot;INSERT INTO pref_demo VALUES (%s, %s, %s)
+                    ON CONFLICT(owner, key) DO UPDATE SET val = EXCLUDED.val&quot;&quot;&quot;
+        conn.execute(upsert, (&quot;alice&quot;, &quot;language&quot;, &quot;한국어&quot;))
+        conn.execute(upsert, (&quot;alice&quot;, &quot;language&quot;, &quot;일본어&quot;))
+        print(conn.execute(&quot;SELECT owner, key, val FROM pref_demo&quot;).fetchall())
+else:
+    print(&quot;PostgreSQL 수업 환경에서 연결을 선택하세요.&quot;)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">PostgreSQL 수업 환경에서 연결을 선택하세요.</pre></div><div class="cell-after"><p>연결한 경우 마지막 조회에서 alice의 language 한 행을 확인하세요. 두 번째 입력의 값이 일본어로 반영되어야 합니다. 이 셀은 임시 테이블의 행 갱신을 확인하는 용도입니다. 서비스 재시작 뒤 장기 보존을 시험하려면 서비스의 영속 테이블에서 별도로 확인해야 합니다.</p></div>
+</article>
+<aside class="lesson-note"><p><mark>사용자와 설정 이름을 함께 정해야 같은 사람의 같은 기억을 갱신할 수 있습니다.</mark> 대화방 ID로만 저장하면 새 대화에서 이전 언어 설정을 찾기 어렵습니다. 사용자별 공간에 공통 키 language를 두면 두 요청이 같은 설정을 가리킵니다.</p></aside><p>통합 서비스에서 선택된 언어가 어떤 사용자에게서 왔는지 확인할 수 있습니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

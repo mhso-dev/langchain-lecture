@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 04 / PYTHON</p>
 <span class="sidebar-title">Python 클래스와 모듈</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-object-state"><span>02</span>__init__과 self로 인스턴스 상태 저장</a><a href="#nb-service"><span>03</span>생성 함수에서 입력 검증</a><a href="#nb-imports"><span>04</span>import로 모듈의 함수 호출</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-object-state"><span>02</span>__init__과 self로 인스턴스 상태 저장</a><a href="#nb-service"><span>03</span>생성 함수에서 입력 검증</a><a href="#nb-imports"><span>04</span>import로 모듈의 함수 호출</a><a href="#workshop"><span>05</span>저장한 학습 기록을 새 객체로 복원하기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter04.ipynb" download="chapter04.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>4장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter04.ipynb" download="chapter04.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>4장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">저장한 학습 기록을 새 객체로 복원하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-object-state" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -59,6 +59,8 @@ print(first.to_dict())</code></pre></figure>
 <div class="cell-after"><p>done에 False가 들어 있습니다. self는 메서드를 호출한 바로 그 객체입니다. to_dict는 지금 그 객체 안에 든 값들을 사전으로 꺼냅니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>서로 다른 두 수업의 완료 상태</h3><p><mark>self는 이번에 메서드를 호출한 객체를 가리킵니다.</mark> 같은 클래스로 수업 두 개를 만들고 한쪽의 완료 상태만 바꿔 보세요. 두 객체의 제목과 상태를 각각 읽으면 어느 데이터가 함께 묶이는지 확인할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter03/index.html">3장 함수의 반환값·타입 힌트·예외 처리</a></p></aside>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 인스턴스별 속성 분리</h3>
 <div class="cell-before"><p>첫 기록만 완료로 바꾼 뒤 방금 만든 둘째 기록을 확인합니다.</p>
 </div>
@@ -204,7 +206,26 @@ def make_record(title):
 <span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>import로 불러온 함수 실행하기</h3><p>셀 07에서는 임시 패키지 안에 models와 service 모듈을 둡니다. service가 models의 StudyRecord를 불러와 객체를 만들고, 호출한 쪽에서 제목을 출력합니다. 화면에 나타난 ‘Git 연습’이 어느 객체의 값인지 찾아보세요.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>저장한 학습 기록을 새 객체로 복원하기</h2></div></header>
+<p>to_dict로 만든 값은 파일에 적기 좋습니다. 다시 읽은 값으로 StudyRecord를 만들면 새 객체가 생성되므로 완료 표시까지 옮길지 직접 정해야 합니다.</p>
+<article class="notebook-cell" data-cell="10" data-task="0"><h3 id="workshop-step-1">셀 10 · 생성 직후의 완료 표시 확인하기</h3><div class="cell-before"><p>저장값에는 done이 True로 들어 있습니다. 기존 create_record에 제목과 시간을 넣고 새 객체의 done을 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">saved_row = {&quot;title&quot;: &quot;  모듈 연습 &quot;, &quot;minutes&quot;: 25, &quot;done&quot;: True}
+loaded = create_record(saved_row[&quot;title&quot;], str(saved_row[&quot;minutes&quot;]))
+print(loaded.title, saved_row[&quot;done&quot;], loaded.done)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">모듈 연습 True False</pre></div><div class="cell-after"><p>제목의 바깥 공백은 정리됐지만 새 객체의 done은 False입니다. create_record가 StudyRecord를 만들 때 생성자가 정한 초기값입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="11" data-task="1"><h3 id="workshop-step-2">과제 11 · 완료 상태까지 복원하는 함수 만들기</h3><div class="cell-before"><p>restore_record(row)를 작성하세요. create_record의 제목·시간 검사를 그대로 이용하고 저장값의 done이 참일 때만 mark_done을 호출하세요. 복원한 객체를 돌려준 뒤 to_dict로 내용을 확인하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-11">복사</button></figcaption><pre tabindex="0"><code id="code-11">def restore_record(row):
+    pass  # 복원한 StudyRecord를 반환하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def restore_record(row):
+    restored = create_record(row[&quot;title&quot;], str(row[&quot;minutes&quot;]))
+    if row[&quot;done&quot;]:
+        restored.mark_done()
+    return restored
+
+print(restore_record(saved_row).to_dict())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;title&#x27;: &#x27;모듈 연습&#x27;, &#x27;minutes&#x27;: 25, &#x27;done&#x27;: True}</pre></div><p>저장한 25분과 완료 표시가 새 객체에 옮겨졌습니다. 같은 함수에 done이 False인 행을 넣으면 생성 직후의 완료 표시가 그대로 유지됩니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>객체를 새로 만드는 것과 저장했던 상태를 복원하는 일은 구분됩니다.</mark> create_record는 제목과 시간을 받고, mark_done은 이미 만든 객체의 상태를 바꿉니다. 복원 함수에서는 이 두 동작을 필요한 순서로 호출하세요.</p></aside><p>파일에서 읽은 레코드와 다시 저장한 레코드의 제목·시간·완료 상태를 대조할 수 있습니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -212,7 +233,7 @@ def make_record(title):
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

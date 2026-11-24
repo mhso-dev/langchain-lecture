@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 46 / MIDTERM PROJECT</p>
 <span class="sidebar-title">검색 규칙 변경과 실패 단계 진단</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-repair-search"><span>02</span>키워드 변경 전후의 문단 적중</a><a href="#nb-adopt-hold"><span>03</span>검색 성공 뒤의 인용 실패</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-repair-search"><span>02</span>키워드 변경 전후의 문단 적중</a><a href="#nb-adopt-hold"><span>03</span>검색 성공 뒤의 인용 실패</a><a href="#workshop"><span>04</span>Q03을 고친 뒤 처음 보는 표현으로 다시 시험하기</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter46.ipynb" download="chapter46.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>46장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter46.ipynb" download="chapter46.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>46장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">Q03을 고친 뒤 처음 보는 표현으로 다시 시험하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-repair-search" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -87,10 +87,28 @@ print(after[<span class="tok-string">'retrieved_ids'</span>], after[<span class=
 </div>
 <p id="example-analysis">수정 전의 no_evidence와 수정 뒤의 invalid_citation은 서로 다른 결함입니다. 두 번째 실행은 p3을 찾는 데 성공했습니다. 이 상태에서 검색어 규칙을 다시 넓히기보다 어떤 인용 ID를 답변에 넣었는지 확인하면 다음 수정 범위를 좁힐 수 있습니다.</p>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>검색을 고쳤는데 답변은 아직 실패한다면</h3><p><mark>기대 문단을 찾아낸 시점과 올바른 문단을 인용한 시점을 구분합니다.</mark> 같은 질문의 상태가 no_evidence에서 invalid_citation으로 바뀌었다면 다음에 읽을 곳은 답변의 출처 필드입니다. 팀 기록에도 두 단계의 결과를 따로 남기세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter45/index.html">45장 질문 전체 일치 검색의 기준선과 빈 결과</a></p></aside>
+
 <div class="lesson-explanation" id="note-code-2"><h3>다음 실패가 드러나는 시점</h3><p>변경 전에는 근거가 없어 생성을 0회로 마쳤습니다. 변경 후에는 p3을 찾아 생성까지 1회 실행했지만 인용 검사에서 멈췄습니다. 두 상태를 나란히 읽으면 다음에 고칠 대상이 검색 키워드에서 인용으로 바뀐 것을 알 수 있습니다.</p></div>
 
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>Q03을 고친 뒤 처음 보는 표현으로 다시 시험하기</h2></div></header>
+<p>후보 검색기가 Q03에서 p3을 찾았습니다. 팀이 이미 이 질문을 보며 “실패”를 낱말 규칙에 추가했다면, Q03 하나로 새로운 문의에도 통한다고 주장하기 어렵습니다.</p>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3 id="workshop-step-1">셀 03 · 같은 수정에 다른 표현 하나 넣기</h3><div class="cell-before"><p>기존 Q03과 별도로 동료가 준비한 문장을 입력합니다. 물어본 뜻과 검색 규칙에 적힌 낱말을 구분해서 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-3">복사</button></figcaption><pre tabindex="0"><code id="code-3">def find_upload_help(question_text):
+    if any(word in question_text for word in (&quot;오류&quot;, &quot;실패&quot;)):
+        return [error_doc[&quot;id&quot;]]
+    return []
+
+print(find_upload_help(question))
+unseen = &quot;과제를 올리는데 화면이 멈춰요.&quot;
+print(find_upload_help(unseen))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;course-guide-v1:p3&#x27;]
+[]</pre></div><div class="cell-after"><p>첫 질문은 p3을 찾지만 “화면이 멈춰요”에는 두 낱말이 없어 빈 결과가 나옵니다. 새 문장을 고치는 데 사용한 순간부터 그 문장도 다음 판의 개발 자료로 옮겨야 합니다.</p></div>
+</article>
+<section class="project-example"><h3>팀 실험 노트에 남길 판단</h3><div class="workshop-table" tabindex="0" role="region" aria-label="팀 실험 노트에 남길 판단"><table><caption>팀 실험 노트에 남길 판단</caption><thead><tr><th scope="col">입력</th><th scope="col">관찰값</th><th scope="col">이번 결정</th></tr></thead><tbody><tr><td>공개한 Q03</td><td>후보 p3, 기존 생성기는 p2 인용</td><td>검색 수정과 인용 수정을 나눠 추적</td></tr><tr><td>새 문의 “화면이 멈춰요”</td><td>후보 0개</td><td>수정 전 첫 관찰로 보존하고 추가 실험 설계</td></tr></tbody></table></div><p>팀의 후보가 새 문장에도 성공했다면 어떤 문서가 몇 번째였는지 적으세요. 이후 규칙을 더 고치면 같은 질문은 회귀 검사에 사용하고, 처음 보는 표현은 별도로 확보합니다.</p></section>
+<aside class="lesson-note"><p><mark>이미 수정에 사용한 질문이 통과한 결과는 회귀 근거로 보관합니다.</mark> Q03의 성공은 그 질문이 다시 깨지는지 확인하는 데 쓸 수 있습니다. 새로운 표현에 대한 성능은 그 표현을 넣어 본 결과로 판단합니다.</p></aside><p>47장의 실행 흐름을 바꿀 때에도 검색 후보와 인용을 각각 기록하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>

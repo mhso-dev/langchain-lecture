@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 065 / ROUTING</p>
 <span class="sidebar-title">의도 라우팅과 LangChain 도구 선택</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-route"><span>02</span>규칙 기반 의도 분류</a><a href="#nb-tool"><span>03</span>분류별 허용 도구와 추가 확인</a><a href="#nb-jev"><span>04</span>선택 실습 · Jev 분류 결과의 수용 조건</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-route"><span>02</span>규칙 기반 의도 분류</a><a href="#nb-tool"><span>03</span>분류별 허용 도구와 추가 확인</a><a href="#nb-jev"><span>04</span>선택 실습 · Jev 분류 결과의 수용 조건</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>분류 후보를 실제 호출 가능 목록과 맞추기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter65.ipynb" download="chapter65.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>65장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12입니다.</p>
+<a class="download" href="chapter65.ipynb" download="chapter65.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>65장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">분류 후보를 실제 호출 가능 목록과 맞추기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain-core 1.6.12입니다.</p>
 </div>
 </section>
 <section id="nb-route" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -53,7 +53,7 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <p id="example-analysis">technical은 이 규칙이 고른 처리 경로입니다. 기술 문의로 분류했다는 사실만으로 해당 도구를 실행할 권한이 생기지는 않습니다. 분류 결과를 받은 쪽에서 경로별 허용 도구를 확인하고, 의도가 겹칠 때는 추가 질문을 보냅니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
-<span class="lesson-anchor" id="boundaries"></span><div class="lesson-explanation" id="reading-boundaries"><h3>분류 결과는 다음 단계의 입력</h3><p>rule_route의 반환값은 billing, technical, clarify 중 한 문자열입니다. 기술 문서를 실제로 읽거나 답변을 제공하는 일은 뒤의 분기와 도구 코드가 맡습니다.</p></div>
+<span class="lesson-anchor" id="boundaries"></span><div class="lesson-explanation" id="reading-boundaries"><h3>분류 결과는 다음 단계의 입력</h3><p>기술 문의가 선택되면 다음 분기가 technical용 도구를 찾습니다. 지금 출력한 문자열만으로는 도구가 실행됐는지 알 수 없습니다.</p></div>
 
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 복합 의도의 추가 확인</h3>
 <div class="cell-before"><p>‘영수증 조회 중 401 오류가 납니다’를 기존 함수에 넣고 어디로 가는지 확인하세요.</p>
@@ -65,6 +65,14 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 </div>
 </details>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>분류 뒤 허용 도구를 확인하는 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+q["문의"] --> d{"rule_route"}
+d -->|technical| t["기술 문의 허용 목록"]
+d -->|billing| b["결제 문의 허용 목록"]
+d -->|clarify| c["추가 질문"]</script><figcaption>technical과 billing은 서로 다른 허용 목록을 읽습니다. 분류 근거가 불분명하면 clarify를 반환해 사용자에게 필요한 정보를 묻습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>서로 다른 의도가 한 문의에 섞일 때</h3><p><mark>분류가 모호하면 도구를 실행하기 전에 필요한 정보를 되묻습니다.</mark> 기술 문의와 다른 의도를 함께 넣고 선택한 경로를 보세요. 라벨을 고른 단계와 그 라벨에서 허용한 도구를 고르는 단계가 구분돼야 잘못된 실행 위치를 찾을 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter14/index.html">14장 분류 함수와 조건부 라우팅</a></p></aside>
+
 <span class="lesson-anchor" id="baselines"></span><div class="lesson-explanation" id="reading-baselines"><h3>단서가 섞이면 추가 질문</h3><p>결제 단서만 있으면 billing이고 기술 단서만 있으면 technical입니다. 두 단서가 함께 있거나 둘 다 없으면 clarify가 됩니다. 단지 먼저 발견된 단어로 결정하지 않습니다.</p></div>
 <span class="lesson-anchor" id="workflow-mixed-route"></span><span class="lesson-anchor" id="workflow-mixed-route-caption"></span>
 
@@ -176,7 +184,37 @@ print(route, [item.name for item in allowed.get(route, [])])</code></pre></figur
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">billing []</pre></div><div class="cell-after"><p>분류기는 결제 경로를 골랐지만 이 수업의 allowed에는 technical만 등록했습니다. 응답 화면은 결제 지원 경로를 안내할 수 있습니다. 분류 결과만 보고 첫 번째 기술 도구를 실행하면 다른 업무의 답이 나옵니다.</p></div></details></article>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>분류 후보를 실제 호출 가능 목록과 맞추기</h2></div></header>
+<p>분류기가 technical을 골라도 서비스에 연결한 도구가 없거나 판단이 모호하면 곧바로 실행할 수 없습니다. 앞의 rule_route와 technical_faq를 이용해 분류값을 검사하는 부분과 도구를 호출하는 부분을 나눕니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 분류 데이터에서 실행 후보 한 건 고르기</h3><div class="cell-before"><p>아래 점수는 실제 모델 요청을 대신하는 수업용 입력입니다. confidence 기준 0.70은 이 서비스가 실험해 보는 값입니다. 기존 예제에 등록한 도구 이름을 예상하고 실행하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">def pick_tools(route, confidence, registry, threshold=0.70):
+    if confidence &lt; threshold or route == &quot;clarify&quot;:
+        return []
+    return registry.get(route, [])
+
+tool_registry = {&quot;technical&quot;: [technical_faq]}
+question_text = &quot;API에서 401 오류가 납니다.&quot;
+candidates = pick_tools(rule_route(question_text), 0.90, tool_registry)
+print([t.name for t in candidates])
+print(candidates[0].invoke({&quot;query&quot;: question_text}))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;technical_faq&#x27;]
+401 오류는 키 설정과 실행 환경을 확인하세요.</pre></div><div class="cell-after"><p>technical_faq가 실제 목록에서 찾아졌고 호출 결과에 키 설정과 실행 환경 안내가 보입니다. 점수가 높아도 registry에 해당 분류가 없다면 빈 목록이 돌아옵니다. 분류 후보와 실제로 연결된 도구는 서로 다른 값입니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 도구가 없는 분류는 추가 질문으로 돌리기</h3><div class="cell-before"><p>영수증 문의는 rule_route가 billing으로 분류하지만 이번 등록 목록에는 결제 도구가 없습니다. 등록된 도구가 하나이고 분류 기준을 통과했을 때만 호출하는 응답 함수를 만드세요. 모호하거나 실행할 도구가 없으면 도구 호출 없이 확인 문장을 돌려주세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># def answer_routed(text, confidence): ...
+# 등록되지 않은 billing과 신뢰도가 낮은 technical을 각각 실행하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def answer_routed(text, confidence):
+    route = rule_route(text)
+    candidates = pick_tools(route, confidence, tool_registry)
+    if len(candidates) != 1:
+        return route, &quot;담당 분야와 안내 가능한 범위를 확인할게요.&quot;
+    return route, candidates[0].invoke({&quot;query&quot;: text})
+
+print(answer_routed(&quot;영수증을 다시 받고 싶습니다.&quot;, 0.95))
+print(answer_routed(question_text, 0.49))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;billing&#x27;, &#x27;담당 분야와 안내 가능한 범위를 확인할게요.&#x27;)
+(&#x27;technical&#x27;, &#x27;담당 분야와 안내 가능한 범위를 확인할게요.&#x27;)</pre></div><p>첫 줄은 billing이 선택됐지만 등록된 도구가 없어서 멈춥니다. 둘째 줄의 technical에는 도구가 있지만 점수가 낮아서 같은 안내로 갑니다. 두 경우를 개선하는 방법은 다릅니다. 앞의 경우는 도구 연결을, 뒤의 경우는 질문을 어떻게 명확히 할지 점검하세요.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>분류기의 확신이 높아도 등록한 도구 목록을 확인해야 합니다.</mark> 분류 정확도와 서비스가 처리할 수 있는 범위는 별개입니다. 낮은 확신과 미등록 분야를 나눠 기록하면 보류 이유를 찾을 수 있습니다.</p></aside><p>선택 Jev 호출을 실행한 학생은 실제 result.choice와 result.confidence를 같은 경로에 넣어 규칙 분류와 차이를 확인할 수 있습니다.</p>
+</section>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

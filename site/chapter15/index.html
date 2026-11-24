@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 15 / FUNCTION CALLING</p>
 <span class="sidebar-title">Function Calling의 도구 명세와 호출 요청</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-schema"><span>02</span>JSON Schema의 enum과 required</a><a href="#nb-request-item"><span>03</span>function_call의 arguments와 call_id</a><a href="#nb-observe"><span>04</span>메시지와 도구 호출 구분</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-schema"><span>02</span>JSON Schema의 enum과 required</a><a href="#nb-request-item"><span>03</span>function_call의 arguments와 call_id</a><a href="#nb-observe"><span>04</span>메시지와 도구 호출 구분</a><a href="#workshop"><span>05</span>도구 명세에 새 인자를 넣고 기존 요청 검사하기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter15.ipynb" download="chapter15.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>15장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter15.ipynb" download="chapter15.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>15장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">도구 명세에 새 인자를 넣고 기존 요청 검사하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-schema" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -63,7 +63,7 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 <p id="example-analysis">사용자가 ‘토요일 몇 시까지 열어요?’라고 물어도 인자 day에 ‘토요일’을 그대로 넣으면 이 명세와 맞지 않습니다. 모델이 weekend를 골랐다면 요일 분류까지 마친 셈입니다. 몇 시에 문을 닫는지는 여전히 함수의 시간표를 읽어야 알 수 있습니다.</p>
 </article>
 <span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>함수 구현과 호출 명세</h3><div class="prose"><p>Python 함수는 프로그램이 실행할 코드입니다. 도구 명세는 모델에게 어떤 기능이 있고 어떤 인자를 받는지 알려 주는 설명입니다. Function Calling에서 모델은 이 명세를 보고 함수 이름과 인자를 포함한 요청을 만들 수 있습니다.</p>
-<p>여기서 사용자가 만든 함수는 애플리케이션이 실행해야 합니다. 모델 응답 안에 함수 이름이 나타났다고 내 컴퓨터에서 함수가 실행된 것은 아닙니다. 이번 장은 요청 관찰까지 다루며 실행·결과 반환은 다음 장에서 구현합니다.</p>
+<p>응답에 적힌 이름은 호출 요청입니다. 실제 운영 시간은 16장에서 이 요청을 실행한 뒤 확인합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>서로 다른 세 가지</caption><thead><tr><th scope="col">대상</th><th scope="col">내용</th><th scope="col">이번 장</th></tr>
 </thead><tbody><tr><td>구현</td><td>실제로 실행되는 Python 코드</td><td>아직 실행하지 않음</td></tr>
@@ -81,6 +81,15 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 </div>
 </details>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>같은 output 목록에서 호출 항목만 모으기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+a["output 목록"] --> b{"다음 항목이 있는가?"}
+b -->|없음| r["calls 반환"]
+b -->|있음| t{"function_call인가?"}
+t -->|다른 유형| b
+t -->|호출| j["arguments의 JSON 해석"] --> k["calls에 추가"] --> b</script><figcaption>inspect_calls는 먼저 type을 확인합니다. message에서 건너뛴 자리에 가짜 호출을 채우지 않고, function_call에서만 이름과 인자를 읽습니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>도구 명세와 실제 요청 읽기</h3><p><mark>required는 요청에 있어야 할 키를, enum은 그 키가 가질 수 있는 값을 정합니다.</mark> 요일 키가 있어도 허용 목록 밖의 값이면 시간표를 조회할 수 없습니다. 모델이 돌려준 인자를 읽을 때에는 키의 유무와 값의 범위를 따로 보세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter11/index.html">11장 OpenAI Responses API의 요청·응답 구조</a></p></aside>
+
 <span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>도서관 도구의 인자 스키마</h3><div class="prose"><p>name은 코드에서 찾을 기능의 식별자입니다. description에는 언제 사용하는지와 하지 않는 일을 설명합니다. parameters는 인자의 모양을 정합니다. 이번 day는 weekday와 weekend만 받습니다.</p>
 <p>required는 day가 필요함을 뜻하고 additionalProperties=False는 다른 필드 추가를 허용하지 않는 스키마 설정입니다. strict=True를 사용해 지원되는 형식 제약을 요청하지만 실제 실행 전에는 애플리케이션도 입력을 검사해야 합니다.</p>
 </div></div>
@@ -162,7 +171,31 @@ args = inspect_calls([unlisted])[0]["arguments"]
 allowed = TOOL["parameters"]["properties"]["day"]["enum"]
 print(args.get("day") in allowed)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div><div class="cell-after"><p>올바른 JSON 객체여서 해석에는 성공합니다. 값 holiday가 weekday·weekend 중 어느 쪽에도 해당하지 않아 허용값 검사에서 걸립니다.</p></div></details></article>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>도구 명세에 새 인자를 넣고 기존 요청 검사하기</h2></div></header>
+<p>같은 요일이라도 본관과 분관의 시간이 다릅니다. 기존 도구의 JSON 스키마에 지점을 추가하고, 예전 요청이 새 명세에서도 유효한지 검사합니다. Jupyter 환경에 설치된 jsonschema의 Draft202012Validator를 사용합니다.</p>
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 예전 요청에 빠진 필드 확인하기</h3><div class="cell-before"><p>기존 명세를 복사한 뒤 지점을 필수로 지정합니다. 인자 JSON을 파싱한 결과가 검사에서 어느 규칙에 걸리는지 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from copy import deepcopy
+from jsonschema import Draft202012Validator
+
+branch_tool = deepcopy(TOOL)
+branch_schema = branch_tool[&quot;parameters&quot;]
+branch_schema[&quot;properties&quot;][&quot;branch&quot;] = {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;main&quot;, &quot;east&quot;]}
+branch_schema[&quot;required&quot;].append(&quot;branch&quot;)
+checker = Draft202012Validator(branch_schema)
+old_args = json.loads(call[&quot;arguments&quot;])
+print([error.validator for error in checker.iter_errors(old_args)])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;required&#x27;]</pre></div><div class="cell-after"><p>required가 나옵니다. weekday와 weekend을 허용하는 규칙은 그대로지만 예전 요청에는 어느 지점을 조회할지 없습니다. 원본 TOOL은 깊은 복사를 했으므로 기존 명세와 새 명세를 나란히 비교할 수 있습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 분관 주말 조회 요청을 새 명세에 맞추기</h3><div class="cell-before"><p>동쪽 분관의 주말 운영 시간을 요청하세요. 원래 call을 복사하고 새 호출 ID를 붙이되 arguments는 JSON 문자열로 작성하세요. inspect_calls로 읽은 뒤 새 명세 검사 결과와 branch를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9"># east와 weekend가 들어 있는 도구 호출을 한 건 만드세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">branch_call = {
+    **call, &quot;call_id&quot;: &quot;hours-east&quot;,
+    &quot;arguments&quot;: json.dumps({&quot;day&quot;: &quot;weekend&quot;, &quot;branch&quot;: &quot;east&quot;}),
+}
+inspected = inspect_calls([branch_call])[0]
+print(inspected[&quot;call_id&quot;], checker.is_valid(inspected[&quot;arguments&quot;]), inspected[&quot;arguments&quot;][&quot;branch&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">hours-east True east</pre></div><p>hours-east True east가 나옵니다. branch를 branch_name으로 적으면 필수 branch가 빠지고 허용하지 않은 키가 생깁니다. 여기까지는 모델이 보낼 요청의 형식을 검사했으며 실제 지점별 시간을 조회한 것은 아닙니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>인자 JSON을 읽을 수 있어도 도구 명세가 요구한 필드가 빠질 수 있습니다.</mark> 명세와 호출 양쪽의 키 이름과 허용값이 맞는지 확인한 뒤 실행 함수로 넘기세요. 지점 인자를 명세에 추가해도 기존 시간표 함수가 자동으로 새 인자를 처리하지는 않습니다.</p></aside><p>다음 단계에서는 검사가 끝난 요청을 실제 함수에 연결하고 결과를 원래 호출 ID로 돌려줍니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
@@ -170,7 +203,7 @@ print(args.get("day") in allowed)</code></pre></figure><div class="output"><p cl
 </div>
 </section>
 
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

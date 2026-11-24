@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/three.min.js"></script><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 37 / RAG EVALUATION</p>
 <span class="sidebar-title">청크 크기·중첩·top-k 비교 실험</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-cut"><span>02</span>chunk size와 원문 경계</a><a href="#nb-overlap"><span>03</span>overlap에 따른 공통 문자열</a><a href="#nb-topk"><span>04</span>top-k와 검색 결과 수</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-cut"><span>02</span>chunk size와 원문 경계</a><a href="#nb-overlap"><span>03</span>overlap에 따른 공통 문자열</a><a href="#nb-topk"><span>04</span>top-k와 검색 결과 수</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>중첩을 늘려 답의 단서가 같은 청크에 남는지 실험하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter37.ipynb" download="chapter37.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>37장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter37.ipynb" download="chapter37.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>37장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">중첩을 늘려 답의 단서가 같은 청크에 남는지 실험하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-cut" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -34,7 +34,7 @@
 </header>
 
 
-<p class="concept-intro">청크 크기는 조각의 길이, 중첩은 이웃 조각이 공유하는 길이, top-k는 가져올 결과 수입니다. 한 번에 하나만 바꿔야 각 설정의 영향을 읽을 수 있습니다.</p><section class="practice-space" id="practice-space" data-practice="size"><h3>청크 크기에 따른 원문 분할</h3><label>청크 크기(글자) <input type="range" min="6" max="17" step="1" value="8"><span class="practice-value">8</span></label><div class="practice-stage" role="img" aria-label="청크 크기에 따른 원문 분할"></div><output aria-live="polite">겹침을 0으로 고정했습니다. 크기 8이면 17글자가 8, 8, 1글자로 나뉩니다.</output></section>
+<p class="concept-intro">청크 크기는 조각의 길이, 중첩은 이웃 조각이 공유하는 길이, top-k는 가져올 결과 수입니다. 한 번에 하나만 바꿔야 각 설정의 영향을 읽을 수 있습니다.</p><p id="practice-space">같은 문장을 서로 다른 길이로 나눈 결과를 셀 01·02에서 대조하세요. 문장 끝 마침표만 남은 조각도 검색 후보의 한 자리를 차지합니다.</p>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="variables"></span><div class="lesson-explanation" id="reading-variables"><h3>실험의 통제 조건</h3><div class="prose"><p>한 번에 size와 overlap을 모두 바꾸고 결과가 달라졌다면 어느 변경이 원인인지 구분하기 어렵습니다. 먼저 변경할 변수 하나를 정하고 나머지 설정과 입력을 유지합니다. 다음 변경은 바로 앞 설정을 기준으로 삼습니다.</p>
 <p>청크 크기를 바꾸면 청크 본문과 벡터가 함께 달라집니다. 이는 바꾼 크기에 따라 다시 계산해야 하는 산출물입니다. 벡터 모델까지 바꾸는 것과는 다릅니다. 비교표의 원 실험에서는 같은 키워드와 거리 계산식을 사용했습니다. 노트북은 문자열을 직접 자르고 저장된 순위를 읽습니다.</p>
 </div>
@@ -83,6 +83,8 @@ print(parts)</code></pre></figure>
 <div class="cell-after"><p>질문에 있는 ‘대출’과 답에 필요한 ‘14일’이 다른 조각으로 갈라졌습니다. 원문 ID 적중률만 같다고 답을 쓸 문맥까지 같은 것은 아닙니다.</p>
 </div>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>겹침을 늘린 뒤 무엇을 비교할까요?</h3><p><mark>서로 이웃한 청크에서 실제로 다시 나온 문자열을 확인합니다.</mark> 조각 개수만 보면 답변에 필요한 표현이 경계를 넘어 보존됐는지 알기 어렵습니다. 원래 구절의 앞뒤가 한 청크 안에 들어왔는지 같은 질문으로 대조하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter21/index.html">21장 문서 청킹과 원문 오프셋</a></p></aside>
+
 <span class="lesson-anchor" id="rebuild"></span><span class="lesson-anchor" id="reading-rebuild"></span>
 
 </section>
@@ -159,6 +161,28 @@ for overlap in (0, 4):
 </div>
 </section>
 
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>중첩을 늘려 답의 단서가 같은 청크에 남는지 실험하기</h2></div></header>
+<p>표현을 찾는 데 필요한 단어가 분할 경계에서 갈라집니다. 원문·질문·청크 크기·검색 조건은 그대로 두고, 중첩만 바꿔 근거를 찾아봅니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 두 단서가 한 조각에 들어야 찾을 수 있는 질문</h3><div class="cell-before"><p>“연장 신청은 언제까지인가요?”에 답할 조각은 연장과 마감 표현을 모두 포함해야 한다고 정합니다. 크기 10으로 자른 목록을 직접 읽으세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">rule_text = &quot;안내: 대출 연장 마감은 금요일입니다.&quot;
+clue_words = (&quot;연장&quot;, &quot;금요일&quot;)
+def candidates_with_both(parts):
+    return [part for part in parts if all(word in part for word in clue_words)]
+without_overlap = split_text(rule_text, size=10, overlap=0)
+print(without_overlap)
+print(candidates_with_both(without_overlap))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;안내: 대출 연장 &#x27;, &#x27;마감은 금요일입니다&#x27;, &#x27;.&#x27;]
+[]</pre></div><div class="cell-after"><p>연장과 금요일이 같은 조각에 있는지 출력에서 읽을 수 있습니다. 이 검색 규칙은 두 단서를 담은 한 조각만 고르므로 원문에 답이 있어도 두 단서가 갈라진 설정에서 빈 목록을 돌려줍니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 처음 성공하는 중첩과 추가 청크 수 찾기</h3><div class="cell-before"><p>중첩 후보 0부터 9까지를 작은 값부터 시험하세요. 두 단서가 처음 함께 나오는 설정에서 중첩, 청크 수, 근거 문구를 출력한 뒤 멈추세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># size는 계속 10으로 두세요. overlap만 바꿉니다.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">for overlap in range(10):
+    pieces = split_text(rule_text, size=10, overlap=overlap)
+    found = candidates_with_both(pieces)
+    if found:
+        print(overlap, len(pieces), repr(found[0]))
+        break</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3 3 &#x27;연장 마감은 금요일&#x27;</pre></div><p>중첩 3에서 ‘연장 마감은 금요일’이 한 조각에 들어옵니다. 중첩이 커지면 인접 청크 수와 중복 본문도 늘어납니다. 다른 질문에서 같은 설정이 좋은지는 고정한 질문 묶음에서 다시 측정해야 합니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>검색 실패의 원인이 분할 경계라면 k를 늘리기 전에 조각의 실제 본문을 봅니다.</mark> 두 단서를 한 조각에서 찾는 규칙에서는 어떤 조각에도 두 단서가 없으면 검색 개수만 늘려도 답을 만들지 못합니다.</p></aside><p>재정렬은 주어진 후보만 다시 배열하므로 먼저 근거 청크가 후보 안에 있는지 확인하세요.</p>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

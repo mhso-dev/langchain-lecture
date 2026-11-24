@@ -1,1 +1,2 @@
 *.pdf binary
+site/assets/mermaid/mermaid.tiny.js -diff linguist-vendored

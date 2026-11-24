@@ -5,7 +5,7 @@
 
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 62 / MCP</p>
 <span class="sidebar-title">MCP 도구와 LangChain 에이전트 연결</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-session"><span>02</span>클라이언트 세션과 도구 어댑터</a><a href="#nb-mismatch"><span>03</span>구조화된 도구 결과의 값 검증</a><a href="#nb-agent"><span>04</span>create_agent와 ToolMessage의 결과 전달</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-session"><span>02</span>클라이언트 세션과 도구 어댑터</a><a href="#nb-mismatch"><span>03</span>구조화된 도구 결과의 값 검증</a><a href="#nb-agent"><span>04</span>create_agent와 ToolMessage의 결과 전달</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -26,7 +26,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter62.ipynb" download="chapter62.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>62장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11, mcp 1.30.0입니다.</p>
+<a class="download" href="chapter62.ipynb" download="chapter62.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>62장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11, mcp 1.30.0입니다.</p>
 </div>
 </section>
 <section id="nb-session" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -82,7 +82,7 @@ print(result)</code></pre></figure>
 </div>
 <p id="example-analysis">주말 시간 문자열이 돌아왔어도 어느 경로에서 얻었는지 구분해야 합니다. 여기서는 LangChain 쪽 도구 호출이 MCP 서버의 함수를 거칩니다. 연결 코드를 수정한 뒤에는 사람이 읽는 시간뿐 아니라 요청한 요일과 응답의 요일도 대조합니다.</p>
 </article>
-<span class="lesson-anchor" id="direct"></span><div class="lesson-explanation" id="reading-direct"><h3>LangChain 도구가 호출하는 MCP 도구</h3><p>lookup.ainvoke에 weekend를 주면 어댑터가 같은 day를 MCP의 get_library_hours에 보냅니다. Python 쪽 lookup과 서버에서 등록한 도구의 이름은 서로 달라도 됩니다.</p><div class="worked-case" id="flow-6"><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
+<span class="lesson-anchor" id="direct"></span><div class="lesson-explanation" id="reading-direct"><h3>LangChain 도구가 호출하는 MCP 도구</h3><p>61장의 get_library_hours를 호출하는 쪽은 이제 LangChain 도구 lookup입니다. 두 이름 사이에서 day가 그대로 전달되는지 보세요.</p><div class="worked-case" id="flow-6"><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
 <p>셀 02에서는 주말을 직접 요청했습니다. 여기서는 셀 04의 모델이 평일을 요청합니다. 같은 hours-1을 요청과 결과에서 찾아보세요.</p>
 <article id="flow-6-step-0"><small>STEP 01 · 모델</small><h4>평일 인자의 도구 요청</h4>
 <p>대본 모델이 lookup에 전달할 요일과 호출 ID를 만듭니다.</p><pre>lookup(day="weekday") · id=hours-1</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션의 호출 전달</h4>
@@ -162,6 +162,13 @@ model = DemoModel(responses=[
 <div class="cell-after"><p>hours-1은 에이전트가 요청과 결과를 연결하는 호출 ID입니다. 뒤의 09:00~18:00이 MCP가 반환한 시간입니다. 외부 HTTP 접속 시간이나 원격 인증을 확인한 기록은 아닙니다.</p>
 </div>
 </article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>모델이 MCP 서버의 값을 받는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+m["테스트 모델"] -->|hours-1| a["lookup 어댑터"] --> c["MCP 세션"] --> s["서버 시간표 도구"]
+s --> v["응답 값 확인"] --> t["ToolMessage"] --> m
+m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_agent에 등록한 lookup이 열린 MCP 세션을 사용합니다. 도구의 반환값은 hours-1에 대응하는 ToolMessage로 모델 대화에 합류합니다.</figcaption></figure>
+
+<aside id="guided-reading" class="lesson-note"><h3>MCP 결과가 모델의 대화에 들어오는 지점</h3><p><mark>어댑터가 받은 값과 ToolMessage에 담긴 값을 같은 호출 ID로 연결합니다.</mark> 서버가 돌려준 운영 시간이 정상이어도 요청한 요일과 다르면 다른 질문의 답입니다. 세션 안에서 값을 검사한 뒤 메시지의 hours-1과 요청을 대조하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter61/index.html">61장 FastMCP 도구 등록과 클라이언트 호출</a></p></aside>
+
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
 <span class="lesson-anchor" id="comparison"></span><div class="lesson-explanation" id="reading-comparison"><h3>최종 문장과 도구의 반환값</h3><p>고정 모델의 마지막 답은 ‘조회가 끝났습니다.’입니다. 실제 운영 시간은 요청 hours-1과 짝인 ToolMessage의 content에서 읽습니다.</p></div>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
@@ -193,6 +200,47 @@ except ValueError as error:
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">result_day_mismatch</pre></div><div class="cell-after"><p>응답에는 정상적인 시간 문자열이 들어 있지만 요청은 주말이고 응답은 평일입니다. 이 검사를 빼면 에이전트는 평일 시간을 주말 답으로 받습니다. 이 과제는 어댑터의 오류 분기만 실행하며 MCP 연결은 앞선 셀에서 확인합니다.</p></div></details></article>
 </section>
 
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</h2></div></header>
+<p>61장에서 stdio 서버를 실행했습니다. 여기서는 FastMCP가 제공하는 Streamable HTTP 앱과 클라이언트를 연결합니다. HTTPX의 ASGITransport를 사용해 요청을 같은 프로세스 안의 앱에 전달하므로 외부 주소나 열린 포트 없이 HTTP 경로를 시험할 수 있습니다.</p>
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · HTTP의 /mcp 경로에서 도구 목록 읽기</h3><div class="cell-before"><p>앞에서 정의한 get_library_hours 함수를 HTTP 서버에 등록합니다. with_http_session은 클라이언트를 초기화한 뒤 인자로 받은 작업을 실행하고 세션을 닫습니다. 첫 작업은 서버에 공개된 도구 이름을 읽는 것입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">import httpx
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
+
+async def with_http_session(action):
+    http_server = FastMCP(&quot;library-http&quot;, stateless_http=True, json_response=True, log_level=&quot;ERROR&quot;)
+    http_server.tool()(get_library_hours)
+    http_app = http_server.streamable_http_app()
+    transport = httpx.ASGITransport(app=http_app)
+    async with http_server.session_manager.run():
+        async with httpx.AsyncClient(transport=transport) as client:
+            async with streamable_http_client(&quot;http://127.0.0.1:8000/mcp&quot;, http_client=client) as channels:
+                async with ClientSession(channels[0], channels[1]) as session:
+                    await session.initialize()
+                    return await action(session)
+
+async def names_from(session):
+    return [item.name for item in (await session.list_tools()).tools]
+
+print(await with_http_session(names_from))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;get_library_hours&#x27;]</pre></div><div class="cell-after"><p>get_library_hours가 보이면 HTTP 경로로 목록 조회에 성공한 것입니다. 이 결과만으로는 운영 시간 응답이 사용자에게 돌아오는지 알 수 없습니다. 다음 과제에서는 같은 경로로 실제 도구를 호출합니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 에이전트의 도구 결과에서 호출 ID와 시간 찾기</h3><div class="cell-before"><p>HTTP 세션을 받는 비동기 함수를 작성하세요. 열린 세션을 make_lookup에 넘겨 도구를 만들고, 주말을 묻는 요청 ID를 http-weekend로 정한 DemoModel과 create_agent에 연결하세요. 최종 상태에서 tool 메시지의 ID와 결과를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># async def ask_over_http(session): ...
+# await with_http_session(ask_over_http)로 실행하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">async def ask_over_http(session):
+    decision = AIMessage(content=&quot;&quot;, tool_calls=[{
+        &quot;name&quot;: &quot;lookup&quot;, &quot;args&quot;: {&quot;day&quot;: &quot;weekend&quot;}, &quot;id&quot;: &quot;http-weekend&quot;,
+    }])
+    model = DemoModel(responses=[decision, AIMessage(content=&quot;조회를 마쳤습니다.&quot;)])
+    service_agent = create_agent(model, tools=[make_lookup(session)])
+    with tracing_context(enabled=False):
+        result = await service_agent.ainvoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;주말에는 언제 여나요?&quot;)]})
+    reply = next(m for m in result[&quot;messages&quot;] if m.type == &quot;tool&quot;)
+    return reply.tool_call_id, reply.content
+
+print(await with_http_session(ask_over_http))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;http-weekend&#x27;, &#x27;10:00~16:00&#x27;)</pre></div><p>http-weekend와 10:00~16:00가 한 쌍으로 돌아옵니다. graph의 lookup 도구가 MCP 서버 쪽 이름 get_library_hours로 호출한 뒤 구조화 응답에서 시간을 꺼냈습니다. HTTP 전송은 실제 SDK를 사용했고 모델의 선택 순서는 대본으로 고정했습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>목록에서 본 서버 도구 이름과 모델이 요청한 도구 이름은 다를 수 있습니다.</mark> 이 어댑터에서 모델은 lookup을 요청하고 MCP 세션은 get_library_hours를 요청합니다. 연결 문제를 찾을 때는 두 이름을 각각의 등록 위치에서 확인하세요.</p></aside><p>같은 MCP 어댑터를 실제 주소로 옮길 때는 네트워크 연결과 접근 권한을 별도로 점검합니다.</p>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

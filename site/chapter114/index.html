@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 114 / FINAL PROJECT</p>
 <span class="sidebar-title">재현 가능한 README와 인수인계</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-readme"><span>02</span>실행 입력·기대 출력·근거 기록</a><a href="#nb-handoff"><span>03</span>재현 실패 단계와 추가 확인 요청</a><a href="#recap"><span>04</span>적용 과제와 인계 기준</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-readme"><span>02</span>실행 입력·기대 출력·근거 기록</a><a href="#nb-handoff"><span>03</span>재현 실패 단계와 추가 확인 요청</a><a href="#workshop"><span>04</span>설명자 없이 실행하는 인수 문서의 첫 화면</a><a href="#recap"><span>05</span>적용 과제와 인계 기준</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -25,7 +25,7 @@
 <h2>실습 노트북과 실행 환경</h2>
 </div>
 </header>
-<a class="download" href="chapter114.ipynb" download="chapter114.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>114장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+<a class="download" href="chapter114.ipynb" download="chapter114.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>114장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">설명자 없이 실행하는 인수 문서의 첫 화면</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
 <section id="nb-readme" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
@@ -101,9 +101,18 @@ print(f'{rule_b[<span class="tok-string">"text"</span>]} 근거 {rule_b[<span cl
 </div>
 </details>
 </article>
+<aside id="guided-reading" class="lesson-note"><h3>동료가 실행 결과를 확인할 수 있는 README</h3><p><mark>기대 문장과 함께 어느 문서의 어느 절이 나와야 하는지 적습니다.</mark> 장비 A의 실행 순서를 그대로 두고 입력만 B로 바꿔 보세요. 동료가 다른 정답과 근거를 찾아낼 수 있으면 입력이 바뀌어도 안내를 따라갈 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter51/index.html">51장 실험 재현을 위한 README와 실행 기록</a></p></aside>
+
 <p><a class="chapter-link" href="../chapter96/index.html">96장 · 장비가 빠진 질문의 화면 예시</a></p>
 </section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>설명자 없이 실행하는 인수 문서의 첫 화면</h2></div></header>
+<p>인계자는 Q01을 여러 번 실행해서 절 번호를 외웠습니다. 처음 받는 팀원이 코드 내부를 뒤지지 않아도 재현할 수 있도록, 준비물과 첫 실행·실패 보고를 한 화면 분량으로 작성합니다.</p>
+<section class="project-example"><h3>인수자에게 실제로 건넬 안내 예시</h3><div class="workshop-table" tabindex="0" role="region" aria-label="인수자에게 실제로 건넬 안내 예시"><table><caption>인수자에게 실제로 건넬 안내 예시</caption><thead><tr><th scope="col">언제</th><th scope="col">새 담당자에게 보이는 문구</th></tr></thead><tbody><tr><td>열기 전</td><td>chapter114.ipynb와 수업 자료 rules-v1을 확인하세요. 노트북의 가상 예시는 별도 서버 없이 읽을 수 있습니다.</td></tr><tr><td>첫 확인</td><td>첫 예제를 실행해 “점검 전 전원 표시등을 확인합니다.”와 RULE-A, 1쪽 2.1절을 나란히 확인하세요.</td></tr><tr><td>자기 입력</td><td>장비 B로 바꾼 입력에서 고정 장치와 RULE-B, 2쪽 2.2절이 나오는지 확인하세요.</td></tr><tr><td>기대한 줄이 없을 때</td><td>사용한 판본, 마지막으로 실행한 셀 제목, 실제로 나온 문장과 절을 보내 주세요.</td></tr></tbody></table></div><p>첫 실행의 목표는 가상 규정 조회를 다시 읽는 것입니다. API 인수는 별도 문서에 있는 주소·세션 준비·정상 응답을 사용해 따로 확인합니다.</p></section>
+<section class="project-example"><h3>진행자가 말을 멈출 구간 정하기</h3><p>인수자가 처음 셀을 실행할 때 화면을 대신 조작하지 마세요. 예를 들어 “RULE-B는 떴는데 2.2절이 안 보입니다”라는 보고를 받으면 안내에 쓴 원문 판본과 실제 응답의 절을 먼저 비교합니다. 이 문장은 가상 보고이며 실제 인수자 기록은 별도로 받습니다.</p></section>
+<section class="project-example"><h3>팀별 인계 문서 고치기</h3><p>README를 처음 받은 사람에게 지정한 한 질문을 실행해 달라고 하세요. 막힌 곳이 환경 준비인지 원문 확인인지 구분한 뒤, 해당 위치의 안내 문장만 고치고 다른 사람이 다시 수행할 수 있게 남깁니다.</p></section>
+<aside class="lesson-note"><p><mark>처음 읽은 사람이 직접 얻은 출력이 인계 확인의 근거입니다.</mark> 작성자가 기대 답을 이미 적어 둔 것만으로는 다른 환경에서 같은 답을 읽었다고 할 수 없습니다.</p></aside><p>115장 리허설에서는 이 첫 실행에서 나온 실제 입력과 출처를 사용해 정상과 예외 시연을 이어 갑니다.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
 </header>
