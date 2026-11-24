@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 19 / LCEL</p>
 <span class="sidebar-title">LCEL 체인과 출력 파서</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inputs"><span>02</span>ChatPromptTemplate의 입력 변수</a><a href="#nb-chain"><span>03</span>파이프 연산자와 StrOutputParser, invoke()</a><a href="#nb-stream"><span>04</span>stream()과 출력 조각 결합</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>LCEL 체인과 출력 파서 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inputs"><span>02</span>ChatPromptTemplate의 입력 변수</a><a href="#nb-chain"><span>03</span>파이프 연산자와 StrOutputParser, invoke()</a><a href="#nb-stream"><span>04</span>stream()과 출력 조각 결합</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -33,6 +33,14 @@
 </div>
 </header>
 <p class="concept-intro">LCEL의 파이프 연산자(|)는 앞 구성 요소의 출력을 다음 구성 요소의 입력으로 넘깁니다. 프롬프트, 모델, 출력 파서가 각각 주고받는 값이 다릅니다.</p><p>템플릿은 비어 있는 칸에 이번 자료를 넣어 요청을 만드는 틀입니다. context에는 근거를, question에는 묻는 문장을 넣습니다. 먼저 표준 파이썬으로 그 두 값을 확인합니다.</p>
+
+<span class="lesson-anchor" id="errors"></span><div class="lesson-explanation" id="reading-errors"><h3>입력 키와 자료형 오류</h3><div class="table-scroll" tabindex="0"><table><caption>증상과 확인</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th></tr>
+</thead><tbody><tr><td>context 키 오류</td><td>템플릿의 변수 이름과 입력 키</td></tr>
+<tr><td>AIMessage를 문자열처럼 처리</td><td>파서 연결 여부와 반환 타입</td></tr>
+<tr><td>질문을 바꿔도 같은 답</td><td>FakeListChatModel의 고정 응답</td></tr>
+<tr><td>모듈을 찾을 수 없음</td><td>현재 가상환경과 requirements</td></tr>
+<tr><td>stream이 한꺼번에 보임</td><td>구성 요소의 스트리밍 지원·출력 처리</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 프롬프트 입력 딕셔너리</h3>
 <div class="cell-before"><p>context와 question이 다른 역할을 한다는 점을 보세요.</p>
 </div>
@@ -42,6 +50,10 @@ print(inputs[<span class="tok-string">"context"</span>])</code></pre></figure>
 <div class="cell-after"><p>대출 기간을 뒷받침하는 문장입니다. 딕셔너리에서 빈칸과 같은 이름의 값을 찾아야 하므로 context를 contents로 적으면 약속한 칸을 찾지 못합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="prompt"></span><div class="lesson-explanation" id="reading-prompt"><h3>프롬프트 변수와 입력 키</h3><div class="prose"><p>context는 모델에게 제공할 사실이고 question은 사용자의 질문입니다. 템플릿에 {context}와 {question}을 사용했으므로 invoke 입력에도 두 키가 있어야 합니다. 이름이 다르거나 빠지면 모델을 호출하기 전에 오류가 날 수 있습니다.</p>
+<p>system 메시지에 넣는 자료도 자동으로 사실이 되는 것은 아닙니다. 이 예제는 명시된 가상 자료만 사용합니다. 이후 문서 검색 수업에서 context를 직접 작성하는 대신 검색한 문서로 만들 것입니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · context와 question 치환</h3>
 <div class="cell-before"><p>파이썬 문자열 format에 inputs를 전달해 근거와 질문이 각각 들어간 문장을 출력하세요. 이 셀은 LCEL을 쓰기 전의 작은 연습입니다.</p>
 </div>
@@ -54,13 +66,25 @@ print(template.format(**inputs))</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>프롬프트 입력 치환 실습</h3><div class="prose"><p>다음 장부터는 모델에 제공할 근거 문서를 준비합니다. LCEL 문법을 더 늘리기보다 문서·검색·근거 답변의 흐름에 집중합니다.</p>
+</div></div>
+
 </section>
 <section id="nb-chain" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>파이프 연산자와 StrOutputParser, invoke()</h2>
 </div>
 </header>
 <p>LangChain Expression Language(LCEL)의 |는 앞 구성 요소가 돌려준 값을 다음 요소에 건넵니다. 수업 환경에 langchain-core가 설치되어 있으면 아래 셀로 실제 체인을 만듭니다. FakeListChatModel은 고정 답변을 내는 수업용 모델입니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>LCEL의 연속 변환</h3><video autoplay loop muted playsinline aria-label="LCEL의 연속 변환" src="concept.mp4"></video><figcaption>카드가 첫 필터를 통과한 뒤 두 번째 필터로 들어갑니다. 코드에서 각 단계가 반환하는 메시지와 문자열을 차례로 확인하세요.</figcaption></figure><article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · to_messages()의 content</h3>
+<figure class="lesson-clip" id="concept-clip"><h3>LCEL의 연속 변환</h3><video autoplay loop muted playsinline aria-label="LCEL의 연속 변환" src="concept.mp4"></video><figcaption>카드가 첫 필터를 통과한 뒤 두 번째 필터로 들어갑니다. 코드에서 각 단계가 반환하는 메시지와 문자열을 차례로 확인하세요.</figcaption></figure>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>LCEL 구성 요소의 입출력</h3><div class="prose"><p>LCEL은 LangChain 구성 요소의 입출력을 연결하는 표현 방식입니다. Runnable은 invoke 같은 공통 실행 방법으로 사용할 수 있는 구성 요소입니다. 이번 장에서는 복잡한 추상화보다 프롬프트, 모델, 출력 파서 세 개만 연결합니다.</p>
+<p>prompt | model | parser에서 |는 문자열을 합치는 기호가 아니라 구성 요소를 순서대로 연결하는 연산입니다. 한 요소의 출력이 다음 요소의 입력으로 들어갑니다. 13장에서 Python 함수로 만든 순차 흐름과 같은 입출력 관점으로 읽으세요.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>연결 순서</caption><thead><tr><th scope="col">구성 요소</th><th scope="col">입력</th><th scope="col">출력</th></tr>
+</thead><tbody><tr><td>ChatPromptTemplate</td><td>변수가 있는 딕셔너리</td><td>메시지를 담은 프롬프트 값</td></tr>
+<tr><td>채팅 모델</td><td>메시지 프롬프트</td><td>AI 메시지</td></tr>
+<tr><td>StrOutputParser</td><td>AI 메시지</td><td>문자열</td></tr>
+</tbody></table></div></div>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · to_messages()의 content</h3>
 <div class="cell-before"><p>모델을 부르기 전에 ChatPromptTemplate이 만든 값에서 질문을 먼저 꺼내 봅니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4"><span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
@@ -78,6 +102,10 @@ has_lcel = find_spec(<span class="tok-string">"langchain_core"</span>) <span cla
 <div class="cell-after"><p>마지막 메시지에는 ‘대출은 며칠인가요?’라는 질문이 들어 있습니다. prompt의 반환값 안에는 system 메시지도 들어 있습니다. 둘을 합친 메시지 묶음이 모델 입력입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="types"></span><div class="lesson-explanation" id="reading-types"><h3>구성 요소별 중간 반환값</h3><div class="prose"><p>ChatPromptValue는 메시지를 담은 프롬프트 값이며 to_messages()로 system과 human 메시지를 볼 수 있습니다. 채팅 모델의 AIMessage에는 content가 있습니다. StrOutputParser를 거친 뒤에는 문자열 자체를 사용합니다. 설치한 1.8.0에서 표시되는 타입명은 TextAccessor이지만 str의 하위 타입이므로 isinstance(parsed, str)는 True이고 문자열처럼 사용합니다.</p>
+<p>이 문자열 파서는 12일에 배운 JSON 스키마 검사나 내용 검증을 수행하지 않습니다. 18일의 입력 검사 책임도 사라지지 않습니다. 모델이 돌려준 문장이 사실인지 확인하려면 별도 근거와 평가가 필요합니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · StrOutputParser와 invoke()</h3>
 <div class="cell-before"><p>고정 모델 뒤에 문자열 파서를 이어 실제 LCEL 경로를 실행합니다.</p>
 <p>모델 뒤에서 멈추면 답은 메시지 객체에 담겨 있습니다. 뒤에 StrOutputParser를 연결하면 invoke의 반환값으로 본문 문자열을 얻습니다. 이 노트북의 실행 기록은 langchain-core 1.6.12 기준이고 더 읽기의 1.8.0은 별도 기록입니다.</p>
@@ -92,6 +120,12 @@ has_lcel = find_spec(<span class="tok-string">"langchain_core"</span>) <span cla
 <div class="cell-after"><p>체인이 실행되면 ‘가상 도서관의 대출 기간은 14일입니다.’라는 문자열이 나옵니다. 파서는 모델이 만든 메시지에서 글을 꺼내고, 지정한 고정 모델은 원문의 사실 여부를 검증하지 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>고정 모델을 이용한 체인 검증</h3><div class="prose"><p>FakeListChatModel은 지정한 응답을 반환하는 테스트용 모델입니다. 여기서는 실제 LLM 서버나 API 키 없이 체인과 파서가 연결되는지 확인하기 위해 사용합니다. 질문을 바꿔도 준비된 답이 나올 수 있으므로 답변 정확도 평가에는 사용할 수 없습니다.</p>
+<p>실제 모델을 연결할 때는 같은 채팅 모델 인터페이스를 지원하는 구성 요소로 바꿉니다. 계정 모델·지원 옵션·버전·비용을 확인하고 응답 결과를 별도로 검증해야 합니다.</p>
+</div></div>
+<span class="lesson-anchor" id="invoke"></span><div class="lesson-explanation" id="reading-invoke"><h3>invoke() 단일 호출</h3><div class="prose"><p>invoke의 결과는 StrOutputParser를 거친 문자열입니다. 파서를 빼고 모델까지만 연결하면 메시지 객체를 받습니다. 문자열과 메시지 객체의 차이를 출력 타입으로 확인하면 뒤 단계에서 잘못된 필드를 읽는 실수를 줄일 수 있습니다.</p>
+</div></div>
+
 </section>
 <section id="nb-stream" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>stream()과 출력 조각 결합</h2>
@@ -123,6 +157,8 @@ print(<span class="tok-string">""</span>.join(pieces))</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="stream"></span><div class="lesson-explanation" id="reading-stream"><h3>조각을 도착 순서대로 이어 붙이기</h3><p>pieces에는 ‘가상 ’과 ‘안내’ 두 문자열이 들어 있습니다. 빈 문자열로 join하면 첫 조각 끝에 들어 있던 공백을 보존한 ‘가상 안내’가 됩니다. 이 셀은 조각을 다시 합치는 연습으로, 실제 모델이 언제 어떤 길이로 보냈는지는 측정하지 않습니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -131,61 +167,15 @@ print(<span class="tok-string">""</span>.join(pieces))</code></pre></figure>
 <div class="prose"><p>입력 사전, 모델에 보낼 메시지 묶음, 마지막 문자열을 순서대로 가리켜 보세요. 다음 장에서는 context를 손으로 쓰는 대신 어느 문서에서 가져올지 정합니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>LCEL 체인과 출력 파서 심화 읽기</h2>
-</div>
-</header>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>LCEL 구성 요소의 입출력</summary><div class="prose"><p>LCEL은 LangChain 구성 요소의 입출력을 연결하는 표현 방식입니다. Runnable은 invoke 같은 공통 실행 방법으로 사용할 수 있는 구성 요소입니다. 이번 장에서는 복잡한 추상화보다 프롬프트, 모델, 출력 파서 세 개만 연결합니다.</p>
-<p>prompt | model | parser에서 |는 문자열을 합치는 기호가 아니라 구성 요소를 순서대로 연결하는 연산입니다. 한 요소의 출력이 다음 요소의 입력으로 들어갑니다. 13장에서 Python 함수로 만든 순차 흐름과 같은 입출력 관점으로 읽으세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>연결 순서</caption><thead><tr><th scope="col">구성 요소</th><th scope="col">입력</th><th scope="col">출력</th></tr>
-</thead><tbody><tr><td>ChatPromptTemplate</td><td>변수가 있는 딕셔너리</td><td>메시지를 담은 프롬프트 값</td></tr>
-<tr><td>채팅 모델</td><td>메시지 프롬프트</td><td>AI 메시지</td></tr>
-<tr><td>StrOutputParser</td><td>AI 메시지</td><td>문자열</td></tr>
-</tbody></table></div>
-</details>
-<span id="prompt"></span><details class="reading-topic" id="reading-prompt"><summary>프롬프트 변수와 입력 키</summary><div class="prose"><p>context는 모델에게 제공할 사실이고 question은 사용자의 질문입니다. 템플릿에 {context}와 {question}을 사용했으므로 invoke 입력에도 두 키가 있어야 합니다. 이름이 다르거나 빠지면 모델을 호출하기 전에 오류가 날 수 있습니다.</p>
-<p>system 메시지에 넣는 자료도 자동으로 사실이 되는 것은 아닙니다. 이 예제는 명시된 가상 자료만 사용합니다. 이후 문서 검색 수업에서 context를 직접 작성하는 대신 검색한 문서로 만들 것입니다.</p>
-</div>
-</details>
-<span id="model"></span><details class="reading-topic" id="reading-model"><summary>고정 모델을 이용한 체인 검증</summary><div class="prose"><p>FakeListChatModel은 지정한 응답을 반환하는 테스트용 모델입니다. 여기서는 실제 LLM 서버나 API 키 없이 체인과 파서가 연결되는지 확인하기 위해 사용합니다. 질문을 바꿔도 준비된 답이 나올 수 있으므로 답변 정확도 평가에는 사용할 수 없습니다.</p>
-<p>실제 모델을 연결할 때는 같은 채팅 모델 인터페이스를 지원하는 구성 요소로 바꿉니다. 계정 모델·지원 옵션·버전·비용을 확인하고 응답 결과를 별도로 검증해야 합니다.</p>
-</div>
-</details>
-<span id="invoke"></span><details class="reading-topic" id="reading-invoke"><summary>invoke() 단일 호출</summary><div class="prose"><p>invoke의 결과는 StrOutputParser를 거친 문자열입니다. 파서를 빼고 모델까지만 연결하면 메시지 객체를 받습니다. 문자열과 메시지 객체의 차이를 출력 타입으로 확인하면 뒤 단계에서 잘못된 필드를 읽는 실수를 줄일 수 있습니다.</p>
-</div>
-</details>
-<span id="stream"></span><details class="reading-topic" id="reading-stream"><summary>stream() 출력 조각 결합</summary><div class="prose"><p>stream은 출력 조각을 순서대로 받을 수 있는 실행 방법입니다. 조각을 문자열로 합치면 전체 결과와 비교할 수 있습니다. 이번 가짜 모델은 테스트용 방식으로 조각을 내보내며 실제 모델의 토큰 경계나 네트워크 지연을 재현하지 않습니다.</p>
-<p>체인에 stream을 호출했다고 모든 구성 요소가 바로 부분 출력을 전달하는 것은 아닙니다. 중간 요소가 전체 입력을 기다린다면 그 지점에서 출력이 모일 수 있습니다. 이번 장은 기본 세 요소의 결과를 관찰하는 범위로 제한합니다.</p>
-</div>
-<div class="prose"><p>invoke와 stream은 같은 응답을 두 방식으로 보는 동작이 아니라 서로 다른 두 번의 실행입니다. 이 예제의 FakeListChatModel은 응답 한 개를 반복하므로 두 결과가 같습니다. 실제 모델은 두 번 다른 답을 만들 수 있으며 각각 호출 비용이 생길 수 있습니다. 조각 수 22는 이 고정 문자열을 나눈 결과이지 실제 토큰 수가 아닙니다.</p>
-</div>
-</details>
-<span id="types"></span><details class="reading-topic" id="reading-types"><summary>구성 요소별 중간 반환값</summary><div class="prose"><p>ChatPromptValue는 메시지를 담은 프롬프트 값이며 to_messages()로 system과 human 메시지를 볼 수 있습니다. 채팅 모델의 AIMessage에는 content가 있습니다. StrOutputParser를 거친 뒤에는 문자열 자체를 사용합니다. 설치한 1.8.0에서 표시되는 타입명은 TextAccessor이지만 str의 하위 타입이므로 isinstance(parsed, str)는 True이고 문자열처럼 사용합니다.</p>
-<p>이 문자열 파서는 12일에 배운 JSON 스키마 검사나 내용 검증을 수행하지 않습니다. 18일의 입력 검사 책임도 사라지지 않습니다. 모델이 돌려준 문장이 사실인지 확인하려면 별도 근거와 평가가 필요합니다.</p>
-</div>
-</details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>입력 키와 자료형 오류</summary><div class="table-scroll" tabindex="0"><table><caption>증상과 확인</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th></tr>
-</thead><tbody><tr><td>context 키 오류</td><td>템플릿의 변수 이름과 입력 키</td></tr>
-<tr><td>AIMessage를 문자열처럼 처리</td><td>파서 연결 여부와 반환 타입</td></tr>
-<tr><td>질문을 바꿔도 같은 답</td><td>FakeListChatModel의 고정 응답</td></tr>
-<tr><td>모듈을 찾을 수 없음</td><td>현재 가상환경과 requirements</td></tr>
-<tr><td>stream이 한꺼번에 보임</td><td>구성 요소의 스트리밍 지원·출력 처리</td></tr>
-</tbody></table></div>
-</details>
-<span id="task"></span><details class="reading-topic" id="reading-task"><summary>프롬프트 입력 치환 실습</summary><div class="prose"><p>다음 장부터는 모델에 제공할 근거 문서를 준비합니다. LCEL 문법을 더 늘리기보다 문서·검색·근거 답변의 흐름에 집중합니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://reference.langchain.com/python/langchain-core/runnables/base/RunnableSequence" target="_blank" rel="noopener noreferrer">LangChain RunnableSequence ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

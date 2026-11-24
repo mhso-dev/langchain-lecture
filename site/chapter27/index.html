@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 27 / LANGGRAPH</p>
 <span class="sidebar-title">LangGraph 조건부 간선과 재검색</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-decision"><span>02</span>add_conditional_edges()와 라우팅 함수</a><a href="#nb-stop"><span>03</span>질의 재작성과 재검색 횟수 제한</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph 조건부 간선과 재검색 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-decision"><span>02</span>add_conditional_edges()와 라우팅 함수</a><a href="#nb-stop"><span>03</span>질의 재작성과 재검색 횟수 제한</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -33,7 +33,9 @@
 </div>
 </header>
 <p class="concept-intro">조건부 간선은 상태에 따라 서로 다른 노드로 이어집니다. 빈 검색 결과를 다시 찾게 할 때는 반복을 끝낼 조건도 필요합니다.</p><p>search가 시도 횟수를 올린 직후 route가 문서 유무와 attempts를 읽습니다. 문서가 있으면 답을 쓰고, 없고 한 번만 찾았다면 검색어를 바꿉니다. 두 번 찾고도 빈 목록이면 멈춥니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>조건부 간선에서 선택되는 경로</h3><video autoplay loop muted playsinline aria-label="조건부 간선에서 선택되는 경로" src="concept.mp4"></video><figcaption>선로가 갈라지는 지점에서 열차는 한쪽으로만 갑니다. route()의 반환값을 바꾸면 어느 노드가 실행되는지 코드와 대조하세요.</figcaption></figure><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · route()의 분기 반환값</h3>
+<figure class="lesson-clip" id="concept-clip"><h3>조건부 간선에서 선택되는 경로</h3><video autoplay loop muted playsinline aria-label="조건부 간선에서 선택되는 경로" src="concept.mp4"></video><figcaption>선로가 갈라지는 지점에서 열차는 한쪽으로만 갑니다. route()의 반환값을 바꾸면 어느 노드가 실행되는지 코드와 대조하세요.</figcaption></figure>
+<figure class="lesson-clip workflow-clip" id="workflow-success-first-time"><h3>첫 검색에서 문서가 있으면 재작성 간선을 건너뜁니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-success-first-time.mp4" aria-label="첫 검색에서 문서가 있으면 재작성 간선을 건너뜁니다" aria-describedby="workflow-success-first-time-caption"></video><figcaption id="workflow-success-first-time-caption">질문에 대출이라는 낱말이 이미 있습니다. route에 들어온 attempts가 1이어도 documents를 먼저 검사하므로 rewrite로 가지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents 1건</li><li><strong>answer_node</strong> · 경로 이름 = answer → answer_node</li><li><strong>END</strong> · 검색 횟수 = 1</li></ol></figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · route()의 분기 반환값</h3>
 <div class="cell-before"><p>검색을 한 번 마쳤고 문서를 못 찾았습니다. 다음에 갈 곳을 고르는 함수만 먼저 실행하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> route(state):
@@ -49,6 +51,11 @@ print(route(after_search))</code></pre></figure>
 <div class="cell-after"><p>retry가 나왔습니다. 이 함수는 검색을 실행하지 않고 다음 경로의 이름만 돌려줍니다. 다음 제공 셀에서 retry와 rewrite가 연결되는 줄을 찾아보세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="branch"></span><div class="lesson-explanation" id="reading-branch"><h3>조건 함수의 경로 이름</h3><div class="prose"><p>search가 documents를 갱신한 뒤 route가 현재 상태를 읽습니다. route의 역할은 답변을 만드는 것이 아니라 answer·retry·stop 중 한 문자열을 반환하는 것입니다. add_conditional_edges의 대응표가 그 문자열을 등록한 노드 이름과 연결합니다.</p>
+<p>직접 성공에서는 한 번 검색하고 종료합니다. 실패라고 무조건 다시 검색하면 같은 입력과 결과를 끝없이 반복할 수 있습니다. 이번 예제는 문서가 없고 attempts가 2보다 작을 때만 재시도합니다.</p>
+</div></div>
+<span class="lesson-anchor" id="setup"></span><span class="lesson-anchor" id="reading-setup"></span>
+
 <div class="table-scroll" tabindex="0"><table><caption>분기 순서</caption><thead><tr><th scope="col">조건</th><th scope="col">반환</th><th scope="col">다음 노드</th></tr>
 </thead><tbody><tr><td>documents가 비어 있지 않음</td><td>answer</td><td>answer_node</td></tr>
 <tr><td>문서 없음·attempts &lt; 2</td><td>retry</td><td>rewrite</td></tr>
@@ -114,6 +121,14 @@ print(search(after_search)[<span class="tok-string">'attempts'</span>])</code></
 <div class="cell-after"><p>같은 상태에서 검색을 한 번 더 실행해 횟수가 2가 됐습니다. 이 셀의 함수 정의를 다음 셀에서 사용합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="attempts"></span><div class="lesson-explanation" id="reading-attempts"><h3>상태에 저장하는 시도 횟수</h3><div class="prose"><p>State에 attempts 정수 필드를 추가합니다. 초기 값 0에서 시작해 search가 실제 실행될 때마다 1을 더합니다. 검색 함수 실행 후 route가 읽는 값은 이미 증가한 값입니다. 첫 번째 실패 뒤에는 1이므로 재시도하고, 두 번째 실패 뒤에는 2이므로 종료합니다.</p>
+<p>attempts는 이 예제에서 검색 노드 실행 횟수입니다. 전체 노드 수나 모델 토큰 수가 아닙니다. 답변 노드와 rewrite 실행을 함께 세고 싶다면 별도의 기록을 설계해야 합니다.</p>
+</div></div>
+<span class="lesson-anchor" id="graph"></span><div class="lesson-explanation" id="reading-graph"><h3>재검색 순환 간선</h3><div class="prose"><p>rewrite 다음에 search로 돌아가는 연결이 반복을 만듭니다. answer_node와 fallback은 END로 연결되어 더 이상 돌아가지 않습니다. 모든 경우를 반복으로 처리하지 않고 성공과 포기 경로를 분리합니다.</p>
+</div></div>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-rewrite-and-recover"><h3>한 번 고친 질문이 두 번째 검색에서 성공합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-rewrite-and-recover.mp4" aria-label="한 번 고친 질문이 두 번째 검색에서 성공합니다" aria-describedby="workflow-rewrite-and-recover-caption"></video><figcaption id="workflow-rewrite-and-recover-caption">route의 retry는 rewrite 노드를 선택합니다. 다음 search가 비어 있지 않은 documents를 돌려주면 answer 경로로 바뀝니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 대출을 빌리는 기간?</li><li><strong>search</strong> · attempts=2 = documents 1건</li><li><strong>answer_node</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · rewrite 노드의 질의 변경</h3>
 <div class="cell-before"><p>질문 한 건의 마지막 상태에서 횟수와 답을 확인하세요.</p>
 </div>
@@ -123,6 +138,14 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 <div class="cell-after"><p>두 번째 검색에서 ‘대출’이 들어 있는 질문으로 문장을 찾았습니다. 첫 번째 빈 결과만 보고 바로 끝냈다면 14일이라는 답까지 가지 못했을 것입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="trace"></span><div class="lesson-explanation" id="reading-trace"><h3>상태표의 세 종료 경로</h3><div class="table-scroll" tabindex="0"><table><caption>관찰할 경로</caption><thead><tr><th scope="col">입력</th><th scope="col">노드 순서</th><th scope="col">검색 횟수</th></tr>
+</thead><tbody><tr><td>대출 기간?</td><td>search → answer_node</td><td>1</td></tr>
+<tr><td>책을 빌리는 기간?</td><td>search → rewrite → search → answer_node</td><td>2</td></tr>
+<tr><td>주차장은?</td><td>search → rewrite → search → fallback</td><td>2</td></tr>
+</tbody></table></div>
+<div class="prose"><p>두 번째 입력은 첫 검색에서 대출이라는 글자가 없어 실패합니다. rewrite가 책을 대출로 바꾼 뒤 다시 검색하면 근거가 생깁니다. 세 번째 입력은 rewrite로 바뀌지 않아도 횟수 상한으로 끝납니다. 질문이 달라진 사실과 답변이 좋아진 사실은 따로 확인해야 합니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 검색 상한과 fallback</h3>
 <div class="cell-before"><p>주차장 질문을 처리한 뒤 몇 번 검색했고 사용자에게 무엇을 안내하는지 출력하세요.</p>
 </div>
@@ -134,41 +157,7 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 </div>
 </details>
 </article>
-</section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>복습과 실습 점검</h2>
-</div>
-</header>
-<div class="prose"><p>검색 한 번에 바로 답하는 질문도 골라 보세요. 세 질문 모두 search 다음에 route를 거칩니다. 어떤 상태에서 다음 경로가 갈라졌나요?</p>
-</div>
-</section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>LangGraph 조건부 간선과 재검색 심화 읽기</h2>
-</div>
-</header>
-<span id="branch"></span><details class="reading-topic" id="reading-branch"><summary>조건 함수의 경로 이름</summary><div class="prose"><p>search가 documents를 갱신한 뒤 route가 현재 상태를 읽습니다. route의 역할은 답변을 만드는 것이 아니라 answer·retry·stop 중 한 문자열을 반환하는 것입니다. add_conditional_edges의 대응표가 그 문자열을 등록한 노드 이름과 연결합니다.</p>
-<p>직접 성공에서는 한 번 검색하고 종료합니다. 실패라고 무조건 다시 검색하면 같은 입력과 결과를 끝없이 반복할 수 있습니다. 이번 예제는 문서가 없고 attempts가 2보다 작을 때만 재시도합니다.</p>
-</div>
-</details>
-<span id="attempts"></span><details class="reading-topic" id="reading-attempts"><summary>상태에 저장하는 시도 횟수</summary><div class="prose"><p>State에 attempts 정수 필드를 추가합니다. 초기 값 0에서 시작해 search가 실제 실행될 때마다 1을 더합니다. 검색 함수 실행 후 route가 읽는 값은 이미 증가한 값입니다. 첫 번째 실패 뒤에는 1이므로 재시도하고, 두 번째 실패 뒤에는 2이므로 종료합니다.</p>
-<p>attempts는 이 예제에서 검색 노드 실행 횟수입니다. 전체 노드 수나 모델 토큰 수가 아닙니다. 답변 노드와 rewrite 실행을 함께 세고 싶다면 별도의 기록을 설계해야 합니다.</p>
-</div>
-</details>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>분기별 예제 입력</summary><div class="prose"><p>공통 환경은 Python 3.12.x입니다. langgraph 1.2.22와 langchain-core 1.8.0으로 로컬 예제를 확인합니다. 이 장은 문서 한 문장을 코드 안에 둡니다. 외부 데이터 파일이나 API 키를 요구하지 않습니다.</p>
-</div>
-</details>
-<span id="graph"></span><details class="reading-topic" id="reading-graph"><summary>재검색 순환 간선</summary><div class="prose"><p>rewrite 다음에 search로 돌아가는 연결이 반복을 만듭니다. answer_node와 fallback은 END로 연결되어 더 이상 돌아가지 않습니다. 모든 경우를 반복으로 처리하지 않고 성공과 포기 경로를 분리합니다.</p>
-</div>
-</details>
-<span id="trace"></span><details class="reading-topic" id="reading-trace"><summary>상태표의 세 종료 경로</summary><div class="table-scroll" tabindex="0"><table><caption>관찰할 경로</caption><thead><tr><th scope="col">입력</th><th scope="col">노드 순서</th><th scope="col">검색 횟수</th></tr>
-</thead><tbody><tr><td>대출 기간?</td><td>search → answer_node</td><td>1</td></tr>
-<tr><td>책을 빌리는 기간?</td><td>search → rewrite → search → answer_node</td><td>2</td></tr>
-<tr><td>주차장은?</td><td>search → rewrite → search → fallback</td><td>2</td></tr>
-</tbody></table></div>
-<div class="prose"><p>두 번째 입력은 첫 검색에서 대출이라는 글자가 없어 실패합니다. rewrite가 책을 대출로 바꾼 뒤 다시 검색하면 근거가 생깁니다. 세 번째 입력은 rewrite로 바뀌지 않아도 횟수 상한으로 끝납니다. 질문이 달라진 사실과 답변이 좋아진 사실은 따로 확인해야 합니다.</p>
-</div>
-</details>
-<span id="limit"></span><details class="reading-topic" id="reading-limit"><summary>반복 상한과 실행 오류</summary><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
+<span class="lesson-anchor" id="limit"></span><div class="lesson-explanation" id="reading-limit"><h3>반복 상한과 실행 오류</h3><div class="prose"><p>recursion_limit은 그래프 진행을 제한하는 별도의 안전 한도입니다. 이 예제의 검색 최대 횟수 2는 route의 조건으로 정합니다. recursion_limit=20을 검색 20회나 모델 호출 20회로 읽지 마세요. 재시도가 허용되는 업무 조건을 이 값 하나에 맡기지 않습니다.</p>
 <p>빈 질문은 search에서 ValueError로 중단됩니다. 질문 자체가 없는데 재검색해도 정보가 늘지 않으므로 입력을 고치도록 합니다. 실제 네트워크 오류의 재시도 여부는 오류 종류·시간 제한·중복 실행 위험을 함께 판단해야 하며 이 장의 로컬 예제로 이를 검증했다고 주장하지 않습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>오류 점검</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">수정 방향</th></tr>
@@ -177,22 +166,21 @@ print(result[<span class="tok-string">'attempts'</span>], result[<span class="to
 <tr><td>두 번 성공인데 실패 답변</td><td>조건 검사 순서</td><td>documents 성공 조건 우선</td></tr>
 <tr><td>빈 질문 ValueError</td><td>입력 값</td><td>공백이 아닌 질문 입력</td></tr>
 <tr><td>항상 문서 없음</td><td>키워드 포함 검사</td><td>가상 검색의 정확한 조건 확인</td></tr>
-</tbody></table></div>
-</details>
-<span id="assignment"></span><details class="reading-topic" id="reading-assignment"><summary>분기 수정과 회귀 테스트</summary><div class="prose"><p>검사는 직접 성공, 재시도 성공, 상한 종료, 분기 경계, 빈 입력을 다룹니다. 학생이 새로 추가한 문서의 결과도 별도 검사로 남깁니다. 제공된 검사만 통과했다는 이유로 새 기능까지 확인했다고 적지 않습니다.</p>
-</div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>조건부 간선의 실행 기록</summary><div class="prose"><p>templates/graph/termination-cases.json을 작업 폴더의 graph/termination-cases.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">위치</th><th scope="col">기록</th></tr>
-</thead><tbody><tr><td>entry_evidence</td><td>이전 상태표 경로, 실제 사용 여부, 보충 자료와 오늘 비교</td></tr>
-<tr><td>cases</td><td>입력, 실행 전 예상, 노드별 갱신/상태, 최종 상태 또는 입력 오류</td></tr>
-<tr><td>explanation</td><td>attempts 상한과 recursion_limit 구분, 빈 질문, 30장 종료와 비교</td></tr>
-<tr><td>추가 cases</td><td>직접 추가한 휴관 문서의 입력·관찰·기존 경로 회귀 결과</td></tr>
-</tbody></table></div>
-</details>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="assignment"></span><div class="lesson-explanation" id="reading-assignment"><h3>분기 하나를 바꾼 뒤 비교할 세 입력</h3><p>대출 기간?, 책을 빌리는 기간?, 주차장은?을 각각 실행하면 즉시 성공, 재작성 후 성공, 두 번째 검색 후 종료를 구별할 수 있습니다. 종료 안내가 맞아도 검색 횟수가 예상과 다르면 route의 조건 순서를 다시 보세요.</p></div>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+<figure class="lesson-clip workflow-clip" id="workflow-retry-budget"><h3>주차 질문은 같은 간선을 돌고도 fallback으로 끝납니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-retry-budget.mp4" aria-label="주차 질문은 같은 간선을 돌고도 fallback으로 끝납니다" aria-describedby="workflow-retry-budget-caption"></video><figcaption id="workflow-retry-budget-caption">같은 재검색 경로에서 질문이 바뀌지 않을 수 있습니다. 두 번째 빈 결과에서는 route가 stop을 반환해 fallback으로 이어집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>search</strong> · attempts=1 = documents = []</li><li><strong>rewrite</strong> · question = 주차장은?</li><li><strong>search</strong> · attempts=2 = documents = []</li><li><strong>fallback</strong> · 경로 이름 = stop → fallback</li><li><strong>END</strong> · 검색 횟수 = 2</li></ol></figure>
+
 </section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>복습과 실습 점검</h2>
+</div>
+</header>
+<div class="prose"><p>검색 한 번에 바로 답하는 질문도 골라 보세요. 세 질문 모두 search 다음에 route를 거칩니다. 어떤 상태에서 다음 경로가 갈라졌나요?</p>
+</div>
+</section>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

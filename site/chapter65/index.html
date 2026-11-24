@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 065 / ROUTING</p>
 <span class="sidebar-title">의도 라우팅과 LangChain 도구 선택</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-route"><span>02</span>규칙 기반 의도 분류</a><a href="#nb-tool"><span>03</span>분류별 허용 도구와 추가 확인</a><a href="#nb-jev"><span>04</span>선택 실습 · Jev 분류 결과의 수용 조건</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>의도 라우팅과 LangChain 도구 선택 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-route"><span>02</span>규칙 기반 의도 분류</a><a href="#nb-tool"><span>03</span>분류별 허용 도구와 추가 확인</a><a href="#nb-jev"><span>04</span>선택 실습 · Jev 분류 결과의 수용 조건</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -51,6 +51,9 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <div class="cell-after"><p>technical은 문의의 분류 결과입니다. 이 문자열을 얻은 것만으로 기술 도구가 실행되지는 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
+<span class="lesson-anchor" id="boundaries"></span><div class="lesson-explanation" id="reading-boundaries"><h3>분류 결과는 다음 단계의 입력</h3><p>rule_route의 반환값은 billing, technical, clarify 중 한 문자열입니다. 기술 문서를 실제로 읽거나 답변을 제공하는 일은 뒤의 분기와 도구 코드가 맡습니다.</p></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 복합 의도의 추가 확인</h3>
 <div class="cell-before"><p>‘영수증 조회 중 401 오류가 납니다’를 기존 함수에 넣고 어디로 가는지 확인하세요.</p>
 </div>
@@ -61,6 +64,9 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="baselines"></span><div class="lesson-explanation" id="reading-baselines"><h3>단서가 섞이면 추가 질문</h3><p>결제 단서만 있으면 billing이고 기술 단서만 있으면 technical입니다. 두 단서가 함께 있거나 둘 다 없으면 clarify가 됩니다. 단지 먼저 발견된 단어로 결정하지 않습니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-mixed-route"><h3>영수증과 401이 한 질문에 들어오면</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-mixed-route.mp4" aria-label="영수증과 401이 한 질문에 들어오면" aria-describedby="workflow-mixed-route-caption"></video><figcaption id="workflow-mixed-route-caption">각 분야 단서가 한 개 이상일 때 rule_route는 어느 도구도 선택하지 않습니다. 뒤 셀의 분기에서는 이 결과가 추가 질문으로 연결됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>복합 문의</strong> · 질문 속 단서 = 영수증 · 401 오류</li><li><strong>결제 검사</strong> · billing = True</li><li><strong>기술 검사</strong> · technical = True</li><li><strong>추가 질문</strong> · 반환값 = clarify</li></ol></figure>
+
 </section>
 <section id="nb-tool" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>분류별 허용 도구와 추가 확인</h2>
@@ -76,6 +82,8 @@ print(rule_route(<span class="tok-string">"API 호출에 401 오류가 납니다
 <video autoplay loop muted playsinline aria-label="분류 레이블이 도구 선택 범위를 좁힙니다" src="visual-tool.mp4"></video>
 <figcaption>인증 오류 질문은 technical 경로에서 technical_faq를 호출합니다. 결제와 기술 단서가 겹치는 질문은 clarify로 보내 추가 질문을 합니다.</figcaption></figure>
 <!-- /lesson-visual visual-tool -->
+
+<figure class="lesson-clip workflow-clip" id="workflow-technical-route"><h3>단일 기술 의도에서 허용된 도구로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-technical-route.mp4" aria-label="단일 기술 의도에서 허용된 도구로" aria-describedby="workflow-technical-route-caption"></video><figcaption id="workflow-technical-route-caption">분류 함수가 반환한 문자열은 답변이 아닙니다. 허용 목록에서 도구를 찾고 invoke를 호출해야 안내 문장이 나옵니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · question = API 인증 오류가 납니다.</li><li><strong>rule_route</strong> · route = technical</li><li><strong>technical_faq</strong> · selected.name = technical_faq</li><li><strong>도구 결과</strong> · 안내 내용 = 키 설정과 실행 환경</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 의도별 허용 도구</h3>
 <div class="cell-before"><p>도구 이름과 실제 안내를 확인합니다.</p>
 <p>복합 문의의 분류값 clarify에는 바로 실행할 도구가 없습니다. 이 값이면 도구 목록을 찾기 전에 질문을 돌려주세요. 아래의 기술 문의만 technical 목록에서 함수를 골라 실행합니다.</p>
@@ -103,6 +111,10 @@ route = rule_route(question)
 <div class="cell-after"><p>technical_faq만 선택됐습니다. 안내는 수업용 함수가 반환한 문구입니다. 계정의 키를 읽거나 인증 상태를 조회한 일은 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="agent"></span><div class="lesson-explanation" id="reading-agent"><h3>선택한 도구를 실행하는 위치</h3><p>allowed에는 technical_faq가 technical 경로에만 등록되어 있습니다. route가 그 키와 일치할 때 selected.invoke를 호출합니다. 이 실습에서는 Python의 조건문이 도구를 선택합니다.</p></div>
+<span class="lesson-anchor" id="connect"></span><span class="lesson-anchor" id="reading-connect"></span>
+<span class="lesson-anchor" id="project-transfer"></span><span class="lesson-anchor" id="reading-project-transfer"></span>
+
 </section>
 <section id="nb-jev" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>선택 실습 · Jev 분류 결과의 수용 조건</h2>
@@ -133,6 +145,8 @@ route = rule_route(question)
 <div class="cell-after"><p>기본 실행에서는 호출을 건너뜁니다. 실제로 요청한 경우에는 선택값, 그 선택의 확률, confidence가 나옵니다. 다음 과제의 0.80과 0.49는 경계 판단을 연습할 예시이며 이 요청의 실측값이 아닙니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="jev"></span><div class="lesson-explanation" id="reading-jev"><h3>선택 실습의 실제 호출 조건</h3><p>기본값 run_jev=False에서는 분류 서비스를 호출하지 않습니다. True로 실행해 응답을 받은 경우에만 선택지, 해당 선택지의 확률, confidence를 실제 반환값으로 읽습니다.</p></div>
+
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 확신도가 낮은 결과 처리</h3>
 <div class="cell-before"><p>분류값이 billing 또는 technical이고 probability가 0.75 이상, confidence가 0.50 이상일 때만 선택을 수용하세요.</p>
 </div>
@@ -146,6 +160,9 @@ print(choice <span class="tok-keyword">if</span> accepted <span class="tok-keywo
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="verify"></span><div class="lesson-explanation" id="reading-verify"><h3>분류가 맞아 보여도 확신도가 낮을 때</h3><p>과제는 technical과 함께 probability 0.80, confidence 0.49를 제공합니다. 선택지 문자열 하나로 도구를 바로 부르지 말고, 주어진 수용 조건을 둘 다 만족하는지 확인합니다.</p></div>
+<span class="lesson-anchor" id="wrap"></span><span class="lesson-anchor" id="reading-wrap"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -154,94 +171,8 @@ print(choice <span class="tok-keyword">if</span> accepted <span class="tok-keywo
 <div class="prose"><p>규칙, 모델 분류, Jev 판단을 비교할 때 문의와 정답 분류를 고정하세요. 분류 호출과 실제 도구 호출 수를 따로 셉니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>의도 라우팅과 LangChain 도구 선택 심화 읽기</h2>
-</div>
-</header>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>분류 단계의 입력·출력</summary><div class="prose"><p>결제 영수증과 API 오류 문의를 처리하는 작은 안내 봇을 만듭니다. 같은 질문을 네 가지 방식으로 실행하고, 누가 경로를 골랐으며 어떤 도구가 실제로 실행됐는지 비교합니다.</p>
-<p>이 장은 create_agent와 Function Calling을 배운 뒤의 65일차 교재입니다. 새 프레임워크를 많이 익히기보다 분류 결과가 실행 경로로 이어지는 지점을 확인합니다. Jev는 2시간 선택 실습이며 필수 프로젝트 기술이 아닙니다.</p>
-</div>
-</details>
-<span id="boundaries"></span><details class="reading-topic" id="reading-boundaries"><summary>라우터와 실행 함수의 역할</summary><div class="prose"><p>모델은 함수 이름과 인자를 요청할 수 있지만 Python 함수를 직접 실행하지는 않습니다. create_agent가 요청을 받아 등록된 도구를 실행하고 결과를 모델에 돌려줍니다. 도구 이름을 답변 문장에 썼다는 사실만으로 실제 실행을 확인할 수는 없습니다.</p>
-<p>기본 에이전트에는 두 도구를 모두 줍니다. 분류를 추가한 예제는 Python 코드가 먼저 분야를 정하고 그 분야의 도구만 create_agent에 넘깁니다. 이 외부 분류 단계는 매 요청마다 실행되며, 에이전트가 선택적으로 호출하는 도구가 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이번 예제의 책임</caption><thead><tr><th scope="col">요소</th><th scope="col">담당하는 일</th><th scope="col">확인할 결과</th></tr>
-</thead><tbody><tr><td>규칙·GPT·Jev</td><td>billing / technical / clarify 중 경로 제안</td><td>decision</td></tr>
-<tr><td>Python 분기</td><td>허용 목록과 임계값으로 도구 집합 선택</td><td>TOOL_GROUPS</td></tr>
-<tr><td>GPT + create_agent</td><td>전달받은 도구의 이름·인자를 요청하고 답변 구성</td><td>AIMessage</td></tr>
-<tr><td>Python 도구 함수</td><td>정적 안내를 조회해 결과 반환</td><td>ToolMessage</td></tr>
-</tbody></table></div>
-</details>
-<span id="agent"></span><details class="reading-topic" id="reading-agent"><summary>도구를 등록한 에이전트</summary><div class="prose"><p>두 도구의 이름, 설명, 입력 형태부터 확인합니다. 아래 query는 모델이 생성할 문자열 인자입니다. 함수 설명은 모델이 도구를 고를 때 참고하고, 실제 반환 값은 Python 코드가 만듭니다.</p>
-</div>
-</details>
-<span id="baselines"></span><details class="reading-topic" id="reading-baselines"><summary>규칙 분류와 LLM 분류</summary><div class="prose"><p>규칙 분류는 지정한 단어를 찾습니다. 단어가 없는 표현이나 두 분야가 섞인 질문에서는 추가 질문으로 보냅니다. 규칙을 복잡하게 늘리기 전에 어떤 문장에서 실패하는지 기록합니다.</p>
-</div>
-<div class="prose"><p>LLM 분류는 RouteLabel 양식으로 결과를 받습니다. 허용된 문자열을 반환한다는 것은 출력 형식이 맞다는 뜻입니다. 의미상 올바른 분야를 골랐는지는 별도로 비교해야 합니다.</p>
-</div>
-</details>
-<span id="jev"></span><details class="reading-topic" id="reading-jev"><summary>선택 실습 · Jev의 분류 응답</summary><div class="prose"><p>Jev는 이 예제에서 답변 문장을 작성하지 않습니다. 주어진 선택지 중 어느 분야에 해당하는지 판단한 결과를 받고, 답변 생성은 GPT가 맡습니다. TypeSafeClassifier는 LangChain의 Runnable이므로 invoke로 실행하지만 ChatOpenAI의 채팅 응답 형태와는 다릅니다.</p>
-<p>먼저 Choice 하나만 사용합니다. Noul은 예/아니오의 확률, Score는 순서가 있는 수준을 평가할 때 쓰지만 이번 필수 코딩에는 추가하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>Choice 결과 읽기</caption><thead><tr><th scope="col">필드</th><th scope="col">의미</th><th scope="col">사용 시 주의</th></tr>
-</thead><tbody><tr><td>choice</td><td>선택한 후보 이름</td><td>코드의 허용 목록과 대조</td></tr>
-<tr><td>probabilities</td><td>후보별 확률 분포</td><td>선택된 후보의 확률을 따로 읽음</td></tr>
-<tr><td>confidence</td><td>분포가 얼마나 한쪽에 집중됐는지 요약한 값</td><td>정답률 94% 등의 성능 수치로 읽지 않음</td></tr>
-<tr><td>model / usage</td><td>응답 모델과 사용량</td><td>모델 별칭과 실행 모델을 구분해 기록</td></tr>
-</tbody></table></div>
-</details>
-<span id="connect"></span><details class="reading-topic" id="reading-connect"><summary>분류 결과와 create_agent 연결</summary><div class="prose"><p>prepare_request가 입력을 검사하고 분류합니다. baseline에서는 두 도구를 모두 넘기고, 나머지 방식에서는 고정된 TOOL_GROUPS에서 한 그룹만 고릅니다. 모델이 돌려준 문자열을 eval이나 임의 함수 실행에 사용하지 않습니다.</p>
-</div>
-<div class="prose"><p>decision은 이번 요청의 Python 지역 변수입니다. agent.invoke가 반환한 state의 messages에는 사용자 메시지, 도구 호출을 포함한 AIMessage, 도구 결과 ToolMessage, 마지막 AIMessage가 들어갑니다. 이 예제는 호출마다 새 에이전트를 만들며 체크포인트·장기 기억을 저장하지 않습니다.</p>
-<p>classify_request를 앞에서 직접 호출했으므로 분류가 반드시 선행됩니다. 같은 분류 함수를 에이전트 Tool로만 등록하면 호출 여부를 모델이 선택하게 됩니다. 분류가 필수인 요구에는 앞단 워크플로우나 before_agent 훅을 검토할 수 있습니다. 이번에는 실행 순서가 드러나는 Python 분기로 익힙니다.</p>
-</div>
-<div class="prose"><p>위 출력은 2026년 11월 15일 실제 실행 결과에서 사용량·소요 시간 필드를 제외한 발췌입니다. 문장과 분류 수치는 실행마다 달라질 수 있습니다. probability와 confidence가 1.0으로 나와도 모든 질문을 정확하게 분류한다는 뜻은 아닙니다. model_calls는 답변 에이전트 안의 호출 수이므로 clarify 결과의 0에도 앞단 Jev 분류 1회는 포함되지 않습니다.</p>
-</div>
-</details>
-<span id="verify"></span><details class="reading-topic" id="reading-verify"><summary>분류 정확도와 호출 수</summary><div class="prose"><p>네트워크 없는 검사와 실제 API 실행을 나누어 확인합니다. 로컬 검사는 정해진 경계 조건을 검사하며 Jev 모델의 정확도를 증명하지 않습니다. 실제 API 결과도 소수 사례의 연결 확인과 전체 성능 평가를 구분합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>직접 확인할 항목</caption><thead><tr><th scope="col">경우</th><th scope="col">관찰할 결과</th><th scope="col">확인 이유</th></tr>
-</thead><tbody><tr><td>명확한 기술 문의</td><td>technical + technical_faq 실행</td><td>분류부터 실행까지 연결</td></tr>
-<tr><td>영수증 문의</td><td>billing + billing_faq 실행</td><td>다른 경로 확인</td></tr>
-<tr><td>모호한 요청</td><td>clarify + 도구·답변 모델 호출 없음</td><td>억지 분류 방지</td></tr>
-<tr><td>선택 확률 또는 confidence 부족</td><td>clarify</td><td>기준 양쪽 확인</td></tr>
-<tr><td>분류 통신 실패</td><td>classifier_error + 도구 호출 없음</td><td>오류와 정상 불확실성 구분</td></tr>
-</tbody></table></div>
-<div class="table-scroll" tabindex="0"><table><caption>호출량 비교의 기준</caption><thead><tr><th scope="col">방식</th><th scope="col">앞단 분류</th><th scope="col">답변 모델·도구</th></tr>
-</thead><tbody><tr><td>baseline</td><td>별도 호출 없음</td><td>GPT 최대 2회·도구 최대 1회</td></tr>
-<tr><td>rule</td><td>로컬 규칙</td><td>정상 경로에서 GPT 최대 2회·도구 최대 1회</td></tr>
-<tr><td>llm</td><td>GPT 구조화 분류 1회</td><td>정상 경로에서 GPT 최대 2회·도구 최대 1회</td></tr>
-<tr><td>jev</td><td>Jev 분류 1회</td><td>정상 경로에서 GPT 최대 2회·도구 최대 1회</td></tr>
-</tbody></table></div>
-<div class="prose"><p>elapsed_seconds에는 분류와 답변 생성 시간이 함께 들어갑니다. 이 값 하나로 분류기 속도를 비교하면 답변 길이·네트워크·도구 호출의 영향을 섞게 됩니다. 분류 정확도, 추가 질문 비율, 각 서비스 사용량을 같은 질문 집합에서 따로 기록하세요. 이 교재는 특정 방식의 비용·속도 우위를 단정하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>제작 시 확인한 결과 · 2026-11-15</caption><thead><tr><th scope="col">검사</th><th scope="col">실행 결과</th><th scope="col">범위</th></tr>
-</thead><tbody><tr><td>로컬 테스트</td><td>10개 통과</td><td>규칙·임계값·도구 제한·오류 분기·호출 집계</td></tr>
-<tr><td>실제 API 실행</td><td>7개 사례 통과</td><td>baseline / rule / llm / Jev 기술·결제·추가 질문 / Jev 단독</td></tr>
-<tr><td>실행 환경</td><td>macOS · Python 3.12.15</td><td>gpt-4.1-mini · 응답 모델 jev-1.14.0</td></tr>
-<tr><td>미검증 범위</td><td>Windows / WSL 실제 실행</td><td>전체 분류 정확도·운영 부하·비용 우위는 평가하지 않음</td></tr>
-</tbody></table></div>
-</details>
-<span id="project-transfer"></span><details class="reading-topic" id="reading-project-transfer"><summary>서비스 함수의 라우팅 연결</summary><div class="prose"><p>결제·기술 문의에서 분류와 실행을 구분했다면 같은 경계를 과정 안내 프로젝트로 옮겨 봅니다. Q03의 질문·p3 원문·출처를 그대로 두고 요청 의도만 별도 입력으로 전달합니다. 분류 결과는 안내 읽기 또는 모의 문의 제안의 후보 경로입니다. 사용자 신원이나 승인을 만들지 않습니다.</p>
-<p>이 예제의 분류는 고정 로컬 규칙이며 자연어 전체를 이해하는 모델이 아닙니다. 실제 create_agent와 LangGraph는 실행하지만 내부 모델 판단은 고정 대본입니다. 앞의 실제 API 7사례와는 다른 관측입니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>로컬 실행에서 확인한 네 경계</caption><thead><tr><th scope="col">요청</th><th scope="col">분류 상태 / 대상</th><th scope="col">서비스 호출</th><th scope="col">관측</th></tr>
-</thead><tbody><tr><td>안내를 읽고 싶어요</td><td>selected / answer</td><td>있음</td><td>같은 Q03의 A1·p3 출처</td></tr>
-<tr><td>모의 문의를 제안해 주세요</td><td>selected / propose</td><td>있음</td><td>pending_approval, result/receipt=null</td></tr>
-<tr><td>도와주세요</td><td>clarify / 없음</td><td>없음</td><td>추가 질문, 등록 0</td></tr>
-<tr><td>분류 예외를 주입한 읽기 요청</td><td>classifier_error / 없음</td><td>없음</td><td>실패 구분, 등록 0</td></tr>
-</tbody></table></div>
-<div class="prose"><p>문의 제안 뒤에도 모의 등록은 0건입니다. 읽기 답변은 공개 A1로 끝나지만 제안은 실제 interrupt에서 멈추므로 result가 null입니다. 등록 여부는 64일의 별도 승인·거절 경로에서 정합니다. 분류기가 propose를 골라도 타인 소유 대화나 잘못된 문의 문구는 서비스가 거부합니다. 이런 서비스 오류를 classifier_error로 바꾸면 실패 위치를 잃습니다.</p>
-</div>
-</details>
-<span id="wrap"></span><details class="reading-topic" id="reading-wrap"><summary>서비스별 라우팅 정책 비교</summary><dl class="glossary"><div><dt>Routing</dt><dd>입력을 어느 처리 경로로 보낼지 정하는 일.</dd></div>
-<div><dt>Structured output</dt><dd>코드가 읽을 수 있도록 정해진 필드·자료형으로 받는 출력.</dd></div>
-<div><dt>Runnable</dt><dd>invoke 등 공통 실행 인터페이스를 제공하는 LangChain 구성 요소.</dd></div>
-<div><dt>Fallback</dt><dd>원래 경로를 선택하기 어렵거나 실패했을 때 사용할 대체 처리.</dd></div>
-<div><dt>ToolMessage</dt><dd>도구 실행 결과를 대화 상태에 담는 메시지.</dd></div>
-</dl></details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

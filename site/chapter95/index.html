@@ -37,6 +37,8 @@
 
 <!-- END MOTION -->
 
+
+<figure class="lesson-clip workflow-clip" id="workflow-filter-before-match"><h3>retrieve()에서 공개 범위를 적용한 뒤 검색하는 순서</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-filter-before-match.mp4" aria-label="retrieve()에서 공개 범위를 적용한 뒤 검색하는 순서" aria-describedby="workflow-filter-before-match-caption"></video><figcaption id="workflow-filter-before-match-caption">장비 A를 검색하는 동안 처음 세 문서가 허용 문서 두 건을 거쳐 결과 한 건으로 줄어듭니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>그룹 검사</strong> · group = public</li><li><strong>검색어 검사</strong> · query.strip() = 장비 A</li><li><strong>공개 범위</strong> · 허용된 ID = RULE-A · RULE-B</li><li><strong>본문·장비 대조</strong> · 일치한 장비 = 장비 A</li><li><strong>결과 필드</strong> · hit = RULE-A · 2.1절</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · retrieve()의 장비 필터</h3>
 <div class="cell-before"><p>제공 모듈의 부분 문자열 검색과 출처 반환을 작은 입력으로 실행합니다.</p>
 <p>제공 기록의 7/7은 검색 모듈을 포함한 전체 응답 함수의 점수입니다. 지금 셀에서는 검색 결과에 RULE-A와 2.1절이 있는지 확인합니다. 이 조회 한 번으로 일곱 답의 정확성을 측정한 것은 아닙니다.</p>

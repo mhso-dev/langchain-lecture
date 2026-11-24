@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 21 / CHUNKING</p>
 <span class="sidebar-title">문자열 청킹과 원문 오프셋</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>문자열 슬라이싱과 chunk overlap</a><a href="#nb-location"><span>03</span>청크 ID와 시작·끝 위치</a><a href="#nb-baseline"><span>04</span>청킹 설정과 다음 단계의 입력</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>문자열 청킹과 원문 오프셋 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>문자열 슬라이싱과 chunk overlap</a><a href="#nb-location"><span>03</span>청크 ID와 시작·끝 위치</a><a href="#nb-baseline"><span>04</span>청킹 설정과 다음 단계의 입력</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -38,6 +38,8 @@
 
 
 
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>원문과 문서 ID 함께 읽기</h3><p>doc의 text에는 대출 기간 문장이 있고 id는 library-1입니다. 글자를 자르기 전 원문 ID를 기록해 두면 잘린 문장이 어느 문서에서 나왔는지 거슬러 올라갈 수 있습니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문자열 슬라이스의 끝 위치</h3>
 <div class="cell-before"><p>20장 첫 문서의 온점이 첫 조각에 들어가는지 보세요.</p>
 </div>
@@ -49,6 +51,10 @@ print(first)</code></pre></figure>
 <div class="cell-after"><p>‘도서 대출 기간은 14일입니다’까지 들어가고 맨 끝 온점은 다음에 남습니다. 범위의 끝 번호 16은 포함하지 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="clean"></span><div class="lesson-explanation" id="reading-clean"><h3>청킹 전 텍스트 정제</h3><div class="prose"><p>문서를 나누는 작업을 청킹이라고 합니다. 청킹 전에 파싱 결과의 문단·페이지·숫자가 올바른지 확인해야 합니다. 잘못된 순서로 읽힌 표를 작은 조각으로 나누어도 원래 의미가 복구되지는 않습니다.</p>
+<p>정리 규칙은 필요에 맞춰 최소한으로 적용합니다. 이 예제는 줄바꿈 형식을 통일하고 문서 앞뒤 공백만 제거합니다. 문장 안의 숫자·단위·공백을 무조건 지우지 않습니다. 원본과 정리본을 나누어 보관해야 어떤 변경이 있었는지 설명할 수 있습니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 청크 간 이동 간격</h3>
 <div class="cell-before"><p>시작점을 16에서 겹칠 4만큼 앞으로 당깁니다.</p>
 <p>첫 조각은 text[0:16]으로 인덱스 0~15를 담습니다. 끝점 16은 포함하지 않습니다. 네 글자를 겹치면 둘째 조각은 16−4=12에서 시작합니다. 인덱스 16은 처음부터 세어 열일곱 번째 글자입니다.</p>
@@ -59,6 +65,16 @@ print(second)</code></pre></figure>
 <div class="cell-after"><p>둘째 조각에는 ‘일입니다.’가 들어 있습니다. 서로 이어 붙일 때 이 네 글자가 두 번 나타날 수 있습니다. 입력 문장을 바꾸지 않고 시작 위치만 확인하면 이유를 볼 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>청크 크기와 겹침</h3><div class="prose"><p>크기는 한 조각에 들어갈 범위이고 중첩은 앞뒤 조각이 함께 포함하는 범위입니다. 경계에서 문장이 끊기는 영향을 줄이려고 중첩을 둘 수 있지만 중복 저장과 검색 결과 중복도 늘어날 수 있습니다.</p>
+<p>이번 코드는 Python 문자열의 문자 위치로 나눕니다. 토큰 기반 청킹이 아니므로 size=40을 모델 토큰 40개라고 읽지 않습니다. 문장 경계를 인식하지 않는 단순 기준선을 먼저 관찰합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>예제 설정</caption><thead><tr><th scope="col">항목</th><th scope="col">값</th><th scope="col">뜻</th></tr>
+</thead><tbody><tr><td>size</td><td>16</td><td>한 청크 최대16문자</td></tr>
+<tr><td>overlap</td><td>4</td><td>이전 청크의 끝4문자를 다음 시작에 포함</td></tr>
+<tr><td>이동 간격</td><td>12</td><td>size-overlap</td></tr>
+<tr><td>경계 기준</td><td>문자 위치</td><td>문장·토큰 의미를 검사하지 않음</td></tr>
+</tbody></table></div></div>
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 인접 슬라이스의 중복 구간</h3>
 <div class="cell-before"><p>첫 조각 끝 4자와 둘째 조각 앞 4자가 같은지 검사하고 그 문자열을 출력하세요.</p>
 </div>
@@ -70,6 +86,8 @@ print(first[-<span class="tok-number">4</span>:])</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="tests"></span><div class="lesson-explanation" id="reading-tests"><h3>나란한 청크의 겹친 문자열 확인</h3><p>first[-4:]와 second[:4]를 비교합니다. 두 값이 같은 ‘일입니다’이면 네 글자가 보존된 채 두 청크에 중복되어 있음을 확인할 수 있습니다. 두 값의 일치는 검색 품질까지 측정한 결과는 아닙니다.</p></div>
+
 </section>
 <section id="nb-location" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>청크 ID와 시작·끝 위치</h2>
@@ -82,6 +100,17 @@ print(first[-<span class="tok-number">4</span>:])</code></pre></figure>
 
 
 
+
+<span class="lesson-anchor" id="compare"></span><div class="lesson-explanation" id="reading-compare"><h3>청킹 매개변수 비교</h3><div class="prose"><p>먼저 overlap=0에서 size=16과 size=24를 비교해 크기 효과를 봅니다. 다음에는 size=16을 고정하고 overlap=0과 overlap=4를 비교합니다. 표의 첫째·셋째 행이 중첩 비교 쌍입니다.</p>
+<p>많은 청크가 생겼다는 사실만으로 검색이 좋아진 것은 아닙니다. 문서 하나를 답변에 필요한 정보가 나뉘도록 잘랐는지, 같은 문장이 반복되는지, 질문에 필요한 단위가 함께 남아 있는지를 직접 읽어야 합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>비교 기록 양식</caption><thead><tr><th scope="col">크기</th><th scope="col">중첩</th><th scope="col">청크 수</th><th scope="col">중복 문자 수</th><th scope="col">관찰할 내용</th></tr>
+</thead><tbody><tr><td>16</td><td>0</td><td>직접 기록</td><td>직접 기록</td><td>경계에서 끊긴 문장</td></tr>
+<tr><td>24</td><td>0</td><td>직접 기록</td><td>직접 기록</td><td>한 조각에 남은 정보</td></tr>
+<tr><td>16</td><td>4</td><td>직접 기록</td><td>직접 기록</td><td>앞 조각 끝과 다음 시작의 반복</td></tr>
+</tbody></table></div>
+<div class="prose"><p>짧은 기준 문서는 size=24로 나누면 모두 한 조각 안에 들어갑니다. 이때 overlap만 바꿔도 실제로 반복되는 경계가 없을 수 있습니다. 중첩을 관찰할 때는 두 조각 이상 생기는 size=16 조건을 사용합니다. 청크 수가 같아도 포함된 글자의 중복은 다를 수 있습니다.</p>
+</div></div>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 청크의 원문 오프셋</h3>
 <div class="cell-before"><p>실험용 식별자에는 0부터 센 조각 번호를 붙입니다.</p>
 </div>
@@ -92,6 +121,8 @@ print(chunk[<span class="tok-string">"id"</span>], text[location[<span class="to
 <div class="cell-after"><p>library-1:1과 ‘일입니다.’가 나옵니다. ID만 읽어 위치를 추측하지 않고 기록한 범위에서 본문을 되찾았습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>청크의 시작·끝 위치로 원문 복원</h3><p>location[&#x27;start&#x27;]는 12, end는 원문 길이입니다. text[start:end]로 자른 값이 둘째 청크인 ‘일입니다.’와 같은지 확인해 보세요. end가 가리키는 위치는 결과에 포함되지 않습니다.</p></div>
+
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · overlap 0의 청크 경계</h3>
 <div class="cell-before"><p>크기는 16으로 유지하고 중첩만 0으로 바꾸세요. 둘째 조각에 무엇이 남나요?</p>
 </div>
@@ -102,6 +133,8 @@ print(chunk[<span class="tok-string">"id"</span>], text[location[<span class="to
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>원문 끝에서 짧아지는 조각</h3><p>원문을 인덱스 16부터 잘라 보면 온점 한 글자가 남습니다. 겹침을 4로 주면 둘째 조각이 12부터 시작해 ‘일입니다.’를 담습니다. 같은 마지막 글자가 두 설정에서 어떤 주변 문맥을 얻는지 비교해 보세요.</p></div>
+
 </section>
 <section id="nb-baseline" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>청킹 설정과 다음 단계의 입력</h2>
@@ -116,6 +149,8 @@ print(chunk[<span class="tok-string">"id"</span>], text[location[<span class="to
 <div class="cell-after"><p>library-1의 전체 대출 문장이 온점까지 남습니다. 청킹 방식을 바꾼 실험을 정식 입력으로 채택하려면 원문과 청크를 대응하는 표와 이후 벡터도 함께 새로 만들어야 합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="handoff"></span><div class="lesson-explanation" id="reading-handoff"><h3>원문 ID와 청크 ID 구분</h3><p>library-1은 문서 전체, library-1:1은 그 문서에서 잘라낸 조각의 ID입니다. 다음 실험에 넘길 때 원문 ID와 시작·끝 인덱스를 함께 보존하면 조각의 문장을 원문에서 다시 찾을 수 있습니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -123,72 +158,10 @@ print(chunk[<span class="tok-string">"id"</span>], text[location[<span class="to
 </header>
 <div class="prose"><p>원문을 합칠 때는 겹친 구간을 한 번만 세고, 출처를 표시할 때는 원문 ID와 조각 ID 중 어떤 단위를 쓰는지 알려 주세요. 눈으로 차이를 구분한 뒤 size와 overlap을 한 번에 하나만 바꿔 보세요.</p>
 </div>
+
+<span class="lesson-anchor" id="sources"></span><span class="lesson-anchor" id="reading-sources"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>문자열 청킹과 원문 오프셋 심화 읽기</h2>
-</div>
-</header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>입력 문서와 원본 ID</summary><div class="prose"><p>진입 확인은 전반 대조 0.5H 중 15분입니다. 이전 파일이 없거나 개인 자료와 섞였으면 이 장의 제공 시작 파일로 돌아갑니다. 영어 PDF 추출 중간 결과는 공통 원문 대신 넣지 않습니다.</p>
-</div>
-</details>
-<span id="clean"></span><details class="reading-topic" id="reading-clean"><summary>청킹 전 텍스트 정제</summary><div class="prose"><p>문서를 나누는 작업을 청킹이라고 합니다. 청킹 전에 파싱 결과의 문단·페이지·숫자가 올바른지 확인해야 합니다. 잘못된 순서로 읽힌 표를 작은 조각으로 나누어도 원래 의미가 복구되지는 않습니다.</p>
-<p>정리 규칙은 필요에 맞춰 최소한으로 적용합니다. 이 예제는 줄바꿈 형식을 통일하고 문서 앞뒤 공백만 제거합니다. 문장 안의 숫자·단위·공백을 무조건 지우지 않습니다. 원본과 정리본을 나누어 보관해야 어떤 변경이 있었는지 설명할 수 있습니다.</p>
-</div>
-</details>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>청크 크기와 겹침</summary><div class="prose"><p>크기는 한 조각에 들어갈 범위이고 중첩은 앞뒤 조각이 함께 포함하는 범위입니다. 경계에서 문장이 끊기는 영향을 줄이려고 중첩을 둘 수 있지만 중복 저장과 검색 결과 중복도 늘어날 수 있습니다.</p>
-<p>이번 코드는 Python 문자열의 문자 위치로 나눕니다. 토큰 기반 청킹이 아니므로 size=40을 모델 토큰 40개라고 읽지 않습니다. 문장 경계를 인식하지 않는 단순 기준선을 먼저 관찰합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>예제 설정</caption><thead><tr><th scope="col">항목</th><th scope="col">값</th><th scope="col">뜻</th></tr>
-</thead><tbody><tr><td>size</td><td>16</td><td>한 청크 최대16문자</td></tr>
-<tr><td>overlap</td><td>4</td><td>이전 청크의 끝4문자를 다음 시작에 포함</td></tr>
-<tr><td>이동 간격</td><td>12</td><td>size-overlap</td></tr>
-<tr><td>경계 기준</td><td>문자 위치</td><td>문장·토큰 의미를 검사하지 않음</td></tr>
-</tbody></table></div>
-</details>
-<span id="code"></span><details class="reading-topic" id="reading-code"><summary>오프셋과 출처 메타데이터</summary><div class="prose"><p>함수는 두 값을 돌려줍니다. chunks, mapping = chunk_document(doc)처럼 나눠 받습니다. chunks의 각 항목에는 id/text/source/page 네 필드만 둡니다. 원문 ID, 청크 순번, start/end와 설정은 mapping에 둡니다. 검색 결과가 가벼워져도 원문 위치를 잃지 않는 구조입니다.</p>
-<p>청크 ID library-1:0으로 mapping을 찾으면 document_id가 library-1임을 알 수 있습니다. start/end는 줄바꿈 통일·앞뒤 공백 제거 후 문자열 위치이며 end는 포함하지 않습니다. 원본 바이트 위치나 PDF 좌표로 해석하지 않습니다.</p>
-<p>서로 다른 크기 설정에서는 같은 청크 ID의 본문이 달라질 수 있습니다. 설정별 결과 폴더를 구분하고 위치표·원문 해시·설정을 함께 저장하세요. 22장에서 벡터를 만들 때도 어떤 청크 스냅샷을 썼는지 기록합니다.</p>
-</div>
-</details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>짧은 문서의 경계 처리</summary><div class="prose"><p>크기 비교 실행은 같은 가상 원문을 size=16, overlap=4로 나눠 chunks.json과 source-map-experiment.json에 저장합니다. 두 파일은 항상 한 묶음으로 읽습니다. 이 문서들은 짧아서 실제 서비스의 최적 크기를 찾는 실험으로 사용할 수 없습니다.</p>
-</div>
-</details>
-<span id="compare"></span><details class="reading-topic" id="reading-compare"><summary>청킹 매개변수 비교</summary><div class="prose"><p>먼저 overlap=0에서 size=16과 size=24를 비교해 크기 효과를 봅니다. 다음에는 size=16을 고정하고 overlap=0과 overlap=4를 비교합니다. 표의 첫째·셋째 행이 중첩 비교 쌍입니다.</p>
-<p>많은 청크가 생겼다는 사실만으로 검색이 좋아진 것은 아닙니다. 문서 하나를 답변에 필요한 정보가 나뉘도록 잘랐는지, 같은 문장이 반복되는지, 질문에 필요한 단위가 함께 남아 있는지를 직접 읽어야 합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>비교 기록 양식</caption><thead><tr><th scope="col">크기</th><th scope="col">중첩</th><th scope="col">청크 수</th><th scope="col">중복 문자 수</th><th scope="col">관찰할 내용</th></tr>
-</thead><tbody><tr><td>16</td><td>0</td><td>직접 기록</td><td>직접 기록</td><td>경계에서 끊긴 문장</td></tr>
-<tr><td>24</td><td>0</td><td>직접 기록</td><td>직접 기록</td><td>한 조각에 남은 정보</td></tr>
-<tr><td>16</td><td>4</td><td>직접 기록</td><td>직접 기록</td><td>앞 조각 끝과 다음 시작의 반복</td></tr>
-</tbody></table></div>
-<div class="prose"><p>짧은 기준 문서는 size=24로 나누면 모두 한 조각 안에 들어갑니다. 이때 overlap만 바꿔도 실제로 반복되는 경계가 없을 수 있습니다. 중첩을 관찰할 때는 두 조각 이상 생기는 size=16 조건을 사용합니다. 청크 수가 같아도 포함된 글자의 중복은 다를 수 있습니다.</p>
-</div>
-</details>
-<span id="tests"></span><details class="reading-topic" id="reading-tests"><summary>내용 누락과 의도적 중첩</summary><div class="prose"><p>test_offsets_coverage_and_separate_four_field_chunks는 청크 문자열과 정리된 원문의 슬라이스가 같은지 검사합니다. 원문 문자 위치가 적어도 한 번 포함되는지 확인하고, 청크에는 네 필드만 있으며 별도 위치표에는 원문 ID가 남는지 확인합니다. 중첩 때문에 같은 위치가 여러 번 포함되는 것은 누락과 다릅니다.</p>
-<p>이 검사는 문장의 의미가 보존되는지 평가하지 않습니다. 모든 글자가 포함되어도 대출 조건과 기간이 다른 청크로 나뉘면 답변에 필요한 문맥을 놓칠 수 있습니다. 질문과 원문을 함께 읽어 판단하세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>검사 대상 구분</caption><thead><tr><th scope="col">검사</th><th scope="col">확인하는 것</th><th scope="col">확인하지 않는 것</th></tr>
-</thead><tbody><tr><td>슬라이스 일치</td><td>청크 문자열과 위치</td><td>의미 완결성</td></tr>
-<tr><td>문자 범위 포함</td><td>기계적 누락 여부</td><td>검색 품질</td></tr>
-<tr><td>메타데이터</td><td>출처 보존</td><td>출처의 진실성</td></tr>
-<tr><td>질문 대조</td><td>필요 근거 포함</td><td>모든 미래 질문</td></tr>
-</tbody></table></div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>실험용 청크와 기준 데이터</summary><div class="prose"><p>후속 저장소 비교에서는 입력을 같게 유지해야 합니다. 짧은 원문 세 개를 더 자르지 않은 기준을 사용합니다. 기준 정책은 one-page-no-overlap-v1이며 원문 1개가 청크 1개라 id가 그대로 library-1/2/3이고 chunk_index는 0입니다.</p>
-<p>prepare_handoff.py는 20장 인계 해시를 확인한 뒤 기준 청크와 위치표를 chunks/ 폴더에 만듭니다. 앞의 chunks.json은 크기 비교용이고, chunks/documents.json은 22장 기준입니다. 두 결과를 이름만 보고 섞지 마세요. 개인 설정으로 후속 실험을 하려면 그 설정의 위치표·질문 매핑·벡터를 새 묶음으로 함께 만들어야 합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>파일을 어디에 쓰나요?</caption><thead><tr><th scope="col">파일</th><th scope="col">용도</th><th scope="col">소비처</th></tr>
-</thead><tbody><tr><td>chunks.json + source-map-experiment.json</td><td>16문자/중첩4 실험</td><td>21장 경계·중복 설명</td></tr>
-<tr><td>chunks/documents.json + chunks/source-map.json</td><td>원문당 전체 청크1개 기준</td><td>22장 같은 벡터 비교</td></tr>
-<tr><td>questions.json</td><td>기대 원문 ID가 있는 고정 질문</td><td>35장 이후 원문 단위 평가</td></tr>
-</tbody></table></div>
-<div class="prose"><p>Q1에서 기대하는 것은 library-1이라는 원문 ID입니다. 검색된 청크가 library-1:0이라면 위치표로 원문 ID library-1을 찾은 뒤 비교합니다. 청크 ID 문자열과 원문 ID 문자열을 곧바로 비교하면 같은 근거도 오답 처리할 수 있습니다.</p>
-</div>
-</details>
-<span id="sources"></span><details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

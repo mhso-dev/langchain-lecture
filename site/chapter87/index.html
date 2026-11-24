@@ -40,6 +40,8 @@
 <div class="prose"><p>SC-01　교대 담당자가 “장비 A의 점검 전 확인 사항은?”이라고 묻습니다. 답에서 ‘전원 표시등’을 읽고 RULE-A 2.1절을 엽니다.</p>
 <p>SC-02　“점검 전 확인 사항은?”이라고만 물으면 어느 장비인지 다시 묻습니다. SC-03　“장비 A를 다음 달에 교체하기로 확정했나요?”에는 가상 규정으로 일정을 확인할 수 없으니 담당자 확인을 안내합니다. SC-04　공개 그룹의 질문에는 관리용 문서가 보이지 않아야 합니다. 사용자 발화를 만들 때는 실제로 들은 말과 팀이 지어낸 질문을 구분해 남기세요.</p>
 </div>
+
+<figure class="lesson-clip workflow-clip" id="workflow-clarify-equipment"><h3>Q02에서 답변 대신 장비를 되묻는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-clarify-equipment.mp4" aria-label="Q02에서 답변 대신 장비를 되묻는 경로" aria-describedby="workflow-clarify-equipment-caption"></video><figcaption id="workflow-clarify-equipment-caption">시나리오 카드에서 기대하는 화면입니다. 장비를 지정하지 않은 Q02는 근거를 인용하기 전에 추가 질문으로 끝납니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>Q02</strong> · question = 점검 전 확인 사항은?</li><li><strong>장비 식별</strong> · 장비명 = A·B 모두 없음</li><li><strong>되묻기</strong> · expected_status = need_clarification</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 추가 질문이 필요한 조건</h3>
 <div class="cell-before"><p>미리 고정한 개발 질문 Q02에서 첫 화면이 어떤 상태인지 읽어 보세요.</p>
 <p>Q02의 화면에는 ‘장비 A인가요, 장비 B인가요?’라고 묻습니다. 개발 기록에는 need_clarification과 빈 출처 목록을 남깁니다. 팀 주제로 바꿀 때는 사용자가 답할 수 있는 두 선택지를 질문에 넣으세요.</p>

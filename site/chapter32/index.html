@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 32 / INTEGRATION</p>
 <span class="sidebar-title">LCEL과 LangGraph의 상태 전달</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-runners"><span>02</span>Runnable과 그래프 노드의 상태 전달 비교</a><a href="#nb-trace"><span>03</span>stream()으로 노드 갱신 추적</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LCEL과 LangGraph의 상태 전달 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-runners"><span>02</span>Runnable과 그래프 노드의 상태 전달 비교</a><a href="#nb-trace"><span>03</span>stream()으로 노드 갱신 추적</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -38,6 +38,8 @@
 <video autoplay loop muted playsinline aria-label="답변이 같은 두 실행에서 무엇이 달라졌을까요?" src="detail-two-runners.mp4"></video>
 <figcaption>LCEL의 k는 1로 유지하고 그래프의 graph_k만 2로 바꾼 비교입니다. 두 답변은 첫 문서의 14일을 유지하지만 그래프의 documents에는 library-2가 더 있어 전체 상태를 비교하면 False입니다.</figcaption></figure>
 <!-- /lesson-visual detail-two-runners -->
+
+<figure class="lesson-clip workflow-clip" id="workflow-lcel-explicit-state"><h3>LCEL 파이프에서 다음 함수가 받는 값은 누가 조립할까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-lcel-explicit-state.mp4" aria-label="LCEL 파이프에서 다음 함수가 받는 값은 누가 조립할까요?" aria-describedby="workflow-lcel-explicit-state-caption"></video><figcaption id="workflow-lcel-explicit-state-caption">두 RunnableLambda가 같은 방식으로 기존 상태와 부분 변경분을 합칩니다. 첫 단계가 넘기는 딕셔너리가 둘째 단계의 입력이 됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>invoke</strong> · question = 대출 기간은?</li><li><strong>첫 Runnable</strong> · search_change의 반환 = documents: [library-1 레코드]</li><li><strong>상태 병합</strong> · {**state, **변경분} = question · documents · answer</li><li><strong>둘째 Runnable</strong> · answer = 도서 대출 기간은 14일입니다.</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · LCEL 함수의 상태 반환</h3>
 <div class="cell-before"><p>검색 후에도 question이 남도록 입력 딕셔너리와 새 documents를 합칩니다.</p>
 </div>
@@ -81,6 +83,11 @@ print(left[<span class="tok-string">'answer'</span>])</code></pre></figure>
 <div class="cell-after"><p>검색 문장이 그대로 답에 들어갔습니다. 두 번째 함수에 전달되는 값에는 원래 질문과 새 문서 목록이 모두 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>같은 입력과 같은 검색 함수로 비교하기</h3><p>두 구현 모두 대출 질문, 같은 세 문서, k=1에서 출발합니다. search_change는 documents 한 칸을, answer_change는 answer 한 칸을 반환합니다. 이 두 변경분을 누가 기존 상태와 합치는지 따라가 보세요.</p></div>
+<span class="lesson-anchor" id="lcel"></span><div class="lesson-explanation" id="reading-lcel"><h3>LCEL 래퍼에서 기존 키를 보존하는 위치</h3><p>파이프 오른쪽은 왼쪽이 반환한 값을 그대로 받습니다. 각 RunnableLambda에서 {**state, **변경분}을 돌려주므로 이전 question과 documents가 다음 단계에도 들어갑니다.</p></div>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-graph-merged-state"><h3>StateGraph에서는 노드가 변경한 키만 반환합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-graph-merged-state.mp4" aria-label="StateGraph에서는 노드가 변경한 키만 반환합니다" aria-describedby="workflow-graph-merged-state-caption"></video><figcaption id="workflow-graph-merged-state-caption">같은 검색·답변 함수를 이번에는 노드에 등록했습니다. 검색 결과와 답변의 적용을 그래프가 맡으므로 각 노드에서 전체 딕셔너리를 새로 조립할 필요가 없습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = 대출 기간은?</li><li><strong>search</strong> · 이번 반환 키 = documents</li><li><strong>compose</strong> · 이번 반환 키 = answer</li><li><strong>END</strong> · right == left = True</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · StateGraph의 부분 갱신</h3>
 <div class="cell-before"><p>LCEL은 기본값 k=1을 씁니다. 그래프의 검색 노드는 이 셀의 graph_k를 읽습니다. 먼저 두 값을 모두 1로 두고 실행하세요.</p>
 </div>
@@ -114,6 +121,8 @@ Graph ['library-1']</pre></div>
 <div class="cell-after"><p>마지막 두 줄에 모두 library-1 하나가 나옵니다. graph_k를 2로 바꾸고 이 셀만 다시 실행하면 그래프 쪽에 library-2가 하나 더 생깁니다. 첫 문서를 읽어 만든 답은 여전히 14일이지만 상태 전체를 비교한 값은 False가 됩니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="graph"></span><div class="lesson-explanation" id="reading-graph"><h3>StateGraph가 노드 변경분을 반영하는 위치</h3><p>graph_search가 반환한 documents가 공유 상태에 합쳐진 뒤 compose가 실행됩니다. compose가 answer만 반환해도 최종 상태에는 검색한 문서가 남습니다. 셀 02는 답과 문서 ID를 두 구현에서 나란히 확인합니다.</p></div>
+
 </section>
 <section id="nb-trace" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>stream()으로 노드 갱신 추적</h2>
@@ -140,6 +149,10 @@ print(first[<span class="tok-string">'search'</span>][<span class="tok-string">'
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="trace"></span><div class="lesson-explanation" id="reading-trace"><h3>stream_mode=&quot;updates&quot;의 첫 항목</h3><p>next()로 꺼낸 첫 갱신은 search라는 노드 이름 아래 documents를 담고 있습니다. 이 시점의 library-1은 검색의 반환값입니다. invoke가 끝난 뒤 받는 전체 상태와 구별해 읽으세요.</p></div>
+<span class="lesson-anchor" id="practice"></span><span class="lesson-anchor" id="reading-practice"></span>
+<figure class="lesson-clip workflow-clip" id="workflow-first-stream-event"><h3>스트림의 첫 갱신에서 어디까지 관찰했을까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-first-stream-event.mp4" aria-label="스트림의 첫 갱신에서 어디까지 관찰했을까요?" aria-describedby="workflow-first-stream-event-caption"></video><figcaption id="workflow-first-stream-event-caption">애니메이션은 next()를 한 번 호출한 관찰자 시점입니다. 첫 항목은 실행 전체의 최종 상태가 아니라 search가 방금 반환한 변경분입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>stream</strong> · 모드 = updates</li><li><strong>search</strong> · 갱신한 키 = documents</li><li><strong>첫 항목</strong> · 바깥 키 = search</li><li><strong>첫 ID 출력</strong> · documents[0][&quot;id&quot;] = library-1</li></ol></figure>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -148,46 +161,8 @@ print(first[<span class="tok-string">'search'</span>][<span class="tok-string">'
 <div class="prose"><p>셀 02의 graph_k를 2로 바꾸고 다시 실행하세요. 두 문서 목록에서 달라진 ID를 적고 답 문장이 같은 이유를 설명하세요. graph_k를 1로 되돌려 두 상태가 다시 같은지 확인하세요.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>LCEL과 LangGraph의 상태 전달 심화 읽기</h2>
-</div>
-</header>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>공통 검색·답변 함수</summary><div class="prose"><p>make_steps가 만든 두 함수에 같은 search_function과 answer_function을 넘깁니다. 검색 단계는 R1 요청과 문서 형식을 검사하고 예상 연결 실패만 운영 상태로 바꿉니다. 답변 단계는 같은 문서 목록으로 A1을 호출합니다. 검색 실패에는 result=None을 유지합니다.</p>
-<p>공통 자료는 contract-snapshot.json으로 식별합니다. 모드와 버전이 같아야 결과 차이를 해석할 수 있습니다. 교육용 벡터는 학습된 임베딩이 아니므로 실제 검색 엔진이나 모델을 교체한 측정과 별도 표에 둡니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이번 비교에서 고정하는 조건</caption><thead><tr><th scope="col">항목</th><th scope="col">값</th></tr>
-</thead><tbody><tr><td>자료</td><td>data/documents.json, source-map.json과 같은 스냅샷</td></tr>
-<tr><td>벡터</td><td>keyword-presence-v1 / 3차원 / 제곱 L2</td></tr>
-<tr><td>질문·k</td><td>동일 문자열과 동일 양의 정수</td></tr>
-<tr><td>생성기</td><td>같은 fixed_demo_generate 또는 같은 주입 함수</td></tr>
-<tr><td>결과 비교</td><td>question,k,documents,search_status,result,error_type</td></tr>
-<tr><td>측정 제외</td><td>그래프/체인 생성, 외부 API·모델 호출</td></tr>
-</tbody></table></div>
-<div class="prose"><p>기본 함수 대신 다른 함수를 주입한 실행은 custom_functions_unverified_mode로 표시하고 external_llm_calls는 null로 둡니다. 함수 안에서 외부 호출을 했는지 이 비교기가 알 수 없기 때문입니다. 실제 호출 수와 실행 모드는 별도로 관찰해 기록해야 합니다.</p>
-</div>
-</details>
-<span id="lcel"></span><details class="reading-topic" id="reading-lcel"><summary>LCEL의 명시적 입력 구성</summary><div class="prose"><p>LCEL의 다음 Runnable은 앞 Runnable의 반환값을 받습니다. search_full은 {**state, **search_step(state)}로 기존 키와 갱신을 합친 새 딕셔너리를 만듭니다. answer_full도 같은 방식으로 앞의 문서와 운영 상태를 보존합니다.</p>
-<p>같은 키가 두 곳에 있으면 뒤 update의 값이 사용됩니다. 이 래퍼가 필요한 이유를 설명할 수 있어야 합니다. LCEL이 임의의 이전 상태를 자동으로 모아 준다고 가정하지 않습니다.</p>
-</div>
-</details>
-<span id="graph"></span><details class="reading-topic" id="reading-graph"><summary>LangGraph의 상태 병합</summary><div class="prose"><p>Graph는 공통 함수가 반환한 키를 State에 반영합니다. search_step은 question과 documents 등을 바꾸고 answer_step은 result만 바꿉니다. 오늘은 고정 순차 경로라서 별도의 체크포인트나 반복을 추가하지 않습니다.</p>
-<p>31장은 연결 실패를 notice 노드로 분기했고, 이번 비교는 공통 answer_step 안에서 result=None을 유지하도록 정리했습니다. 두 경우 모두 검색 오류에서 생성기는 호출하지 않습니다. 제어를 어느 위치에 둘지 바뀌어도 실패 의미를 유지해야 합니다.</p>
-</div>
-</details>
-<span id="trace"></span><details class="reading-topic" id="reading-trace"><summary>단계별 입력과 소요 시간</summary><div class="prose"><p>observed는 원래 단계 함수를 한 번 실행하고 입력 요약, 반환 갱신, 경과 시간을 trace 목록에 추가합니다. trace는 State 밖에 있으므로 LCEL과 Graph의 결과 딕셔너리를 비교할 때 제외됩니다. 상태가 같아도 실행 시간은 매번 다를 수 있습니다.</p>
-<p>search의 입력 document_ids는 빈 목록이고 갱신에는 검색한 문서가 있습니다. answer 입력의 document_ids는 그 목록입니다. 기록을 읽는 데 다시 invoke할 필요가 없습니다. trace를 확인하기 위해 stream이나 invoke를 한 번 더 실행하면 별도 호출과 비용이 생길 수 있습니다.</p>
-</div>
-</details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>실패 사례의 재현 조건</summary><div class="table-scroll" tabindex="0"><table><caption>문제의 위치를 좁히기</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th></tr>
-</thead><tbody><tr><td>LCEL에 documents가 없음</td><td>전체 상태를 유지한 래퍼</td></tr>
-<tr><td>두 검색 문서가 다름</td><td>자료 해시·질문·k·함수·동점 처리</td></tr>
-<tr><td>시간만 다름</td><td>측정 구간·부하·실행 순서</td></tr>
-<tr><td>둘 다 같은 잘못된 답</td><td>공통 생성기와 원문 의미 평가</td></tr>
-<tr><td>연결 실패를 no_evidence로 표시</td><td>31장의 운영 오류 규칙 인계</td></tr>
-</tbody></table></div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

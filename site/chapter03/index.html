@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 03 / PYTHON</p>
 <span class="sidebar-title">함수의 반환값·타입 힌트·예외 처리</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-return"><span>02</span>print()와 return의 차이</a><a href="#nb-exception"><span>03</span>raise와 try/except로 ValueError 처리</a><a href="#nb-contract"><span>04</span>타입 힌트와 입력 정규화 함수</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>함수의 반환값·타입 힌트·예외 처리 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-return"><span>02</span>print()와 return의 차이</a><a href="#nb-exception"><span>03</span>raise와 try/except로 ValueError 처리</a><a href="#nb-contract"><span>04</span>타입 힌트와 입력 정규화 함수</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -62,6 +62,20 @@ print(parse_minutes(<span class="tok-string">" 30 "</span>) + <span class="tok-n
 <div class="cell-after"><p>함수가 정수 30을 반환했으므로 10을 더하면 40이 됩니다. -&gt; int는 반환값의 의도를 알려 주고, 범위는 if 문에서 직접 검사합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="functions"></span><div class="lesson-explanation" id="reading-functions"><h3>함수의 매개변수와 return</h3><div class="prose"><p>def는 함수 이름과 매개변수를 정해 처리 내용을 묶습니다. 정의만으로는 본문이 실행되지 않습니다. add_minutes(25, 35)처럼 호출할 때 25와 35가 first·second에 전달됩니다. 호출하며 넘긴 값은 인자라고 부릅니다.</p>
+<p>return은 결과를 호출한 자리로 돌려주고 해당 함수 실행을 끝냅니다. print는 화면에 보여 줄 뿐 호출자에게 계산 결과를 돌려주는 역할을 하지 않습니다. return을 쓰지 않은 함수의 반환값은 None입니다.</p>
+<p>함수 안에서 만든 result는 그 호출 안에서 사용하는 지역 변수입니다. 함수 밖에서는 combined처럼 반환값을 저장한 이름을 사용합니다.</p>
+</div>
+<div class="worked-case" id="flow-9"><h3>같은 30분을 출력할 때와 돌려줄 때</h3>
+<p>셀 01과 셀 02를 비교합니다. 화면에 찍힌 값과 호출한 쪽이 받은 값을 따로 보세요.</p>
+<article id="flow-9-step-0"><small>STEP 01 · 셀 01</small><h4>함수 내부의 print()</h4>
+<p>show_minutes가 문자열을 정수로 바꾸고 화면에 씁니다.</p><pre>show_minutes("30")
+화면: 30</pre></article><article id="flow-9-step-1"><small>STEP 02 · 셀 01</small><h4>명시적 return이 없을 때의 None</h4>
+<p>함수 끝에 return이 없어 saved에는 None이 들어갑니다.</p><pre>saved = None
+print(saved) → None</pre></article><article id="flow-9-step-2"><small>STEP 03 · 셀 02</small><h4>return으로 정수 전달</h4>
+<p>parse_minutes는 공백을 지우고 범위를 확인한 뒤 정수 30을 돌려줍니다.</p><pre>parse_minutes(" 30 ") → 30</pre></article><article id="flow-9-step-3"><small>STEP 04 · 셀 02</small><h4>반환값의 산술 연산</h4>
+<p>호출한 쪽이 30에 10을 더해 출력합니다.</p><pre>print(30 + 10) → 40</pre></article></div></div>
+
 </section>
 <section id="nb-exception" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>raise와 try/except로 ValueError 처리</h2>
@@ -89,6 +103,8 @@ print(parse_minutes(<span class="tok-string">" 30 "</span>) + <span class="tok-n
 <div class="cell-after"><p>‘분은 0~480 사이여야 합니다.’라는 문구가 나옵니다. raise가 실행되면 return까지 가지 않고 호출자의 except로 이동합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="errors"></span><div class="lesson-explanation" id="reading-errors"><h3>ValueError를 받는 호출자</h3><p>함수 안에서 raise ValueError(...)가 실행되면 그 함수의 나머지 줄은 건너뜁니다. 호출한 쪽의 try 블록에서 예외가 발생한 위치를 찾고, except ValueError가 어떤 메시지를 출력하는지 이어서 읽어 보세요.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 허용 범위의 경계 테스트</h3>
 <div class="cell-before"><p>480을 넣어 반환값이 정수 480인지 assert로 확인하고 그 값을 표시하세요.</p>
 <p>assert 뒤에는 참이어야 하는 조건을 씁니다. 조건이 참이면 다음 줄로 넘어가고 거짓이면 AssertionError에서 멈춥니다. 성공할 때 assert 자체는 아무것도 출력하지 않습니다.</p>
@@ -102,12 +118,24 @@ print(minutes)</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="tests"></span><div class="lesson-explanation" id="reading-tests"><h3>정상값·경곗값·예외 테스트</h3><div class="prose"><p>assert 뒤의 조건이 거짓이면 AssertionError가 발생합니다. 정답을 눈으로 보는 대신 예상 결과를 코드에 적어 바뀐 동작을 빠르게 찾습니다. assert는 개발용 검사에 사용하며 운영 입력 검증은 앞서 작성한 if와 raise로 유지합니다. Python 최적화 옵션에서는 assert가 생략될 수 있습니다.</p>
+<p>실패 검사는 오류가 발생해야 통과합니다. except의 pass는 이 실패가 예상됐다는 뜻입니다. else로 들어왔다는 것은 거부해야 할 입력이 통과했다는 뜻이므로 AssertionError를 냅니다. pytest로 검사를 모으는 방법은 7장에서 배웁니다.</p>
+</div></div>
+
 </section>
 <section id="nb-contract" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>타입 힌트와 입력 정규화 함수</h2>
 </div>
 </header>
 <p>제목 안에 붙은 여러 공백은 한 칸으로 합치고, 시간은 앞에서 만든 함수에 맡깁니다. 두 함수는 키보드나 파일 없이 문자열만 주면 확인할 수 있습니다.</p>
+
+<span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>타입 힌트와 입력 검증</h3><div class="prose"><p>title: str은 문자열을 받을 의도, -&gt; str은 문자열을 반환할 의도를 나타내는 타입 힌트입니다. 실행기가 이 표기만 보고 값을 자동 변환하거나 잘못된 타입을 모두 막지는 않습니다. 입력 규칙과 검사 코드를 함께 작성해야 합니다.</p>
+<p>normalize_title은 공백으로 나눈 단어들을 공백 하나로 다시 합칩니다. " ".join(목록)은 문자열 목록 사이에 공백을 넣어 연결합니다. parse_minutes는 정수로 바꾼 뒤 이 수업 예제의 허용 범위인 0~480분인지 확인합니다. 이 범위는 Python의 제한이 아니라 과제 규칙입니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>함수별 입출력 계약</caption><thead><tr><th scope="col">함수</th><th scope="col">허용 입력</th><th scope="col">결과·실패</th></tr>
+</thead><tbody><tr><td>normalize_title</td><td>문자열</td><td>공백을 정리한 문자열, 빈 입력이면 빈 문자열</td></tr>
+<tr><td>parse_minutes</td><td>정수를 나타내는 문자열</td><td>0~480 정수; 변환 실패·범위 밖이면 ValueError</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · split()과 join()으로 공백 정리</h3>
 <div class="cell-before"><p>split에 구분자를 주지 않으면 연속된 공백을 건너뜁니다.</p>
 </div>
@@ -119,6 +147,8 @@ print(normalize_title(<span class="tok-string">"  Python   기초 "</span>))</co
 <div class="cell-after"><p>Python과 기초 사이에 공백 한 칸만 남습니다. strip만 쓰면 양 끝은 정리돼도 가운데 세 칸이 남습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="boundary"></span><div class="lesson-explanation" id="reading-boundary"><h3>문자열 정리와 화면 출력 분리</h3><p>normalize_title은 정리한 문자열을 돌려주고 화면 출력은 호출한 쪽의 print가 맡습니다. 따라서 같은 함수의 반환값을 그대로 표시할 수도 있고, 다른 함수의 인자로 넘길 수도 있습니다.</p></div>
+
 <article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 변환 실패 예외 처리</h3>
 <div class="cell-before"><p>‘내일’을 넣으면 정수 변환에 실패하고, ‘481’을 넣으면 범위 검사에 걸립니다. 두 경우 모두 ‘0~480 사이의 정수를 입력하세요.’라고 출력하세요. 입력을 고칠 기회를 주기 위해 실패한 값을 0분으로 저장하지 않습니다.</p>
 </div>
@@ -134,6 +164,8 @@ print(normalize_title(<span class="tok-string">"  Python   기초 "</span>))</co
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="challenge"></span><div class="lesson-explanation" id="reading-challenge"><h3>숫자가 아닌 문자열 처리하기</h3><p>text에 들어 있는 ‘내일’은 int로 바꿀 수 없습니다. parse_minutes(text)를 try 안에서 호출하고 except ValueError에서 사용자가 고쳐야 할 입력을 안내해 보세요.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -142,66 +174,17 @@ print(normalize_title(<span class="tok-string">"  Python   기초 "</span>))</co
 <div class="prose"><p>‘ 0 ’과 ‘-1’을 각각 넣어 보세요. 하나는 정수 0을 돌려주고 하나는 범위에서 걸립니다. 함수에서 돌려줄 값과 호출자에게 알려 줄 실패를 종이에 한 줄씩 써 보면 다음 장에서 객체를 만들 때도 같은 입력 규칙을 재사용할 수 있습니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>함수의 반환값·타입 힌트·예외 처리 심화 읽기</h2>
-</div>
-</header>
-<span id="functions"></span><details class="reading-topic" id="reading-functions"><summary>함수의 매개변수와 return</summary><div class="prose"><p>def는 함수 이름과 매개변수를 정해 처리 내용을 묶습니다. 정의만으로는 본문이 실행되지 않습니다. add_minutes(25, 35)처럼 호출할 때 25와 35가 first·second에 전달됩니다. 호출하며 넘긴 값은 인자라고 부릅니다.</p>
-<p>return은 결과를 호출한 자리로 돌려주고 해당 함수 실행을 끝냅니다. print는 화면에 보여 줄 뿐 호출자에게 계산 결과를 돌려주는 역할을 하지 않습니다. return을 쓰지 않은 함수의 반환값은 None입니다.</p>
-<p>함수 안에서 만든 result는 그 호출 안에서 사용하는 지역 변수입니다. 함수 밖에서는 combined처럼 반환값을 저장한 이름을 사용합니다.</p>
-</div>
-<details class="case-reference" id="flow-9"><summary>같은 30분을 출력할 때와 돌려줄 때</summary>
-<p>셀 01과 셀 02를 비교합니다. 화면에 찍힌 값과 호출한 쪽이 받은 값을 따로 보세요.</p>
-<article id="flow-9-step-0"><small>STEP 01 · 셀 01</small><h4>함수 내부의 print()</h4>
-<p>show_minutes가 문자열을 정수로 바꾸고 화면에 씁니다.</p><pre>show_minutes("30")
-화면: 30</pre></article><article id="flow-9-step-1"><small>STEP 02 · 셀 01</small><h4>명시적 return이 없을 때의 None</h4>
-<p>함수 끝에 return이 없어 saved에는 None이 들어갑니다.</p><pre>saved = None
-print(saved) → None</pre></article><article id="flow-9-step-2"><small>STEP 03 · 셀 02</small><h4>return으로 정수 전달</h4>
-<p>parse_minutes는 공백을 지우고 범위를 확인한 뒤 정수 30을 돌려줍니다.</p><pre>parse_minutes(" 30 ") → 30</pre></article><article id="flow-9-step-3"><small>STEP 04 · 셀 02</small><h4>반환값의 산술 연산</h4>
-<p>호출한 쪽이 30에 10을 더해 출력합니다.</p><pre>print(30 + 10) → 40</pre></article></details>
-</details>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>타입 힌트와 입력 검증</summary><div class="prose"><p>title: str은 문자열을 받을 의도, -&gt; str은 문자열을 반환할 의도를 나타내는 타입 힌트입니다. 실행기가 이 표기만 보고 값을 자동 변환하거나 잘못된 타입을 모두 막지는 않습니다. 입력 규칙과 검사 코드를 함께 작성해야 합니다.</p>
-<p>normalize_title은 공백으로 나눈 단어들을 공백 하나로 다시 합칩니다. " ".join(목록)은 문자열 목록 사이에 공백을 넣어 연결합니다. parse_minutes는 정수로 바꾼 뒤 이 수업 예제의 허용 범위인 0~480분인지 확인합니다. 이 범위는 Python의 제한이 아니라 과제 규칙입니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>함수별 입출력 계약</caption><thead><tr><th scope="col">함수</th><th scope="col">허용 입력</th><th scope="col">결과·실패</th></tr>
-</thead><tbody><tr><td>normalize_title</td><td>문자열</td><td>공백을 정리한 문자열, 빈 입력이면 빈 문자열</td></tr>
-<tr><td>parse_minutes</td><td>정수를 나타내는 문자열</td><td>0~480 정수; 변환 실패·범위 밖이면 ValueError</td></tr>
-</tbody></table></div>
-</details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>호출자의 try/except</summary><div class="prose"><p>raise ValueError(...)는 현재 입력을 처리할 수 없다는 사실을 호출한 쪽에 알립니다. 호출자는 try 안에서 실행하고 except ValueError에서 그 종류의 실패를 처리합니다. 실패하면 try 안의 남은 문장은 건너뜁니다. else는 예외가 없을 때만 실행합니다.</p>
-<p>from contracts import parse_minutes는 같은 폴더의 contracts.py에서 함수를 가져옵니다. 이 파일은 앞 절의 함수를 그대로 담은 제공 파일입니다. 모듈을 직접 나누는 방법은 4장에서 연습합니다.</p>
-<p>여기서는 잘못된 입력을 알려 주고 다음 기록으로 넘어가는 정책을 택했습니다. 실패를 0분으로 바꾸면 실제 0분 기록과 구분할 수 없으므로 그렇게 처리하지 않습니다. except:처럼 모든 실패를 묶으면 철자 오류까지 숨길 수 있습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>오류를 만났을 때</caption><thead><tr><th scope="col">종류</th><th scope="col">의미</th><th scope="col">대응</th></tr>
-</thead><tbody><tr><td>SyntaxError</td><td>코드를 읽을 수 없는 문법</td><td>실행 전 문법 수정</td></tr>
-<tr><td>ValueError</td><td>종류는 맞지만 값이 조건을 위반</td><td>입력 안내·재시도 또는 해당 기록 제외</td></tr>
-<tr><td>NameError</td><td>정의하지 않은 이름 사용</td><td>변수·함수 철자와 정의 확인</td></tr>
-<tr><td>TypeError</td><td>지원하지 않는 종류의 연산</td><td>호출자와 함수의 계약 대조</td></tr>
-</tbody></table></div>
-</details>
-<span id="boundary"></span><details class="reading-topic" id="reading-boundary"><summary>계산 로직과 입출력 함수 분리</summary><div class="prose"><p>순수 함수는 같은 입력에 같은 결과를 반환하고 파일·화면·네트워크 같은 바깥 상태를 바꾸지 않습니다. normalize_title·parse_minutes·make_summary는 이 입력 계약 안에서 결과를 계산합니다. input()과 print()는 사용자·화면과 상호작용하므로 바깥쪽에 둡니다.</p>
-<p>외부 API 호출은 네트워크나 서버 상태에 따라 실패할 수 있습니다. 6장에서 실제 호출을 다루기 전에 지금은 콘솔 입력을 경계로 삼습니다. 계산 부분이 input()을 직접 부르지 않으면 값을 넣어 반복 검사하기 쉽습니다.</p>
-</div>
-</details>
-<span id="tests"></span><details class="reading-topic" id="reading-tests"><summary>정상값·경곗값·예외 테스트</summary><div class="prose"><p>assert 뒤의 조건이 거짓이면 AssertionError가 발생합니다. 정답을 눈으로 보는 대신 예상 결과를 코드에 적어 바뀐 동작을 빠르게 찾습니다. assert는 개발용 검사에 사용하며 운영 입력 검증은 앞서 작성한 if와 raise로 유지합니다. Python 최적화 옵션에서는 assert가 생략될 수 있습니다.</p>
-<p>실패 검사는 오류가 발생해야 통과합니다. except의 pass는 이 실패가 예상됐다는 뜻입니다. else로 들어왔다는 것은 거부해야 할 입력이 통과했다는 뜻이므로 AssertionError를 냅니다. pytest로 검사를 모으는 방법은 7장에서 배웁니다.</p>
-</div>
-</details>
-<span id="challenge"></span><details class="reading-topic" id="reading-challenge"><summary>함수 실습 · 기록 입력 검증</summary><div class="prose"><p>시작 파일의 NotImplementedError는 아직 작성하지 않은 자리를 표시합니다. 각 함수의 TODO를 구현한 뒤 해당 raise 줄을 제거하세요. 필요한 parse_minutes import는 미리 제공했습니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.python.org/3.14/tutorial/controlflow.html" target="_blank" rel="noopener noreferrer">함수 정의 ↗</a><span></span></li>
 <li><a href="https://docs.python.org/3.14/tutorial/errors.html" target="_blank" rel="noopener noreferrer">예외 처리 ↗</a><span></span></li>
 <li><a href="https://docs.python.org/3.14/library/typing.html" target="_blank" rel="noopener noreferrer">타입 힌트 ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

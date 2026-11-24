@@ -9,8 +9,6 @@ function revealTopic() {
     parent.open = true;
     parent = parent.parentElement?.closest('details');
   }
-  const topic = target.nextElementSibling;
-  if (topic?.matches('details.reading-topic')) topic.open = true;
   target.scrollIntoView();
 }
 window.addEventListener('hashchange', revealTopic);

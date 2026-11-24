@@ -55,6 +55,8 @@
 <div class="cell-after"><p>True와 r6가 나옵니다. 첫 값은 현재 두 사본의 바이트 일치이고 둘째 값은 복구한 사본을 읽은 결과입니다. 셀이 끝나면 이 셀의 임시 디렉터리는 정리됩니다.</p>
 </div>
 </article>
+<div class="lesson-explanation" id="note-code-1"><h3>True와 r6이 확인한 복원 결과의 차이</h3><p>True는 복사한 두 파일을 바이트 단위로 비교한 결과입니다. r6은 복구한 위치에서 JSON을 다시 읽고 마지막 요청 ID를 꺼낸 값입니다. 바이트가 같다는 검사와 복구 파일을 실제로 파싱해 원하는 기록을 찾는 검사를 함께 수행한 셈입니다.</p></div>
+
 </section>
 <section id="nb-replay" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>복원한 레코드의 내용과 중복 검사</h2>

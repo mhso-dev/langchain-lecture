@@ -67,6 +67,8 @@ RULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules
 <div class="cell-after"><p>답 바로 아래에 RULE-A의 위치가 붙습니다. 출처 ID만 나왔다면 검색 결과의 누락인지 화면 함수에서 일부 필드만 읽었는지 두 값을 대조하세요.</p>
 </div>
 </article>
+
+<figure class="lesson-clip workflow-clip" id="workflow-empty-source-loop"><h3>출처가 0건이면 show_reply()에서 어느 줄까지 실행될까?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-empty-source-loop.mp4" aria-label="출처가 0건이면 show_reply()에서 어느 줄까지 실행될까?" aria-describedby="workflow-empty-source-loop-caption"></video><figcaption id="workflow-empty-source-loop-caption">추가 질문도 답변 영역에 표시됩니다. 빈 sources를 순회하면 citation_line()은 한 번도 호출되지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>응답 받기</strong> · sources = []</li><li><strong>답 표시</strong> · answer = 장비 A인가요, 장비 B인가요?</li><li><strong>출처 순회</strong> · 반복 횟수 = 0회</li><li><strong>표시 종료</strong> · 출력 = 질문 한 줄</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>show_reply()의 추가 질문</h3>
 <div class="cell-before"><p>아래 셀을 실행한 뒤 바로 앞의 결과와 비교하세요.</p>
 </div>

@@ -50,6 +50,8 @@ print(normalized)</code></pre></figure>
 <div class="cell-after"><p>둘째 줄에는 장비 A 사이의 공백이 생깁니다. ‘의’ 뒤의 질문 내용은 같습니다. 원문과 처리본을 함께 두면 답이 바뀐 원인을 설명할 수 있습니다.</p>
 </div>
 </article>
+<div class="lesson-explanation" id="note-code-1"><h3>전방 탐색에서 다음 글자가 보존되는 이유</h3><p>장비A의에서 패턴이 치환하는 부분은 장비A까지입니다. (?=...)는 뒤의 의를 읽어도 그 글자를 소비하지 않으므로 치환 뒤에도 의가 그대로 붙습니다. A 뒤에 영문 B가 이어지면 이 조건을 통과하지 않습니다.</p></div>
+
 </section>
 <section id="nb-guard" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>접두어 오인식을 막는 반례</h2>

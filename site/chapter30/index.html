@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 30 / RETRIEVER NODE</p>
 <span class="sidebar-title">LangGraph의 검색 노드와 답변 노드</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-records"><span>02</span>retrieve()의 문서와 출처 반환</a><a href="#nb-required"><span>03</span>StateGraph에 검색·답변 노드 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph의 검색 노드와 답변 노드 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-records"><span>02</span>retrieve()의 문서와 출처 반환</a><a href="#nb-required"><span>03</span>StateGraph에 검색·답변 노드 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -68,6 +68,10 @@ print(retrieve(<span class="tok-string">'대출 기간은?'</span>, <span class=
 <div class="cell-after"><p>library-1에 14일이라는 문장, 가상 도서관 이용 안내, 1쪽이 함께 있습니다. text만 남기면 다음 노드에서 출처를 복원할 수 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>retrieve(question, k)의 반환값</h3><p>검색에 쓰는 세 낱말은 대출·휴관·반납입니다. 하나도 들어 있지 않으면 빈 리스트를 돌려줍니다. 일치하는 낱말이 있으면 거리와 문서 ID로 정렬한 뒤 앞의 k개를 반환합니다. 셀 01은 k=1의 첫 레코드를 출력합니다.</p></div>
+<span class="lesson-anchor" id="state-bridge"></span><div class="lesson-explanation" id="reading-state-bridge"><h3>문장에 출처와 쪽 번호를 함께 보관하기</h3><p>26장에서는 documents의 원소가 문자열이었습니다. 여기서는 한 문서를 id·text·source·page 네 필드로 받습니다. 답변에는 text를 쓰고, 어떤 자료의 몇 쪽인지 확인할 때는 같은 레코드에서 source와 page를 읽습니다.</p></div>
+<span class="lesson-anchor" id="chroma"></span><span class="lesson-anchor" id="reading-chroma"></span>
+
 </section>
 <section id="nb-required" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>StateGraph에 검색·답변 노드 연결</h2>
@@ -79,6 +83,8 @@ print(retrieve(<span class="tok-string">'대출 기간은?'</span>, <span class=
 <video autoplay loop muted playsinline aria-label="검색 노드에서 답변까지 따라가는 문서 한 건" src="visual-required.mp4"></video>
 <figcaption>휴관 질문은 library-2를 찾습니다. 답변 노드가 문서 본문으로 답을 만듭니다. 쪽 번호 2는 최종 상태의 documents에서 따로 읽습니다.</figcaption></figure>
 <!-- /lesson-visual visual-required -->
+
+<figure class="lesson-clip workflow-clip" id="workflow-record-survives-compose"><h3>같은 레코드의 본문과 페이지가 서로 다른 곳으로 갑니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-record-survives-compose.mp4" aria-label="같은 레코드의 본문과 페이지가 서로 다른 곳으로 갑니다" aria-describedby="workflow-record-survives-compose-caption"></video><figcaption id="workflow-record-survives-compose-caption">그래프 이름 compose에 등록한 함수는 answer_node입니다. 이 함수는 answer만 반환합니다. 쪽 번호는 END의 documents에서 읽습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = 휴관 요일은 언제인가요?</li><li><strong>search</strong> · documents[0] = library-2 · page 2</li><li><strong>compose</strong> · answer = 도서관은 월요일에 휴관합니다.</li><li><strong>END</strong> · documents[0][&quot;page&quot;] = 2</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색·답변 노드를 간선으로 연결</h3>
 <div class="cell-before"><p>아래 그래프에서 START 다음에 연결한 노드를 찾고 휴관 질문을 실행하세요.</p>
 <p>이 노트북의 retrieve는 공백 질문에서 []를 반환하고 답변은 상태의 answer에서 읽습니다. 뒤의 R1/A1 참고 구현은 공백을 ValueError로 처리하며 result 안에 답을 넣습니다. 두 구현의 키를 섞으면 값을 찾을 수 없습니다.</p>
@@ -112,6 +118,8 @@ print(result[<span class="tok-string">'answer'</span>], result[<span class="tok-
 <div class="cell-after"><p>월요일이라는 답 뒤에 2가 붙습니다. 검색 함수가 고른 2쪽을 compose가 그대로 읽었습니다. 답 옆의 숫자는 결과 순위가 아닌 원문의 쪽수입니다. result는 실행 결과 전체의 변수 이름입니다. 답은 result["answer"], 원문 쪽수는 result["documents"][0]["page"]에서 읽습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="nodes"></span><div class="lesson-explanation" id="reading-nodes"><h3>검색 노드가 쓰는 필드와 답변 노드가 읽는 필드</h3><p>search_node는 documents만 반환합니다. 다음 compose 노드는 그 목록에서 첫 문서의 text를 꺼내 answer를 씁니다. 마지막 print에서 page를 읽을 수 있는 이유는 검색 노드가 넘긴 문서가 결과 상태에 남기 때문입니다.</p></div>
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 빈 검색 결과의 응답 분기</h3>
 <div class="cell-before"><p>‘주차 요금은?’을 넣고 documents와 answer를 차례로 확인하세요.</p>
 </div>
@@ -123,6 +131,9 @@ print(empty[<span class="tok-string">'documents'</span>], empty[<span class="tok
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="failures"></span><div class="lesson-explanation" id="reading-failures"><h3>검색에 성공했지만 근거가 없을 때</h3><p>주차 질문에는 자료의 세 낱말이 없습니다. search가 빈 리스트를 기록해도 고정 간선은 compose로 이어집니다. compose가 빈 리스트를 읽고 안내를 씁니다. 다음 장에서는 검색 함수가 예외를 낸 경우와 비교합니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-empty-still-composes"><h3>검색 결과가 비어도 고정 간선은 compose로 갑니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-empty-still-composes.mp4" aria-label="검색 결과가 비어도 고정 간선은 compose로 갑니다" aria-describedby="workflow-empty-still-composes-caption"></video><figcaption id="workflow-empty-still-composes-caption">빈 리스트는 정상 반환값입니다. search에서 종료하지 않고 compose가 목록 길이에 맞는 안내를 고릅니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = 주차 요금은?</li><li><strong>search</strong> · documents = []</li><li><strong>compose</strong> · answer = 제공된 자료에서 확인할 수 없습니다.</li><li><strong>END</strong> · 최종 documents = []</li></ol></figure>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -131,51 +142,8 @@ print(empty[<span class="tok-string">'documents'</span>], empty[<span class="tok
 <div class="prose"><p>Chroma에서 같은 결과를 받을 때도 id, text, source, page 네 칸이 필요합니다. 여러 열로 나뉜 반환값을 합칠 때 목록 길이와 쪽수 단위를 확인하세요.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>LangGraph의 검색 노드와 답변 노드 심화 읽기</h2>
-</div>
-</header>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>검색 함수의 반환 계약</summary><div class="prose"><p>R1은 retrieve(question, k=2)가 id·text·source·page를 가진 문서 객체 목록을 반환하는 규칙입니다. 공백 질문, 양의 정수가 아닌 k, bool인 k는 ValueError입니다. True는 Python에서 정수처럼 취급될 수 있지만 검색 개수를 뜻하는 입력으로 허용하지 않습니다.</p>
-<p>출처가 빠진 문서는 정상 빈 검색과 다릅니다. DataContractError로 중단해 원본 데이터와 변환 코드를 확인합니다. 누락된 출처를 “출처 미등록” 같은 문장으로 채우면 어디에서 잘못됐는지 감춰집니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>함수와 상태의 대응 · 확장 R1/A1 구현</caption><thead><tr><th scope="col">대상</th><th scope="col">입력</th><th scope="col">출력/갱신</th></tr>
-</thead><tbody><tr><td>R1 retrieve</td><td>question, k</td><td>문서 객체 목록</td></tr>
-<tr><td>retrieve_node</td><td>question, k</td><td>정리한 question, documents</td></tr>
-<tr><td>answer_node</td><td>question, k, documents</td><td>A1 result</td></tr>
-<tr><td>A1 result</td><td>검색된 문맥과 생성 문자열</td><td>status, answer, sources, generation_calls</td></tr>
-</tbody></table></div>
-</details>
-<span id="state-bridge"></span><details class="reading-topic" id="reading-state-bridge"><summary>문자열 목록과 출처 객체</summary><div class="prose"><p>26장 입문 예제의 documents: list[str]에는 문장만 들어 있었습니다. 문자열만 보고 원문 제목과 페이지를 확실히 복원할 수는 없습니다. 오늘은 23장의 검색 결과가 이미 제공하는 출처 객체를 그대로 저장합니다. 기존 문자열에 임의의 ID나 페이지를 붙이는 변환은 하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>답은 어느 키에서 읽을까요?</caption><thead><tr><th scope="col">확인할 값</th><th scope="col">26장 입문 예</th><th scope="col">30장 셀 02</th><th scope="col">R1/A1 확장 구현</th></tr>
-</thead><tbody><tr><td>검색 결과 한 건</td><td>문장 문자열</td><td>documents[0]의 id·text·source·page</td><td>같은 네 필드를 가진 객체</td></tr>
-<tr><td>답을 읽는 위치</td><td>상태의 answer</td><td>result = graph.invoke(request) 뒤 result["answer"]</td><td>상태의 result 안에 있는 answer와 sources</td></tr>
-<tr><td>검색 개수</td><td>예제 내부 규칙</td><td>search_node에서 k=1</td><td>입력 k를 검사한 뒤 전달</td></tr>
-</tbody></table></div>
-<div class="prose"><p>셀 02의 result는 graph.invoke가 돌려준 상태 전체에 붙인 변수 이름입니다. 아래 R1/A1 확장에서는 상태 안에 result라는 키를 따로 만들어 답과 출처를 함께 보관합니다.</p>
-</div>
-</details>
-<span id="nodes"></span><details class="reading-topic" id="reading-nodes"><summary>검색·답변 노드의 상태 변경 필드</summary><div class="prose"><p>retrieve_node는 R1 함수를 한 번 호출하고 문서를 검증합니다. answer_node는 같은 목록을 A1에 넘깁니다. lambda는 이미 찾은 문서를 반환하므로 여기서 저장소를 다시 조회하지 않습니다. 검색을 두 번 하면 중간에 바뀐 자료나 순서 때문에 답변과 표시 출처가 달라질 수 있습니다.</p>
-</div>
-<div class="prose"><p>START에서 answer_node로 바로 가는 연결은 없습니다. 빈 검색에서도 answer_node는 실행되지만, A1은 생성기를 호출하지 않고 no_evidence를 반환합니다. 노드 실행 수와 생성 함수 호출 수는 다른 값입니다. 이 생성 함수는 고정 규칙이므로 generation_calls=1을 외부 모델 호출 1회로 해석하지 않습니다.</p>
-</div>
-</details>
-<span id="chroma"></span><details class="reading-topic" id="reading-chroma"><summary>Chroma 결과의 형식 변환</summary><div class="prose"><p>expected_embedding은 인덱스 생성과 질문 벡터 생성에 사용한 E1 기록입니다. provider·model·dimension·normalization·distance와 문서/원문/청킹 정책 해시가 일치해야 합니다. 차원만 같다고 다른 모델의 벡터를 섞지 않습니다. 어댑터를 만들 때 이 기록부터 확인하고, 질의할 때 실제 벡터 길이도 검사합니다.</p>
-<p>Chroma의 한 질의 결과는 ids[0], documents[0], metadatas[0]에 나뉘어 있습니다. [0]은 첫 질의 묶음입니다. 공통 변환 코드는 세 열의 길이와 출처 필드를 검사한 뒤 문서 객체를 만듭니다. 빈 컬렉션은 []이고 잘못된 열이나 출처는 DataContractError입니다. 통신 예외는 그대로 전달합니다.</p>
-</div>
-</details>
-<span id="failures"></span><details class="reading-topic" id="reading-failures"><summary>빈 문서 목록과 검색 예외</summary><div class="table-scroll" tabindex="0"><table><caption>실패를 나누는 기준 · 확장 R1/A1 구현</caption><thead><tr><th scope="col">상황</th><th scope="col">관찰할 결과</th><th scope="col">다음 행동</th></tr>
-</thead><tbody><tr><td>문서 존재</td><td>A1 answered 또는 invalid_citation</td><td>답변과 실제 인용 원문 대조</td></tr>
-<tr><td>정상 빈 검색</td><td>no_evidence, 생성 호출 0</td><td>자료·질문 범위 확인</td></tr>
-<tr><td>공백 질문/bool k</td><td>ValueError</td><td>사용자 입력 수정</td></tr>
-<tr><td>출처 누락/잘못된 결과 열</td><td>DataContractError</td><td>데이터·변환 코드 수정</td></tr>
-<tr><td>TimeoutError/ConnectionError</td><td>예외가 호출자로 전달</td><td>연결 상태 확인</td></tr>
-</tbody></table></div>
-<div class="prose"><p>30장은 오류를 숨기지 않는 기준선을 만듭니다. 31장에서 예상 연결 실패만 별도 운영 상태로 바꾸고 안내합니다. 정상 빈 검색처럼 처리하면 장애가 발생한 사실을 놓치게 됩니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

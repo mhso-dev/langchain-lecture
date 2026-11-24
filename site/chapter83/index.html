@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY / 083</p>
 <span class="sidebar-title">멱등적인 완료 상태 갱신</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reproduce"><span>02</span>토글 방식과 중복 요청 재현</a><a href="#nb-fix"><span>03</span>목표 상태 대입과 회귀 검사</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>멱등적인 완료 상태 갱신 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reproduce"><span>02</span>토글 방식과 중복 요청 재현</a><a href="#nb-fix"><span>03</span>목표 상태 대입과 회귀 검사</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -37,6 +37,10 @@
 <!-- END MOTION -->
 
 
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="section-01"></span><span class="lesson-anchor" id="reading-section-01"></span>
+<span class="lesson-anchor" id="section-02"></span><div class="lesson-explanation" id="reading-section-02"><h3>동일한 요청을 두 번 보내기</h3><p>결함을 보려면 같은 딕셔너리에 목표 True를 두 번 전달해야 합니다. 호출할 때마다 새 딕셔너리를 만들면 첫 번째 요청만 반복하는 셈이어서 두 번째 호출의 문제를 발견할 수 없습니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-toggle-twice"><h3>같은 완료 요청이 두 번째에 미완료를 만드는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-toggle-twice.mp4" aria-label="같은 완료 요청이 두 번째에 미완료를 만드는 경로" aria-describedby="workflow-toggle-twice-caption"></video><figcaption id="workflow-toggle-twice-caption">faulty_update는 전달받은 목표 값 대신 현재 값을 뒤집습니다. 요청이 두 번 들어왔을 때의 실제 출력을 읽어 보세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>완료 요청</strong> · 목표 상태 = True</li><li><strong>상태 반전</strong> · not False = True</li><li><strong>완료</strong> · 첫 번째 출력 = True</li><li><strong>완료 요청</strong> · 재전송한 목표 = True</li><li><strong>상태 반전</strong> · not True = False</li><li><strong>미완료</strong> · 두 번째 출력 = False</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 반복 요청으로 토글 오류 재현</h3>
 <div class="cell-before"><p>아래 결함은 수업용으로 의도해 넣었습니다. 두 번째 결과를 첫 번째와 비교하세요.</p>
 </div>
@@ -52,12 +56,18 @@ False</pre></div>
 <div class="cell-after"><p>True 다음에 False가 나옵니다. 두 번 모두 보낸 값은 True였는데 함수는 인자를 읽지 않고 현재 상태만 뒤집었습니다. Codex에 보낼 오류 보고에는 요청 두 건과 두 번째 실제 결과를 함께 적으세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>호출 횟수에 따라 바뀌는 토글</h3><p>faulty_update는 전달된 completed 인자를 사용하지 않습니다. 현재 값에 not을 적용하므로 이미 완료된 행도 같은 요청을 한 번 더 받으면 미완료가 됩니다.</p></div>
+<span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
+<span class="lesson-anchor" id="section-05"></span><span class="lesson-anchor" id="reading-section-05"></span>
+
 </section>
 <section id="nb-fix" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>목표 상태 대입과 회귀 검사</h2>
 </div>
 </header>
 
+
+<span class="lesson-anchor" id="section-06"></span><span class="lesson-anchor" id="reading-section-06"></span>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 목표 상태 대입의 멱등성</h3>
 <div class="cell-before"><p>원래 함수에서 받은 completed 값을 그대로 대입하고 같은 입력 두 번의 결과를 출력하세요.</p>
 </div>
@@ -75,6 +85,8 @@ print(update(row, <span class="tok-keyword">True</span>), update(row, <span clas
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="section-07"></span><div class="lesson-explanation" id="reading-section-07"><h3>목표 상태의 직접 대입</h3><p>수정한 함수는 호출자가 원하는 값을 item[&quot;completed&quot;]에 대입해야 합니다. 같은 True를 여러 번 대입해도 저장값은 True로 유지되고, False를 전달한 경우에만 완료가 해제됩니다.</p></div>
+
 <div class="learn-detail"><h4>동일 입력 반복에 따른 최종 상태</h4>
 <table style="width:100%;border-collapse:collapse"><thead><tr><th scope="col">구현</th><th scope="col">첫 요청 True</th><th scope="col">둘째 요청 True</th></tr>
 </thead><tbody><tr><td>셀 01 · 현재 값을 뒤집음</td><td>True</td><td>False</td></tr>
@@ -105,6 +117,9 @@ last = update(row, <span class="tok-keyword">False</span>)
 <p>완료 요청을 두 번 보낸 뒤 해제했으므로 마지막 값은 False입니다. 요청할 때마다 상태를 뒤집는 구현은 두 번째 True 검사에서 멈춥니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-08"></span><div class="lesson-explanation" id="reading-section-08"><h3>반환값과 실제 저장값을 따로 검사하기</h3><p>first와 second의 반환값이 모두 True인지 보고, 두 시점에 복사한 행의 id·title·completed도 대조합니다. True를 반환하기만 하고 딕셔너리를 고치지 않은 함수라면 행 비교에서 드러납니다.</p></div>
+<span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -112,67 +127,12 @@ last = update(row, <span class="tok-keyword">False</span>)
 </header>
 <div class="prose"><p>수정 요청의 입력·기대·실제를 다른 팀원에게 보여 주고 초기 상태부터 재현하게 해 보세요. 같은 결과를 보지 못한다면 게시된 코드를 더 바꾸기 전에 사용한 저장소와 초기 데이터를 비교하세요.</p>
 </div>
+
+<span class="lesson-anchor" id="section-09"></span><span class="lesson-anchor" id="reading-section-09"></span>
+<span class="lesson-anchor" id="section-11"></span><span class="lesson-anchor" id="reading-section-11"></span>
+<span class="lesson-anchor" id="section-12"></span><span class="lesson-anchor" id="reading-section-12"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>멱등적인 완료 상태 갱신 심화 읽기</h2>
-</div>
-</header>
-<span id="section-01"></span><details class="reading-topic" id="reading-section-01"><summary>결함 입력과 영향 범위</summary><div class="prose"><p>82일차의 T1 앱과 검색·저장 실패 기록을 가져옵니다. 첫 15분에는 같은 ID·완료 규칙, 실제 실행한 환경, 아직 확인하지 않은 HTTP·PG 항목을 설명합니다. 이전 기록이 없으면 제공 자료를 읽고 자기 수행으로 바꾸지 않습니다.</p>
-<p>오늘의 결함은 강사가 일부러 만든 별도 사본입니다. 정상 reference와 오류 faulty가 같은 T1에서 출발하며 원래 82 앱에 결함이 있었다고 주장하지 않습니다. 완료 값을 명시 설정해야 하는데 현재 값을 반전시키는 차이를 다룹니다.</p>
-<p>오류 재현은 기대와 실제가 어긋나는 조건을 고정하는 일입니다. “완료가 이상하다”보다 초기 false, 같은 ID, true 두 번, 기대 true/true, 실제 true/false를 적으면 다른 사람이 같은 경로를 따라갈 수 있습니다.</p>
-</div>
-</details>
-<span id="section-02"></span><details class="reading-topic" id="reading-section-02"><summary>오류 재현 절차</summary><div class="prose"><p>재현 보고에는 작업 폴더, 버전, 입력 순서, 기대, 실제 출력과 종료 코드를 넣습니다. 콘솔의 마지막 줄만 복사하면 초기 데이터가 무엇이었는지 알 수 없습니다. 같은 제목이 있어도 ID가 다르면 다른 항목입니다.</p>
-<p>7일차의 재현 기록 방식처럼 관찰과 가설을 분리합니다. “반전 코드가 원인 같다”는 가설이고 실제 true/false는 관찰입니다. 코드와 같은 검사가 그 가설을 지지하는지 다음 단계에서 확인합니다.</p>
-</div>
-</details>
-<span id="section-03"></span><details class="reading-topic" id="reading-section-03"><summary>오류가 있는 기준 구현</summary><div class="prose"><p>faulty는 메모리 저장소와 PG 저장소의 update에만 반전 로직을 넣었습니다. 메모리에서 current를 읽어 반전하고, PG 경로에서는 get으로 읽은 현재 완료를 반전해 UPDATE에 전달합니다. 둘 다 사용자가 보낸 목표 값을 무시한다는 같은 오류입니다.</p>
-<p>PG의 get과 UPDATE를 늘린 코드가 실제 DB에서 실행됐다는 뜻은 아닙니다. 제공 관찰은 메모리 실행과 PG 호출 대역입니다. 실제 HTTP·PG 재현 여부는 빈 기록에 따로 남깁니다.</p>
-<p>정상 원본을 고쳐 오류를 만드는 대신 작업 사본을 사용합니다. 수정 전 파일을 보존해야 어떤 줄이 바뀌었는지 비교할 수 있습니다. 같은 파일 이름이어도 다른 폴더를 실행하면 다른 실험이 됩니다.</p>
-</div>
-</details>
-<span id="section-04"></span><details class="reading-topic" id="reading-section-04"><summary>수정 전 실패 기록</summary><div class="prose"><p>실패 출력의 observed가 true/false인지 확인합니다. ModuleNotFoundError로 종료됐다면 아직 완료 규칙을 시험한 것이 아닙니다. 환경 오류를 기대한 테스트 실패라고 기록하지 않습니다.</p>
-<p>같은 기대를 reference에 적용하면 true/true가 됩니다. 이 비교는 사용자가 요청한 상태를 그대로 유지하는 의미를 보여 주며 네트워크에서 정확히 한 번 실행을 보장하는 증거는 아닙니다.</p>
-</div>
-</details>
-<span id="section-05"></span><details class="reading-topic" id="reading-section-05"><summary>Codex에 전달할 재현 입력</summary><div class="prose"><p>Codex에 전달할 맥락에는 현재 작업 사본과 수정 가능한 파일을 적습니다. 목표는 completed를 반전하지 않고 요청한 bool로 설정하는 것입니다. ID·제목·타입·검색·오류 외피는 유지합니다.</p>
-<p>같은 재현 명령과 기대를 요청에 넣으면 수정 뒤 무엇을 다시 확인할지 분명해집니다. “모든 테스트를 통과시켜라”만 요청하면 검사 삭제나 범위 밖 변경을 놓치기 쉽습니다. 변경 이유와 검증 계획을 먼저 읽습니다.</p>
-<p>도구를 사용할 수 없으면 제공 두 함수를 비교하고 같은 수정을 수동으로 검토합니다. 실제 Codex 응답·시간·커밋이 없으면 만들어 적지 않습니다. 제공 참조는 도구 실측 산출물이 아닙니다.</p>
-</div>
-</details>
-<span id="section-06"></span><details class="reading-topic" id="reading-section-06"><summary>원인과 변경 diff 검토</summary><div class="prose"><p>diff에서 가장 먼저 보는 것은 요구와 줄의 관계입니다. 현재 값 반전을 제거하는 변경은 완료 설정에 필요하지만, 날짜나 인증을 추가하는 변경은 이번 오류와 관계없습니다. 한 번에 다른 기능을 바꾸면 효과를 나누기 어렵습니다.</p>
-<p>검사 기대를 true/false로 바꾸거나 실패를 무조건 성공으로 처리하면 프로그램의 약속이 바뀝니다. 출력의 오류 메시지만 숨기는 것도 원인을 고친 것이 아닙니다. 같은 입력의 상태가 true/true로 회복되는지 확인해야 합니다.</p>
-<p>PG 사본의 추가 get은 반전용 현재 값을 얻으려고 들어간 코드입니다. 명시 값을 그대로 UPDATE하면 필요하지 않습니다. 그 조회를 제거한 이유도 diff에 설명하되 실제 PG 지연 개선을 측정했다고 말하지 않습니다.</p>
-</div>
-</details>
-<span id="section-07"></span><details class="reading-topic" id="reading-section-07"><summary>완료 상태 갱신의 최소 수정</summary><div class="prose"><p>작업 사본에서 요청값을 반전시키는 줄을 제거하고 이미 검증된 patch를 그대로 적용합니다. completed가 없는 제목 수정에서는 완료 상태를 건드리지 않습니다. 문자열 true를 실제 bool로 몰래 바꾸는 기능도 추가하지 않습니다.</p>
-<p>수정 뒤에는 입력·검사 버전을 바꾸지 않고 같은 명령을 다시 실행합니다. 기대는 처음부터 true/true였고, 바뀐 것은 오류 사본의 처리뿐이어야 합니다. 원본 reference는 비교용으로 그대로 남깁니다.</p>
-<p>학생이 직접 수행한 결과는 자기 작업 폴더의 출력입니다. provided의 복구 관찰을 복사했다면 제공 분석으로 표시합니다. 작성자 임시 사본에서 정상 코드와 바이트가 같아졌다는 근거는 학생 작업이 같다는 증거가 아닙니다.</p>
-</div>
-</details>
-<span id="section-08"></span><details class="reading-topic" id="reading-section-08"><summary>경곗값과 회귀 사례</summary><div class="prose"><p>회귀는 새 수정이 기존 행동을 깨뜨리는지 보는 일입니다. 이번 변경은 완료 처리이므로 엄격한 bool과 제목만 수정하는 경우, 같은 제목 두 ID, 잘못된 patch 뒤 상태 보존을 먼저 확인합니다.</p>
-<p>검색·저장 실패·UI stale은 수정 파일과 의존 경로를 읽어 영향 범위를 판단합니다. 값 설정만 고쳤는데 오류를 빈 목록으로 바꾸거나 클라이언트 응답 형식을 바꾸었다면 범위가 넓어진 것입니다. 기존 정상 참조의 검사 근거는 해시가 같을 때 재사용합니다.</p>
-<p>같은 검사를 여러 번 실행한 수를 새 검사 수로 더하지 않습니다. 통과 행의 개수만으로 이해를 평가하지 말고 실패 입력과 유지한 계약을 설명하게 합니다. 실제 HTTP·PG 관찰이 없다면 남은 범위를 표시합니다.</p>
-</div>
-</details>
-<span id="section-09"></span><details class="reading-topic" id="reading-section-09"><summary>검색 조건의 결함 사례</summary><div class="prose"><p>기본·보충 경로는 완료 결함의 재현·diff·설명을 마무리합니다. 기본을 마친 학생은 같은 40분 안에서 %와 _의 문자 검색을 선택 대조할 수 있습니다. 모든 학생에게 새 결함을 추가로 구현하게 하지는 않습니다.</p>
-<p>예를 들어 %는 제목의 퍼센트 문자이고 와일드카드가 아닙니다. 공개 자료의 기대 ID와 준비된 strpos/바인딩 값을 읽습니다. 실제 PG에 요청하지 않았다면 아래 출력은 Python 기대입니다.</p>
-<p>선택 과제를 하더라도 정상 원본을 바꾸지 않습니다. 별도 실험 사본의 한 조건만 바꾸고, 기대와 실제의 차이를 설명한 뒤 원래 계약으로 돌아올 수 있게 기록합니다.</p>
-</div>
-</details>
-<span id="section-10"></span><details class="reading-topic" id="reading-section-10"><summary>수정 전후의 출력 대조</summary><div class="prose"><p>작성자 제공 관찰과 학생 실제 관찰은 나란히 둘 수 있지만 출처 칸은 다르게 둡니다. 사용자 만족·실제 모델 품질·운영 성능은 이 공개 완료 사례로 측정한 항목이 아닙니다.</p>
-</div>
-</details>
-<span id="section-11"></span><details class="reading-topic" id="reading-section-11"><summary>동료 재현과 롤백</summary><div class="prose"><p>동료 재현은 다른 사람이 안내만 보고 같은 결과를 얻는지 확인하는 활동입니다. 실제 참여한 사람의 명령·도움이 필요했던 지점·실패를 기록합니다. 참여하지 않은 동료의 반응은 채우지 않습니다.</p>
-<p>되돌리기는 자기 작업 사본의 특정 변경만 대상으로 합니다. 다른 파일의 진행 중 작업까지 전체 reset하거나 원본 자료를 삭제하지 않습니다. 저장해 둔 diff와 변경 전 사본을 기준으로 범위를 확인합니다.</p>
-</div>
-</details>
-<span id="section-12"></span><details class="reading-topic" id="reading-section-12"><summary>부분 업데이트에 전달할 검증 기록</summary><div class="prose"><p>84일차에는 정상 완료 설정을 유지한 앱에 새 요구를 추가합니다. 수정한 버전·같은 검사·T1 불변 조건·실제 미확인을 인계합니다. 의도적인 오류 사본은 다음 정상 앱의 기본값으로 사용하지 않습니다.</p>
-<p>O83-1은 재현 기록, O83-2는 최소 수정과 이유, O83-3은 같은 회귀·인계로 확인합니다. 목표별 근거충족·수정필요·미확인으로 피드백하고 코드 생성량이나 고정 합격점으로 대신하지 않습니다.</p>
-<p>제공 정상 참조를 그대로 읽은 학생도 근거를 설명할 수 있지만 실제 수정 수행과는 구분합니다. 다음 장에서 무엇을 유지하고 무엇을 확장할지 자기 말로 정리합니다.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

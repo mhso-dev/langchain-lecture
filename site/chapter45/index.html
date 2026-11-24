@@ -33,6 +33,8 @@
 </div>
 </header>
 <p class="concept-intro">검색 기준선은 개선 효과를 비교할 첫 구현입니다. 답변과 출처를 함께 돌려주고, 관련 문서를 놓친 질문도 남깁니다.</p><p>가상 안내 p2가 실린 수업용 페이지판은 1쪽입니다. 문단 ID를 course-guide-v1:p2로 연결하고 본문·출처·쪽수를 함께 넘깁니다. 모의 검색은 Q01의 정확한 문구만 받습니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-exact-query"><h3>기준선 검색에서 문단 하나가 선택되는 조건</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-exact-query.mp4" aria-label="기준선 검색에서 문단 하나가 선택되는 조건" aria-describedby="workflow-exact-query-caption"></video><figcaption id="workflow-exact-query-caption">strip()으로 양끝 공백을 지우고 전체 질문이 같은지 비교합니다. 참인 경로는 문서 객체의 본문과 출처를 함께 반환합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · 질문 = 과제는 어디에 내나요?</li><li><strong>전체 비교</strong> · 문장 전체의 일치 = True</li><li><strong>문서 반환</strong> · found[0] = course-guide-v1:p2 · 1쪽</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · retrieve()로 문서 본문·출처 조회</h3>
 <div class="cell-before"><p>도서관 예제의 library-1 대신 팀 자료의 문서 ID가 보이는지 확인하세요.</p>
 <p>기준선 한 행을 만들 때 질문, 기대 문단, 검색이 반환한 원문, 사용자에게 표시할 답을 따로 적으세요. 반환된 원문의 한 구절을 직접 가리킬 수 있는지 확인한 뒤, 화면용으로 짧게 다듬은 문장을 마지막 칸에 씁니다.</p>

@@ -19,10 +19,13 @@ class Page(HTMLParser):
         self.has_practice = False
         self.videos = []
         self.clip_playback_errors = []
+        self.closed_lesson_blocks = []
         self.title = None
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
+        if tag == "details" and not {"notebook-answer", "checkpoint"}.intersection(attrs.get("class", "").split()):
+            self.closed_lesson_blocks.append(attrs.get("id", attrs.get("class", "details")))
         if "id" in attrs:
             self.ids.add(attrs["id"])
         for key in ("href", "xlink:href", "src", "srcset", "poster", "data-gif", "data-still", "data-sheet"):
@@ -73,6 +76,8 @@ def main():
         if route not in home:
             errors.append(f"목차에서 {route} 누락")
         page = pages[ROOT / route]
+        if page.closed_lesson_blocks or 'href="#readings"' in (ROOT / route).read_text():
+            errors.append(f"{name} 본문에 접힌 설명 또는 이전 심화 읽기 목차가 남았습니다")
         if f"{name}.ipynb" not in page.notebooks:
             errors.append(f"{name} 노트북 링크 누락")
         notebook = json.loads((ROOT / name / f"{name}.ipynb").read_text())

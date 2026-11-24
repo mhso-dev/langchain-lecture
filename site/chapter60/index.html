@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 060</p>
 <span class="sidebar-title">사용자별 장기 기억과 SQL 저장</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>사용자별 장기 기억과 SQL 저장 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -55,6 +55,9 @@ print(memory.get((owner, <span class="tok-string">"language"</span>)))</code></p
 <div class="cell-after"><p>한국어가 나옵니다. 저장 키에는 대화 ID가 없으므로 다른 대화에서도 사용자의 같은 설정을 읽을 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><div class="lesson-explanation" id="reading-goals"><h3>대화를 넘어 사용할 설정</h3><p>language 같은 설정을 다시 쓰려면 누구의 선호인지 함께 저장해야 합니다. 이 셀에서 조회의 기준은 두 값으로 만든 키 (&quot;alice&quot;, &quot;language&quot;)입니다.</p></div>
+<span class="lesson-anchor" id="roles"></span><span class="lesson-anchor" id="reading-roles"></span>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 동일한 키의 소유자 분리</h3>
 <div class="cell-before"><p>설정 이름은 그대로 두고 사용자를 바꿉니다.</p>
 </div>
@@ -63,6 +66,9 @@ print(memory.get((owner, <span class="tok-string">"language"</span>)))</code></p
 <div class="cell-after"><p>None은 bob의 항목이 없다는 뜻입니다. 여기서 alice의 값으로 대체하면 사용자 경계가 무너집니다. DB 연결이 끊긴 상황은 조회 성공 후의 빈 값과 따로 처리합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="identity"></span><div class="lesson-explanation" id="reading-identity"><h3>같은 설정 이름과 다른 소유자</h3><p>alice의 language가 저장되어 있어도 (&quot;bob&quot;, &quot;language&quot;)는 다른 키입니다. 빈 조회의 None을 다른 사용자의 값으로 채우면 소유자 분리가 깨집니다.</p></div>
+<span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
+
 </section>
 <section id="nb-owner" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>선호 정보의 수정과 삭제</h2>
@@ -80,6 +86,8 @@ print(memory[(<span class="tok-string">'bob'</span>, <span class="tok-string">'l
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="crud"></span><div class="lesson-explanation" id="reading-crud"><h3>한 사용자 설정만 수정하기</h3><p>딕셔너리에서 (&quot;bob&quot;, &quot;language&quot;)에 값을 대입하면 그 키의 항목만 생기거나 바뀝니다. 삭제할 때도 (사용자, 설정 이름) 두 값을 모두 지정합니다.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 소유자별 설정 삭제</h3>
 <div class="cell-before"><p>샘플 복사본에서 alice의 language만 지우고 남은 bob의 설정을 출력하세요.</p>
 </div>
@@ -93,12 +101,16 @@ print(saved)</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="conversation"></span><span class="lesson-anchor" id="reading-conversation"></span>
+
 </section>
 <section id="nb-sql" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>SQL WHERE로 소유자별 조회</h2>
 </div>
 </header>
 <p>제공 PostgreSQL 저장소는 SELECT value FROM course_memories WHERE owner=%s AND memory_key=%s에 (user_id, memory_key)를 따로 전달합니다. 아래는 메모리 SQLite DB에 같은 행을 넣어 조건을 직접 실행하는 실습입니다. 두 드라이버가 쓰는 자리표시자가 다릅니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-owner-key-select"><h3>두 사용자의 language 중 하나만 조회하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-owner-key-select.mp4" aria-label="두 사용자의 language 중 하나만 조회하기" aria-describedby="workflow-owner-key-select-caption"></video><figcaption id="workflow-owner-key-select-caption">SQLite가 두 조건을 동시에 만족하는 행에서 value를 가져옵니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기억 테이블</strong> · language 행 = alice · bob</li><li><strong>WHERE 조건</strong> · 매개변수 = alice · language</li><li><strong>alice 행</strong> · value = 한국어</li><li><strong>fetchone</strong> · row[0] = 한국어</li></ol></figure>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · SQL 매개변수로 범위 제한</h3>
 <div class="cell-before"><p>SQLite의 ? 두 자리에 소유자와 설정 이름을 순서대로 전달합니다.</p>
 </div>
@@ -114,6 +126,12 @@ print(row[<span class="tok-number">0</span>])</code></pre></figure>
 <div class="cell-after"><p>한국어는 두 조건을 모두 만족한 행에서 읽었습니다. PostgreSQL 확인 환경에서는 같은 두 사용자를 준비한 뒤 새 연결에서 조회하고 앱을 재시작해 다시 읽습니다. 이 셀의 메모리 DB는 연결을 닫으면 사라집니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
+<span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>복합 기본 키와 조회 조건</h3><p>PRIMARY KEY(owner, memory_key)는 같은 사용자의 같은 설정이 두 행이 되는 것을 막습니다. SELECT의 WHERE에도 같은 두 열을 써서 같은 이름의 남의 설정을 제외합니다.</p></div>
+<span class="lesson-anchor" id="local"></span><span class="lesson-anchor" id="reading-local"></span>
+<span class="lesson-anchor" id="postgres"></span><span class="lesson-anchor" id="reading-postgres"></span>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -122,104 +140,8 @@ print(row[<span class="tok-number">0</span>])</code></pre></figure>
 <div class="prose"><p>대화 안에서만 유지할 발화와 다음 대화에서도 필요한 선호를 하나씩 골라 보세요. 새 프로세스에서 읽어야 하는 정보는 이 예제의 메모리 사전만으로 보존할 수 없습니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>사용자별 장기 기억과 SQL 저장 심화 읽기</h2>
-</div>
-</header>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>명시적 장기 기억 저장</summary><div class="prose"><p>대화가 바뀌어도 짧은 한국어 문장으로 답해 달라는 선호를 다시 쓰고 싶을 수 있습니다. 먼저 그 정보가 필요한지, 누가 저장을 요청했는지, 어떤 사용자에게 속하는지 정해야 합니다. 이 장에서는 가상 alice와 bob이 같은 answer_style 키를 쓰는 상황을 비교합니다.</p>
-<p>저장 함수는 54장의 B1 연결과 같은 SQL 값을 사용합니다. 로컬 검사에서는 연결 대역을 사용하며 실제 PostgreSQL을 실행한 결과와 구분합니다. 준비된 DB에서 이어서 실행할 코드와 절차도 제공하지만 현재 DB 성공을 주장하지 않습니다.</p>
-</div>
-</details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>DB 저장 함수와 기억 정책</summary><div class="prose"><p>54장의 repository.py는 동적 값을 SQL에 이어 붙이지 않고 %s와 별도 인수로 전달합니다. get_document는 소유 문서가 없으면 None이고, list_turns는 소유 대화가 없으면 KeyError입니다. 접속 오류는 정상 빈 결과로 바꾸지 않습니다.</p>
-<p>59장의 recent 정책은 같은 fixture에서 T3/T4를 고르고 장소·언어를 모델 입력에서 뺍니다. 그 결과가 장기 저장 필요성을 자동으로 결정하지는 않습니다. 오늘의 기억은 명시적으로 저장한 answer_style이며, 과거 대화 요약이나 답변 내용을 자동 추출한 값이 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>진입 자료의 성격</caption><thead><tr><th scope="col">파일</th><th scope="col">확인할 것</th><th scope="col">현재 제공 상태</th></tr>
-</thead><tbody><tr><td>inputs/chapter54-repository-tests.md</td><td>값 바인딩·소유자·rollback 기록</td><td>학생이 작성할 빈 양식 사본</td></tr>
-<tr><td>inputs/chapter59-comparison.json</td><td>recent의 T3/T4와 추정량 62</td><td>작성자 실행 관찰</td></tr>
-<tr><td>inputs/chapter59-conversation-policy.md</td><td>필수 사실·선택 이유·재확인</td><td>가상 사례의 작성자 정책 예시</td></tr>
-</tbody></table></div>
-</details>
-<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>저장 위치별 책임과 수명</summary><div class="prose"><p>State는 현재 대화에서 갱신할 값입니다. 체크포인터는 그 State를 thread별로 다시 찾는 경로입니다. Store는 namespace와 key로 대화를 넘어 정보를 찾는 인터페이스이고, 서비스 DB는 사용자·문서·대화·질문/답변 같은 업무 관계를 저장합니다. 같은 PostgreSQL 제품을 쓴다고 이 네 역할이 같은 테이블이 되지는 않습니다.</p>
-<p>namespace는 저장 영역을 구분하는 이름 묶음입니다. InMemoryStore에서 (alice, preferences)와 (bob, preferences)는 다른 영역입니다. 같은 Store 객체를 쓰는 동안 새 대화에서도 alice 값을 찾을 수 있지만 새 InMemoryStore 객체는 비어 있습니다. 대화를 넘는 범위와 프로세스 종료 뒤의 영속성을 구분합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>실습에서 확인하는 수명</caption><thead><tr><th scope="col">역할</th><th scope="col">선택 키</th><th scope="col">현재 구현</th><th scope="col">현재 확인 범위</th></tr>
-</thead><tbody><tr><td>State</td><td>현재 실행의 값</td><td>59 turns/question/selection</td><td>이번 실행과 갱신</td></tr>
-<tr><td>체크포인트</td><td>thread_id</td><td>InMemorySaver</td><td>같은 saver; 새 saver는 빈 값</td></tr>
-<tr><td>장기 Store</td><td>사용자 namespace/key</td><td>InMemoryStore</td><td>같은 객체; 디스크 보관 아님</td></tr>
-<tr><td>서비스 DB</td><td>B1 owner/PK/FK</td><td>PostgreSQL용 함수·SQL</td><td>로컬 대역 검사; 실제 DB HOLD</td></tr>
-</tbody></table></div>
-</details>
-<span id="identity"></span><details class="reading-topic" id="reading-identity"><summary>신뢰할 수 있는 사용자 식별</summary><div class="prose"><p>질문에 user_id=bob이라고 써도 그 요청의 사용자가 bob으로 바뀌어서는 안 됩니다. TrustedAppContext는 신뢰된 앱이 확인한 신원을 전달할 자리입니다. 이 수업에서는 제공 코드가 가상 alice/bob를 만들며 실제 로그인은 구현하지 않습니다.</p>
-<p>frozen dataclass는 생성 뒤 값 변경을 막습니다. 올바른 타입을 받았다는 사실만으로 실제 사용자 인증이 끝나는 것은 아닙니다. 실제 서비스에서는 인증 어댑터가 context를 만들고 외부 입력으로 user_id를 고르게 하지 않아야 합니다.</p>
-</div>
-<div class="prose"><p>put은 memory_key와 value 외의 필드를 거부합니다. user_id/thread_id를 추가하면 ValueError이며 DB를 부르지 않습니다. 사용자 식별자와 DB 접속 계정 course도 다릅니다. 이 owner 조건은 교육 계정으로 직접 SQL을 실행하는 사용자를 제한하는 RLS를 구현한 것이 아닙니다.</p>
-</div>
-</details>
-<span id="schema"></span><details class="reading-topic" id="reading-schema"><summary>DB에 기억 테이블 추가</summary><div class="prose"><p>53~54장의 사용자·문서·대화 테이블을 그대로 둡니다. 060_memory.sql은 course_users를 참조하는 course_memories 하나를 추가합니다. owner와 memory_key의 조합을 기본 키로 삼으므로 alice의 answer_style과 bob의 answer_style이 공존합니다.</p>
-<p>value는 문자열이고 updated_at은 갱신 시각입니다. Python 저장 경계는 공백 키·값을 거부합니다. SQL의 CHECK와 Python 검사가 같은 범위를 모두 검증한다고 가정하지 말고 실제 제약을 읽습니다. 이 테이블은 프레임워크 체크포인트 테이블을 대신하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>같은 키, 다른 사용자</caption><thead><tr><th scope="col">owner</th><th scope="col">memory_key</th><th scope="col">value</th><th scope="col">관계</th></tr>
-</thead><tbody><tr><td>alice</td><td>answer_style</td><td>간결한 한국어</td><td>alice의 값</td></tr>
-<tr><td>bob</td><td>answer_style</td><td>표로 정리</td><td>bob의 별도 값</td></tr>
-</tbody></table></div>
-<div class="prose"><p>제공 apply_schema.py는 같은 적용 기록에서 053을 확인하고 060을 순차 추가합니다. 공통 도구의 트랜잭션·잠금·적용 흐름을 보존하고 선택 단계와 오류 안내를 54/60으로 제한한 60장 사본입니다. 기존 표를 지우거나 새 볼륨으로 갈아타는 절차가 아닙니다.</p>
-</div>
-</details>
-<span id="crud"></span><details class="reading-topic" id="reading-crud"><summary>사용자·설정 키별 CRUD</summary><div class="prose"><p>put_memory는 새로운 키면 생성하고 같은 owner/key가 있으면 값을 갱신합니다. 이 동작을 upsert라고 부릅니다. ON CONFLICT의 두 열은 기본 키와 같으며, 값은 SQL 문자열 밖의 tuple로 전달합니다. 작은따옴표가 든 값도 SQL 명령으로 이어 붙이지 않습니다.</p>
-<p>get_memory는 같은 owner/key를 조회해 문자열 또는 None을 반환합니다. delete_memory는 지운 행이 하나일 때 True이고 없으면 False입니다. alice의 삭제가 bob의 같은 키에 영향을 주면 안 됩니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>기본 관찰 순서</caption><thead><tr><th scope="col">순서</th><th scope="col">동작</th><th scope="col">확인할 결과</th></tr>
-</thead><tbody><tr><td>1</td><td>alice answer_style 생성</td><td>alice는 값, bob은 None</td></tr>
-<tr><td>2</td><td>bob 같은 키 생성</td><td>두 사용자 값이 각각 유지</td></tr>
-<tr><td>3</td><td>alice 값 수정</td><td>bob 값은 그대로</td></tr>
-<tr><td>4</td><td>alice 삭제 후 재삭제</td><td>처음 True, 다음 False; bob 유지</td></tr>
-</tbody></table></div>
-</details>
-<span id="conversation"></span><details class="reading-topic" id="reading-conversation"><summary>대화와 사용자 선호의 분리 저장</summary><div class="prose"><p>표현 선호를 저장했다고 대화의 질문/답변 이력이 함께 저장되지는 않습니다. save_exchange는 54장의 save_turn을 호출하는 별도 경로입니다. 대화의 owner를 확인한 뒤 이력을 저장하며 기억 CRUD와 여러 호출을 묶은 원자적 트랜잭션을 제공한다고 주장하지 않습니다.</p>
-<p>내부 체크포인트 키를 만들 때에도 대화 소유권을 먼저 확인합니다. UUID 문법이 맞는 대화 ID를 안다는 사실만으로 권한이 생기지는 않습니다. list_turns가 타인/없는 대화에 KeyError를 내면 키를 반환하지 않습니다.</p>
-</div>
-<div class="prose"><p>같은 사용자의 새 대화 둘은 서로 다른 내부 키를 갖지만, 사용자 기억은 같은 owner/key로 찾습니다. 실제 인증과 HTTP 세션은 이후 69장의 경계입니다. 지금의 thread 문자열을 외부 사용자의 인증 정보로 사용하지 않습니다.</p>
-</div>
-</details>
-<span id="local"></span><details class="reading-topic" id="reading-local"><summary>로컬 격리 테스트</summary><div class="prose"><p>현재 가능한 검사는 실제 Python 저장 함수에 연결 대역을 주입한 실행입니다. FakeDB는 코드가 전달한 SQL과 인수를 기록하고 제한된 동작을 메모리에서 수행합니다. PostgreSQL 문법, FK, commit/rollback, 디스크 영속성을 검사하는 DB 엔진이 아닙니다.</p>
-<p>observe.py는 alice/bob CRUD, payload 신원 거부, 소유 대화, 접속 오류를 확인합니다. 별도로 설치된 InMemoryStore도 실행해 namespace 분리와 새 객체의 빈 결과를 관찰합니다. 두 실행 모드가 관찰 JSON에 구분되어 있습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>제공 결과에서 읽을 항목</caption><thead><tr><th scope="col">항목</th><th scope="col">현재 관찰</th><th scope="col">범위</th></tr>
-</thead><tbody><tr><td>단위 검사</td><td>7개 통과</td><td>Python 경계와 SQL 인수</td></tr>
-<tr><td>checks</td><td>12개 true</td><td>연결 대역의 CRUD/소유/오류</td></tr>
-<tr><td>store_mode</td><td>real_InMemoryStore_process_local</td><td>실제 라이브러리의 메모리 객체</td></tr>
-<tr><td>postgresql</td><td>HOLD</td><td>실제 DB는 확인하지 않음</td></tr>
-</tbody></table></div>
-<div class="prose"><p>새 실행은 runs/latest/user-isolation.json에 저장합니다. 제공 observations.json을 자기 실행으로 바꾸지 말고 둘을 비교합니다. 테스트 함수 이름과 실제 SQL 호출의 owner/key 인수를 같이 읽으면 실패 위치를 설명하기 쉽습니다.</p>
-</div>
-</details>
-<span id="postgres"></span><details class="reading-topic" id="reading-postgres"><summary>PostgreSQL 저장 검증 절차</summary><div class="prose"><p>현재 제작 환경에는 psycopg가 없어 실제 DB 실행을 완료하지 못했습니다. 설치·Docker 소켓·네트워크 제한을 우회하는 활동을 하지 않습니다. 준비된 강사 환경에서 아래 순서를 이어서 실행하고, 준비되지 않았다면 명령의 목적과 미실행 사유를 기록합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>실제 DB 검사 게이트</caption><thead><tr><th scope="col">실행</th><th scope="col">현재 결과</th><th scope="col">해석</th></tr>
-</thead><tbody><tr><td>RUN_POSTGRES_TESTS 미설정</td><td>4 SKIP</td><td>실제 검사를 실행하지 않음</td></tr>
-<tr><td>opt-in=1, 현재 의존성 상태</td><td>ModuleNotFoundError; setUpClass ERROR</td><td>0개 실행, DB 통과 아님</td></tr>
-<tr><td>준비된 환경의 opt-in</td><td>아직 미확인</td><td>CRUD·FK/rollback·소유 대화·단계 적용을 확인할 경로</td></tr>
-</tbody></table></div>
-<div class="prose"><p>제공 실제 테스트는 고유 memory60_test_ 접두사의 별도 schema를 만들고 그 schema만 종료 시 제거합니다. 공유 B1 schema나 볼륨을 초기화하지 않습니다. 해당 테스트 권한이 준비되지 않으면 오류로 남깁니다. 실제 DB를 통과한 뒤에도 새 OS와 DB 재시작은 각각 별도 확인입니다.</p>
-</div>
-</details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>조회 오류와 빈 기억 구분</summary><div class="prose"><p>없거나 지운 기억을 읽으면 None이지만 DB 접속 실패는 ConnectionError 같은 실행 오류입니다. 둘을 같은 빈 응답으로 처리하면 사용자는 저장한 정보가 사라졌다고 오해할 수 있습니다. 재시도 전에 실패 위치와 실행 여부를 확인합니다.</p>
-<p>다른 사용자 대화의 조회는 KeyError, payload에 신원을 추가하면 ValueError입니다. 현재 구현은 자동 재시도·중단 복구·실제 로그인·RLS를 제공하지 않습니다. 가상 context를 만들 수 있다는 사실을 인증 통과로 쓰지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>원인별 다음 확인</caption><thead><tr><th scope="col">상황</th><th scope="col">예상</th><th scope="col">확인할 경계</th></tr>
-</thead><tbody><tr><td>user_id/thread_id를 payload에 추가</td><td>ValueError, 저장 호출 전 중단</td><td>memory_service.put</td></tr>
-<tr><td>bob이 alice 대화 접근</td><td>KeyError, 내부 키 없음</td><td>repository.list_turns</td></tr>
-<tr><td>기억 없음</td><td>None</td><td>정상 조회 결과</td></tr>
-<tr><td>DB 통신 실패</td><td>예외 전파</td><td>접속과 실행 상태</td></tr>
-<tr><td>작은따옴표를 값에 포함</td><td>값 tuple에 그대로 전달</td><td>문자열 SQL 결합 금지</td></tr>
-</tbody></table></div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>소유자 격리 검증 기록</summary><div class="prose"><p>새 프로세스 조회 절차는 postgres_demo.py의 write와 read를 각각 실행하는 것입니다. 같은 새 UUID를 두 명령에 사용합니다. write를 같은 ID로 반복하면 중복 오류가 날 수 있고, delete-memory는 해당 기억만 지우며 대화 이력은 남깁니다. 전체 명령은 README에 있으며 현재 실제 DB 결과는 미확인입니다.</p>
-<p>63장은 필요한 경우만 기억을 선택하고, 69장은 인증된 소유 대화를 확인하며, 70장은 같은 B1에 업로드 상태와 저장을 연결합니다. 원래 SQL을 덮어쓰거나 A1의 여러 출처를 하나의 document_id로 축소하지 않도록 후속 계약을 확인해야 합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

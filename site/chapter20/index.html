@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 20 / RAG</p>
 <span class="sidebar-title">RAG 문서 로딩과 근거 메타데이터</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-sources"><span>02</span>문서 ID와 쪽 번호로 근거 식별</a><a href="#nb-loaders"><span>03</span>텍스트 파일과 PDF의 본문 추출</a><a href="#nb-unanswerable"><span>04</span>답변 가능 여부와 기준 질문</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>RAG 문서 로딩과 근거 메타데이터 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-sources"><span>02</span>문서 ID와 쪽 번호로 근거 식별</a><a href="#nb-loaders"><span>03</span>텍스트 파일과 PDF의 본문 추출</a><a href="#nb-unanswerable"><span>04</span>답변 가능 여부와 기준 질문</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -38,6 +38,8 @@
 
 <!-- END MOTION -->
 
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>문서 레코드에서 본문 찾기</h3><p>documents[0]은 문서 하나를 나타내는 딕셔너리입니다. text에서 대출 기간을, id와 page에서 이 문장을 다시 찾을 단서를 읽습니다. 이 세 값을 구분해 두면 이후 검색 결과의 근거를 확인할 수 있습니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 문서 ID와 쪽 번호</h3>
 <div class="cell-before"><p>이 수업의 공통 문서 세 건은 실제 도서관 정책이 아닌 가상 자료입니다.</p>
 <p>5장의 JSON은 학습 기록 한 건이라 제목은 title에서 읽었습니다. 오늘은 아래에서 제공하는 도서관 문서 목록을 사용합니다. documents[0]["text"]에는 대출 기간, documents[1]["text"]에는 휴관 안내가 들어 있습니다.</p>
@@ -53,6 +55,10 @@ print(closed[<span class="tok-string">"id"</span>], closed[<span class="tok-stri
 <div class="cell-after"><p>library-2, 2쪽, 월요일 휴관이라는 내용이 한 건에 붙어 있습니다. 같은 자료를 다음 장에서 나눠도 이 출처를 되찾을 수 있어야 합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="data"></span><div class="lesson-explanation" id="reading-data"><h3>가상 문서의 출처 구조</h3><div class="prose"><p>이 세 문서는 이후 LCEL·Graph·검색 도구 실습에서 공통으로 사용합니다. id는 문서 식별자, text는 본문, source는 출처 이름, page는 원문 위치를 뜻합니다. 여기의 page 1~3은 수업용 문서 페이지 번호이며 실제 기관 문서가 아닙니다.</p>
+<p>주차 요금은 자료에 없습니다. 모델이 그럴듯한 요금을 알고 있어도 근거 문서에서 확인할 수 없다고 답하는 것이 이번 서비스의 요구입니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 기대 근거 문서 선택</h3>
 <div class="cell-before"><p>‘대출 기간은 며칠인가요?’의 기대 원문 ID와 본문을 documents에서 찾아 출력하세요.</p>
 </div>
@@ -64,12 +70,34 @@ print(loan[<span class="tok-string">"id"</span>], loan[<span class="tok-string">
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>RAG의 검색 근거</h3><div class="prose"><p>RAG는 질문과 관련된 외부 문서를 찾아 생성 모델의 입력에 넣는 방식입니다. 모델이 가진 일반 지식에만 기대는 대신 이번 질문에 사용할 자료를 명시적으로 제공합니다. 그렇다고 검색한 문서가 항상 적절하거나 생성 답변이 항상 맞는 것은 아닙니다.</p>
+<p>가상 도서관의 대출 규정은 수업 자료에 정해져 있습니다. 실제 도서관의 일반적인 규정을 모델이 알고 있더라도 이 서비스는 제공한 가상 자료에 근거해 답해야 합니다.</p>
+</div>
+<div class="worked-case" id="flow-9"><h3>문서에서 답변까지</h3>
+<p>20장에서는 문서 준비 단계만 실제 구현합니다.</p>
+<article id="flow-9-step-0"><small>STEP 01 · 인덱싱</small><h4>문서 로딩과 정제</h4>
+<p>본문과 원문 위치를 보존합니다.</p><pre>library-1 · 도서 대출 기간은 14일입니다.</pre></article><article id="flow-9-step-1"><small>STEP 02 · 검색</small><h4>질의 관련 문서 검색</h4>
+<p>검색 방법은 이후 장에서 구현합니다.</p><pre>질문: 대출 기간은?
+선택할 문서: library-1</pre></article><article id="flow-9-step-2"><small>STEP 03 · 생성</small><h4>근거 문맥을 포함한 생성 입력</h4>
+<p>근거가 없으면 답변을 보류합니다.</p><pre>question + documents → answer</pre></article></div></div>
+
 </section>
 <section id="nb-loaders" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>텍스트 파일과 PDF의 본문 추출</h2>
 </div>
 </header>
 <p>텍스트 파일 한 개와 PDF의 쪽 하나는 위치 정보가 다릅니다. PDF를 글자로 추출한 다음에는 실제 쪽의 문장과 대조해야 합니다. 글자가 읽히지 않은 스캔 페이지를 빈 내용 그대로 검색에 넣지 않습니다.</p>
+
+<span class="lesson-anchor" id="source-check"></span><div class="lesson-explanation" id="reading-source-check"><h3>문서 사용 범위와 최신성</h3><div class="prose"><p>문서를 가지고 있다는 사실만으로 수업이나 서비스에 복제·업로드할 수 있는 것은 아닙니다. 문서의 사용 조건과 공개 범위를 확인하고, 개인정보나 비밀값이 포함되지 않았는지 검사합니다. 이번 예제는 직접 만든 가상 자료만 제공합니다.</p>
+<p>자료가 수정되면 이전 인덱스와 새 문서를 섞지 않도록 버전이나 수집일을 기록합니다. 같은 id의 내용이 바뀌었는지 추적할 수 있어야 답변 근거를 다시 확인할 수 있습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>문서 점검표</caption><thead><tr><th scope="col">검사</th><th scope="col">완료 증거</th></tr>
+</thead><tbody><tr><td>내용</td><td>원문과 추출 본문 대조</td></tr>
+<tr><td>위치</td><td>파일·페이지 또는 문단 식별</td></tr>
+<tr><td>사용 조건</td><td>가상 자료 또는 사용 허용 근거</td></tr>
+<tr><td>버전</td><td>문서 식별자·수정 기록</td></tr>
+<tr><td>질문</td><td>답변 가능·불가 기준 질문</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · read_text()로 텍스트 로딩</h3>
 <div class="cell-before"><p>제공 셀이 실제 임시 UTF-8 파일에 도서관 안내를 넣습니다. 원문을 읽은 뒤 파일 이름을 출처로 보관합니다.</p>
 </div>
@@ -85,6 +113,10 @@ print(plain[<span class="tok-string">"source"</span>], plain[<span class="tok-st
 <div class="cell-after"><p>library.txt와 None이 나옵니다. 페이지 구분이 없는 텍스트에 임의로 ‘PDF 1쪽’이라고 붙이지 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="text"></span><div class="lesson-explanation" id="reading-text"><h3>텍스트 로딩과 메타데이터</h3><div class="prose"><p>Path.read_text는 파일을 글자로 읽습니다. UTF-8을 명시해 인코딩을 분명히 하고 비어 있는 파일은 오류로 알립니다. 일반 텍스트 파일에는 PDF처럼 페이지가 없으므로 page=None으로 표시합니다.</p>
+<p>줄바꿈과 문단은 원문의 구조를 나타낼 수 있습니다. 로딩 단계에서 모든 공백을 지워 붙이면 뒤에서 문장 경계나 표를 해석하기 어려워질 수 있습니다. 본문과 정리 규칙을 함께 기록하세요.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · PDF 추출 결과의 page</h3>
 <div class="cell-before"><p>제공된 예제 PDF의 첫 쪽을 이미 읽어 보관한 결과입니다. 이번 셀은 추출 기록을 읽습니다.</p>
 </div>
@@ -118,12 +150,17 @@ print(extracted[<span class="tok-string">"page"</span>], extracted[<span class="
 <div class="cell-after"><p>만든 PDF에서 텍스트를 추출하면 첫 쪽의 14 days가 그대로 나옵니다. pages[0]은 사람이 보는 1쪽입니다. 텍스트가 있는 학습용 PDF를 확인한 결과이며, 스캔 이미지만 있는 PDF까지 읽었다는 뜻은 아닙니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="pdf"></span><div class="lesson-explanation" id="reading-pdf"><h3>페이지 인덱스와 사람이 읽는 쪽 번호</h3><p>PdfReader(pdf).pages[0]은 첫 번째 페이지 객체입니다. 추출 기록의 page에는 사람이 읽는 1쪽을 표시합니다. 이 셀은 글자가 직접 들어 있는 가상 PDF를 읽으며, 스캔 사진 속 글씨를 인식하는 작업은 수행하지 않습니다.</p></div>
+
 </section>
 <section id="nb-unanswerable" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>답변 가능 여부와 기준 질문</h2>
 </div>
 </header>
 <p>기준 질문에는 답을 뒷받침할 문서 ID와 현재 묶음에서 답할 수 있는지 여부를 함께 적습니다. 주차 요금은 세 문서 어디에도 없습니다.</p>
+
+<span class="lesson-anchor" id="manifest"></span><div class="lesson-explanation" id="reading-manifest"><h3>질문과 기대 근거 함께 기록하기</h3><p>‘주차 요금은 얼마인가요?’에는 연결할 문서 ID가 없어 expected_document_ids가 빈 목록이고 answerable은 False입니다. 문서에 금액이 없다는 사실을 0원이라는 답으로 바꾸지 마세요.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-unanswerable"><h3>질문과 근거가 만나는 곳</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-unanswerable.mp4" aria-label="질문과 근거가 만나는 곳" aria-describedby="workflow-unanswerable-caption"></video><figcaption id="workflow-unanswerable-caption">세 문서는 대출 기간·휴관일·반납함을 설명합니다. 주차 요금을 물었을 때 빈 기대 목록을 쓰는 이유는 자료 안에서 금액을 확인할 수 없기 때문입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>주차 질문</strong> · question_id = dev-03</li><li><strong>자료 대조</strong> · 문서의 주제 = 대출 · 휴관 · 반납</li><li><strong>근거 없음</strong> · expected_document_ids = []</li></ol></figure>
 <article class="notebook-cell" data-cell="6" data-task="1"><h3>과제 06 · 근거 없는 질문의 기대값</h3>
 <div class="cell-before"><p>공통 개발 질문 dev-03의 기대 문서 목록과 answerable을 채우세요.</p>
 </div>
@@ -136,6 +173,10 @@ print(case[<span class="tok-string">"expected_document_ids"</span>], case[<span 
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="questions"></span><div class="lesson-explanation" id="reading-questions"><h3>평가 질문과 기대 문서 ID</h3><div class="prose"><p>question_id는 질문의 이름이고 expected_document_ids는 답을 확인할 원문 ID 목록입니다. 답변 가능 여부는 answerable에 true 또는 false로 적습니다. 근거가 없는 질문은 기대 원문 목록이 비어 있어야 합니다. 정답 문장의 말투보다 어떤 자료로 확인할 수 있는지를 먼저 정합니다.</p>
+<p>development의 3문항으로 코드와 기준을 설명하고 holdout의 2문항은 설명 후 같은 규칙이 적용되는지 확인합니다. 공개된 교육용 문항이므로 비공개 시험이나 실제 사용자 성능을 뜻하지 않습니다. 확인 문항을 보며 튜닝했다면 이후에는 새 확인 문항이 필요합니다. 35장에서는 이 구분을 평가 절차로 확장합니다.</p>
+</div></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -144,71 +185,15 @@ print(case[<span class="tok-string">"expected_document_ids"</span>], case[<span 
 <div class="prose"><p>월요일, 14일, 24시간 중 하나를 골라 자료 이름·쪽·원문 ID를 말해 보세요. 다음 장에 넘길 때는 세 문서의 본문과 ID를 유지하고, 실험으로 잘게 자른 자료는 별도로 식별합니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>RAG 문서 로딩과 근거 메타데이터 심화 읽기</h2>
-</div>
-</header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>문서 로딩의 선행 입력</summary><div class="prose"><p>이번 장의 documents[0]["text"]에서 대출 기간을 읽으세요. 5장에서 저장한 학습 기록에는 title과 minutes가 있고, 이 도서관 안내에는 text와 page가 있습니다.</p>
-<p>진입 확인은 전반 대조 시간 중 15분을 사용합니다. 이전 파일을 찾지 못했다면 이 장의 documents.json으로 시작하세요. 공통 가상 원문 3개는 그대로 두고 개인 확장 자료는 별도 파일에 저장합니다.</p>
-</div>
-</details>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>RAG의 검색 근거</summary><div class="prose"><p>RAG는 질문과 관련된 외부 문서를 찾아 생성 모델의 입력에 넣는 방식입니다. 모델이 가진 일반 지식에만 기대는 대신 이번 질문에 사용할 자료를 명시적으로 제공합니다. 그렇다고 검색한 문서가 항상 적절하거나 생성 답변이 항상 맞는 것은 아닙니다.</p>
-<p>가상 도서관의 대출 규정은 수업 자료에 정해져 있습니다. 실제 도서관의 일반적인 규정을 모델이 알고 있더라도 이 서비스는 제공한 가상 자료에 근거해 답해야 합니다.</p>
-</div>
-<details class="case-reference" id="flow-9"><summary>문서에서 답변까지</summary>
-<p>20장에서는 문서 준비 단계만 실제 구현합니다.</p>
-<article id="flow-9-step-0"><small>STEP 01 · 인덱싱</small><h4>문서 로딩과 정제</h4>
-<p>본문과 원문 위치를 보존합니다.</p><pre>library-1 · 도서 대출 기간은 14일입니다.</pre></article><article id="flow-9-step-1"><small>STEP 02 · 검색</small><h4>질의 관련 문서 검색</h4>
-<p>검색 방법은 이후 장에서 구현합니다.</p><pre>질문: 대출 기간은?
-선택할 문서: library-1</pre></article><article id="flow-9-step-2"><small>STEP 03 · 생성</small><h4>근거 문맥을 포함한 생성 입력</h4>
-<p>근거가 없으면 답변을 보류합니다.</p><pre>question + documents → answer</pre></article></details>
-</details>
-<span id="data"></span><details class="reading-topic" id="reading-data"><summary>가상 문서의 출처 구조</summary><div class="prose"><p>이 세 문서는 이후 LCEL·Graph·검색 도구 실습에서 공통으로 사용합니다. id는 문서 식별자, text는 본문, source는 출처 이름, page는 원문 위치를 뜻합니다. 여기의 page 1~3은 수업용 문서 페이지 번호이며 실제 기관 문서가 아닙니다.</p>
-<p>주차 요금은 자료에 없습니다. 모델이 그럴듯한 요금을 알고 있어도 근거 문서에서 확인할 수 없다고 답하는 것이 이번 서비스의 요구입니다.</p>
-</div>
-</details>
-<span id="questions"></span><details class="reading-topic" id="reading-questions"><summary>평가 질문과 기대 문서 ID</summary><div class="prose"><p>question_id는 질문의 이름이고 expected_document_ids는 답을 확인할 원문 ID 목록입니다. 답변 가능 여부는 answerable에 true 또는 false로 적습니다. 근거가 없는 질문은 기대 원문 목록이 비어 있어야 합니다. 정답 문장의 말투보다 어떤 자료로 확인할 수 있는지를 먼저 정합니다.</p>
-<p>development의 3문항으로 코드와 기준을 설명하고 holdout의 2문항은 설명 후 같은 규칙이 적용되는지 확인합니다. 공개된 교육용 문항이므로 비공개 시험이나 실제 사용자 성능을 뜻하지 않습니다. 확인 문항을 보며 튜닝했다면 이후에는 새 확인 문항이 필요합니다. 35장에서는 이 구분을 평가 절차로 확장합니다.</p>
-</div>
-</details>
-<span id="text"></span><details class="reading-topic" id="reading-text"><summary>텍스트 로딩과 메타데이터</summary><div class="prose"><p>Path.read_text는 파일을 글자로 읽습니다. UTF-8을 명시해 인코딩을 분명히 하고 비어 있는 파일은 오류로 알립니다. 일반 텍스트 파일에는 PDF처럼 페이지가 없으므로 page=None으로 표시합니다.</p>
-<p>줄바꿈과 문단은 원문의 구조를 나타낼 수 있습니다. 로딩 단계에서 모든 공백을 지워 붙이면 뒤에서 문장 경계나 표를 해석하기 어려워질 수 있습니다. 본문과 정리 규칙을 함께 기록하세요.</p>
-</div>
-</details>
-<span id="pdf"></span><details class="reading-topic" id="reading-pdf"><summary>PDF 본문과 텍스트 추출 결과</summary><div class="prose"><p>PDF 페이지 번호는 enumerate(...,1)로 1부터 붙입니다. 추출 결과가 비면 needs_review=True로 표시합니다. 이미지로만 된 스캔 PDF는 텍스트가 거의 없을 수 있고, pypdf의 텍스트 추출은 OCR을 대신하지 않습니다.</p>
-<p>첨부한 library-sample.pdf는 같은 가상 규칙을 영어로 적은 3페이지짜리 텍스트 PDF입니다. 한글 공통 문서와 영어 PDF를 같은 원문 파일로 혼동하지 마세요. PDF는 추출·페이지 보존 동작을 확인하는 별도 입력입니다.</p>
-</div>
-</details>
-<span id="source-check"></span><details class="reading-topic" id="reading-source-check"><summary>문서 사용 범위와 최신성</summary><div class="prose"><p>문서를 가지고 있다는 사실만으로 수업이나 서비스에 복제·업로드할 수 있는 것은 아닙니다. 문서의 사용 조건과 공개 범위를 확인하고, 개인정보나 비밀값이 포함되지 않았는지 검사합니다. 이번 예제는 직접 만든 가상 자료만 제공합니다.</p>
-<p>자료가 수정되면 이전 인덱스와 새 문서를 섞지 않도록 버전이나 수집일을 기록합니다. 같은 id의 내용이 바뀌었는지 추적할 수 있어야 답변 근거를 다시 확인할 수 있습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>문서 점검표</caption><thead><tr><th scope="col">검사</th><th scope="col">완료 증거</th></tr>
-</thead><tbody><tr><td>내용</td><td>원문과 추출 본문 대조</td></tr>
-<tr><td>위치</td><td>파일·페이지 또는 문단 식별</td></tr>
-<tr><td>사용 조건</td><td>가상 자료 또는 사용 허용 근거</td></tr>
-<tr><td>버전</td><td>문서 식별자·수정 기록</td></tr>
-<tr><td>질문</td><td>답변 가능·불가 기준 질문</td></tr>
-</tbody></table></div>
-</details>
-<span id="manifest"></span><details class="reading-topic" id="reading-manifest"><summary>문서·질문 데이터셋 인계</summary><div class="prose"><p>파일 해시는 파일 내용에서 계산한 확인값입니다. 한 글자라도 바뀌면 값이 달라지는지 비교할 수 있습니다. 이 값이 자료의 진실성을 보장하지는 않습니다. 후속 장이 같은 원문을 사용했는지 확인하는 표식으로 씁니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>오류가 났을 때</caption><thead><tr><th scope="col">메시지/상태</th><th scope="col">확인할 것</th><th scope="col">처리</th></tr>
-</thead><tbody><tr><td>문서 ID 중복</td><td>원문 목록에 같은 id가 두 번 있는지</td><td>개인 자료에 새 ID를 부여</td></tr>
-<tr><td>기대 근거에 없는 원문 ID</td><td>질문의 expected_document_ids</td><td>철자를 고치거나 실제 원문을 별도 등록</td></tr>
-<tr><td>페이지가 None</td><td>로딩 중간 결과인지</td><td>위치를 검토한 문서와 분리</td></tr>
-<tr><td>기준 파일이 바뀜</td><td>개인 편집이 기준 파일에 섞였는지</td><td>공통 시작 파일을 복원하고 확장은 따로 저장</td></tr>
-</tbody></table></div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://pypdf.readthedocs.io/en/6.21.4/user/extract-text.html" target="_blank" rel="noopener noreferrer">pypdf 텍스트 추출 ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

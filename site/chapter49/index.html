@@ -72,6 +72,8 @@ print(usage)</code></pre></figure>
 <div class="cell-after"><p>외부 호출 수는 0이고 비용과 지연은 None입니다. 측정하지 않은 값을 0원이나 0초로 덮어쓰면 실제 모델과 비교할 수 없습니다. 팀이 실제 연동을 사용한다면 요청별 입력량·출력량·적용 요금·측정 구간을 남겨 계산하세요.</p>
 </div>
 </article>
+<div class="lesson-explanation" id="note-code-2"><h3>0회와 측정값 없음 구별하기</h3><p>external_model_calls의 0은 외부 모델을 부르지 않았다는 횟수입니다. model_cost와 model_latency의 None은 관측한 값이 없다는 뜻입니다. 평균을 낼 때 None을 0원이나 0초로 넣으면 실제보다 낮은 수치가 됩니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>

@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 042</p>
 <span class="sidebar-title">RAG 화면의 출처 추적과 회귀 검사</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-trace-evidence"><span>02</span>검색 결과와 표시 출처 대조</a><a href="#nb-repair-view"><span>03</span>동일 질의로 출처 수정 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>RAG 화면의 출처 추적과 회귀 검사 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-trace-evidence"><span>02</span>검색 결과와 표시 출처 대조</a><a href="#nb-repair-view"><span>03</span>동일 질의로 출처 수정 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -70,6 +70,11 @@ found = retrieve(question, <span class="tok-number">1</span>)
 <div class="cell-after"><p>검색 직후에는 library-1과 14일이 맞아떨어집니다. 검색 입력을 바꾸기 전에 답과 화면 사이를 살펴볼 차례입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
+<span class="lesson-anchor" id="loop"></span><span class="lesson-anchor" id="reading-loop"></span>
+<span class="lesson-anchor" id="rag"></span><div class="lesson-explanation" id="reading-rag"><h3>검색 직후에 고정할 증거</h3><p>found[0]의 id와 text를 함께 읽습니다. 이번 질문에서 찾아낸 것은 library-1의 14일 문장입니다. 이제 화면이 어느 문서를 가리키는지 같은 ID를 기준으로 비교할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="decision"></span><span class="lesson-anchor" id="reading-decision"></span>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 이전 응답의 출처 잔존 검사</h3>
 <div class="cell-before"><p>같은 질문의 검색 ID와 화면의 이전 출처를 대조하세요.</p>
 </div>
@@ -79,6 +84,10 @@ print(screen[<span class="tok-string">'source'</span>][<span class="tok-string">
 <div class="cell-after"><p>화면은 library-2의 2쪽을 가리킵니다. 답의 인용과 검색은 대출인데 화면에만 지난 휴관 문서가 남았습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
+<span class="lesson-anchor" id="session"></span><span class="lesson-anchor" id="reading-session"></span>
+<span class="lesson-anchor" id="diagnosis"></span><div class="lesson-explanation" id="reading-diagnosis"><h3>답변과 출처가 갈라지는 지점</h3><p>답변 끝에는 [library-1]이 있지만 화면의 source는 records[1]입니다. 목록의 두 번째 원소는 library-2이므로 2쪽이 표시됩니다. 이 두 값을 비교하면 검색과 화면 구성 중 어디를 고쳐야 하는지 좁힐 수 있습니다.</p></div>
+
 </section>
 <section id="nb-repair-view" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>동일 질의로 출처 수정 검증</h2>
@@ -119,6 +128,11 @@ source = match_source(screen[<span class="tok-string">"answer"</span>], found)
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="remediation"></span><div class="lesson-explanation" id="reading-remediation"><h3>같은 대출 질문으로 수정 결과 확인하기</h3><p>질문과 답변을 고정한 뒤 현재 검색한 문서 ID가 답변에 있는지 확인하고 출처만 교체합니다. 수정 후에는 답변의 인용, 화면 ID, 원문 쪽 번호가 모두 library-1의 자료와 맞아야 합니다.</p></div>
+<span class="lesson-anchor" id="peer"></span><span class="lesson-anchor" id="reading-peer"></span>
+<span class="lesson-anchor" id="scope"></span><span class="lesson-anchor" id="reading-scope"></span>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -127,101 +141,7 @@ source = match_source(screen[<span class="tok-string">"answer"</span>], found)
 <div class="prose"><p>동료에게 재현 질문, 처음 어긋난 값, 같은 입력으로 확인한 수정 결과를 전달하세요. 이 기록이 있으면 프로젝트 팀은 검색과 화면 중 어디를 고칠지 합의할 수 있습니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>RAG 화면의 출처 추적과 회귀 검사 심화 읽기</h2>
-</div>
-</header>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>RAG 실행 경로의 재현</summary><div class="prose"><p>오늘은 새 프레임워크를 추가하는 날이 아닙니다.18일의 도구 왕복,25일의 RAG,39일의 개선 판단,41일의 화면·대화 상태를 실제 코드와 결과로 다시 설명합니다. 설명이 막히면 어떤 장의 어떤 경계로 돌아갈지 정하고, 확인한 것과 아직 확인하지 못한 것을 프로젝트 진입 기록에 남깁니다.</p>
-<p>프로젝트 범위를 계획할 준비와 작동 MVP를 완성한 상태는 다릅니다. 실제 UI나 저장소를 아직 확인하지 못했더라도 그 항목을 숨기지 않고 43일의 범위 계획에 넘길 수 있습니다. 실행 성공이나 학습 성취를 빈칸 대신 임의로 적지 않습니다.</p>
-</div>
-</details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>학생 기록과 제공 로그</summary><div class="prose"><p>같은 폴더에 파일이 있다고 해서 모두 완료 증거는 아닙니다.18일 learning-record.md와 25일 reproduction.md는 학생이 작성할 빈 양식입니다.39일 decision.json은 작성자가 가상 자료를 대조한 예시이고 41일 observations.json은 작성자의 로컬 Graph 실행입니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>들어오는 네 종류의 자료</caption><thead><tr><th scope="col">장</th><th scope="col">제공 파일</th><th scope="col">지금 알 수 있는 것</th><th scope="col">아직 알 수 없는 것</th></tr>
-</thead><tbody><tr><td>18</td><td>inputs/chapter18-learning-record.md</td><td>기록해야 할 항목</td><td>학생의 도구 왕복 수행</td></tr>
-<tr><td>25</td><td>inputs/chapter25-reproduction.md</td><td>동료 재현 양식</td><td>실제 동료 실행 여부</td></tr>
-<tr><td>39</td><td>inputs/chapter39-decision.json</td><td>유지/보류와 근거</td><td>팀 자료에서 같은 결론인지</td></tr>
-<tr><td>41</td><td>inputs/chapter41-observations.json</td><td>로컬 상태/Graph 관찰</td><td>실제 Streamlit 조작</td></tr>
-</tbody></table></div>
-</details>
-<span id="loop"></span><details class="reading-topic" id="reading-loop"><summary>도구 호출 전 요청 검증</summary><div class="prose"><p>모델이 함수를 호출해 달라는 요청을 만들었다고 해서 실제 함수가 실행된 것은 아닙니다. 코드가 도구 이름과 인자 형태를 확인하고 허용한 함수만 실행해야 합니다. 반환한 결과는 어느 요청에 대한 것인지 ID로 연결합니다. 그 뒤 최종 답변을 받아 종료하는 위치도 있어야 합니다.</p>
-<p>한 정상 요청을 골라 입력→요청 검사→함수 실행→결과 반환→종료를 설명해 보세요. 그다음 이름이 없는 도구, 잘못된 JSON, 누락 ID 중 한 사례를 골라 어느 단계에서 멈추는지 설명합니다. 성공 경로만 읽고 반복이나 오류가 끝나는 조건을 생략하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>도구 왕복에서 다시 확인할 질문</caption><thead><tr><th scope="col">경계</th><th scope="col">직접 가리킬 근거</th></tr>
-</thead><tbody><tr><td>요청은 누가 만들었나</td><td>모델 응답에서 도구 요청을 읽는 위치</td></tr>
-<tr><td>실행해도 되는가</td><td>이름·인자·ID 검사와 허용 목록</td></tr>
-<tr><td>무엇을 실행했나</td><td>실제 함수 호출과 반환값</td></tr>
-<tr><td>어느 요청의 결과인가</td><td>요청 ID와 반환 결과의 연결</td></tr>
-<tr><td>언제 멈추나</td><td>최종 응답·거절·오류·반복 한도 처리</td></tr>
-</tbody></table></div>
-</details>
-<span id="rag"></span><details class="reading-topic" id="reading-rag"><summary>검색 결과와 인용 검사</summary><div class="prose"><p>RAG는 질문으로 문서를 찾고, 문맥을 만들고, 답변을 생성한 뒤 근거를 확인하는 흐름입니다. R1 문서는 id/text/source/page를 갖고 A1의 sources는 답변이 실제 인용한 문서 객체를 담습니다. 검색된 모든 문서를 sources로 복사하는 것과 다릅니다.</p>
-<p>24/25일의 원문 ID와 39일의 분할 청크 ID도 구분해야 합니다. library-1과 library-1:0처럼 식별 범위가 달라질 수 있으므로 서로 다른 버전의 ID를 문자열 모양만 보고 섞지 않습니다. 해당 실행의 원문/청크 매핑과 고정 입력을 함께 읽습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>같은 질문 흐름의 네 경계</caption><thead><tr><th scope="col">사례</th><th scope="col">확인할 결과</th><th scope="col">보충할 위치</th></tr>
-</thead><tbody><tr><td>정상 근거</td><td>answered, 실제 인용 객체</td><td>원문 주장의 의미까지 대조</td></tr>
-<tr><td>정상 빈 검색</td><td>no_evidence, 생성 0</td><td>검색 입력과 자료 범위</td></tr>
-<tr><td>없는 인용 또는 인용 누락</td><td>invalid_citation</td><td>인용 ID와 검색 결과 집합</td></tr>
-<tr><td>검색/생성 통신 실패</td><td>실행 오류, 관측 불가</td><td>예외를 자료 없음으로 숨기지 않음</td></tr>
-</tbody></table></div>
-</details>
-<span id="decision"></span><details class="reading-topic" id="reading-decision"><summary>실험 후보와 적용 설정</summary><div class="prose"><p>39일은 rerank를 비교 후보로 정했지만 현재 유지한 실행 방법은 baseline입니다. 같은 자료에서 추가 작업에 비해 확인된 이익이 없어서 후보를 보류한 예시입니다. “새 기법을 배웠으니 반드시 채택한다”는 결론은 아닙니다.</p>
-<p>개발 문항, 선택 후 공개 확인, 의도적 진단을 한 평균으로 섞지 않습니다. 검색 실패로 관측할 수 없는 행도 남깁니다. 실패를 뺀 평균만으로 후보가 좋아졌다고 결론내리면 평가의 분모가 바뀝니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>제공 결정에서 읽을 근거</caption><thead><tr><th scope="col">결정</th><th scope="col">현재 상태</th><th scope="col">남길 이유/다음 확인</th></tr>
-</thead><tbody><tr><td>baseline</td><td>retain_baseline</td><td>로컬 학습 기준으로 유지; 반납 문장 잘림 미해결</td></tr>
-<tr><td>rerank</td><td>hold</td><td>같은 최종 답변·근거, 추가 작업</td></tr>
-<tr><td>잘못된 순위 진단</td><td>rollback_regression</td><td>원래 되던 질문의 근거/답변이 나빠짐</td></tr>
-<tr><td>검색 Timeout 진단</td><td>blocked_failure</td><td>관측 불가를 실패 행으로 유지</td></tr>
-<tr><td>999일 진단</td><td>rollback_regression</td><td>유효한 인용이어도 원문 의미와 다름</td></tr>
-</tbody></table></div>
-<div class="prose"><p>반납 답변 “무인 반납함은 24시간 이용할”은 수치와 인용이 있어도 문장이 완결되지 않습니다. 이것을 화면 연결 뒤 성공으로 덮지 않습니다. 기존 실패를 고치려면 다음 실험의 변경 요인과 질문/자료 버전을 새로 기록해야 합니다. 공개 확인 질문은 이미 공개되어 있어 비공개 일반 성능 검증이라고 부르지 않습니다.</p>
-</div>
-</details>
-<span id="session"></span><details class="reading-topic" id="reading-session"><summary>현재 출처와 대화 기록</summary><div class="prose"><p>같은 GraphSession의 A/B 대화는 thread_id로 나뉩니다. 새 C를 시작했다고 같은 저장소의 A가 삭제되지는 않습니다. 새 GraphSession을 만들면 메모리 저장소도 새로 시작하므로 이전 A 기록을 찾을 수 없습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>41일 제공 관찰을 읽기</caption><thead><tr><th scope="col">관찰</th><th scope="col">알 수 있는 것</th><th scope="col">말할 수 없는 것</th></tr>
-</thead><tbody><tr><td>A2/B1/C0</td><td>같은 로컬 Graph 저장소의 대화 구분</td><td>브라우저 사용자 인증 완료</td></tr>
-<tr><td>정상 다음 Timeout</td><td>현재 result=None·출처 없음</td><td>실제 네트워크 장애 복구 완료</td></tr>
-<tr><td>새 GraphSession의 A0</td><td>새 메모리 저장소의 경계</td><td>영속 DB 삭제/보관 정책 완료</td></tr>
-<tr><td>Streamlit not_run</td><td>UI 수행 증거가 아직 없음</td><td>버튼과 반응형 화면 성공</td></tr>
-</tbody></table></div>
-</details>
-<span id="diagnosis"></span><details class="reading-topic" id="reading-diagnosis"><summary>부족한 근거의 진단</summary><div class="prose"><p>project-entry/record.json은 네 영역의 상태를 evidence_recorded/needs_practice/unverified로 적는 양식입니다. evidence_recorded는 관찰을 기록했다는 자기 신고입니다. 실제 파일 경로와 관찰 문장이 함께 있어야 기록이 완비됐다고 볼 수 있지만, 그 내용의 진실성이나 이해 수준은 강사가 다시 대조합니다.</p>
-<p>entry_logic.py는 파일 누락을 찾고 18/25/39/41의 보충 위치를 안내합니다. 모든 기록이 완비되어도 ready_for_instructor_review일 뿐이며 learner_completion_confirmed는 False입니다. 자동 체크가 학습자 설명을 대신하지 않도록 한 경계입니다.</p>
-</div>
-</details>
-<span id="remediation"></span><details class="reading-topic" id="reading-remediation"><summary>실패 사례 재실행</summary><div class="prose"><p>보충은 새 기술을 더하는 작업이 아닙니다. 설명이 끊긴 경계로 돌아가 같은 정상/실패 사례를 다시 예상하고 실행합니다. 요청과 실행을 섞었다면 18일, 검색 목록과 실제 인용을 혼동했다면 25일, 실패 행을 지웠다면 39일, 현재 출처가 남는 문제라면 41일의 기록을 다시 봅니다.</p>
-<p>학습자가 실제로 관찰한 부족함을 기준으로 경로를 정하세요. 이 자료에는 개인별 시험 점수나 직접 진단 결과가 없습니다. 제공 양식이 비었다는 이유만으로 특정 영역을 못한다고 단정하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>보충을 정하는 기록</caption><thead><tr><th scope="col">관찰한 어려움</th><th scope="col">선택할 활동</th><th scope="col">다시 확인할 증거</th></tr>
-</thead><tbody><tr><td>요청을 곧바로 실행으로 설명</td><td>18의 검사 전/후 경로 재설명</td><td>실행 함수가 호출되는 조건</td></tr>
-<tr><td>sources를 검색 전체라고 설명</td><td>25의 검색/인용 목록 비교</td><td>실제 인용 객체와 원문 위치</td></tr>
-<tr><td>후보 보류를 채택으로 기록</td><td>39의 결정·근거 행 다시 읽기</td><td>adopted_method와 selected_candidate</td></tr>
-<tr><td>오류 화면에 이전 근거 표시</td><td>41 current/history/checkpoint 비교</td><td>새 결과 초기화·출처 제거</td></tr>
-</tbody></table></div>
-</details>
-<span id="peer"></span><details class="reading-topic" id="reading-peer"><summary>동료 재현과 문서 검토</summary><div class="prose"><p>동료가 자료를 읽은 것과 직접 실행한 것은 다른 활동입니다. 실제 실행했다면 실행자·환경·명령·입력·관찰·발견을 남깁니다. 코드를 수정했다면 같은 사례를 다시 실행해 전후를 비교합니다. 다른 OS에서 확인하지 않았다면 그 범위도 그대로 남깁니다.</p>
-<p>환경 제약은 숨길 필요가 없습니다. Streamlit 설치가 준비되지 않은 팀은 로컬 상태/Graph와 코드 설명을 확인하고 실제 UI는 미확인으로 인계합니다. 이를 학생이 개념을 이해하지 못했다는 판정과 합치지 않습니다.</p>
-</div>
-</details>
-<span id="scope"></span><details class="reading-topic" id="reading-scope"><summary>프로젝트 입력 범위와 자료 선정</summary><div class="prose"><p>43일에는 사용자 문제와 작은 시나리오를 정합니다. “문서 질문 서비스”만 쓰면 누가 어떤 일을 하려는지 알기 어렵습니다. 사용자·문제·한 번의 질문 흐름을 적고, 포함할 일과 제외할 일을 나누어 수용 사례로 확인할 수 있게 만듭니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>42의 근거를 43·44 산출물로 옮기기</caption><thead><tr><th scope="col">이번 기록</th><th scope="col">43일 범위 필드</th><th scope="col">44일 준비</th></tr>
-</thead><tbody><tr><td>사용자가 묻는 한 질문</td><td>problem/user/scenario</td><td>고정 질문ID와 문장</td></tr>
-<tr><td>근거 자료와 위치</td><td>documents: id/permission/owner</td><td>document_id/paragraph_id/text, 원문 대조</td></tr>
-<tr><td>할 일·하지 않을 일</td><td>in_scope/out_of_scope</td><td>answerable과 자료 범위</td></tr>
-<tr><td>정상/자료 없음 기대</td><td>acceptance: input/expected/evidence</td><td>split·expected_paragraph_ids·검토 이유</td></tr>
-<tr><td>만들고 검토할 사람</td><td>roles와 다음날 산출물</td><td>자료/질문 담당·검토 기록</td></tr>
-</tbody></table></div>
-<div class="prose"><p>44일 제공 JSON에는 문단 ID와 본문이 있고 페이지 필드는 없습니다. p2를 보고 2쪽이라고 추정하지 않습니다. 뒤 단계에서 page가 필요한 출처 계약을 연결하려면 확인 가능한 원문 위치나 명시적인 별도 페이지 자료를 준비했다고 기록해야 합니다. 누락 위치를 성공값으로 채우는 작업을 여기서 추가하지 않습니다.</p>
-</div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>검증 근거와 미확인 항목</summary><div class="prose"><p>최종 인계에는 자기 코드·상태표·평가 기록과 project-entry/checklist.md를 묶습니다. 목표별로 근거가 충분한지, 수정이 필요한지, 아직 확인하지 못했는지 강사가 대조합니다. 체크박스 수나 자동 검사 수를 학습 성취 점수로 바꾸지 않습니다.</p>
-<p>43일 범위 계획은 미확인을 적은 상태로 진행할 수 있습니다. 그러나 실제 Streamlit/Chroma/LLM이 미검증이라면 작동 MVP나 서비스 수용이 완료됐다고 말할 수 없습니다. 프로젝트 동안 어느 증거를 추가할지 역할과 다음 산출물에 연결하세요.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

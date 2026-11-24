@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 11 / SDK</p>
 <span class="sidebar-title">OpenAI Responses API의 요청·응답 구조</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request-input"><span>02</span>사용자 메시지의 role과 content</a><a href="#nb-sdk-mock"><span>03</span>MockTransport를 이용한 SDK 호출</a><a href="#nb-usage"><span>04</span>usage와 응답 완료 상태</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>OpenAI Responses API의 요청·응답 구조 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request-input"><span>02</span>사용자 메시지의 role과 content</a><a href="#nb-sdk-mock"><span>03</span>MockTransport를 이용한 SDK 호출</a><a href="#nb-usage"><span>04</span>usage와 응답 완료 상태</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -33,6 +33,19 @@
 </div>
 </header>
 <p class="concept-intro">SDK는 Python에서 요청을 만들고 응답을 읽게 해 주는 라이브러리입니다. 고정 응답으로도 메시지, 출력 본문, 사용량 필드를 따로 살펴볼 수 있습니다.</p><p>SDK는 파이썬 코드에서 서비스의 요청과 응답을 다루게 해 주는 라이브러리입니다. 먼저 보내려는 내용만 조립하면 실제 통신 없이도 모델 이름과 사용자 메시지가 어느 칸에 들어 있는지 볼 수 있습니다.</p>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>API·SDK·토큰의 관계</h3><div class="prose"><p>API는 프로그램이 서비스와 요청·응답을 주고받는 규약입니다. Python SDK는 그 규약을 Python 객체와 메서드로 사용하도록 돕는 라이브러리입니다. SDK를 설치하는 것과 서버에 모델 요청을 보내는 것은 별개의 일입니다.</p>
+<p>모델은 요청의 입력을 처리하고 출력을 생성합니다. 토큰은 모델이 텍스트 등을 처리할 때 사용하는 단위이며 한국어 글자 수와 일치하지 않습니다. 사용량 필드의 입력 토큰·출력 토큰과 답변 글자 수를 같은 값으로 취급하지 않습니다.</p>
+<p>컨텍스트는 모델이 이번 요청에서 참고할 입력 범위입니다. 긴 문서를 넣는다고 전체 내용을 정확히 기억한다는 뜻은 아닙니다. 모델 선택에는 기능 지원, 입력 길이, 응답 품질, 지연, 비용 조건을 함께 확인해야 합니다. 이번 교재는 특정 모델을 모든 과제에 최선이라고 정하지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>이번 예제의 책임</caption><thead><tr><th scope="col">요소</th><th scope="col">하는 일</th></tr>
+</thead><tbody><tr><td>내 Python 코드</td><td>입력 구성·호출·출력 기록</td></tr>
+<tr><td>OpenAI SDK</td><td>요청 직렬화·응답 객체 처리</td></tr>
+<tr><td>실제 API 서버</td><td>선택 모델 실행</td></tr>
+<tr><td>MockTransport</td><td>HTTP 전송 대신 고정 응답 반환</td></tr>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>호출 전 입력 검증</h3><div class="prose"><p>다음 장에서는 응답 형식을 스키마로 정하고, 불완전 응답·거절·스트리밍을 구분합니다. 오늘의 호출 함수와 오류 기록이 출발점입니다.</p>
+</div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · role과 content 구성</h3>
 <div class="cell-before"><p>model은 예제의 대역 이름입니다. 실제 계정에서 선택할 모델과 구분하세요.</p>
 </div>
@@ -43,6 +56,9 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <div class="cell-after"><p>원래 질문이 그대로 나옵니다. max_output_tokens는 생성할 출력의 한도이고 입력 문장 길이나 실제 생성 토큰 수가 아닙니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="context"></span><div class="lesson-explanation" id="reading-context"><h3>대화 메시지 목록 구성</h3><div class="prose"><p>이 예제의 input에는 사용자 메시지 하나가 있습니다. 프로그램을 다시 실행해도 지난 요청의 내용이 자동으로 포함된다고 가정하지 않습니다. 후속 질문에 앞선 내용이 필요하면 그 내용을 입력으로 전달하는 방식을 명시적으로 구현해야 합니다.</p>
+</div></div>
+
 </section>
 <section id="nb-sdk-mock" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>MockTransport를 이용한 SDK 호출</h2>
@@ -62,7 +78,7 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <div class="cell-before"><p>제공 함수는 요청에서 user 역할을 확인하고, message 하나와 사용량 예시가 든 HTTP 응답을 준비합니다.</p>
 <p>제공 함수는 네트워크 대신 예제 응답을 만듭니다. 셀 03에서는 본문을, 과제 04에서는 같은 응답의 사용량을 읽습니다. 처음에는 함수 안의 생성 코드보다 반환된 응답 한 건을 따라가세요.</p>
 </div>
-<details class="provided-code"><summary>제공 코드 전체 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">import</span> json
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">import</span> json
 <span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
 sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> find_spec(<span class="tok-string">"openai"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>
 <span class="tok-keyword">if</span> sdk_available:
@@ -80,10 +96,13 @@ sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="
                     <span class="tok-string">"content"</span>: [{<span class="tok-string">"type"</span>: <span class="tok-string">"output_text"</span>, <span class="tok-string">"text"</span>: <span class="tok-string">"가상 안내를 확인했습니다."</span>, <span class="tok-string">"annotations"</span>: []}]}],
         <span class="tok-string">"usage"</span>: {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>},
     })</code></pre></figure>
-</details>
+
 <div class="cell-after"><p>이 셀은 함수를 정의합니다. 아직 요청을 보내지 않았으므로 답변 출력이 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="setup"></span><div class="lesson-explanation" id="reading-setup"><h3>모의 응답 환경 구성</h3><div class="prose"><p>이 모의 실행은 SDK가 요청을 구성하고 응답을 읽는지 확인합니다. 실제 모델의 답변 품질·사용 가능 모델·계정 권한·요금·네트워크는 확인하지 않습니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · output_text 읽기</h3>
 <div class="cell-before"><p>고정 응답에 적힌 안내 문장을 SDK가 꺼낸 값과 대조하세요.</p>
 </div>
@@ -99,12 +118,18 @@ sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="
 <div class="cell-after"><p>SDK가 꺼낸 본문은 ‘가상 안내를 확인했습니다.’입니다. 이 문장은 제공 함수의 응답 본문에서 왔습니다. 실제 서비스 모델의 생성 결과나 품질을 보여 주지는 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="request"></span><div class="lesson-explanation" id="reading-request"><h3>SDK 요청 함수</h3><div class="prose"><p>ask는 클라이언트, 모델 이름, 질문을 입력받습니다. instructions에는 응답 방식, input에는 사용자 메시지를 전달합니다. max_output_tokens는 출력의 상한이며 항상 그만큼 출력하거나 같은 길이의 문장을 만든다는 뜻은 아닙니다.</p>
+<p>함수 안에서 요청이 끝난 뒤 응답 상태와 텍스트를 반환합니다. 호출 한 번의 성공이 내용의 정확성까지 보장하지 않으므로 10장의 원문 대조 기준을 함께 적용합니다.</p>
+</div></div>
+
 </section>
 <section id="nb-usage" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>usage와 응답 완료 상태</h2>
 </div>
 </header>
 <p>토큰은 모델이 입력과 출력을 세는 단위입니다. 과금이나 지연을 추측하지 않고 응답에 실제 제공된 값을 읽습니다. 요청 상태가 미완료면 본문 길이만 보고 성공으로 기록하지 않습니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-partial-response"><h3>응답 조각이 있어도 완료 상태를 먼저 확인하기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-partial-response.mp4" aria-label="응답 조각이 있어도 완료 상태를 먼저 확인하기" aria-describedby="workflow-partial-response-caption"></video><figcaption id="workflow-partial-response-caption">partial의 text에는 ‘가상 안’이 남아 있습니다. 상태가 incomplete인 이 실행에서는 미완료 안내가 출력됩니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>응답 받기</strong> · partial.text = 가상 안</li><li><strong>status 검사</strong> · partial.status = incomplete</li><li><strong>미완료 안내</strong> · print() = 미완료 응답</li></ol></figure>
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · usage의 토큰 합계</h3>
 <div class="cell-before"><p>제공 응답과 같은 사용량 사전입니다. 사용량이 보고된 경우 총 토큰 수를 출력하세요.</p>
 </div>
@@ -117,6 +142,17 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="response"></span><div class="lesson-explanation" id="reading-response"><h3>응답 객체의 본문과 사용량</h3><div class="prose"><p>Responses API의 output에는 텍스트 외의 항목도 들어갈 수 있습니다. 첫 번째 항목의 첫 번째 필드가 항상 답변이라고 가정하지 않고 SDK의 output_text를 사용합니다. status와 usage도 따로 확인합니다.</p>
+<p>이번 모의 응답은 항상 “가상 안내를 확인했습니다.”를 반환합니다. 질문을 바꾸어도 같은 답이 나오는 것은 모델이 실행되지 않기 때문입니다. 이를 답변 모델의 성능으로 평가하면 안 됩니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>결과 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">해석</th></tr>
+</thead><tbody><tr><td>mode</td><td>mock 또는 live 실행 구분</td></tr>
+<tr><td>status</td><td>응답의 완료 상태</td></tr>
+<tr><td>answer</td><td>SDK가 모은 텍스트 출력</td></tr>
+<tr><td>usage</td><td>서버 응답의 토큰 사용량 또는 없음</td></tr>
+<tr><td>seconds</td><td>로컬에서 측정한 요청 대기 포함 시간</td></tr>
+</tbody></table></div></div>
+
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 미완료 상태 판별</h3>
 <div class="cell-before"><p>통신은 끝났지만 서비스가 완료하지 못했다고 가정합니다. 본문을 화면에 내보내도 될까요?</p>
 </div>
@@ -129,6 +165,8 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 <div class="cell-after"><p>‘미완료 응답’이 남습니다. 실제 호출 기록에는 모델, 상태, 사용량과 경과 시간을 구분해 두고 오류가 나면 키나 요청 원문 전체 대신 필요한 오류 종류를 기록합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="failures"></span><div class="lesson-explanation" id="reading-failures"><h3>완료 상태를 확인한 뒤 본문 읽기</h3><p>예제의 partial에는 짧은 text가 있지만 status는 incomplete입니다. 미리 받은 글자가 있어도 완성된 답변으로 표시하기 전에는 상태를 확인해야 합니다. 이 셀의 출력은 ‘미완료 응답’입니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -137,69 +175,16 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
 <div class="prose"><p>질문 하나의 입력, 응답 본문, 사용량을 다시 짚어 보세요. 같은 글자를 요청해도 라이브 응답의 값은 달라질 수 있습니다. 다음 장에서는 완료 응답을 받았을 때도 그 안의 공지 형식과 내용을 다시 확인합니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>OpenAI Responses API의 요청·응답 구조 심화 읽기</h2>
-</div>
-</header>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>API·SDK·토큰의 관계</summary><div class="prose"><p>API는 프로그램이 서비스와 요청·응답을 주고받는 규약입니다. Python SDK는 그 규약을 Python 객체와 메서드로 사용하도록 돕는 라이브러리입니다. SDK를 설치하는 것과 서버에 모델 요청을 보내는 것은 별개의 일입니다.</p>
-<p>모델은 요청의 입력을 처리하고 출력을 생성합니다. 토큰은 모델이 텍스트 등을 처리할 때 사용하는 단위이며 한국어 글자 수와 일치하지 않습니다. 사용량 필드의 입력 토큰·출력 토큰과 답변 글자 수를 같은 값으로 취급하지 않습니다.</p>
-<p>컨텍스트는 모델이 이번 요청에서 참고할 입력 범위입니다. 긴 문서를 넣는다고 전체 내용을 정확히 기억한다는 뜻은 아닙니다. 모델 선택에는 기능 지원, 입력 길이, 응답 품질, 지연, 비용 조건을 함께 확인해야 합니다. 이번 교재는 특정 모델을 모든 과제에 최선이라고 정하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이번 예제의 책임</caption><thead><tr><th scope="col">요소</th><th scope="col">하는 일</th></tr>
-</thead><tbody><tr><td>내 Python 코드</td><td>입력 구성·호출·출력 기록</td></tr>
-<tr><td>OpenAI SDK</td><td>요청 직렬화·응답 객체 처리</td></tr>
-<tr><td>실제 API 서버</td><td>선택 모델 실행</td></tr>
-<tr><td>MockTransport</td><td>HTTP 전송 대신 고정 응답 반환</td></tr>
-</tbody></table></div>
-</details>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>모의 응답 환경 구성</summary><div class="prose"><p>이 모의 실행은 SDK가 요청을 구성하고 응답을 읽는지 확인합니다. 실제 모델의 답변 품질·사용 가능 모델·계정 권한·요금·네트워크는 확인하지 않습니다.</p>
-</div>
-</details>
-<span id="request"></span><details class="reading-topic" id="reading-request"><summary>SDK 요청 함수</summary><div class="prose"><p>ask는 클라이언트, 모델 이름, 질문을 입력받습니다. instructions에는 응답 방식, input에는 사용자 메시지를 전달합니다. max_output_tokens는 출력의 상한이며 항상 그만큼 출력하거나 같은 길이의 문장을 만든다는 뜻은 아닙니다.</p>
-<p>함수 안에서 요청이 끝난 뒤 응답 상태와 텍스트를 반환합니다. 호출 한 번의 성공이 내용의 정확성까지 보장하지 않으므로 10장의 원문 대조 기준을 함께 적용합니다.</p>
-</div>
-</details>
-<span id="response"></span><details class="reading-topic" id="reading-response"><summary>응답 객체의 본문과 사용량</summary><div class="prose"><p>Responses API의 output에는 텍스트 외의 항목도 들어갈 수 있습니다. 첫 번째 항목의 첫 번째 필드가 항상 답변이라고 가정하지 않고 SDK의 output_text를 사용합니다. status와 usage도 따로 확인합니다.</p>
-<p>이번 모의 응답은 항상 “가상 안내를 확인했습니다.”를 반환합니다. 질문을 바꾸어도 같은 답이 나오는 것은 모델이 실행되지 않기 때문입니다. 이를 답변 모델의 성능으로 평가하면 안 됩니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>결과 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">해석</th></tr>
-</thead><tbody><tr><td>mode</td><td>mock 또는 live 실행 구분</td></tr>
-<tr><td>status</td><td>응답의 완료 상태</td></tr>
-<tr><td>answer</td><td>SDK가 모은 텍스트 출력</td></tr>
-<tr><td>usage</td><td>서버 응답의 토큰 사용량 또는 없음</td></tr>
-<tr><td>seconds</td><td>로컬에서 측정한 요청 대기 포함 시간</td></tr>
-</tbody></table></div>
-</details>
-<span id="context"></span><details class="reading-topic" id="reading-context"><summary>대화 메시지 목록 구성</summary><div class="prose"><p>이 예제의 input에는 사용자 메시지 하나가 있습니다. 프로그램을 다시 실행해도 지난 요청의 내용이 자동으로 포함된다고 가정하지 않습니다. 후속 질문에 앞선 내용이 필요하면 그 내용을 입력으로 전달하는 방식을 명시적으로 구현해야 합니다.</p>
-</div>
-</details>
-<span id="failures"></span><details class="reading-topic" id="reading-failures"><summary>API 실패 유형과 실호출 조건</summary><div class="prose"><p>실제 실행은 강사가 승인한 계정과 예산이 준비되었을 때만 --live를 붙입니다. OPENAI_MODEL에는 해당 계정에서 이용 가능하고 Responses API를 지원하는 모델을 지정합니다. 이 자료는 실제 모델 호출을 검증했다고 주장하지 않습니다.</p>
-<p>실제 클라이언트는 20초 시간 제한과 자동 재시도 0회를 사용합니다. 연결·인증·한도 오류를 만났을 때 무한히 재호출하지 않기 위한 수업 설정입니다. 기록에는 오류 종류와 HTTP 상태 코드만 남기고 키·헤더·예외 본문 전체를 출력하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>오류를 읽는 기준</caption><thead><tr><th scope="col">상황</th><th scope="col">확인할 점</th></tr>
-</thead><tbody><tr><td>인증 실패</td><td>올바른 계정·키 설정 여부, 키 값 출력 금지</td></tr>
-<tr><td>사용 한도 오류</td><td>계정 한도·과금 조건, 반복 호출 중지</td></tr>
-<tr><td>연결·시간 초과</td><td>네트워크와 시간 제한</td></tr>
-<tr><td>지원하지 않는 모델·옵션</td><td>계정 모델과 공식 API 문서</td></tr>
-<tr><td>정상 응답이나 틀린 내용</td><td>API 연결과 별개로 원문 대조</td></tr>
-</tbody></table></div>
-<div class="prose"><p>사용량에 가격을 곱해 비용을 계산하려면 실제 모델의 최신 단가와 토큰 구분을 확인해야 합니다. 이 장은 가격 숫자를 고정하지 않습니다. 실제 비용 확인은 계정 사용량 기록과 대조합니다.</p>
-</div>
-</details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>호출 전 입력 검증</summary><div class="prose"><p>다음 장에서는 응답 형식을 스키마로 정하고, 불완전 응답·거절·스트리밍을 구분합니다. 오늘의 호출 함수와 오류 기록이 출발점입니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://developers.openai.com/api/docs/guides/text" target="_blank" rel="noopener noreferrer">OpenAI 텍스트 생성 ↗</a><span></span></li>
 <li><a href="https://github.com/openai/openai-python" target="_blank" rel="noopener noreferrer">OpenAI Python SDK ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

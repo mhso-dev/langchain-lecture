@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 29 / CHECKPOINT</p>
 <span class="sidebar-title">체크포인터와 thread_id를 이용한 대화 저장</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thread"><span>02</span>체크포인터로 같은 스레드의 상태 복원</a><a href="#nb-isolation"><span>03</span>thread_id를 이용한 대화 분리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>체크포인터와 thread_id를 이용한 대화 저장 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-thread"><span>02</span>체크포인터로 같은 스레드의 상태 복원</a><a href="#nb-isolation"><span>03</span>thread_id를 이용한 대화 분리</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -83,6 +83,20 @@ print(reply[<span class="tok-string">'messages'</span>][-<span class="tok-number
 <div class="cell-after"><p>사용자 발화가 1개로 나옵니다. respond가 이 대화 안의 HumanMessage만 세므로 AI 답변은 개수에 들어가지 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="roles"></span><div class="lesson-explanation" id="reading-roles"><h3>그래프·체크포인터·스레드의 역할</h3><div class="prose"><p>add_messages는 새 메시지를 기존 목록에 어떻게 반영할지 정합니다. 체크포인터는 대화별 그래프 상태를 저장하고 다음 실행에서 이어 쓰게 합니다. thread_id는 어느 대화의 상태를 사용할지 지정하는 이름입니다. 같은 이름을 써도 다른 저장소 객체를 만들면 이전 기록을 찾을 수 없습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>역할 비교</caption><thead><tr><th scope="col">요소</th><th scope="col">질문</th><th scope="col">이 예제</th></tr>
+</thead><tbody><tr><td>messages 갱신 규칙</td><td>새 메시지를 어떻게 합칠까?</td><td>add_messages</td></tr>
+<tr><td>체크포인터</td><td>대화 상태를 어디에 보관할까?</td><td>InMemorySaver의 RAM</td></tr>
+<tr><td>thread_id</td><td>어느 대화를 이어갈까?</td><td>A / B / C</td></tr>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="setup"></span><span class="lesson-anchor" id="reading-setup"></span>
+<span class="lesson-anchor" id="compile"></span><div class="lesson-explanation" id="reading-compile"><h3>체크포인터를 지정한 그래프 재사용</h3><div class="prose"><p>make_graph는 호출할 때 InMemorySaver를 새로 만듭니다. 예제의 시작에서 한 번만 호출해 graph를 만든 뒤 여러 send 호출에 같은 객체를 넘깁니다. 질문을 보낼 때마다 make_graph를 다시 호출하면 그때마다 새 저장소가 생겨 이전 상태가 이어지지 않습니다.</p>
+<p>RAM에 있는 상태는 프로그램이 종료되면 사라집니다. 이 동작을 데이터베이스 영구 저장으로 설명하지 마세요. 후반 서비스에서는 보관 기간·삭제·접근 제어까지 별도 설계합니다. 여기서는 저장소 수명과 대화 구분의 원리를 확인합니다.</p>
+</div></div>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-restore-before-respond"><h3>A의 두 번째 invoke 전에 어떤 상태가 복원될까요?</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-restore-before-respond.mp4" aria-label="A의 두 번째 invoke 전에 어떤 상태가 복원될까요?" aria-describedby="workflow-restore-before-respond-caption"></video><figcaption id="workflow-restore-before-respond-caption">같은 graph와 thread_id를 다시 사용합니다. 첫 질문과 응답을 복원한 뒤 이번 사용자 질문만 더해 respond에 전달합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>A 선택</strong> · thread_id = A</li><li><strong>상태 복원</strong> · 직전 messages = 사용자 1 · 응답 1</li><li><strong>입력 병합</strong> · 사용자 발화 수 = 2</li><li><strong>respond</strong> · 최근 질문 = 반납 방법?</li><li><strong>상태 보관</strong> · A의 messages = 사용자 2 · 응답 2</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 같은 thread_id의 체크포인트</h3>
 <div class="cell-before"><p>이미 저장된 첫 질문을 다시 넘기지 말고 두 번째 질문만 보냅니다.</p>
 </div>
@@ -92,6 +106,10 @@ print(reply[<span class="tok-string">'messages'</span>][-<span class="tok-number
 <div class="cell-after"><p>사용자 발화 2개가 되었습니다. 같은 저장소와 같은 A를 썼기 때문입니다. 중간에 첫 셀을 다시 실행하면 저장소를 새로 만들어 과거 상태가 사라집니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="send"></span><div class="lesson-explanation" id="reading-send"><h3>동일 thread_id의 연속 입력</h3><div class="prose"><p>thread_id는 State의 messages 안에 넣지 않고 호출 config의 configurable에 넣습니다. send는 이번 사용자 질문 한 개만 변경분으로 보냅니다. 체크포인터가 가져온 이전 상태에 add_messages 규칙으로 새 입력이 반영되고 respond가 실행됩니다.</p>
+<p>이전 전체 기록을 새로운 ID로 다시 만들어 보내면 이전 질문이 중복 추가될 수 있습니다. 새 질문과 이미 저장된 이력의 책임을 나눕니다. 이 장은 수정·삭제 요청을 구현하지 않으며 새 입력 추가만 다룹니다.</p>
+</div></div>
+
 </section>
 <section id="nb-isolation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>thread_id를 이용한 대화 분리</h2>
@@ -115,13 +133,24 @@ print(reply_b[<span class="tok-string">'messages'</span>][-<span class="tok-numb
 </div>
 </details>
 </article>
-<details class="case-reference" id="flow-5"><summary>같은 저장소에서 대화 A와 B 따라가기</summary>
+<span class="lesson-anchor" id="observe"></span><div class="lesson-explanation" id="reading-observe"><h3>두 번째 대화가 읽는 기록</h3><p>graph를 그대로 두고 config의 thread_id만 B로 바꾸세요. A의 두 질문을 보관한 저장소를 공유해도 B가 시작하는 메시지 목록에는 그 질문들이 없습니다. 출력의 사용자 발화 수로 구별할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>새 스레드와 저장소의 수명</h3><div class="table-scroll" tabindex="0"><table><caption>막혔을 때</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
+</thead><tbody><tr><td>같은 대화가 이어지지 않음</td><td>graph 객체·thread_id</td><td>같은 graph와 같은 ID인지 비교</td></tr>
+<tr><td>다른 대화가 섞임</td><td>A/B에 실제로 전달한 ID</td><td>호출 인자 기록 확인</td></tr>
+<tr><td>질문이 중복됨</td><td>전체 이력 재전송·새 ID</td><td>이번 새 사용자 입력만 전달</td></tr>
+<tr><td>프로그램 재실행 후 기록 없음</td><td>InMemorySaver 수명</td><td>RAM 저장의 정상 범위로 기록</td></tr>
+<tr><td>빈 대화 ID 오류</td><td>config_for 입력</td><td>비어 있지 않은 학습용 ID 사용</td></tr>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+<figure class="lesson-clip workflow-clip" id="workflow-isolate-new-thread"><h3>같은 그래프가 B의 첫 질문에는 1개라고 답합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-isolate-new-thread.mp4" aria-label="같은 그래프가 B의 첫 질문에는 1개라고 답합니다" aria-describedby="workflow-isolate-new-thread-caption"></video><figcaption id="workflow-isolate-new-thread-caption">A에 이미 저장된 네 메시지는 A에 남습니다. 이번 config가 B를 가리키므로 respond는 B의 입력만 셉니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>B 선택</strong> · thread_id = B</li><li><strong>B의 상태</strong> · 기존 메시지 = 0개</li><li><strong>respond</strong> · 사용자 발화 = 휴관일? · 1개</li><li><strong>상태 보관</strong> · B의 messages = 사용자 1 · 응답 1</li></ol></figure>
+
+<div class="worked-case" id="flow-5"><h3>같은 저장소에서 대화 A와 B 따라가기</h3>
 <p>대화 ID가 바뀔 때 어느 대화의 이전 발화를 불러오는지 살펴보세요.</p>
 <article id="flow-5-step-0"><small>STEP 01 · thread_id = A</small><h4>첫 thread_id의 초기 입력</h4>
 <p>A에 쌓인 사용자 발화는 한 개입니다.</p><pre>A · 1개 · 대출 기간?</pre></article><article id="flow-5-step-1"><small>STEP 02 · thread_id = A</small><h4>같은 스레드의 후속 질문</h4>
 <p>같은 대화를 다시 열었으므로 첫 질문도 기록에 남습니다.</p><pre>A · 2개 · 반납 방법?</pre></article><article id="flow-5-step-2"><small>STEP 03 · thread_id = B</small><h4>별도 thread_id의 초기 입력</h4>
 <p>같은 저장소를 써도 B의 사용자 발화는 한 개입니다. A의 두 발화는 A에 남습니다.</p><pre>A · 2개 · 대출 기간? / 반납 방법?
-B · 1개 · 휴관일?</pre></article></details>
+B · 1개 · 휴관일?</pre></article></div>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -130,53 +159,8 @@ B · 1개 · 휴관일?</pre></article></details>
 <div class="prose"><p>graph.get_state(config_for('A')).values에서 메시지 수를 예측해 보세요. 두 발화에 각각 답이 붙어 총 네 개입니다. 이미 실행한 셀을 반복하면 그만큼 새 발화가 더해집니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>체크포인터와 thread_id를 이용한 대화 저장 심화 읽기</h2>
-</div>
-</header>
-<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>그래프·체크포인터·스레드의 역할</summary><div class="prose"><p>add_messages는 새 메시지를 기존 목록에 어떻게 반영할지 정합니다. 체크포인터는 대화별 그래프 상태를 저장하고 다음 실행에서 이어 쓰게 합니다. thread_id는 어느 대화의 상태를 사용할지 지정하는 이름입니다. 같은 이름을 써도 다른 저장소 객체를 만들면 이전 기록을 찾을 수 없습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>역할 비교</caption><thead><tr><th scope="col">요소</th><th scope="col">질문</th><th scope="col">이 예제</th></tr>
-</thead><tbody><tr><td>messages 갱신 규칙</td><td>새 메시지를 어떻게 합칠까?</td><td>add_messages</td></tr>
-<tr><td>체크포인터</td><td>대화 상태를 어디에 보관할까?</td><td>InMemorySaver의 RAM</td></tr>
-<tr><td>thread_id</td><td>어느 대화를 이어갈까?</td><td>A / B / C</td></tr>
-</tbody></table></div>
-</details>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>체크포인트 실습 환경</summary><div class="prose"><p>Python 3.12.x, langgraph 1.2.22, langchain-core 1.8.0을 기준으로 확인합니다. API 키나 서버는 필요 없습니다. 설치 후에는 로컬 메모리에서 예제가 실행됩니다. 기존 가상환경을 사용할 때는 패키지 버전을 먼저 확인하세요.</p>
-</div>
-</details>
-<span id="compile"></span><details class="reading-topic" id="reading-compile"><summary>체크포인터를 지정한 그래프 재사용</summary><div class="prose"><p>make_graph는 호출할 때 InMemorySaver를 새로 만듭니다. 예제의 시작에서 한 번만 호출해 graph를 만든 뒤 여러 send 호출에 같은 객체를 넘깁니다. 질문을 보낼 때마다 make_graph를 다시 호출하면 그때마다 새 저장소가 생겨 이전 상태가 이어지지 않습니다.</p>
-<p>RAM에 있는 상태는 프로그램이 종료되면 사라집니다. 이 동작을 데이터베이스 영구 저장으로 설명하지 마세요. 후반 서비스에서는 보관 기간·삭제·접근 제어까지 별도 설계합니다. 여기서는 저장소 수명과 대화 구분의 원리를 확인합니다.</p>
-</div>
-</details>
-<span id="send"></span><details class="reading-topic" id="reading-send"><summary>동일 thread_id의 연속 입력</summary><div class="prose"><p>thread_id는 State의 messages 안에 넣지 않고 호출 config의 configurable에 넣습니다. send는 이번 사용자 질문 한 개만 변경분으로 보냅니다. 체크포인터가 가져온 이전 상태에 add_messages 규칙으로 새 입력이 반영되고 respond가 실행됩니다.</p>
-<p>이전 전체 기록을 새로운 ID로 다시 만들어 보내면 이전 질문이 중복 추가될 수 있습니다. 새 질문과 이미 저장된 이력의 책임을 나눕니다. 이 장은 수정·삭제 요청을 구현하지 않으며 새 입력 추가만 다룹니다.</p>
-</div>
-</details>
-<span id="observe"></span><details class="reading-topic" id="reading-observe"><summary>스레드별 상태 조회</summary><div class="prose"><p>get_state는 해당 대화의 저장 상태를 읽습니다. 이 코드에서는 조회한다고 respond가 다시 실행되거나 답변이 추가되지 않습니다. 반대로 invoke는 그래프를 실행합니다. 이전 실행 결과를 확인하려고 같은 질문을 invoke로 반복 보내면 새 메시지가 생기는 이유를 구분하세요.</p>
-</div>
-</details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>새 스레드와 저장소의 수명</summary><div class="table-scroll" tabindex="0"><table><caption>막혔을 때</caption><thead><tr><th scope="col">증상</th><th scope="col">확인</th><th scope="col">조치</th></tr>
-</thead><tbody><tr><td>같은 대화가 이어지지 않음</td><td>graph 객체·thread_id</td><td>같은 graph와 같은 ID인지 비교</td></tr>
-<tr><td>다른 대화가 섞임</td><td>A/B에 실제로 전달한 ID</td><td>호출 인자 기록 확인</td></tr>
-<tr><td>질문이 중복됨</td><td>전체 이력 재전송·새 ID</td><td>이번 새 사용자 입력만 전달</td></tr>
-<tr><td>프로그램 재실행 후 기록 없음</td><td>InMemorySaver 수명</td><td>RAM 저장의 정상 범위로 기록</td></tr>
-<tr><td>빈 대화 ID 오류</td><td>config_for 입력</td><td>비어 있지 않은 학습용 ID 사용</td></tr>
-</tbody></table></div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>체크포인트 검증 기록</summary><div class="prose"><p>templates/graph/thread-isolation.json을 작업 폴더의 graph/thread-isolation.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">위치</th><th scope="col">기록</th></tr>
-</thead><tbody><tr><td>entry_evidence</td><td>28장 메시지 갱신 사례와 오늘 thread_id의 역할 비교</td></tr>
-<tr><td>AB_two_turns</td><td>A/B 각각 두 요청의 thread_id·입력·실제 메시지 목록</td></tr>
-<tr><td>C 전후 / A 재조회</td><td>C 시작이 A를 지우지 않음, 조회는 응답을 추가하지 않음</td></tr>
-<tr><td>new_store_same_A</td><td>새 InMemorySaver에서 같은 A의 상태와 저장소 수명 설명</td></tr>
-</tbody></table></div>
-<div class="prose"><p>graph/thread-isolation.json에 A/B 각 두 질문·C 시작 전후·A 보존·반복 조회·새 저장소를 기록합니다. 새 C 시작은 삭제가 아니며, get_state는 새 답변 생성이 아님을 설명합니다. 이후 수업에 이 관찰을 넘기되 30장의 순차 RAG에 대화 메모리를 억지로 붙이지 않습니다. 장기 Store와 운영 정책은 후속 수업에서 다룹니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

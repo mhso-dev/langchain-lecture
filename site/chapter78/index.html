@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 78 / 120</p>
 <span class="sidebar-title">HTML 입력 요소와 반응형 CSS</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-markup"><span>02</span>label의 for와 input의 id</a><a href="#nb-layout"><span>03</span>좁은 화면에서의 CSS 줄바꿈</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>HTML 입력 요소와 반응형 CSS 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-markup"><span>02</span>label의 for와 input의 id</a><a href="#nb-layout"><span>03</span>좁은 화면에서의 CSS 줄바꿈</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -29,6 +29,9 @@
 </header>
 <a class="download" href="chapter78.ipynb" download="chapter78.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>78장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 ipython 9.17.1입니다.</p>
 </div>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
+<span class="lesson-anchor" id="roles"></span><span class="lesson-anchor" id="reading-roles"></span>
 </section>
 <section id="nb-markup" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>label의 for와 input의 id</h2>
@@ -39,6 +42,9 @@
 
 <!-- END MOTION -->
 
+
+<span class="lesson-anchor" id="document"></span><span class="lesson-anchor" id="reading-document"></span>
+<span class="lesson-anchor" id="tags"></span><span class="lesson-anchor" id="task-a"></span><div class="lesson-explanation" id="reading-tags"><h3>버튼을 표시하는 것과 활성화하는 것</h3><p>button은 화면에 보이지만 disabled 속성이 있어 누를 수 없습니다. type=&quot;button&quot;으로 선언한 버튼에 실제 추가 동작을 연결하려면 별도의 이벤트 처리가 필요합니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · HTML 입력 요소와 버튼</h3>
 <div class="cell-before"><p>노트북에서 레이블을 눌러 커서가 옮겨지는지 보세요. 정적 시안이라 버튼은 비활성입니다.</p>
 </div>
@@ -55,6 +61,9 @@ display({<span class="tok-string">"text/html"</span>: markup, <span class="tok-s
 &lt;button type=&quot;button&quot; disabled&gt;추가 동작 준비 중&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;"></iframe><div class="cell-after"><p>화면에 입력칸이 보이지만 입력 내용을 저장하는 코드는 없습니다. 표시와 저장을 따로 설계하면 화면을 읽기 전에 서버를 준비할 필요가 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="form"></span><div class="lesson-explanation" id="reading-form"><h3>for와 id가 같을 때의 초점 이동</h3><p>레이블의 for 값은 입력 요소의 id를 가리킵니다. 표시 문구가 같아도 이 두 값이 다르면 브라우저가 올바른 입력칸을 연결할 수 없습니다. 레이블 글자를 눌러 어느 입력칸에 초점이 가는지 확인하세요.</p></div>
+<span class="lesson-anchor" id="list"></span><span class="lesson-anchor" id="reading-list"></span>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · label과 id 연결</h3>
 <div class="cell-before"><p>for가 다른 이름을 가리키는 짧은 화면을 고쳐 레이블로 입력칸에 초점을 보낼 수 있게 하세요.</p>
 </div>
@@ -68,6 +77,9 @@ display({<span class="tok-string">'text/html'</span>: fixed, <span class="tok-st
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="states"></span><span class="lesson-anchor" id="reading-states"></span>
+<figure class="lesson-clip workflow-clip" id="workflow-label-target"><h3>레이블에서 실제 입력칸을 찾는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-label-target.mp4" aria-label="레이블에서 실제 입력칸을 찾는 경로" aria-describedby="workflow-label-target-caption"></video><figcaption id="workflow-label-target-caption">새 제목 레이블의 for를 수정하면 브라우저가 가리킬 입력칸이 달라집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>레이블</strong> · for = task-a</li><li><strong>ID 찾기</strong> · 입력칸 id = task-b</li><li><strong>일치 없음</strong> · 일치 여부 = task-a ≠ task-b</li><li><strong>for 수정</strong> · 수정한 for = task-b</li><li><strong>ID 찾기</strong> · 다시 비교 = task-b = task-b</li><li><strong>입력칸 연결</strong> · 연결된 요소 = input#task-b</li></ol></figure>
+
 </section>
 <section id="nb-layout" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>좁은 화면에서의 CSS 줄바꿈</h2>
@@ -77,6 +89,9 @@ display({<span class="tok-string">'text/html'</span>: fixed, <span class="tok-st
 <!-- lesson-visual practice-space -->
 <section class="practice-space" id="practice-space" data-practice="wrapping"><h3>폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?</h3><p>입력칸 180px, 버튼 100px, gap 10px로 고정한 flex-wrap 비교 예시입니다. 컨테이너 폭을 290px와 289px로 바꿔 보세요.</p><label>컨테이너 폭(px) <input type="range" min="200" max="440" step="1" value="290"><span class="practice-value">290</span></label><div class="practice-stage" role="img" aria-label="폭을 줄이면 버튼이 언제 다음 줄로 내려갈까요?"></div><output aria-live="polite">290px에서는 입력칸과 버튼이 한 줄입니다. 289px에서는 1px가 부족해 버튼이 다음 줄로 넘어갑니다.</output></section>
 <!-- /lesson-visual practice-space -->
+
+<span class="lesson-anchor" id="css"></span><div class="lesson-explanation" id="reading-css"><h3>부모 행에 적용되는 flex와 gap</h3><p>display:flex와 flex-wrap:wrap은 input과 button이 함께 들어 있는 .input-row에 적용합니다. gap:10px은 두 요소 사이의 여백입니다. 입력칸 자체에 적용하면 이 둘을 한 행으로 배치할 수 없습니다.</p></div>
+<span class="lesson-anchor" id="layout"></span><div class="lesson-explanation" id="reading-layout"><h3>좁은 화면에서 첫 줄이 끝나는 위치</h3><p>입력칸과 버튼의 최소 너비에 사이 간격까지 더한 값보다 행이 좁으면 버튼이 다음 줄로 내려갑니다. 옆의 너비 조절 실험에서 처음으로 버튼이 내려가는 지점을 찾으세요.</p></div>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 반응형 CSS 수정</h3>
 <div class="cell-before"><p>gap의 10px를 24px로 바꾸고 셀을 다시 실행해 입력칸과 버튼 사이를 보세요.</p>
 <p>아래 gap은 입력칸과 버튼 사이의 간격입니다. 값을 바꾼 뒤 같은 셀을 다시 실행하면 화면 스타일과 텍스트 설명이 함께 바뀝니다.</p>
@@ -95,6 +110,10 @@ display({<span class="tok-string">"text/html"</span>: style + second, <span clas
 &lt;button type=&quot;button&quot; disabled&gt;추가 동작 준비 중&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;"></iframe><div class="cell-after"><p>레이블 아래에 입력칸과 버튼이 한 묶음으로 그려집니다. CSS를 바꿔도 HTML에서 지정한 disabled 상태는 그대로입니다. 결과가 그림 대신 코드로 보이면 노트북에서 HTML 출력을 표시하는지 확인하세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="modify"></span><span class="lesson-anchor" id="reading-modify"></span>
+<span class="lesson-anchor" id="check"></span><span class="lesson-anchor" id="reading-check"></span>
+<span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -102,83 +121,10 @@ display({<span class="tok-string">"text/html"</span>: style + second, <span clas
 </header>
 <div class="prose"><p>입력칸의 이름, 버튼의 사용 가능 여부, 목록의 완료 표시를 차례로 가리켜 보세요. 다음 장에서는 과정 안내 질문을 전송하는 별도 사례로 입력값을 읽고 응답을 기다리는 순서를 익힙니다.</p>
 </div>
+
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>HTML 입력 요소와 반응형 CSS 심화 읽기</h2>
-</div>
-</header>
-<span id="goals"></span><details class="reading-topic" id="reading-goals"><summary>화면 실습의 HTML 구조</summary><div class="prose"><p>브라우저에서 입력칸과 버튼을 본 적이 있어도, 어느 코드가 그 요소를 만드는지 처음에는 찾기 어렵습니다. 오늘은 작은 할 일 화면의 HTML과 CSS를 읽고 문구·목록·간격을 수정합니다. 클릭 뒤 저장되는 동작은 80일에 만듭니다. 오늘의 추가 버튼과 체크박스는 정적 예시임을 드러내기 위해 비활성화했습니다.</p>
-<p>68일의 api/http-contract-results.json에서 요청과 응답을, 77일의 cd/rollout-rollback.md에서 실제 앱 버전과 미확인을 찾으세요. 첫 15분은 아래 첫 0.5H에 포함됩니다. 자료가 없다면 실제 API·배포가 확인된 것으로 채우지 않고 역할표의 빈칸부터 읽습니다.</p>
-</div>
-</details>
-<span id="roles"></span><details class="reading-topic" id="reading-roles"><summary>브라우저·API·DB의 역할 분담</summary><div class="prose"><p>브라우저는 HTML을 읽어 화면 구조를 만들고 CSS 규칙으로 표시합니다. 입력칸의 값은 우선 브라우저 안에 있습니다. 서버로 보내려면 뒤에서 배울 이벤트 처리와 HTTP 요청이 필요합니다. DB에 남기려면 서버의 저장 동작까지 연결되어야 합니다. 이 단계를 생략하고 입력칸만 그린 상태를 저장 완료라고 부르면 오류를 찾기 어렵습니다.</p>
-<p>79일에는 오늘의 입력·버튼·결과 영역을 별도의 과정 안내 질문 화면에 씁니다. 문서 답변을 받는 H1 API는 할 일을 만드는 API가 아닙니다. 80일에는 다시 할 일 앱의 추가·완료·삭제를 구현하고, 81일에 별도 CRUD API를 연결합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이어지는 것과 새로 만드는 것</caption><thead><tr><th scope="col">날짜</th><th scope="col">화면/데이터</th><th scope="col">직접 확인할 범위</th></tr>
-</thead><tbody><tr><td>78</td><td>정적 할 일 예시</td><td>요소와 스타일 변경</td></tr>
-<tr><td>79</td><td>별도 과정 안내 질문</td><td>입력·비동기 상태·H1 응답</td></tr>
-<tr><td>80</td><td>Todo 작업 레코드</td><td>브라우저 메모리의 추가/완료/삭제</td></tr>
-<tr><td>81 이후</td><td>별도 Todo API/DB</td><td>CRUD 요청과 영속성</td></tr>
-</tbody></table></div>
-</details>
-<span id="document"></span><details class="reading-topic" id="reading-document"><summary>HTML 문서의 기본 골격</summary><div class="prose"><p>HTML은 내용을 요소로 나누어 표시하는 문서입니다. 태그는 요소의 시작과 끝을 나타냅니다. head에는 문자 인코딩·문서 제목·CSS 연결 같은 정보를, body에는 사용자가 읽을 내용을 둡니다. lang="ko"는 문서 언어를 나타내며 화면을 한국어로 자동 번역하는 명령은 아닙니다.</p>
-<p>viewport 선언은 작은 화면에서 페이지 폭을 다루는 데 사용합니다. link의 href는 CSS 파일의 위치입니다. 같은 폴더의 styles.css를 가리키므로 HTML 파일만 다른 곳으로 옮기면 스타일 연결이 끊어질 수 있습니다. 단일 교재 HTML은 교재 스타일을 포함하지만 실습 화면의 HTML/CSS 두 파일은 함께 보관해야 합니다.</p>
-</div>
-</details>
-<span id="tags"></span><details class="reading-topic" id="reading-tags"><summary>태그·속성·요소 중첩</summary><div class="prose"><p>h1은 이 화면의 큰 제목이고 section은 관련 내용을 묶는 영역입니다. 속성은 태그 안에서 요소의 이름이나 설정을 적는 부분입니다. id는 문서 안에서 한 요소를 찾는 이름이므로 중복하지 않습니다. class는 같은 스타일을 적용할 여러 요소에 붙일 수 있습니다.</p>
-<p>중첩은 요소 안에 다른 요소가 들어가는 관계입니다. 목록 ul 안에 항목 li가 들어가고, 입력 영역 section 안에는 label·input·button이 있습니다. 닫는 태그를 옮기기 전에 어떤 범위를 묶는지 먼저 표시하세요. 문서의 id="task-a"는 화면 요소의 이름이며 뒤에서 사용할 Todo 레코드 id와는 역할이 다릅니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이 화면에서 찾을 단서</caption><thead><tr><th scope="col">표기</th><th scope="col">의미</th><th scope="col">찾을 예</th></tr>
-</thead><tbody><tr><td>id</td><td>문서 안의 특정 요소</td><td>todo-title</td></tr>
-<tr><td>class</td><td>스타일을 공유하는 요소 묶음</td><td>panel, note</td></tr>
-<tr><td>for</td><td>label이 설명하는 입력 id</td><td>todo-title</td></tr>
-<tr><td>href</td><td>연결된 파일/문서 위치</td><td>styles.css</td></tr>
-</tbody></table></div>
-</details>
-<span id="form"></span><details class="reading-topic" id="reading-form"><summary>레이블·입력 요소의 식별자</summary><div class="prose"><p>label은 입력칸이 무엇을 받는지 설명합니다. label의 for와 input의 id를 같은 값으로 맞추면 두 요소의 관계가 분명해집니다. placeholder는 입력 전의 힌트이고 label을 대신하지 않습니다. 버튼에는 type을 적어 의도한 동작을 드러냅니다.</p>
-<p>현재 추가 버튼은 disabled입니다. 동작을 아직 만들지 않았다는 뜻입니다. 입력칸에 글자를 적어도 목록이 늘지 않는 것은 이 단계의 정상 범위입니다. maxlength=100은 정적 예제의 입력 표시 제한일 뿐, 80일 T1 제목 규칙을 정한 값은 아닙니다.</p>
-</div>
-</details>
-<span id="list"></span><details class="reading-topic" id="reading-list"><summary>목록·완료·오류 표시 상태</summary><div class="prose"><p>ul은 목록, li는 한 항목입니다. 제공 파일에는 미완료 예시와 완료 예시 두 개가 있습니다. checked는 체크 표시의 초기 상태를 나타내고 disabled는 조작을 막습니다. 체크가 보인다는 사실은 학습자가 실제 작업을 끝냈다는 기록이 아닙니다.</p>
-<p>완료 상태를 색만으로 표현하면 색을 구별하기 어려운 사용자가 놓칠 수 있습니다. 예제는 문구에도 완료/미완료를 적었습니다. 오류 안내도 같은 원리입니다. 빈 제목일 때 어떤 문구를 보여 줄지 정하되 지금은 정적 표시라는 점을 기록합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>상태 계획 예시 · 실제 관찰 아님</caption><thead><tr><th scope="col">상태</th><th scope="col">보여 줄 내용</th><th scope="col">오늘의 작업</th></tr>
-</thead><tbody><tr><td>빈 목록</td><td>아직 할 일이 없습니다.</td><td>문구 계획</td></tr>
-<tr><td>빈 입력 오류</td><td>제목을 입력해 주세요.</td><td>표시 위치 계획</td></tr>
-<tr><td>완료</td><td>체크와 완료 문구</td><td>정적 예시 읽기</td></tr>
-</tbody></table></div>
-</details>
-<span id="css"></span><details class="reading-topic" id="reading-css"><summary>CSS 선택자와 선언</summary><div class="prose"><p>CSS 규칙은 선택자와 선언으로 읽습니다. .panel은 class="panel"인 요소를 고릅니다. 중괄호 안의 padding은 안쪽 여백, margin은 바깥 간격, border는 테두리입니다. 속성 이름과 값을 콜론으로 나누고 선언 끝에 세미콜론을 적습니다.</p>
-<p>여러 규칙이 같은 요소에 적용될 수 있습니다. 처음에는 어느 규칙이 이기는지 외우기보다 제공 선택자 하나의 값만 바꾸고 차이를 확인하세요. 모든 CSS를 한꺼번에 교체하면 원인을 설명하기 어렵습니다.</p>
-</div>
-</details>
-<span id="layout"></span><details class="reading-topic" id="reading-layout"><summary>반응형 너비·줄바꿈·포커스</summary><div class="prose"><p>큰 화면에서 보기 좋던 입력 줄도 작은 폭에서는 넘칠 수 있습니다. max-width는 본문이 지나치게 넓어지지 않게 하고, flex-wrap은 한 줄에 들어가지 않는 요소를 다음 줄로 보낼 수 있게 합니다. 긴 출처나 단어는 overflow-wrap으로 줄바꿈을 허용합니다.</p>
-<p>키보드로 이동할 때 현재 선택된 요소를 알아볼 수 있어야 합니다. :focus-visible 규칙은 초점 테두리를 제공합니다. 이 선언이 있다는 이유만으로 모든 키보드 조작과 대비를 검증한 것은 아닙니다. 실제 브라우저에서 이동 순서와 보이는 상태를 따로 확인합니다.</p>
-</div>
-</details>
-<span id="modify"></span><details class="reading-topic" id="reading-modify"><summary>HTML·CSS 변경 검증</summary><div class="prose"><p>원본 파일을 보존하고 작업 사본에서 수정하세요. 먼저 제목/안내, 다음으로 목록 예시, 마지막으로 지정 CSS의 간격이나 폭을 바꿉니다. 한 번 저장할 때마다 변경 이유를 적으면 문제가 생겼을 때 돌아갈 위치를 찾기 쉽습니다.</p>
-<p>브라우저에서 바뀌지 않는다면 먼저 저장한 파일이 맞는지, CSS 경로가 같은지, 수정한 선택자가 요소의 class와 일치하는지 확인합니다. 서버를 새로 만들거나 프레임워크를 설치하는 것은 이 문제를 확인하는 첫 단계가 아닙니다.</p>
-</div>
-</details>
-<span id="states"></span><details class="reading-topic" id="reading-states"><summary>빈 입력과 오류 상태 설계</summary><div class="prose"><p>좋은 화면은 정상 입력만 설명하지 않습니다. 아직 항목이 없을 때, 제목이 비었을 때, 완료 여부를 구분할 때 무엇을 보여 줄지 정해야 합니다. 오늘은 상태를 표로 만들고 HTML에 예시 문구를 배치합니다. 상태를 자동 전환하는 프로그램은 80일의 작업입니다.</p>
-<p>79일에는 다른 종류의 상태가 추가됩니다. 질문을 보내기 전, 응답 대기 중, 답변 완료, 서버 오류입니다. 목록 저장과 답변 수신을 섞지 않고 UI의 입력/버튼/결과 구조만 옮기는 이유를 설명해 보세요.</p>
-</div>
-</details>
-<span id="check"></span><details class="reading-topic" id="reading-check"><summary>정적 구조와 화면 렌더링 검사</summary><div class="prose"><p>제공 check_static.py는 Python 표준 라이브러리로 id 중복, label 연결, CSS 파일, 스크립트 부재와 비활성 예시를 확인합니다. 코드를 기계적으로 확인할 수 있는 부분입니다. 실제로 읽기 편한지, 초점이 보이는지, 좁은 화면에서 잘리는지는 이 검사로 알 수 없습니다.</p>
-</div>
-</details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>레이아웃 오류 위치 진단</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 문제와 확인 순서</caption><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인</th><th scope="col">오늘 완료로 볼 수 있는 범위</th></tr>
-</thead><tbody><tr><td>스타일이 없음</td><td>styles.css 파일과 href</td><td>경로를 고치고 구조 검사</td></tr>
-<tr><td>입력 설명 연결이 깨짐</td><td>for/id와 중복 id</td><td>연결 복구</td></tr>
-<tr><td>목록이 안 늘어남</td><td>정적 예시·disabled·스크립트 없음</td><td>미구현을 설명</td></tr>
-<tr><td>작은 화면이 넘침</td><td>폭/줄바꿈 규칙과 실제 화면</td><td>실제 확인 전 미검증</td></tr>
-<tr><td>체크만 있고 의미 불명확</td><td>완료 문구/상태 계획</td><td>색 외 설명 추가</td></tr>
-</tbody></table></div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>질문 패널과 할 일 UI의 공통 요소</summary><div class="prose"><p>79일에는 오늘의 UI 재료로 과정 안내 질문을 보여 줍니다. 80일에는 별도 T1 계약의 Todo 데이터를 사용합니다. DOM id와 작업 레코드 id, 정적 체크 표시와 명시적 완료 값, 브라우저 메모리와 DB 보존의 차이를 다음 작업에서 다시 확인합니다.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
