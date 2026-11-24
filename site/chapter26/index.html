@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 26 / LANGGRAPH</p>
 <span class="sidebar-title">LangGraph StateGraph의 상태와 노드</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-three-fields"><span>02</span>TypedDict와 노드의 부분 갱신</a><a href="#nb-run-graph"><span>03</span>add_node()·add_edge()·compile()로 그래프 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph StateGraph의 상태와 노드 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-three-fields"><span>02</span>TypedDict와 노드의 부분 갱신</a><a href="#nb-run-graph"><span>03</span>add_node()·add_edge()·compile()로 그래프 연결</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -44,6 +44,15 @@
 <video autoplay loop muted playsinline aria-label="노드 하나가 반환하지 않은 필드는 어디로 갈까요?" src="visual-three-fields.mp4"></video>
 <figcaption>검색 노드는 documents만, 답변 노드는 answer만 돌려줍니다. 각 갱신이 합쳐진 뒤에도 처음 받은 question은 상태에 남습니다.</figcaption></figure>
 <!-- /lesson-visual visual-three-fields -->
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>노드 실행 순서와 공유 상태</h3><div class="prose"><p>Node는 이번에 실행할 Python 함수입니다. Edge는 어떤 함수 다음에 어떤 함수를 실행할지 정한 연결입니다. State는 실행 중 공유하는 값의 묶음입니다. 문서가 어디에 저장되는지와 어느 함수가 다음에 호출되는지를 한 용어로 섞으면 오류 원인을 찾기 어렵습니다.</p>
+<p>예를 들어 질문의 공백을 지우는 normalize는 question을 읽고 question만 갱신합니다. 문서를 고르는 lookup은 question을 읽고 documents를 갱신합니다. 답변을 만드는 compose는 documents를 읽고 answer를 갱신합니다. 이번 그래프에서는 모델이 다음 노드를 고르지 않고 코드의 고정된 연결을 따릅니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>세 요소를 코드에 대응하기</caption><thead><tr><th scope="col">요소</th><th scope="col">예제</th><th scope="col">변경의 의미</th></tr>
+</thead><tbody><tr><td>Node</td><td>normalize, lookup, compose</td><td>처리할 계산을 바꿈</td></tr>
+<tr><td>Edge</td><td>normalize → lookup</td><td>실행 순서를 바꿈</td></tr>
+<tr><td>State</td><td>question, documents, answer</td><td>전달하고 보관할 값을 바꿈</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · normalize()의 공백 정리</h3>
 <div class="cell-before"><p>normalize가 돌려줄 딕셔너리의 키를 예측해 보세요.</p>
 </div>
@@ -67,6 +76,15 @@ print(normalize(initial))</code></pre></figure>
 <div class="cell-after"><p>question 하나만 보입니다. strip이 앞뒤 공백을 뺐고, normalize는 문서나 답변을 만들지 않았습니다. 이 반환값을 다음 단계의 전체 상태로 넘기면 나머지 키가 사라집니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>TypedDict 상태 스키마</h3><div class="prose"><p>State는 실행 중 사용할 딕셔너리의 키와 값 형태를 적은 타입입니다. question은 질문 문자열, documents는 문장 문자열의 리스트, answer는 답변 문자열입니다. 실제 값은 graph.invoke에 넘기는 initial에 들어 있습니다. 타입 선언만으로 질문이 자동 생성되지는 않습니다.</p>
+<p>TypedDict는 정적 타입 확인을 돕는 선언입니다. 잘못된 자료형이나 빈 입력을 모든 경우 자동으로 막아 주는 런타임 검증기로 생각하지 마세요. 이번 예제는 question.strip() 결과가 비었는지 노드에서 직접 검사합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>초기 상태 예측</caption><thead><tr><th scope="col">키</th><th scope="col">초기 값</th><th scope="col">누가 갱신하나요?</th></tr>
+</thead><tbody><tr><td>question</td><td>"  대출 기간은?  "</td><td>normalize</td></tr>
+<tr><td>documents</td><td>[]</td><td>lookup</td></tr>
+<tr><td>answer</td><td>""</td><td>compose</td></tr>
+</tbody></table></div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 노드 반환값과 상태 병합</h3>
 <div class="cell-before"><p>직접 호출에서는 딕셔너리를 합쳐 그래프가 하는 일을 한 번 따라 해 봅니다.</p>
 </div>
@@ -76,12 +94,18 @@ print(normalized)</code></pre></figure>
 <div class="cell-after"><p>documents와 answer의 빈 값이 남습니다. 두 칸은 이제 검색과 답변 노드가 채울 자리입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="nodes"></span><div class="lesson-explanation" id="reading-nodes"><h3>노드 함수의 부분 갱신</h3><div class="prose"><p>normalize가 반환한 딕셔너리에는 question 하나만 있습니다. 반환에서 빠진 documents와 answer를 지우라는 뜻이 아닙니다. 이번처럼 별도 갱신 규칙을 지정하지 않은 필드는 해당 키가 반환되면 새 값으로 바뀌며, 반환하지 않은 필드는 유지됩니다.</p>
+<p>입력 딕셔너리의 값을 직접 바꿔 놓고 아무것도 반환하지 않는 방식을 피합니다. 갱신할 내용을 새 딕셔너리로 반환하면 노드의 책임과 검사할 결과가 분명해집니다. 이 장은 순차 실행만 다루며 여러 노드가 동시에 같은 키를 갱신하는 경우는 포함하지 않습니다.</p>
+</div></div>
+
 </section>
 <section id="nb-run-graph" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>add_node()·add_edge()·compile()로 그래프 연결</h2>
 </div>
 </header>
 <p>엣지는 어떤 함수를 다음에 부를지 정하는 연결입니다. START에서 normalize, lookup, compose 순으로 연결한 뒤 END에서 멈춥니다. 검색 결과를 미리 써 넣지 않고 질문에 들어 있는 낱말을 자료와 대조합니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-build-before-run"><h3>compile()까지는 어떤 노드도 실행되지 않습니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-build-before-run.mp4" aria-label="compile()까지는 어떤 노드도 실행되지 않습니다" aria-describedby="workflow-build-before-run-caption"></video><figcaption id="workflow-build-before-run-caption">빌더에서 이름과 간선을 등록해 실행 경로를 완성합니다. 첫 상태는 graph.invoke(initial)에서 들어갑니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>add_node</strong> · 등록한 이름 = normalize · lookup · compose</li><li><strong>add_edge</strong> · 연결한 간선 = START → normalize → lookup</li><li><strong>compile</strong> · 반환 객체 = graph</li><li><strong>invoke</strong> · 첫 실행 입력 = initial</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · StateGraph의 노드와 간선</h3>
 <div class="cell-before"><p>이번 셀의 lookup은 노트북 안에 넣어 둔 두 가상 문장에서 찾습니다. 등록된 노드 이름과 엣지의 이름을 맞춰 보세요.</p>
 <p>초기값부터 normalize, lookup, compose 순서로 따라가세요. 한 노드가 돌려주는 사전은 이번에 바꿀 칸만 담습니다. 나머지 두 칸은 앞 상태의 값을 유지합니다.</p>
@@ -115,6 +139,12 @@ print(graph.invoke(initial)[<span class="tok-string">'answer'</span>])</code></p
 <div class="cell-after"><p>14일이라는 문장이 나옵니다. lookup이 대출 문장을 골라 documents에 넣었고 compose는 그대로 이어 붙였습니다. 모델에 날짜를 묻는 과정은 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="edges"></span><div class="lesson-explanation" id="reading-edges"><h3>노드·간선 등록과 컴파일</h3><div class="prose"><p>StateGraph는 그래프를 만드는 빌더입니다. add_node의 첫 인자는 그래프에서 사용하는 이름이고 두 번째 인자는 실행할 함수입니다. add_edge는 등록한 이름으로 연결합니다. START는 입력을 받은 시작 위치, END는 종료 위치입니다.</p>
+<p>compile로 실행 가능한 그래프를 만든 뒤 invoke를 호출합니다. 컴파일 단계가 실제 문서 내용의 품질이나 모든 런타임 오류를 증명해 주지는 않습니다. 문서 파일 누락처럼 실행할 때 드러나는 문제도 직접 검사해야 합니다.</p>
+</div></div>
+<span class="lesson-anchor" id="observe"></span><div class="lesson-explanation" id="reading-observe"><h3>노드 반환값과 invoke()의 최종 상태</h3><p>normalize(initial)은 question 한 칸을 돌려줍니다. graph.invoke(initial)은 세 노드를 거친 뒤 question·documents·answer를 모두 돌려줍니다. 셀 03에서 마지막에 선택한 키는 answer입니다. 휴관 문서 자체를 확인할 때는 documents를 읽습니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-question-to-answer"><h3>같은 상태에서 세 노드가 한 칸씩 채웁니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-question-to-answer.mp4" aria-label="같은 상태에서 세 노드가 한 칸씩 채웁니다" aria-describedby="workflow-question-to-answer-caption"></video><figcaption id="workflow-question-to-answer-caption">실행 중인 노드가 바뀔 때 반환 키도 바뀝니다. lookup이 찾은 문장은 compose가 answer를 쓴 뒤에도 documents에 남습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · question = &quot;  대출 기간은?  &quot;</li><li><strong>normalize</strong> · question = &quot;대출 기간은?&quot;</li><li><strong>lookup</strong> · documents[0] = 도서 대출 기간은 14일입니다.</li><li><strong>compose</strong> · answer = 도서 대출 기간은 14일입니다.</li><li><strong>END</strong> · 최종 상태 = question · documents · answer</li></ol></figure>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · invoke() 결과의 근거 확인</h3>
 <div class="cell-before"><p>질문을 ‘휴관 요일은?’로 바꾸어 실행하고 최종 상태에서 documents만 표시하세요.</p>
 </div>
@@ -126,7 +156,7 @@ print(graph.invoke(request)[<span class="tok-string">'documents'</span>])</code>
 </div>
 </details>
 </article>
-<details class="case-reference" id="flow-6"><summary>초기 상태와 세 노드의 변경값</summary>
+<div class="worked-case" id="flow-6"><h3>초기 상태와 세 노드의 변경값</h3>
 <p>질문의 공백을 지운 뒤 documents와 answer에 어떤 값이 남는지 예시에서 찾아보세요.</p>
 <article id="flow-6-step-0"><small>STEP 01 · 호출자</small><h4>State 초기값</h4>
 <p>질문을 넣고 결과 칸은 비웁니다.</p><pre>question  = '  대출 기간은?  '
@@ -140,7 +170,7 @@ documents = ["도서 대출 기간은 14일입니다."]
 answer    = ""</pre></article><article id="flow-6-step-3"><small>STEP 04 · compose</small><h4>답변 노드의 문맥 사용</h4>
 <p>documents를 읽고 answer를 갱신합니다.</p><pre>question  = '대출 기간은?'
 documents = ["도서 대출 기간은 14일입니다."]
-answer    = "도서 대출 기간은 14일입니다."</pre></article></details>
+answer    = "도서 대출 기간은 14일입니다."</pre></article></div>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -149,48 +179,8 @@ answer    = "도서 대출 기간은 14일입니다."</pre></article></details>
 <div class="prose"><p>주차 질문을 넣었을 때 답변을 만든 노드와 빈 목록을 만든 노드를 구별해 보세요. 다음 장은 빈 검색 뒤 한 번 더 찾을지 결정합니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>LangGraph StateGraph의 상태와 노드 심화 읽기</h2>
-</div>
-</header>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>노드 실행 순서와 공유 상태</summary><div class="prose"><p>Node는 이번에 실행할 Python 함수입니다. Edge는 어떤 함수 다음에 어떤 함수를 실행할지 정한 연결입니다. State는 실행 중 공유하는 값의 묶음입니다. 문서가 어디에 저장되는지와 어느 함수가 다음에 호출되는지를 한 용어로 섞으면 오류 원인을 찾기 어렵습니다.</p>
-<p>예를 들어 질문의 공백을 지우는 normalize는 question을 읽고 question만 갱신합니다. 문서를 고르는 lookup은 question을 읽고 documents를 갱신합니다. 답변을 만드는 compose는 documents를 읽고 answer를 갱신합니다. 이번 그래프에서는 모델이 다음 노드를 고르지 않고 코드의 고정된 연결을 따릅니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>세 요소를 코드에 대응하기</caption><thead><tr><th scope="col">요소</th><th scope="col">예제</th><th scope="col">변경의 의미</th></tr>
-</thead><tbody><tr><td>Node</td><td>normalize, lookup, compose</td><td>처리할 계산을 바꿈</td></tr>
-<tr><td>Edge</td><td>normalize → lookup</td><td>실행 순서를 바꿈</td></tr>
-<tr><td>State</td><td>question, documents, answer</td><td>전달하고 보관할 값을 바꿈</td></tr>
-</tbody></table></div>
-</details>
-<span id="state"></span><details class="reading-topic" id="reading-state"><summary>TypedDict 상태 스키마</summary><div class="prose"><p>State는 실행 중 사용할 딕셔너리의 키와 값 형태를 적은 타입입니다. question은 질문 문자열, documents는 문장 문자열의 리스트, answer는 답변 문자열입니다. 실제 값은 graph.invoke에 넘기는 initial에 들어 있습니다. 타입 선언만으로 질문이 자동 생성되지는 않습니다.</p>
-<p>TypedDict는 정적 타입 확인을 돕는 선언입니다. 잘못된 자료형이나 빈 입력을 모든 경우 자동으로 막아 주는 런타임 검증기로 생각하지 마세요. 이번 예제는 question.strip() 결과가 비었는지 노드에서 직접 검사합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>초기 상태 예측</caption><thead><tr><th scope="col">키</th><th scope="col">초기 값</th><th scope="col">누가 갱신하나요?</th></tr>
-</thead><tbody><tr><td>question</td><td>"  대출 기간은?  "</td><td>normalize</td></tr>
-<tr><td>documents</td><td>[]</td><td>lookup</td></tr>
-<tr><td>answer</td><td>""</td><td>compose</td></tr>
-</tbody></table></div>
-</details>
-<span id="nodes"></span><details class="reading-topic" id="reading-nodes"><summary>노드 함수의 부분 갱신</summary><div class="prose"><p>normalize가 반환한 딕셔너리에는 question 하나만 있습니다. 반환에서 빠진 documents와 answer를 지우라는 뜻이 아닙니다. 이번처럼 별도 갱신 규칙을 지정하지 않은 필드는 해당 키가 반환되면 새 값으로 바뀌며, 반환하지 않은 필드는 유지됩니다.</p>
-<p>입력 딕셔너리의 값을 직접 바꿔 놓고 아무것도 반환하지 않는 방식을 피합니다. 갱신할 내용을 새 딕셔너리로 반환하면 노드의 책임과 검사할 결과가 분명해집니다. 이 장은 순차 실행만 다루며 여러 노드가 동시에 같은 키를 갱신하는 경우는 포함하지 않습니다.</p>
-</div>
-</details>
-<span id="edges"></span><details class="reading-topic" id="reading-edges"><summary>노드·간선 등록과 컴파일</summary><div class="prose"><p>StateGraph는 그래프를 만드는 빌더입니다. add_node의 첫 인자는 그래프에서 사용하는 이름이고 두 번째 인자는 실행할 함수입니다. add_edge는 등록한 이름으로 연결합니다. START는 입력을 받은 시작 위치, END는 종료 위치입니다.</p>
-<p>compile로 실행 가능한 그래프를 만든 뒤 invoke를 호출합니다. 컴파일 단계가 실제 문서 내용의 품질이나 모든 런타임 오류를 증명해 주지는 않습니다. 문서 파일 누락처럼 실행할 때 드러나는 문제도 직접 검사해야 합니다.</p>
-</div>
-</details>
-<span id="observe"></span><details class="reading-topic" id="reading-observe"><summary>중간 변경분과 최종 상태</summary><div class="prose"><p>stream_mode="updates"에서는 실행된 노드 이름과 그 노드의 갱신 내용을 차례로 봅니다. invoke 결과는 실행이 끝난 뒤의 상태입니다. 예제는 관찰을 위해 두 호출을 모두 사용하므로 그래프 전체가 두 번 실행됩니다. 실제 API를 노드에 넣는다면 그만큼 호출이 다시 발생할 수 있습니다.</p>
-<p>첫 번째 출력은 question만, 두 번째는 documents만, 세 번째는 answer만 담습니다. 그 사이 다른 값이 사라지는 것이 아닙니다. 출력된 변경분을 초기 상태에 차례로 적용하여 마지막 상태를 손으로 완성해 보세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>상태 기록표 양식</caption><thead><tr><th scope="col">시점</th><th scope="col">question</th><th scope="col">documents</th><th scope="col">answer</th></tr>
-</thead><tbody><tr><td>입력</td><td>공백 포함 질문</td><td>[]</td><td>빈 문자열</td></tr>
-<tr><td>normalize 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
-<tr><td>lookup 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
-<tr><td>compose 뒤</td><td>직접 작성</td><td>직접 작성</td><td>직접 작성</td></tr>
-</tbody></table></div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 04 / PYTHON</p>
 <span class="sidebar-title">Python 클래스와 모듈</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-object-state"><span>02</span>__init__과 self로 인스턴스 상태 저장</a><a href="#nb-service"><span>03</span>생성 함수에서 입력 검증</a><a href="#nb-imports"><span>04</span>import로 모듈의 함수 호출</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>Python 클래스와 모듈 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-object-state"><span>02</span>__init__과 self로 인스턴스 상태 저장</a><a href="#nb-service"><span>03</span>생성 함수에서 입력 검증</a><a href="#nb-imports"><span>04</span>import로 모듈의 함수 호출</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -69,6 +69,20 @@ print(second.done)</code></pre></figure>
 <div class="cell-after"><p>False가 나옵니다. first.mark_done()의 self는 first를 가리키므로 second.done은 처음 값 그대로입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="objects"></span><div class="lesson-explanation" id="reading-objects"><h3>속성과 인스턴스 메서드</h3><div class="prose"><p>객체는 값을 담고 그 값에 관련된 동작을 제공할 수 있습니다. 클래스는 그런 객체를 만드는 정의입니다. StudyRecord("Python", 30)을 호출하면 기록 객체 하나가 만들어집니다. 다른 인자로 다시 호출하면 별도 객체가 생깁니다.</p>
+<p>__init__은 새 인스턴스의 초기 상태를 정하는 메서드입니다. self는 그 메서드가 다루는 객체 자신을 가리키는 관례적 이름입니다. self.title처럼 적으면 해당 객체의 속성에 저장합니다. 메서드는 클래스 안에 정의한 함수입니다.</p>
+<p>first.mark_done()을 호출할 때 Python이 first를 self로 전달합니다. second.done은 바꾸지 않았으므로 False로 남습니다. 이 예제의 생성자는 정리된 문자열과 정수를 받는다고 가정하며 입력 검증은 뒤의 함수가 맡습니다.</p>
+</div>
+<div class="worked-case" id="flow-10"><h3>객체 두 개의 상태</h3>
+<p>한 객체를 바꿨을 때 다른 객체의 값이 유지되는지 살펴봅니다.</p>
+<article id="flow-10-step-0"><small>STEP 01 · first</small><h4>첫 인스턴스 생성</h4>
+<p>first는 자체 title·minutes·done을 갖습니다.</p><pre>first.done  = False
+second      = 아직 생성 전</pre></article><article id="flow-10-step-1"><small>STEP 02 · second</small><h4>별도 속성을 가진 두 번째 인스턴스</h4>
+<p>second는 별도 인스턴스입니다.</p><pre>first.done  = False
+second.done = False</pre></article><article id="flow-10-step-2"><small>STEP 03 · first.mark_done</small><h4>첫 객체의 완료 상태 변경</h4>
+<p>self가 first이므로 first.done만 바뀝니다.</p><pre>first.done = True
+second.done = False</pre></article></div></div>
+
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 인스턴스 메서드의 상태 변경</h3>
 <div class="cell-before"><p>첫 기록에서 사전을 꺼내 완료 칸만 출력하세요.</p>
 </div>
@@ -79,12 +93,24 @@ print(second.done)</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="verify"></span><div class="lesson-explanation" id="reading-verify"><h3>서로 다른 객체의 상태 확인</h3><p>first.mark_done()을 실행한 뒤 first.done과 second.done을 차례로 읽어 보세요. 같은 클래스의 메서드를 사용했지만 완료로 표시된 기록은 first 하나입니다.</p></div>
+
 </section>
 <section id="nb-service" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>생성 함수에서 입력 검증</h2>
 </div>
 </header>
 <p>한 번의 계산으로 끝나는 제목 정리와 숫자 변환은 함수에 맡깁니다. 유효한 값이 준비되었을 때만 객체를 만들어 호출한 곳으로 돌려줍니다.</p>
+
+<span class="lesson-anchor" id="choice"></span><div class="lesson-explanation" id="reading-choice"><h3>함수와 상태 객체의 역할</h3><div class="prose"><p>입력 문자열을 정리하는 작업은 함수 하나로 충분합니다. 완료 여부처럼 같은 대상의 상태가 여러 동작을 거쳐 바뀐다면 객체로 묶는 것이 도움이 됩니다. 단지 코드가 길다는 이유만으로 모든 함수를 클래스로 바꾸지는 않습니다.</p>
+<p>여기서는 텍스트 검증은 함수, 기록의 제목·시간·완료 상태는 StudyRecord에 둡니다. 상속·추상 클래스·설계 패턴은 이번 기본 과제에 필요하지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>이 과제의 역할 선택</caption><thead><tr><th scope="col">작업</th><th scope="col">형태</th><th scope="col">이유</th></tr>
+</thead><tbody><tr><td>공백 정리·분 검증</td><td>함수</td><td>입력에서 결과를 계산</td></tr>
+<tr><td>기록의 완료 상태 유지</td><td>클래스</td><td>대상별 값을 보관</td></tr>
+<tr><td>실행 제목 설정</td><td>환경변수 읽는 모듈</td><td>환경별 값 분리</td></tr>
+<tr><td>화면 출력·호출 순서</td><td>진입점 함수</td><td>실행 시작 위치를 한곳에 둠</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 생성 함수와 int() 변환</h3>
 <div class="cell-before"><p>공백이 많은 제목과 30이라는 문자열을 넘겨 봅니다.</p>
 </div>
@@ -122,6 +148,8 @@ print(entry.to_dict())</code></pre></figure>
 </div>
 </header>
 <p>모듈은 이름을 통해 불러 쓸 수 있는 코드 묶음입니다. math를 예로 들어 모듈과 그 안의 함수를 구별해 본 뒤, 수업 예제의 studylog.models와 StudyRecord에도 같은 읽기 순서를 적용해 보세요.</p>
+
+<span class="lesson-anchor" id="settings"></span><div class="lesson-explanation" id="reading-settings"><h3>패키지 안의 상대 import</h3><p>from .models import StudyRecord에서 점 하나는 같은 패키지를 가리킵니다. service 모듈은 클래스 정의를 복사하지 않고 models에 있는 정의를 사용합니다.</p></div>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · import math와 math.isqrt()</h3>
 <div class="cell-before"><p>점 왼쪽에서 모듈을 찾고 오른쪽의 함수를 부릅니다.</p>
 </div>
@@ -131,6 +159,11 @@ print(math.isqrt(<span class="tok-number">25</span>))</code></pre></figure>
 <div class="cell-after"><p>5가 나옵니다. import math 뒤에는 math.isqrt라고 씁니다. 원본의 from studylog.models import StudyRecord처럼 이름을 골라 가져오면 호출할 때는 StudyRecord(...)만 적습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="modules"></span><div class="lesson-explanation" id="reading-modules"><h3>모듈 경계와 import</h3><div class="prose"><p>from studylog.models import StudyRecord는 studylog 패키지의 models 모듈에서 클래스를 가져옵니다. import된 모듈의 최상위 문장은 처음 불러올 때 실행될 수 있습니다. 입력 요청이나 예제 실행을 아무 곳에나 두면 다른 모듈에서 가져올 때도 실행되어 불편합니다.</p>
+</div>
+<div class="prose"><p>to_dict는 객체 값을 새 딕셔너리로 만드는 메서드입니다. JSON 변환 전에 사용할 수 있는 평범한 Python 딕셔너리를 반환합니다. 이 장에서는 타입 힌트가 모델 검증을 대신하지 않으므로 create_record에서 먼저 값의 규칙을 확인합니다.</p>
+</div></div>
+
 <div class="learn-detail"><h4>모듈 분리와 파일별 역할</h4>
 
 <div class="demo-panels"><div><small>models.py</small><pre><code>class StudyRecord:
@@ -146,7 +179,7 @@ def make_record(title):
 <div class="cell-before"><p>제공 셀이 임시 studylog 폴더에 두 모듈을 만듭니다. models에서 클래스를 정의한 줄과 service에서 그 클래스를 불러오는 줄을 나란히 읽으세요.</p>
 <p>models.py에서 기록의 구조를 정의하고 service.py에서 그 기록을 사용합니다. from .models의 점은 같은 패키지 안에서 models를 찾는다는 뜻입니다. 먼저 이 두 파일의 내용만 읽고 아래 제공 셀을 통째로 실행하세요.</p>
 </div>
-<details class="provided-code"><summary>제공 코드 전체 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-9" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-9"><span class="tok-keyword">import</span> subprocess
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 24줄</span><button class="copy-button js-only" data-copy="code-9" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-9"><span class="tok-keyword">import</span> subprocess
 <span class="tok-keyword">import</span> sys
 <span class="tok-keyword">from</span> pathlib <span class="tok-keyword">import</span> Path
 <span class="tok-keyword">from</span> tempfile <span class="tok-keyword">import</span> TemporaryDirectory
@@ -170,11 +203,13 @@ def make_record(title):
     result = subprocess.run([sys.executable, <span class="tok-string">"-c"</span>, command], cwd=folder,
                             check=<span class="tok-keyword">True</span>, capture_output=<span class="tok-keyword">True</span>, text=<span class="tok-keyword">True</span>)
     print(result.stdout.strip())</code></pre></figure>
-</details>
+
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">Git 연습</pre></div>
 <div class="cell-after"><p>‘Git 연습’이 나옵니다. service의 from .models에서 점 하나는 같은 패키지를 뜻합니다. 방금 실행한 작은 패키지는 제목 정리만 옮긴 예입니다. 전체 학습 기록 패키지에는 앞에서 확인한 시간 검사와 완료 표시도 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>import로 불러온 함수 실행하기</h3><p>셀 07에서는 임시 패키지 안에 models와 service 모듈을 둡니다. service가 models의 StudyRecord를 불러와 객체를 만들고, 호출한 쪽에서 제목을 출력합니다. 화면에 나타난 ‘Git 연습’이 어느 객체의 값인지 찾아보세요.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -183,66 +218,16 @@ def make_record(title):
 <div class="prose"><p>제목을 고치는 규칙이 바뀌면 create_record부터, 완료 상태를 보관하는 방법이 바뀌면 StudyRecord부터 살펴보세요. 서로 다른 두 기록 가운데 하나만 변경하는 검사는 파일을 나눈 뒤에도 그대로 쓸 수 있습니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>Python 클래스와 모듈 심화 읽기</h2>
-</div>
-</header>
-<span id="objects"></span><details class="reading-topic" id="reading-objects"><summary>속성과 인스턴스 메서드</summary><div class="prose"><p>객체는 값을 담고 그 값에 관련된 동작을 제공할 수 있습니다. 클래스는 그런 객체를 만드는 정의입니다. StudyRecord("Python", 30)을 호출하면 기록 객체 하나가 만들어집니다. 다른 인자로 다시 호출하면 별도 객체가 생깁니다.</p>
-<p>__init__은 새 인스턴스의 초기 상태를 정하는 메서드입니다. self는 그 메서드가 다루는 객체 자신을 가리키는 관례적 이름입니다. self.title처럼 적으면 해당 객체의 속성에 저장합니다. 메서드는 클래스 안에 정의한 함수입니다.</p>
-<p>first.mark_done()을 호출할 때 Python이 first를 self로 전달합니다. second.done은 바꾸지 않았으므로 False로 남습니다. 이 예제의 생성자는 정리된 문자열과 정수를 받는다고 가정하며 입력 검증은 뒤의 함수가 맡습니다.</p>
-</div>
-<details class="case-reference" id="flow-10"><summary>객체 두 개의 상태</summary>
-<p>한 객체를 바꿨을 때 다른 객체의 값이 유지되는지 살펴봅니다.</p>
-<article id="flow-10-step-0"><small>STEP 01 · first</small><h4>첫 인스턴스 생성</h4>
-<p>first는 자체 title·minutes·done을 갖습니다.</p><pre>first.done  = False
-second      = 아직 생성 전</pre></article><article id="flow-10-step-1"><small>STEP 02 · second</small><h4>별도 속성을 가진 두 번째 인스턴스</h4>
-<p>second는 별도 인스턴스입니다.</p><pre>first.done  = False
-second.done = False</pre></article><article id="flow-10-step-2"><small>STEP 03 · first.mark_done</small><h4>첫 객체의 완료 상태 변경</h4>
-<p>self가 first이므로 first.done만 바뀝니다.</p><pre>first.done = True
-second.done = False</pre></article></details>
-</details>
-<span id="choice"></span><details class="reading-topic" id="reading-choice"><summary>함수와 상태 객체의 역할</summary><div class="prose"><p>입력 문자열을 정리하는 작업은 함수 하나로 충분합니다. 완료 여부처럼 같은 대상의 상태가 여러 동작을 거쳐 바뀐다면 객체로 묶는 것이 도움이 됩니다. 단지 코드가 길다는 이유만으로 모든 함수를 클래스로 바꾸지는 않습니다.</p>
-<p>여기서는 텍스트 검증은 함수, 기록의 제목·시간·완료 상태는 StudyRecord에 둡니다. 상속·추상 클래스·설계 패턴은 이번 기본 과제에 필요하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이 과제의 역할 선택</caption><thead><tr><th scope="col">작업</th><th scope="col">형태</th><th scope="col">이유</th></tr>
-</thead><tbody><tr><td>공백 정리·분 검증</td><td>함수</td><td>입력에서 결과를 계산</td></tr>
-<tr><td>기록의 완료 상태 유지</td><td>클래스</td><td>대상별 값을 보관</td></tr>
-<tr><td>실행 제목 설정</td><td>환경변수 읽는 모듈</td><td>환경별 값 분리</td></tr>
-<tr><td>화면 출력·호출 순서</td><td>진입점 함수</td><td>실행 시작 위치를 한곳에 둠</td></tr>
-</tbody></table></div>
-</details>
-<span id="modules"></span><details class="reading-topic" id="reading-modules"><summary>모듈 경계와 import</summary><div class="prose"><p>from studylog.models import StudyRecord는 studylog 패키지의 models 모듈에서 클래스를 가져옵니다. import된 모듈의 최상위 문장은 처음 불러올 때 실행될 수 있습니다. 입력 요청이나 예제 실행을 아무 곳에나 두면 다른 모듈에서 가져올 때도 실행되어 불편합니다.</p>
-</div>
-<div class="prose"><p>to_dict는 객체 값을 새 딕셔너리로 만드는 메서드입니다. JSON 변환 전에 사용할 수 있는 평범한 Python 딕셔너리를 반환합니다. 이 장에서는 타입 힌트가 모델 검증을 대신하지 않으므로 create_record에서 먼저 값의 규칙을 확인합니다.</p>
-</div>
-</details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>모듈 실행과 진입점</summary><div class="prose"><p>첫 두 명령은 각각 위의 두 줄을 출력합니다. 마지막 import 명령은 프로그램 결과를 출력하지 않고 import 완료 한 줄만 출력해야 합니다. 기본 설정에서 분리 전후의 동작이 같은지 먼저 확인하세요.</p>
-</div>
-</details>
-<span id="settings"></span><details class="reading-topic" id="reading-settings"><summary>환경별 설정 로딩</summary><div class="prose"><p>아래 설정은 현재 명령 한 번에만 적용됩니다. 값은 공개해도 되는 실습용 제목이며 실제 키를 쓰지 않습니다. APP_TITLE은 모듈을 import하는 시점에 한 번 읽습니다. 파일이나 환경을 바꾼 뒤 프로그램을 새로 실행해서 확인하세요.</p>
-</div>
-</details>
-<span id="verify"></span><details class="reading-topic" id="reading-verify"><summary>모듈 분리 후 상태 검증</summary><div class="prose"><p>for title, minutes in [...]은 한 쌍의 값을 두 이름에 나눠 담습니다. 앞 장의 단일 반복 변수에서 두 항목을 함께 읽는 형태로 확장한 것입니다. 별도의 문법 암기보다 각 호출에 전달되는 두 값을 확인하세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>자주 막히는 위치</caption><thead><tr><th scope="col">증상</th><th scope="col">원인 후보</th><th scope="col">확인</th></tr>
-</thead><tbody><tr><td>ModuleNotFoundError</td><td>실행 위치 또는 이름 오류</td><td>examples에서 -m 실행</td></tr>
-<tr><td>AttributeError</td><td>객체 속성·메서드 이름 오류</td><td>클래스 정의와 철자 대조</td></tr>
-<tr><td>TypeError: 인자 개수</td><td>self 누락 또는 잘못된 호출</td><td>메서드 정의의 첫 인자 확인</td></tr>
-<tr><td>import만 했는데 출력</td><td>최상위에서 직접 실행</td><td>main guard로 실행 분리</td></tr>
-<tr><td>설정 파일이 안 읽힘</td><td>.env 자동 로딩으로 오해</td><td>환경변수 주입 또는 명시 로더 사용</td></tr>
-</tbody></table></div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://docs.python.org/3.14/tutorial/classes.html" target="_blank" rel="noopener noreferrer">Python 클래스 ↗</a><span></span></li>
 <li><a href="https://docs.python.org/3.14/tutorial/modules.html" target="_blank" rel="noopener noreferrer">모듈과 패키지 ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

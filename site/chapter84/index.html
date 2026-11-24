@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY / 084</p>
 <span class="sidebar-title">SQLite 스키마 변경과 부분 업데이트</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-migration"><span>02</span>ALTER TABLE과 기존 행의 기본값</a><a href="#nb-patch"><span>03</span>값 바인딩과 수정 필드 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>SQLite 스키마 변경과 부분 업데이트 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-migration"><span>02</span>ALTER TABLE과 기존 행의 기본값</a><a href="#nb-patch"><span>03</span>값 바인딩과 수정 필드 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,6 +27,9 @@
 </header>
 <a class="download" href="chapter84.ipynb" download="chapter84.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>84장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="section-01"></span><span class="lesson-anchor" id="reading-section-01"></span>
+<span class="lesson-anchor" id="section-02"></span><span class="lesson-anchor" id="reading-section-02"></span>
 </section>
 <section id="nb-migration" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>ALTER TABLE과 기존 행의 기본값</h2>
@@ -37,6 +40,9 @@
 
 <!-- END MOTION -->
 
+
+<span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>기존 세 열에 추가하는 두 필드</h3><p>due_date는 날짜가 정해지지 않았으면 NULL로 둘 수 있습니다. priority에는 low, normal, high만 들어갈 수 있으며 기본값은 normal입니다. 추가 직후 1번 행의 제목과 완료는 그대로 남습니다.</p></div>
+<span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · ALTER TABLE로 열 추가</h3>
 <div class="cell-before"><p>변경 전의 복습 한 건을 넣고 ADD COLUMN을 적용합니다.</p>
 </div>
@@ -51,6 +57,8 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <div class="cell-after"><p>기존 제목은 복습으로 유지되고 새 필드는 None과 normal입니다. 예전 행에 존재하지 않았던 마감일을 임의의 날짜로 채우지 않았습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-05"></span><div class="lesson-explanation" id="reading-section-05"><h3>ALTER TABLE 이후 기존 행 읽기</h3><p>먼저 기존 형식으로 복습 한 행을 넣은 다음 열을 추가합니다. 기존 행을 다시 조회하면 새 due_date는 None, 기본값이 있는 priority는 normal입니다.</p></div>
+
 </section>
 <section id="nb-patch" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>값 바인딩과 수정 필드 검증</h2>
@@ -62,6 +70,8 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <video autoplay loop muted playsinline aria-label="제목만 수정할 때 다른 열의 값은?" src="visual-patch.mp4"></video>
 <figcaption>UPDATE가 지정한 열만 바뀝니다. 날짜와 우선순위를 채운 뒤 제목만 수정해도 2027-04-02와 high는 같은 행에 남습니다.</figcaption></figure>
 <!-- /lesson-visual visual-patch -->
+
+<span class="lesson-anchor" id="section-06"></span><div class="lesson-explanation" id="reading-section-06"><h3>날짜 문자열을 바인딩하기 전에 확인하기</h3><p>date.fromisoformat으로 실제 달력 날짜인지 검사한 뒤 isoformat 결과를 TEXT 열에 저장합니다. 이 셀에서 날짜를 검사하는 곳은 Python입니다.</p></div>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · UPDATE의 값 바인딩</h3>
 <div class="cell-before"><p>날짜 문자열은 실제 달력 날짜인지 확인한 뒤 SQL 자리표시자에 넣습니다.</p>
 <p>날짜와 우선순위를 저장한 다음, 같은 행의 제목만 바꿔 보세요. 제목 변경 뒤에도 날짜는 2027-04-02, 우선순위는 high여야 합니다. 다음 과제에서 날짜를 직접 비울 때와 비교합니다.</p>
@@ -75,6 +85,8 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <div class="cell-after"><p>복습·2027-04-02·high가 나옵니다. 바인딩 값은 SQL에 적힌 열 순서와 같습니다. 전체 T1 구현은 허용하는 변경 필드 조합별로 문장을 고릅니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-07"></span><span class="lesson-anchor" id="reading-section-07"></span>
+
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>부분 수정 시 기존 값 보존</h3>
 <div class="cell-before"><p>아래 셀을 실행한 뒤 바로 앞의 결과와 비교하세요.</p>
 </div>
@@ -85,6 +97,8 @@ print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM
 <div class="cell-after"><p>UPDATE에 title만 적었습니다. 날짜와 우선순위를 다시 읽어 두 값이 유지되는지 대조하세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-08"></span><div class="lesson-explanation" id="reading-section-08"><h3>UPDATE에서 생략한 열과 NULL을 넣은 열</h3><p>제목만 SET 하면 기존 기한과 우선순위가 유지됩니다. 기한을 지우려면 due_date를 SET 대상에 포함하고 None을 전달합니다. 필드를 건너뛴 동작과 값을 지운 동작을 출력에서 구별하세요.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 03 · NULL과 필드 생략 구분</h3>
 <div class="cell-before"><p>기존 마감일을 NULL로 변경하고 due_date와 priority를 다시 읽으세요.</p>
 </div>
@@ -97,6 +111,8 @@ print(db.execute(<span class="tok-string">'SELECT due_date, priority FROM todos 
 </div>
 </details>
 </article>
+
+<figure class="lesson-clip workflow-clip" id="workflow-check-rollback"><h3>허용하지 않는 우선순위가 저장되지 않는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-check-rollback.mp4" aria-label="허용하지 않는 우선순위가 저장되지 않는 경로" aria-describedby="workflow-check-rollback-caption"></video><figcaption id="workflow-check-rollback-caption">앞에서 high로 정한 1번 행을 urgent로 바꾸려고 시도합니다. UPDATE의 입력값과 실패 후 SELECT의 값을 비교하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 행</strong> · 현재 priority = high</li><li><strong>UPDATE</strong> · 바인딩한 값 = urgent</li><li><strong>CHECK</strong> · 허용한 값 = low · normal · high</li><li><strong>예외 처리</strong> · 예외 = IntegrityError</li><li><strong>SELECT</strong> · 남은 priority = high</li></ol></figure>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 04 · 허용 우선순위 검증</h3>
 <div class="cell-before"><p>데이터 규칙이 저장 시점에도 적용되는지 확인하세요.</p>
 </div>
@@ -111,6 +127,9 @@ high</pre></div>
 <div class="cell-after"><p>오류 뒤에도 high가 남습니다. 코드 검토에서는 기본값뿐 아니라 잘못된 입력을 모두 검사한 뒤 한 번에 반영하는지 살펴보세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="section-09"></span><div class="lesson-explanation" id="reading-section-09"><h3>CHECK 실패 후 저장값 확인하기</h3><p>urgent는 허용 목록에 없어 IntegrityError가 발생합니다. except 뒤에서 같은 행의 priority를 다시 읽으면 실패한 문자열 대신 직전의 high가 남습니다.</p></div>
+<span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -118,82 +137,11 @@ high</pre></div>
 </header>
 <div class="prose"><p>검토할 diff에서 기존 ID·제목·완료 필드를 바꾸는 줄이 있는지, 이전 데이터가 마감일 없이 읽히는지, 빈 날짜와 필드 누락을 구별하는지 찾으세요.</p>
 </div>
+
+<span class="lesson-anchor" id="section-11"></span><span class="lesson-anchor" id="reading-section-11"></span>
+<span class="lesson-anchor" id="section-12"></span><span class="lesson-anchor" id="reading-section-12"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>SQLite 스키마 변경과 부분 업데이트 심화 읽기</h2>
-</div>
-</header>
-<span id="section-01"></span><details class="reading-topic" id="reading-section-01"><summary>기준 입력과 기존 DB</summary><div class="prose"><p>83일차의 정상 완료 설정과 회귀 기록을 가져옵니다. 첫 15분에는 ID·title·completed, strict bool, 공백 정상화, 검색·저장 오류의 불변 조건을 설명합니다. 오류 주입 사본을 새 앱의 기준으로 사용하지 않습니다.</p>
-<p>이번 요구는 선택 마감일과 우선순위입니다. 새 필드가 응답에 들어가므로 계약을 T1-api-v2로 명시합니다. v1을 그대로 보존하고 파생 앱을 따로 작성하며 예전 클라이언트가 자동으로 호환된다고 가정하지 않습니다.</p>
-<p>변경 전에 원본 파일과 실제 수행 여부를 고정합니다. 기존 기록이 없으면 제공 정상 자료를 읽고 새 날짜 기능을 실제 사용자 요구나 만족도 조사에서 나왔다고 꾸미지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>입력과 파생 앱</caption><thead><tr><th scope="col">경로</th><th scope="col">역할</th></tr>
-</thead><tbody><tr><td>examples/v1-source</td><td>변경 전 핵심 파일의 읽기 사본</td></tr>
-<tr><td>examples/application</td><td>명시적인 T1-api-v2 전체 준비 앱</td></tr>
-<tr><td>sql/082_todo_v1.sql</td><td>기존 파일·해시 보존</td></tr>
-<tr><td>sql/084_todo_v2.sql</td><td>새 가산 변경</td></tr>
-</tbody></table></div>
-</details>
-<span id="section-02"></span><details class="reading-topic" id="reading-section-02"><summary>요구 변경의 수용 조건</summary><div class="prose"><p>마감일은 시간대 없는 달력 날짜이며 기본값은 null입니다. 정해지지 않은 날짜와 빈 문자열은 다릅니다. API는 null 또는 YYYY-MM-DD의 실제 날짜만 받고, UI의 빈 날짜 칸은 null로 명시적으로 변환합니다.</p>
-<p>우선순위는 low·normal·high의 정확한 문자열이고 생성 기본값은 normal입니다. HIGH나 null을 임의로 normal로 바꾸지 않습니다. 입력 오류를 드러내야 사용자가 의도한 값을 확인할 수 있습니다.</p>
-<p>오늘은 자동 연체 판정·알림·우선순위 정렬을 추가하지 않습니다. 새 정렬이 필요하면 별도 요구와 사례가 필요합니다. 지금 결과 순서는 기존 ID 오름차순을 유지합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>v2의 새 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">생성</th><th scope="col">PATCH</th></tr>
-</thead><tbody><tr><td>due_date</td><td>생략하면 null; 유효 날짜 또는 null</td><td>생략=유지, null=해제</td></tr>
-<tr><td>priority</td><td>생략하면 normal; low/normal/high</td><td>생략=유지, null=오류</td></tr>
-</tbody></table></div>
-</details>
-<span id="section-03"></span><details class="reading-topic" id="reading-section-03"><summary>할 일 레코드의 필드 확장</summary><div class="prose"><p>v2 레코드는 id·title·completed·due_date·priority 다섯 필드를 갖습니다. 응답 외피의 contract_version도 T1-api-v2로 바뀝니다. 기존 세 필드의 타입과 의미를 유지하는 것과 레코드 모양이 같다는 말은 다릅니다.</p>
-<p>v1의 세 필드 레코드를 v2 클라이언트가 조용히 채워 받아들이지 않습니다. 서버와 UI를 같은 버전으로 연결하고, 누락·추가·잘못된 필드를 응답 오류로 처리합니다. 경로 /todos와 목록의 status/q 의미는 유지합니다.</p>
-<p>DB의 date 값은 Python date로 올 수 있습니다. pg_record에서 명시적으로 isoformat 문자열로 바꾸고 다시 레코드를 검증합니다. 문자열 날짜를 저장한 메모리 결과와 DB 변환 경계를 구분합니다.</p>
-</div>
-</details>
-<span id="section-04"></span><details class="reading-topic" id="reading-section-04"><summary>변경 작업의 의존 순서</summary><div class="prose"><p>작업을 계약→저장→API→화면→회귀로 나눕니다. 각 단계에서 바뀔 파일과 기대를 정하면 많은 파일이 수정되어도 이유를 추적할 수 있습니다. 저장 필드를 추가했는데 클라이언트 파서가 세 필드만 받으면 같은 앱이라고 해도 화면이 실패합니다.</p>
-<p>Codex 요청에도 이 순서를 적고 각 변경의 diff를 읽습니다. 먼저 달력·우선순위·PATCH 기준을 설명하게 한 뒤 코드와 검사를 연결합니다. 작업 중 인증·팀·새 프레임워크를 추가하면 현재 범위와 분리합니다.</p>
-<p>실제 도구 실행이 없으면 제공 변경 전후 파일을 비교하고 수용 기준과 연결합니다. 분석한 파일 수를 직접 작성한 코드 수나 실제 Codex 성과로 바꾸지 않습니다.</p>
-</div>
-</details>
-<span id="section-05"></span><details class="reading-topic" id="reading-section-05"><summary>기존 레코드의 스키마 이관</summary><div class="prose"><p>가산 마이그레이션은 기존 열과 행을 보존하며 새 열을 더하는 변경입니다. 084는 due_date를 nullable date로, priority를 normal 기본값과 허용값 CHECK가 있는 text로 추가합니다. 기존 id·title·completed를 재번호하거나 초기화하지 않습니다.</p>
-<p>082 파일은 이미 적용된 버전의 정본이므로 고치지 않습니다. apply_v2_schema는 같은 연결 트랜잭션 안에서 082 기록을 확인하고 084의 버전·해시를 확인합니다. 동일 해시는 재적용 없이 기록을 반환하고 다르면 검토를 요구합니다.</p>
-<p>아래 대역은 가산 값과 실패 시 상태 복구를 설명하는 제어된 기록 모델입니다. SQL 파서나 실제 PostgreSQL이 아니며 DB가 DDL을 수용했다는 증거가 아닙니다. 실제 적용 전후 행과 마이그레이션 기록은 별도 수업 환경에서 확인합니다.</p>
-</div>
-</details>
-<span id="section-06"></span><details class="reading-topic" id="reading-section-06"><summary>부분 업데이트 입력 검증</summary><div class="prose"><p>날짜 모양만 맞아도 달력에 없는 날짜일 수 있습니다. 2028-02-29는 윤년에 존재하지만 2027-02-29는 없습니다. YYYY-MM-DD 정규형과 실제 달력 값을 함께 확인하고 시간이나 시간대를 덧붙이지 않습니다.</p>
-<p>PATCH에 새 필드가 빠지면 기존 값을 유지합니다. due_date=null은 해제이고 priority=null은 오류입니다. 전체 patch를 검증한 뒤 저장소를 바꾸므로 title이 유효해도 due_date가 틀리면 제목만 먼저 바뀌지 않습니다.</p>
-<p>생성과 수정에서 같은 검증 함수를 재사용하되 기본값은 생성에만 적용합니다. 수정 요청에서 생략한 값을 기본값으로 덮으면 사용자가 바꾸지 않은 날짜와 우선순위가 사라집니다.</p>
-</div>
-</details>
-<span id="section-07"></span><details class="reading-topic" id="reading-section-07"><summary>새 필드의 입력과 표시</summary><div class="prose"><p>날짜 입력칸은 빈 값을 문자열로 반환할 수 있습니다. dateInputValue는 빈 문자열을 null로 바꾸고 서버는 다른 잘못된 문자열을 거부합니다. 브라우저 입력 유형만 믿지 않고 API에서도 같은 계약을 확인합니다.</p>
-<p>우선순위 선택값은 low·normal·high지만 화면 표시는 낮음·보통·높음입니다. 각 입력은 label 또는 항목 ID를 포함한 aria-label로 연결합니다. 제목과 날짜를 textContent로 보여 주어 입력을 HTML 구조로 해석하지 않습니다.</p>
-<p>편집 저장은 같은 ID에 title·due_date·priority를 보내고 completed는 별도 체크의 명시 bool로 바꿉니다. 쓰기 후 같은 조건을 재조회하고 실패하면 이전 확정 목록을 유지합니다. 실제 키보드·화면 동작은 직접 관찰한 경우에만 기록합니다.</p>
-</div>
-</details>
-<span id="section-08"></span><details class="reading-topic" id="reading-section-08"><summary>필드 변경 코드 검토</summary><div class="prose"><p>코드 검토는 새 필드가 화면에 보이는지만 보는 과정이 아닙니다. 날짜·우선순위에 필요한 변경인지, 기존 완료·검색·오류를 바꾸지 않았는지, SQL에 값이 직접 이어 붙지 않았는지 읽습니다.</p>
-<p>UPDATE에 들어갈 열 이름은 고정된 허용 목록에서만 고릅니다. 사용자 값은 계속 바인딩합니다. 허용 필드 조합을 만들기 위해 문자열을 조합하는 것과 사용자 제목을 SQL에 붙이는 것은 다른 작업입니다.</p>
-<p>필요 없는 로그인·LLM·새 정렬 제안은 현재 변경에서 제외하거나 별도 요구로 보류합니다. 도구가 제시했다는 이유만으로 모든 기술을 채택할 필요는 없습니다. 승인된 새 필드의 수용 기준으로 판단합니다.</p>
-</div>
-</details>
-<span id="section-09"></span><details class="reading-topic" id="reading-section-09"><summary>기존·신규 필드의 회귀 테스트</summary><div class="prose"><p>새 검사에는 윤년·잘못된 날짜·우선순위·PATCH 생략/해제·전체 검증을 포함합니다. 기존 세 필드는 projection으로 비교할 수 있지만 이것을 v1 API 응답과 v2 응답이 호환된다는 뜻으로 쓰지 않습니다.</p>
-<p>공개 검색 12개 기대 ID, 엄격한 bool·ID·중복 제목·명시 완료·저장 실패·UI stale도 함께 대조합니다. 과거 v1 검사 파일은 v1-tests에 읽기 자료로 보존하고 v2 앱의 자동 발견 대상에서 분리했습니다.</p>
-<p>로컬 Python 검사와 Node 검사는 실제 HTTP·PG·브라우저를 대신하지 않습니다. 같은 파일을 배포 묶음으로 복사할 때는 해시를 확인하고, 외부 환경에서 수행하지 않은 결과는 HOLD로 남깁니다.</p>
-</div>
-</details>
-<span id="section-10"></span><details class="reading-topic" id="reading-section-10"><summary>부분 변경의 롤백</summary><div class="prose"><p>일부 요구를 되돌릴 때는 앱 코드와 DB 상태를 함께 생각합니다. 화면 표시를 잠시 이전으로 돌리는 것과 이미 추가한 DB 열을 삭제하는 것은 다릅니다. 가산 열을 지워 데이터를 잃는 방식으로 코드 되돌리기를 대신하지 않습니다.</p>
-<p>이전 이미지의 API·UI·DB 접근이 현재 스키마와 호환되는지 확인해야 합니다. 새 필드를 표시하지 못할 수 있고, v1과 v2의 응답 파서도 다릅니다. “이전 버전이니까 안전하다”는 이유만으로 배포하지 않습니다.</p>
-<p>학생 작업 사본에서는 해당 diff만 비교하고 되돌림 이유·남는 데이터·다시 적용할 조건을 기록합니다. 실제 DB를 바꾸지 않았다면 그 사실을 명시하고 파괴적인 SQL을 실행한 것으로 채우지 않습니다.</p>
-</div>
-</details>
-<span id="section-11"></span><details class="reading-topic" id="reading-section-11"><summary>동료 검토와 수정 근거</summary><div class="prose"><p>동료에게는 수용 기준 하나가 어느 코드와 결과로 이어지는지 설명합니다. 예를 들어 빈 날짜가 null이 되는 UI 줄, PATCH 검증, SQL date 값, 응답 문자열을 같은 입력으로 따라갑니다.</p>
-<p>설명 중 모르는 부분이 나오면 확인할 파일과 실험을 적습니다. 실제 동료가 실행했다면 도움 없이 진행한 범위와 막힌 점을 기록하고, 역할 연습이었다면 그렇게 표시합니다. 피드백 문장을 만들어 채우지 않습니다.</p>
-<p>새 요구를 모두 구현한 것처럼 보여도 기존 행이나 실패 경계를 설명하지 못하면 해당 목표는 수정필요 또는 미확인입니다. 결과 화면 한 장만으로 데이터 보존과 트랜잭션을 증명하지 않습니다.</p>
-</div>
-</details>
-<span id="section-12"></span><details class="reading-topic" id="reading-section-12"><summary>배포에 넘길 스키마 버전</summary><div class="prose"><p>85일차는 이 v2 앱과 082/084 SQL, 같은 검사·화면·설정을 배포 묶음으로 옮깁니다. 다른 앱을 새로 만드는 단계가 아닙니다. 앱과 설정의 소비 목록·해시, 실제 미확인 범위를 함께 넘깁니다.</p>
-<p>O84-1은 수용 기준과 작업 분할, O84-2는 기존 행·동작 보존과 새 필드 근거, O84-3은 검토·회귀·인계로 확인합니다. 실제 PG 적용과 학생 수행을 제공 준비 검사로 채우지 않습니다.</p>
-<p>다음 장의 CI/CD도 같은 소스·검사·이미지 계보를 따라야 합니다. 실제 배포를 수행하지 않았다면 실행 가능한 준비 파일과 빈 실제 기록으로 인계합니다.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

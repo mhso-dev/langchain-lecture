@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 73 / PGVECTOR</p>
 <span class="sidebar-title">벡터의 L2 거리와 pgvector 검색</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-embed"><span>02</span>어휘 벡터와 유클리드 거리</a><a href="#nb-pgvector"><span>03</span>선택 실습 · pgvector 거리순 정렬</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>벡터의 L2 거리와 pgvector 검색 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-embed"><span>02</span>어휘 벡터와 유클리드 거리</a><a href="#nb-pgvector"><span>03</span>선택 실습 · pgvector 거리순 정렬</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -27,6 +27,8 @@
 </header>
 <a class="download" href="chapter73.ipynb" download="chapter73.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>73장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="conditions"></span><span class="lesson-anchor" id="reading-conditions"></span>
 </section>
 <section id="nb-embed" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>어휘 벡터와 유클리드 거리</h2>
@@ -38,6 +40,8 @@
 
 
 
+
+<span class="lesson-anchor" id="e1"></span><div class="lesson-explanation" id="reading-e1"><h3>세 좌표에 의미를 부여하는 어휘 순서</h3><p>이 예제의 좌표는 과제, 제출, 검토의 순서입니다. 단어가 문장에 있으면 1.0, 없으면 0.0입니다. 문서와 질문에 같은 순서를 적용해야 대응하는 좌표끼리 거리를 잴 수 있습니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 유클리드 거리 계산</h3>
 <div class="cell-before"><p>검색 질문과 두 문서에 같은 규칙을 적용합니다. 질문과 거리가 가까운 문서부터 정렬합니다.</p>
 <p>p2에서 다른 좌표가 두 개이고 각 차이의 크기가 1이면 제곱합은 1²+1²=2입니다. L2 거리는 여기에 제곱근을 취한 약 1.414입니다. 같은 벡터라도 거리와 거리의 제곱은 숫자가 다릅니다.</p>
@@ -55,6 +59,9 @@ print([(key, round(distance, <span class="tok-number">3</span>)) <span class="to
 <div class="cell-after"><p>p1은 세 칸 모두 질문과 같아서 거리가 0입니다. p2는 제출과 검토 두 칸이 달라 L2 거리가 √2입니다. 거리를 제곱하면 2가 되지만 순서는 같습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="distance"></span><div class="lesson-explanation" id="reading-distance"><h3>L2 거리에서 1.414가 나오는 이유</h3><p>질문 [1, 1, 0]에서 p2의 [1, 0, 1]을 빼면 차이는 [0, 1, -1]입니다. 제곱의 합은 2이고 제곱근은 약 1.414입니다. p1은 질문과 세 좌표가 같아 거리 0으로 먼저 나옵니다.</p></div>
+<span class="lesson-anchor" id="library"></span><span class="lesson-anchor" id="reading-library"></span>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 질의 변경에 따른 거리 비교</h3>
 <div class="cell-before"><p>질문을 ‘과제 검토’로 바꿔 가장 가까운 청크의 키를 구하세요.</p>
 </div>
@@ -66,12 +73,18 @@ print(min(texts, key=<span class="tok-keyword">lambda</span> key: dist(new_query
 </div>
 </details>
 </article>
+<figure class="lesson-clip workflow-clip" id="workflow-query-rerank"><h3>질문 속 단어 하나가 최근접 문서를 바꾸는 경로</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-query-rerank.mp4" aria-label="질문 속 단어 하나가 최근접 문서를 바꾸는 경로" aria-describedby="workflow-query-rerank-caption"></video><figcaption id="workflow-query-rerank-caption">어휘의 순서는 과제·제출·검토로 고정합니다. 원래 질문과 바꾼 질문의 가장 가까운 문서를 비교하세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 질문</strong> · 과제 제출 = [1, 1, 0]</li><li><strong>거리 계산</strong> · L2 거리 = p1 0 · p2 1.414</li><li><strong>p1 선택</strong> · 가장 가까운 문서 = p1</li><li><strong>질문 변경</strong> · 과제 검토 = [1, 0, 1]</li><li><strong>다시 계산</strong> · L2 거리 = p1 1.414 · p2 0</li><li><strong>p2 선택</strong> · 가장 가까운 문서 = p2</li></ol></figure>
+
 </section>
 <section id="nb-pgvector" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>선택 실습 · pgvector 거리순 정렬</h2>
 </div>
 </header>
 <p>PostgreSQL에서 vector(3) 열은 세 값을 받습니다. &lt;-&gt; 연산자는 L2 거리를 반환하므로 작은 순서대로 정렬합니다. 실제 서비스는 여기에 소유자·허용 문서 범위를 걸고 청크 ID로 원문 표를 연결합니다.</p>
+
+<span class="lesson-anchor" id="mapping"></span><span class="lesson-anchor" id="reading-mapping"></span>
+<span class="lesson-anchor" id="schema"></span><span class="lesson-anchor" id="reading-schema"></span>
+<span class="lesson-anchor" id="sql"></span><div class="lesson-explanation" id="reading-sql"><h3>질문 벡터를 매개변수로 전달하기</h3><p>선택 셀은 %s::vector 자리에 질문 벡터를 별도 매개변수로 전달합니다. &lt;-&gt; 연산의 raw_l2를 오름차순으로 정렬하고, 거리가 같을 때는 문서 id를 두 번째 정렬 기준으로 사용합니다.</p></div>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 선택 실습 · PostgreSQL 벡터 조회</h3>
 <div class="cell-before"><p>강사가 읽기 가능한 pgvector 수업 DB를 준비했으면 run_postgres를 켭니다. 연결 설정은 수업 커널의 표준 PG 환경변수를 사용합니다. 아래 SELECT는 제공한 두 벡터만 계산하며 테이블을 변경하지 않습니다.</p>
 </div>
@@ -91,6 +104,9 @@ FROM docs ORDER BY raw_l2, id"""</span>
 <div class="cell-after"><p>기본 실행에서는 PostgreSQL을 호출하지 않습니다. 실제 DB에서 비교할 때는 p1의 0과 p2의 약 1.414, 이어서 두 ID의 순서를 앞 셀과 맞춰 보세요. 수업용 DB에 vector 확장이 있고 커널에서 psycopg로 접속할 수 있을 때 run_postgres를 True로 바꾸세요. p1, p2 순서와 두 거리 값을 Python 결과 옆에 적으세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="service"></span><span class="lesson-anchor" id="reading-service"></span>
+<span class="lesson-anchor" id="actual"></span><div class="lesson-explanation" id="reading-actual"><h3>Python 계산과 PostgreSQL 실행</h3><p>run_postgres가 False인 기본 상태에서는 SQL 문자열만 준비합니다. PostgreSQL 연결과 pgvector 확장을 갖춘 환경에서만 선택 셀의 SQL을 실행해 Python의 거리 순서와 직접 비교할 수 있습니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -98,75 +114,12 @@ FROM docs ORDER BY raw_l2, id"""</span>
 </header>
 <div class="prose"><p>벡터 규칙이나 임베딩 모델을 교체했다면 기존 DB 행과 같은 좌표계인지 먼저 확인하세요. 차원 수만 같다고 이전 인덱스를 그대로 쓸 수 있는 것은 아닙니다.</p>
 </div>
+
+<span class="lesson-anchor" id="failures"></span><span class="lesson-anchor" id="reading-failures"></span>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>벡터의 L2 거리와 pgvector 검색 심화 읽기</h2>
-</div>
-</header>
-<span id="conditions"></span><details class="reading-topic" id="reading-conditions"><summary>벡터 저장소의 비교 조건</summary><div class="prose"><p>저장소를 바꾸면서 문서를 다시 쪼개고 임베딩 모델과 k까지 바꾸면 결과가 왜 달라졌는지 알기 어렵습니다. 오늘은 입력과 규칙을 먼저 고정합니다. 단순히 같은 차원의 숫자 세 개라는 사실만으로 같은 임베딩이라고 부르지 않습니다.</p>
-<p>두 예제는 목적이 다릅니다. library-lab는 39일의 가상 도서관 원문 3개·청크 5개와 개발 3문항·공개 확인 2문항을 유지합니다. service는 70일의 같은 가상 TXT·owner·문서 UUID·청크·출처로 B1의 실제 연결 코드를 준비합니다. 도서관 문장을 과정 안내나 업로드 문서의 사실로 섞지 않습니다.</p>
-</div>
-</details>
-<span id="e1"></span><details class="reading-topic" id="reading-e1"><summary>벡터 표현 계약</summary><div class="prose"><p>벡터 [1,0,0]은 그 자체로 “첫 번째 의미가 강하다”는 뜻이 아닙니다. 어떤 모델이 어떤 문서를 어떤 규칙으로 바꾸었는지 알아야 해석할 수 있습니다. E1에는 provider, model, dimension, normalization, distance와 문서·청크 정책 해시가 들어갑니다.</p>
-<p>제공 키워드 벡터는 단어가 있으면 1, 없으면 0인 교육용 값입니다. semantic_embedding=false이므로 문장의 의미를 이해한 모델이라고 쓰지 않습니다. 실제 임베딩으로 교체한다면 모델·차원·정규화와 문서/정책 계약을 함께 새로 기록해야 합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>같은 차원이어도 거부하는 예</caption><thead><tr><th scope="col">변화</th><th scope="col">이유</th></tr>
-</thead><tbody><tr><td>모델 이름만 다른 3차원</td><td>각 좌표의 의미가 다를 수 있음</td></tr>
-<tr><td>청크 정책 변경</td><td>벡터가 표현하는 텍스트가 달라짐</td></tr>
-<tr><td>원문/청크 해시 변경</td><td>같은 ID의 내용이 달라짐</td></tr>
-<tr><td>빈 [] 또는 NaN</td><td>유효한 벡터가 아님</td></tr>
-<tr><td>[0,0,0]</td><td>형식은 유효; 제공 검색 규칙을 별도 적용</td></tr>
-</tbody></table></div>
-</details>
-<span id="distance"></span><details class="reading-topic" id="reading-distance"><summary>거리와 검색 순위</summary><div class="prose"><p>[1,0,0]과 [0,1,0]의 각 좌표 차이는 1,-1,0입니다. 차이의 제곱 합은 2이고 그 제곱근인 L2 거리는 √2입니다. 같은 두 벡터라도 squared_l2와 l2의 숫자는 다릅니다. 양수 거리에서는 제곱근을 취해도 크기 순서는 유지됩니다.</p>
-<p>기준선과 Chroma의 l2 설정은 제곱 L2를 사용하고 pgvector의 &lt;-&gt;는 L2 거리를 돌려줍니다. 원시 거리를 저장한 뒤 공통 척도로 바꾸어 비교합니다. 동률이면 청크 ID 오름차순을 사용합니다. 실제 단정도 벡터 저장·반올림 오차는 별도로 확인하며, 수치 허용 오차를 학생 합격 점수로 쓰지 않습니다.</p>
-</div>
-</details>
-<span id="mapping"></span><details class="reading-topic" id="reading-mapping"><summary>서비스 UUID와 문서 식별자</summary><div class="prose"><p>도서관 lab의 UUID는 실험을 위해 만든 가상 식별자입니다. 기존 B1 문서 UUID를 대체하지 않습니다. 서비스에서는 70일에 만든 문서 UUID와 owner를 그대로 사용하고 원문 ID, 청크 ID, 원문 바이트/내보내기 해시, 청크 해시를 이어받습니다.</p>
-<p>document_material은 현재 DB 본문을 같은 70 파서로 읽고 저장된 매핑을 대조합니다. text만 같아도 source나 page가 다르면 다른 출처 계약입니다. 현재 DB 본문을 내보낸 경우의 db-export 원문 ID와 과거 업로드 원본을 구분합니다. TXT 페이지 1은 논리 페이지이며 실제 PDF 페이지 추정이 아닙니다.</p>
-</div>
-</details>
-<span id="schema"></span><details class="reading-topic" id="reading-schema"><summary>기존 DB의 벡터 테이블</summary><div class="prose"><p>PostgreSQL 이미지를 pgvector가 포함된 것으로 사용했다는 사실과 데이터베이스에서 vector 확장을 활성화했다는 사실은 다릅니다. 73의 추가 migration이 확장과 벡터 표를 준비합니다. vector(3)은 이번 제공 모델의 차원이고 모든 실제 임베딩의 차원이라는 뜻이 아닙니다.</p>
-<p>course_vector_indexes는 owner/document별 E1 전체와 해시를 저장합니다. course_chunk_vectors는 같은 owner/document/chunk와 계약 해시를 외래키로 연결합니다. 70의 source map 관계에 필요한 UNIQUE만 추가하고 기존 문서·대화·A1·기억 행을 지우지 않습니다. 기본에는 HNSW/IVFFlat 근사 인덱스를 추가하지 않습니다.</p>
-</div>
-<div class="prose"><p>DOCUMENT_UUID는 실제 소유 문서의 관측 값으로 바꿉니다. CLI의 owner는 신뢰한 운영자가 지정하는 값이며 HTTP 인증을 구현한 것이 아닙니다. 업로드→명시 인덱스 준비→질문 순서이고, 인덱스가 없으면 409를 반환합니다.</p>
-</div>
-</details>
-<span id="sql"></span><details class="reading-topic" id="reading-sql"><summary>값 바인딩과 소유자 필터</summary><div class="prose"><p>SQL의 %s 자리에는 값 튜플을 별도로 전달합니다. 질문·owner·UUID·벡터를 SQL 문자열에 이어 붙이지 않습니다. 테이블과 열 이름은 코드의 고정 식별자이며 사용자 입력으로 고르지 않습니다.</p>
-<p>owner와 허용 문서 조건을 먼저 적용한 집합에서 거리를 정렬하고 LIMIT합니다. 전체 검색 결과에서 타인의 owner를 나중에 숨기는 방식으로 바꾸면 안 됩니다. 저장된 E1이 예상과 같은지도 먼저 확인합니다. 계약이 틀린 인덱스를 해시 필터로 제외해 []로 만드는 것만으로는 오류를 제대로 전달하지 못합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>경계의 결과</caption><thead><tr><th scope="col">상황</th><th scope="col">처리</th></tr>
-</thead><tbody><tr><td>벡터 인덱스 미준비</td><td>409 VectorIndexNotReady</td></tr>
-<tr><td>모델/자료/반환 불일치</td><td>502 VectorContractError</td></tr>
-<tr><td>시간 초과/연결 오류</td><td>안전한 실행 오류 유지</td></tr>
-<tr><td>유효한 영벡터 질문</td><td>인덱스 확인 뒤 거리 SQL 생략·no_evidence</td></tr>
-<tr><td>다른 소유자의 문서</td><td>소유 조회에서 차단</td></tr>
-</tbody></table></div>
-</details>
-<span id="library"></span><details class="reading-topic" id="reading-library"><summary>고정 질문의 검색 결과 비교</summary><div class="prose"><p>examples/library-lab에서 test_vector_lab과 record_comparison.py를 실행합니다. 이 폴더는 서비스 예제와 별도 Python 프로세스로 사용합니다. 기존 청크 5개·후보 k2·최종 k1을 유지하고 L2 재계산의 R1/A1이 39일 기준선과 같은지 봅니다. 이는 실제 Chroma/pgvector 실행이 아닙니다.</p>
-<p>Q1의 expected_document_ids는 원문 ID입니다. 검색된 청크를 source-map으로 원문에 연결한 뒤 Recall을 계산합니다. 정답 집합이 비면 Recall은 NA/empty_gold이고, 검색 오류의 NA는 retrieval_error 등 다른 이유입니다. 공개 확인 holdout-* 문항은 이미 공개되어 있어 비공개 평가라고 부르지 않습니다.</p>
-<p>반납함 문항은 최종 청크가 “무인 반납함은 24시간 이용할”에서 끝나는 기존 불완전성을 보존합니다. 원문 ID가 맞고 Recall이 1이어도 문장이 완전하다는 뜻이 아닙니다. 저장소를 바꾸었다고 이 문제를 해결했다고 쓰지 않습니다.</p>
-</div>
-</details>
-<span id="service"></span><details class="reading-topic" id="reading-service"><summary>문서 검색과 서비스 연결</summary><div class="prose"><p>service/input70은 검수된 70일 전체 앱의 바이트 사본입니다. app_pgvector.py는 그 앱에서 검색 factory와 새 벡터 오류 상태만 연결한 파생 코드입니다. 공개 사용자 대역, H1 요청/응답, 문서 상태, A1, 이력, 스트림의 순서를 유지합니다.</p>
-<p>서비스 E1은 70일의 같은 두 문단을 사용합니다. 제공 “과제”/k2에서 70일 원래 A1과 73일 A1을 같은 문서 UUID·청크·source/page로 대조했습니다. 새 E1의 Python 계산과 SQL 호출 대역은 8개 조건에서 같습니다. 70의 문자열 포함 검색과 모든 질문에서 같다는 주장이나 품질 개선 주장은 아닙니다.</p>
-<p>S1은 사용자 지정 함수의 외부 호출 수를 null로 남깁니다. 실제 작성한 어댑터가 로컬이라는 이유로 S1 metadata를 0으로 덮어쓰지 않습니다. 생성기는 70일과 같은 제공 근거 문맥 반환 함수이고 외부 모델은 사용하지 않습니다.</p>
-</div>
-</details>
-<span id="failures"></span><details class="reading-topic" id="reading-failures"><summary>색인·검색·저장 오류 분리</summary><div class="prose"><p>index_document는 해당 owner/document의 벡터와 E1만 같은 트랜잭션에서 재준비합니다. 벡터 INSERT가 실패하면 이전 인덱스가 rollback으로 남아야 합니다. 문서·대화·이전 A1을 지우는 재설정과 다릅니다.</p>
-<p>검색 결과의 id/text/source/page와 거리·순서도 검사합니다. 잘못된 원문이나 벡터를 저장소가 반환하면 정상 답으로 진행하지 않습니다. 서비스는 이미 생성한 답의 저장 실패에서 A1을 보존하고 persistence.failed_or_unknown을 남깁니다. commit 효과가 미확정일 수 있으므로 자동 재시도하지 않습니다.</p>
-</div>
-</details>
-<span id="actual"></span><details class="reading-topic" id="reading-actual"><summary>실제 저장소 검증의 실행 조건</summary><div class="prose"><p>check_stores_prepared.py는 도서관의 같은 5개 청크를 무작위 임시 schema와 선택 Chroma 메모리 collection에 넣는 실제 실행용 코드입니다. service/check_postgres_prepared.py는 같은 70일/B1→73의 S1·재조회·인덱스 rollback을 확인하는 코드입니다. 두 파일 모두 현재 실행하지 않았습니다.</p>
-<p>Chroma 비교는 query_embeddings로 제공 벡터를 직접 넘기고 embedding_function=None으로 별도 모델 호출을 하지 않습니다. 작은 진단 자료 전체를 요청한 뒤 동률 ID를 정리합니다. Chroma의 근사 인덱스와 pgvector 기본 정확검색의 차이를 숨기거나 이 작은 자료로 속도·비용을 일반화하지 않습니다.</p>
-</div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>공통 DB·볼륨과 검증 범위</summary><div class="prose"><p>deploy/input72는 같은 course-b1·course-data·PG*를 유지하는 72일 정본 사본입니다. deploy/compose.vector.yaml은 73일 이미지의 파생 override이며 기존 DB 서비스를 바꾸지 않습니다. 실제 Docker context·project label·volume 식별을 확인하기 전에는 같은 이름만으로 기존 데이터에 연결됐다고 판단하지 않습니다.</p>
-<p>API 재시작, DB 재시작/같은 볼륨 재연결, 별도 빈 DB 백업 복구는 다른 검사입니다. 실제 owner/document/conversation/source map/E1/A1과 행 수를 전후 대조해야 합니다. 현재 새 연결 검사 준비는 서버 재시작 성공 기록이 아닙니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

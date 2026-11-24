@@ -1,0 +1,10 @@
+header a{color:inherit}
+.edition-jumps{display:flex;gap:.6rem 1rem;flex-wrap:wrap;padding:1rem 0}
+.edition-group{margin:2rem 0 3rem;scroll-margin-top:1rem}
+.edition-group h2{margin-bottom:.8rem}
+.edition-group ul{list-style:none;padding:0;margin:0}
+.edition-group li{padding:1rem 0;border-bottom:1px solid #b8c9c1;scroll-margin-top:1rem}
+.edition-group h3{margin:0 0 .4rem;font-size:1.12rem}
+.edition-group p{margin:.3rem 0;line-height:1.65}
+.edition-group strong{margin-right:.5rem;font-size:.9em}
+main a{color:#175c51;text-underline-offset:.18em}

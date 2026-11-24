@@ -64,6 +64,8 @@ print(next_step(<span class="tok-string">"장비 A를 다음 달에 교체하기
 
 <!-- END MOTION -->
 
+
+<figure class="lesson-clip workflow-clip" id="workflow-q01-service-contract"><h3>Q01 응답 설계에서 검색 뒤 화면으로 넘어가는 값</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-q01-service-contract.mp4" aria-label="Q01 응답 설계에서 검색 뒤 화면으로 넘어가는 값" aria-describedby="workflow-q01-service-contract-caption"></video><figcaption id="workflow-q01-service-contract-caption">이 절의 서비스 설계 예시입니다. 앞 셀의 next_step()이 check_equipment를 반환한 뒤 붙일 검색과 응답 단계를 읽어 보세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>Q01</strong> · 질문 = 장비 A의 점검 전 확인 사항은?</li><li><strong>질문 분류</strong> · next_step() = check_equipment</li><li><strong>장비 조회</strong> · 설계상 후보 = RULE-A</li><li><strong>근거 표시</strong> · 답 옆에 놓을 근거 = 1쪽 2.1절 · rules-v1</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 빈 입력의 상태 전이</h3>
 <div class="cell-before"><p>공백만 넣었을 때 짧은 분기의 종료 위치를 표시하세요. 질문을 더 받으면 되는 상태와 구분해 봅니다.</p>
 </div>

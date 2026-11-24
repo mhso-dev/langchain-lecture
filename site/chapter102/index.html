@@ -44,6 +44,8 @@ print(json.dumps(request, ensure_ascii=<span class="tok-keyword">False</span>))<
 <div class="cell-after"><p>세 필드가 한 요청으로 묶입니다. session_id는 대화를 찾고 request_id는 해당 시도를 추적합니다. 이 셀은 전송 전의 JSON을 만들었습니다.</p>
 </div>
 </article>
+
+<figure class="lesson-clip workflow-clip" id="workflow-read-response-envelope"><h3>HTTP 200에서 실제 답과 출처 ID까지 내려가기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-read-response-envelope.mp4" aria-label="HTTP 200에서 실제 답과 출처 ID까지 내려가기" aria-describedby="workflow-read-response-envelope-caption"></video><figcaption id="workflow-read-response-envelope-caption">저장된 전송 예시의 겉 상태와 안쪽 값을 읽는 경로입니다. HTTP 상태 코드만으로 인용한 문서까지 알 수는 없습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>전송 기록</strong> · status_code = 200</li><li><strong>python_response</strong> · request_id = normal</li><li><strong>답변 결과</strong> · result.status = answered</li><li><strong>첫 출처</strong> · sources[0].id = RULE-A</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 응답의 출처 필드</h3>
 <div class="cell-before"><p>로컬 전송 기록 정상 행에서 화면이 읽을 필드만 발췌했습니다. 실제 응답 원본에는 job 등 추가 필드도 있습니다.</p>
 </div>

@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 13 / WORKFLOW</p>
 <span class="sidebar-title">순차 워크플로의 입력·출력 연결</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-summary"><span>02</span>요약 출력을 분류 입력으로 전달</a><a href="#nb-handoff"><span>03</span>JSON으로 다중 입력 조립</a><a href="#nb-trace"><span>04</span>단계별 호출 로그와 중간값 검증</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>순차 워크플로의 입력·출력 연결 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-summary"><span>02</span>요약 출력을 분류 입력으로 전달</a><a href="#nb-handoff"><span>03</span>JSON으로 다중 입력 조립</a><a href="#nb-trace"><span>04</span>단계별 호출 로그와 중간값 검증</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -43,6 +43,10 @@
 <video autoplay loop muted playsinline aria-label="요약의 반환값은 다음 호출의 입력입니다" src="visual-summary.mp4"></video>
 <figcaption>첫 호출이 돌려준 문장 전체가 분류 함수로 이동합니다. 분류 결과 billing은 요약과 함께 작성 단계에 전달됩니다. 이 예제는 단계별 응답을 고정한 모의 호출입니다.</figcaption></figure>
 <!-- /lesson-visual visual-summary -->
+
+<span class="lesson-anchor" id="loss"></span><div class="lesson-explanation" id="reading-loss"><h3>요약 단계의 정보 손실</h3><div class="prose"><p>순차 흐름의 뒤 단계는 앞 단계가 넘긴 정보에 의존합니다. 원문에 “영수증을 찾을 수 없고 로그인 오류도 난다”는 내용이 있는데 요약이 영수증만 남기면 분류와 안내도 한쪽으로 치우칠 수 있습니다.</p>
+<p>요약 길이를 늘리는 방법과 원문을 뒤 단계에도 전달하는 방법은 서로 다른 설계입니다. 어떤 정보를 남겨야 하는지 먼저 정하고, 입력 크기와 확인 부담을 함께 비교하세요.</p>
+</div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · mock_call()의 요약 반환값</h3>
 <div class="cell-before"><p>첫 번째 요청의 질문은 그대로 두고, 반환된 요약을 변수에 보관하세요.</p>
 </div>
@@ -58,6 +62,15 @@ print(summary)</code></pre></figure>
 <div class="cell-after"><p>영수증 확인 방법을 묻는 문장이 나옵니다. 모의 함수는 단계 이름으로 준비된 답을 골라 주므로 입력을 바꿔도 요약 품질을 시험할 수는 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="why"></span><div class="lesson-explanation" id="reading-why"><h3>순차 호출의 단계 분할</h3><div class="prose"><p>여러 작업을 한 번에 요청하면 어디에서 잘못되었는지 구분하기 어려울 수 있습니다. 요약·분류·문장 작성을 따로 실행하면 중간 결과를 볼 수 있지만 호출 수와 대기 시간도 늘어납니다. 작업을 나눈다는 사실만으로 품질이 좋아진다고 단정하지 않습니다.</p>
+<p>이번 흐름에서는 Python 코드가 항상 요약, 분류, 작성 순서를 정합니다. 모델이 다음 함수를 선택하는 에이전트가 아닙니다. 모델은 각 단계에서 입력을 받아 텍스트를 돌려줄 뿐입니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>세 단계의 입출력</caption><thead><tr><th scope="col">단계</th><th scope="col">입력</th><th scope="col">출력</th></tr>
+</thead><tbody><tr><td>summarize</td><td>원본 문의</td><td>요약 한 문장</td></tr>
+<tr><td>classify</td><td>요약</td><td>billing/technical/clarify</td></tr>
+<tr><td>write</td><td>요약과 분야를 담은 JSON 문자열</td><td>접수 안내</td></tr>
+</tbody></table></div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 분류 호출에 요약 전달</h3>
 <div class="cell-before"><p>방금 얻은 summary를 세 번째 인자로 넣습니다.</p>
 </div>
@@ -67,6 +80,8 @@ print(category)</code></pre></figure>
 <div class="cell-after"><p>billing이 나옵니다. 다음 단계에 이 단어만 보내면 무엇 때문에 결제 문의로 분류했는지 알 수 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>고정 응답으로 함수 연결 시험하기</h3><p>mock_call은 단계 이름으로 미리 저장한 값을 찾아 반환합니다. 입력 문장을 바꾸어도 같은 문자열을 돌려주므로 분류 정확도는 측정할 수 없습니다. 여기서는 요약 반환값이 실제로 다음 호출의 입력에 들어갔는지 로그로 확인합니다.</p></div>
+
 </section>
 <section id="nb-handoff" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>JSON으로 다중 입력 조립</h2>
@@ -86,6 +101,8 @@ print(writing_input)</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="flow"></span><span class="lesson-anchor" id="flow-7"></span><span class="lesson-anchor" id="flow-7-step-0"></span><span class="lesson-anchor" id="flow-7-step-1"></span><span class="lesson-anchor" id="flow-7-step-2"></span><div class="lesson-explanation" id="reading-flow"><h3>작성 함수로 함께 전달되는 두 값</h3><p>분류 함수에는 앞서 만든 summary 하나가 들어갑니다. 작성 함수에는 summary와 category가 모두 필요해 두 값을 JSON 문자열로 묶습니다. 로그의 classify 입력과 write 입력에서 이 차이를 찾아보세요.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 빈 문자열의 ValueError 처리</h3>
 <div class="cell-before"><p>분류 전에 요약이 공백만 돌아온 상황입니다. 뒤의 호출에 보낼 값이 있는지 먼저 봅니다.</p>
 </div>
@@ -102,6 +119,17 @@ print(writing_input)</code></pre></figure>
 <div class="cell-after"><p>오류 메시지에 summarize가 보입니다. 뒤에서 분류 실패가 난 것으로 오해하지 않고 처음 비어 버린 위치로 돌아갈 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="failure"></span><div class="lesson-explanation" id="reading-failure"><h3>빈 중간값의 실패 처리</h3><div class="prose"><p>분류 단계가 빈 문자열을 반환했는데 작성 단계로 계속 진행하면 정상처럼 보이는 안내문을 만들 수 있습니다. 빈 출력과 허용하지 않은 분류를 즉시 거부하고 뒤 단계를 실행하지 않도록 합니다.</p>
+<p>이 예제는 오류를 예외로 알립니다. 실패 시 앞 단계 로그를 외부에 반환하는 구조까지 구현하지 않았습니다. 실제 운영 로그를 만들 때는 성공 단계와 실패 단계를 함께 보관하되 민감한 입력 전체를 무조건 저장하지 않습니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>실패 조건</caption><thead><tr><th scope="col">발견 위치</th><th scope="col">처리</th></tr>
+</thead><tbody><tr><td>시작 전 빈 문의</td><td>ValueError, 호출 없음</td></tr>
+<tr><td>단계의 빈 출력</td><td>해당 단계에서 예외, 이후 중단</td></tr>
+<tr><td>허용값 밖 분류</td><td>작성 단계 실행 전 중단</td></tr>
+<tr><td>SDK 응답 미완료</td><td>호출 함수에서 예외</td></tr>
+<tr><td>내용은 틀리지만 형식 정상</td><td>원문 대조로 별도 발견</td></tr>
+</tbody></table></div></div>
+
 </section>
 <section id="nb-trace" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>단계별 호출 로그와 중간값 검증</h2>
@@ -147,6 +175,10 @@ print(result[<span class="tok-string">"log"</span>][<span class="tok-number">1</
 <div class="cell-after"><p>두 번째 호출 기록의 input은 첫 호출이 만든 요약입니다. result의 answer는 세 번째 모의 호출이 돌려준 접수 안내입니다. 계정 조회나 환불을 실행한 기록은 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>단계 실행 함수</h3><div class="prose"><p>step은 단계 이름과 입력을 받아 호출하고 결과를 검사합니다. 입력과 출력, 시간을 log에 함께 남기므로 어느 단계에서 문제가 생겼는지 읽을 수 있습니다. 이번 실습은 가상 문의만 로그에 남깁니다. 실제 서비스에서는 개인정보가 로그에 남지 않도록 범위와 보관 규칙을 정해야 합니다.</p>
+<p>run_workflow의 call 인자는 모델 호출을 담당하는 함수입니다. 기본 실행은 mock_call을 전달합니다. 이처럼 호출 경계를 분리하면 인터넷 없이도 연결 순서와 실패 경로를 검사할 수 있습니다.</p>
+</div></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -155,63 +187,15 @@ print(result[<span class="tok-string">"log"</span>][<span class="tok-number">1</
 <div class="prose"><p>분류가 허용 목록에 없는 payment라면 어느 단계에서 중단해야 할까요? 작성 입력을 만들기 전에 category를 검사한 위치를 찾아 보세요. 세 번의 호출이 항상 같은 순서인 이 방식에서 다음 장은 분류별로 다른 경로를 고릅니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>순차 워크플로의 입력·출력 연결 심화 읽기</h2>
-</div>
-</header>
-<span id="why"></span><details class="reading-topic" id="reading-why"><summary>순차 호출의 단계 분할</summary><div class="prose"><p>여러 작업을 한 번에 요청하면 어디에서 잘못되었는지 구분하기 어려울 수 있습니다. 요약·분류·문장 작성을 따로 실행하면 중간 결과를 볼 수 있지만 호출 수와 대기 시간도 늘어납니다. 작업을 나눈다는 사실만으로 품질이 좋아진다고 단정하지 않습니다.</p>
-<p>이번 흐름에서는 Python 코드가 항상 요약, 분류, 작성 순서를 정합니다. 모델이 다음 함수를 선택하는 에이전트가 아닙니다. 모델은 각 단계에서 입력을 받아 텍스트를 돌려줄 뿐입니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>세 단계의 입출력</caption><thead><tr><th scope="col">단계</th><th scope="col">입력</th><th scope="col">출력</th></tr>
-</thead><tbody><tr><td>summarize</td><td>원본 문의</td><td>요약 한 문장</td></tr>
-<tr><td>classify</td><td>요약</td><td>billing/technical/clarify</td></tr>
-<tr><td>write</td><td>요약과 분야를 담은 JSON 문자열</td><td>접수 안내</td></tr>
-</tbody></table></div>
-</details>
-<span id="flow"></span><details class="reading-topic" id="reading-flow"><summary>중간 출력과 입력 매핑</summary><details class="case-reference" id="flow-7"><summary>세 단계의 연결</summary>
-<p>설명용 시각화입니다. 기본 실행은 고정 응답을 사용합니다.</p>
-<article id="flow-7-step-0"><small>STEP 01 · Python → 모델</small><h4>요약 함수의 반환값</h4>
-<p>원본의 문제와 요청을 남깁니다.</p><pre>summary = "사용자가 결제 영수증 확인 방법을 문의했다."</pre></article><article id="flow-7-step-1"><small>STEP 02 · Python → 모델</small><h4>요약을 입력으로 받은 분류</h4>
-<p>요약을 허용된 분야 하나로 분류합니다.</p><pre>category = "billing"</pre></article><article id="flow-7-step-2"><small>STEP 03 · Python → 모델</small><h4>분류 결과와 안내문 생성</h4>
-<p>요약과 분야를 함께 전달합니다.</p><pre>summary: 결제 영수증 확인 문의
-category: billing</pre></article></details>
-<div class="prose"><p>분류가 billing이라는 단어만 반환하면 그 안에는 사용자의 구체적인 문의가 없습니다. 작성 단계에는 분야뿐 아니라 요약도 전달해야 합니다. 중간 단계 하나의 출력만 계속 덮어쓰면 앞에서 필요한 정보를 잃을 수 있습니다.</p>
-</div>
-</details>
-<span id="code"></span><details class="reading-topic" id="reading-code"><summary>단계 실행 함수</summary><div class="prose"><p>step은 단계 이름과 입력을 받아 호출하고 결과를 검사합니다. 입력과 출력, 시간을 log에 함께 남기므로 어느 단계에서 문제가 생겼는지 읽을 수 있습니다. 이번 실습은 가상 문의만 로그에 남깁니다. 실제 서비스에서는 개인정보가 로그에 남지 않도록 범위와 보관 규칙을 정해야 합니다.</p>
-<p>run_workflow의 call 인자는 모델 호출을 담당하는 함수입니다. 기본 실행은 mock_call을 전달합니다. 이처럼 호출 경계를 분리하면 인터넷 없이도 연결 순서와 실패 경로를 검사할 수 있습니다.</p>
-</div>
-</details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>모의 호출과 SDK 연결</summary><div class="prose"><p>기본 응답은 입력 내용과 무관하게 준비된 값을 반환합니다. 질문을 바꿔도 같은 결과가 나오므로 분류 정확도 시험으로 사용할 수 없습니다. 이 실행은 세 단계의 데이터 전달과 중단 조건을 검사합니다.</p>
-</div>
-<div class="prose"><p>sdk_call은 11장의 준비된 OpenAI 클라이언트와 모델을 받아 같은 호출 인터페이스를 만듭니다. 실제 사용 시 run_workflow(sdk_call(client, model), request)로 연결할 수 있습니다. 실제 경로는 정상 흐름 한 번에 모델 요청 세 번을 수행하므로 사전 예산과 계정 확인이 필요합니다. 이번 제작에서는 호출하지 않았습니다.</p>
-</div>
-</details>
-<span id="failure"></span><details class="reading-topic" id="reading-failure"><summary>빈 중간값의 실패 처리</summary><div class="prose"><p>분류 단계가 빈 문자열을 반환했는데 작성 단계로 계속 진행하면 정상처럼 보이는 안내문을 만들 수 있습니다. 빈 출력과 허용하지 않은 분류를 즉시 거부하고 뒤 단계를 실행하지 않도록 합니다.</p>
-<p>이 예제는 오류를 예외로 알립니다. 실패 시 앞 단계 로그를 외부에 반환하는 구조까지 구현하지 않았습니다. 실제 운영 로그를 만들 때는 성공 단계와 실패 단계를 함께 보관하되 민감한 입력 전체를 무조건 저장하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>실패 조건</caption><thead><tr><th scope="col">발견 위치</th><th scope="col">처리</th></tr>
-</thead><tbody><tr><td>시작 전 빈 문의</td><td>ValueError, 호출 없음</td></tr>
-<tr><td>단계의 빈 출력</td><td>해당 단계에서 예외, 이후 중단</td></tr>
-<tr><td>허용값 밖 분류</td><td>작성 단계 실행 전 중단</td></tr>
-<tr><td>SDK 응답 미완료</td><td>호출 함수에서 예외</td></tr>
-<tr><td>내용은 틀리지만 형식 정상</td><td>원문 대조로 별도 발견</td></tr>
-</tbody></table></div>
-</details>
-<span id="loss"></span><details class="reading-topic" id="reading-loss"><summary>요약 단계의 정보 손실</summary><div class="prose"><p>순차 흐름의 뒤 단계는 앞 단계가 넘긴 정보에 의존합니다. 원문에 “영수증을 찾을 수 없고 로그인 오류도 난다”는 내용이 있는데 요약이 영수증만 남기면 분류와 안내도 한쪽으로 치우칠 수 있습니다.</p>
-<p>요약 길이를 늘리는 방법과 원문을 뒤 단계에도 전달하는 방법은 서로 다른 설계입니다. 어떤 정보를 남겨야 하는지 먼저 정하고, 입력 크기와 확인 부담을 함께 비교하세요.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://developers.openai.com/api/docs/guides/text" target="_blank" rel="noopener noreferrer">OpenAI 텍스트 생성 ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

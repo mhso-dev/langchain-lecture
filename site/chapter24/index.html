@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 24 / FIRST RAG</p>
 <span class="sidebar-title">LCEL로 구성하는 RAG와 인용 검증</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-prepare"><span>02</span>검색 문서를 프롬프트 문맥으로 변환</a><a href="#nb-citation"><span>03</span>검색 ID와 생성 답변의 인용 대조</a><a href="#nb-empty"><span>04</span>빈 검색 결과의 생성 생략</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>LCEL로 구성하는 RAG와 인용 검증 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-prepare"><span>02</span>검색 문서를 프롬프트 문맥으로 변환</a><a href="#nb-citation"><span>03</span>검색 ID와 생성 답변의 인용 대조</a><a href="#nb-empty"><span>04</span>빈 검색 결과의 생성 생략</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -38,10 +38,12 @@
 hits = retrieve(question, k=1)
 context = format_context(hits)</code></pre><p>셀 01의 마지막 세 줄입니다. hits에는 문서 한 건이, context에는 그 문서의 ID·출처·2쪽 본문이 들어갑니다. 셀 02가 같은 문맥을 답변에 사용합니다.</p>
 </div>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>검색 결과를 LCEL 입력으로 바꾸기</h3><p>검색 결과인 문서 목록에서 ID·출처·쪽·본문을 묶어 context를 만듭니다. question은 질문 칸에 그대로 넣습니다. 두 입력이 프롬프트의 서로 다른 변수로 들어가는지 확인하세요.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · format_context()로 문맥 조립</h3>
 <div class="cell-before"><p>셀 맨 아래의 question 한 줄에서 질문을 고릅니다. 먼저 휴관 질문을 실행해 첫 줄의 문서 ID와 둘째 줄의 원문을 읽으세요.</p>
 </div>
-<details class="provided-code"><summary>제공 코드 전체 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 64줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 64줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">documents = [
   {<span class="tok-string">"id"</span>:<span class="tok-string">"library-1"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서 대출 기간은 14일입니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">1</span>},
   {<span class="tok-string">"id"</span>:<span class="tok-string">"library-2"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"도서관은 월요일에 휴관합니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">2</span>},
   {<span class="tok-string">"id"</span>:<span class="tok-string">"library-3"</span>,<span class="tok-string">"text"</span>:<span class="tok-string">"무인 반납함은 24시간 이용할 수 있습니다."</span>,<span class="tok-string">"source"</span>:<span class="tok-string">"가상 도서관 이용 안내"</span>,<span class="tok-string">"page"</span>:<span class="tok-number">3</span>}
@@ -105,12 +107,14 @@ question = <span class="tok-string">"휴관 요일은 언제인가요?"</span>
 hits = retrieve(question, k=<span class="tok-number">1</span>)
 context = format_context(hits)
 print(context)</code></pre></figure>
-</details>
+
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[library-2] 가상 도서관 이용 안내 / p.2
 도서관은 월요일에 휴관합니다.</pre></div>
 <div class="cell-after"><p>첫 줄에는 [library-2]와 자료 이름, p.2가 나옵니다. 둘째 줄은 월요일 휴관을 밝힌 원문입니다. 이 둘을 같은 문자열로 모델에 전달합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="prompt"></span><div class="lesson-explanation" id="reading-prompt"><h3>질문과 근거가 들어가는 메시지</h3><p>system 메시지에는 ‘다음 근거만 읽고 사용한 ID를 표시하세요.’라는 지시와 context가 들어갑니다. human 메시지에는 question이 들어갑니다. 모델의 답을 받은 뒤에는 인용 ID도 실제 검색 목록과 대조합니다.</p></div>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 고정 모델과 LCEL 호출</h3>
 <div class="cell-before"><p>셀 01에서 만든 질문과 검색 결과를 그대로 씁니다. 첫 문서의 본문과 ID로 이번 대본을 만든 뒤 LCEL에 전달합니다. 검색 결과가 비면 모델을 부르기 전에 멈춥니다.</p>
 </div>
@@ -134,6 +138,23 @@ print(context)</code></pre></figure>
 <div class="cell-after"><p>휴관 질문에는 월요일과 [library-2]가 나옵니다. 셀 01의 질문을 ‘대출 기간은?’으로 바꾸고 두 셀을 다시 실행하면 14일과 [library-1]이 나옵니다. ‘주차 요금은?’에는 근거가 없다는 안내가 나옵니다. 이 모델은 준비된 답 한 줄을 돌려줍니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="connect"></span><div class="lesson-explanation" id="reading-connect"><h3>검색 단계와 생성 단계</h3><div class="prose"><p>RAG는 검색한 근거를 질문과 함께 모델 입력에 넣어 답변을 생성합니다. 검색과 생성을 나누어 관찰하면 어느 단계의 문제인지 찾기 쉽습니다.</p>
+<p>search(question, k)는 23장의 네 필드 문서 목록을 반환합니다. 기본 실행은 같은 교육용 벡터를 계산하는 로컬 검색과 고정 응답 모델입니다. prompt | model | parser는 실제 LCEL 라이브러리로 연결하지만 외부 LLM에 요청하지 않습니다.</p>
+</div>
+<div class="worked-case" id="flow-8"><h3>첫 RAG의 실행 순서</h3>
+<p>검색은 교육용 로컬 계산, 모델은 고정 응답입니다. 연결에는 실제 LCEL을 사용합니다.</p>
+<div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">검색 결과</th><th scope="col">이후 실행</th></tr>
+</thead><tbody><tr><td>[]</td><td>no_evidence 반환 · 생성 0회 · 종료</td></tr>
+<tr><td>library-2</td><td>본문과 ID를 문맥에 넣어 답변 생성</td></tr>
+</tbody></table></div>
+<article id="flow-8-step-0"><small>STEP 01 · Retriever</small><h4>관련 문서 반환</h4>
+<p>id·text·source·page를 유지합니다.</p><pre>휴관 요일은 언제인가요? → library-2</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>빈 검색 결과 판정</h4>
+<p>빈 목록이면 생성하지 않습니다.</p><pre>[] → 여기서 종료
+문서 있음 → 다음 단계</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>출처와 본문 포매팅</h4>
+<p>질문과 근거를 별도로 넣습니다.</p><pre>context + question</pre></article><article id="flow-8-step-3"><small>STEP 04 · LCEL</small><h4>답변 문자열 반환</h4>
+<p>인용 id를 검색 결과와 대조합니다.</p><pre>월요일 휴관 · 출처 [library-2]</pre></article></div></div>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>고정 모델을 이용해 연결 확인하기</h3><p>FakeListChatModel은 준비된 휴관 안내를 돌려줍니다. 질문·문맥·파서를 연결해 최종 문자열이 나오는지 시험할 수 있습니다. 고정 응답을 사용했으므로 다른 질문에 답하는 능력까지 평가한 결과는 아닙니다.</p></div>
+
 </section>
 <section id="nb-citation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>검색 ID와 생성 답변의 인용 대조</h2>
@@ -186,83 +207,7 @@ print(bad[<span class="tok-string">"status"</span>])</code></pre></figure>
 <div class="cell-after"><p>invalid_citation이 나옵니다. 문장은 맞아도 library-1은 검색 결과에 없었습니다. 반대로 올바른 ID를 붙였어도 문장에 다른 요일을 쓰면 이 검사만으로는 발견하지 못합니다.</p>
 </div>
 </article>
-<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 유효 인용과 검색 목록 대조</h3>
-<div class="cell-before"><p>위의 검색 함수는 그대로 두고 올바른 문장과 ID를 반환하는 생성 함수를 전달하세요. sources에 든 문서의 쪽을 출력하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 새 생성 함수를 만들고 answer_question을 호출하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5"><span class="tok-keyword">def</span> cite_closed(question, context):
-    <span class="tok-keyword">return</span> <span class="tok-string">"도서관은 월요일에 휴관합니다. [library-2]"</span>
-
-answer = answer_question(citation_question, search_closed, cite_closed, k=<span class="tok-number">1</span>)
-print(answer[<span class="tok-string">"status"</span>], answer[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"page"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">answered 2</pre></div>
-<div class="cell-after"><p>answered와 2가 나옵니다. 사용자에게 전달할 sources에는 실제 인용한 문서 객체만 들어 있습니다.</p>
-</div>
-</details>
-</article>
-</section>
-<section id="nb-empty" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
-<h2>빈 검색 결과의 생성 생략</h2>
-</div>
-</header>
-<p>주차 요금 정보가 없는 질문에 답을 써 달라고 부르면 그럴듯한 요금이 만들어질 수 있습니다. 빈 검색 결과는 생성기 앞에서 정상적으로 처리하고, 통신 실패는 오류로 남깁니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 근거 부재와 생성 호출 수</h3>
-<div class="cell-before"><p>항상 빈 목록을 돌려주는 검색 함수를 건네고 상태와 generation_calls를 출력하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># 빈 결과를 돌려주는 검색 함수를 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7"><span class="tok-keyword">def</span> no_hits(question, k):
-    <span class="tok-keyword">return</span> []
-
-unanswered = answer_question(<span class="tok-string">"주차 요금은 얼마인가요?"</span>, no_hits, wrong_id)
-print(unanswered[<span class="tok-string">"status"</span>], unanswered[<span class="tok-string">"generation_calls"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence 0</pre></div>
-<div class="cell-after"><p>no_evidence 0입니다. 생성기 자리에 잘못된 ID를 쓰는 함수가 있었어도 이번에는 호출하지 않았습니다. 시간 초과로 검색에 실패한 경우라면 ‘자료에 없음’과 구분해 알려야 합니다.</p>
-</div>
-</details>
-</article>
-</section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>복습과 실습 점검</h2>
-</div>
-</header>
-<div class="prose"><p>본문 ‘월요일’을 ‘화요일’로만 바꾼 고정 답변을 넣으면 ID 검사가 무엇을 놓칠까요? 원문과 답 문장을 사람이 대조해야 하는 이유를 이 한 건으로 설명할 수 있습니다.</p>
-</div>
-</section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>LCEL로 구성하는 RAG와 인용 검증 심화 읽기</h2>
-</div>
-</header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>Retriever 출력과 LCEL 입력</summary><div class="prose"><p>전반 대조 0.5H 중 15분에 23장의 대출 질문 문서와 빈 주차 결과를 읽어 보세요. question·context 두 입력이 19장의 프롬프트 변수와 맞는지 설명합니다. 검색 오류를 빈 목록과 구분하지 못했다면 23장 contract/limits를 먼저 복습합니다.</p>
-</div>
-</details>
-<span id="connect"></span><details class="reading-topic" id="reading-connect"><summary>검색 단계와 생성 단계</summary><div class="prose"><p>RAG는 검색한 근거를 질문과 함께 모델 입력에 넣어 답변을 생성합니다. 검색과 생성을 나누어 관찰하면 어느 단계의 문제인지 찾기 쉽습니다.</p>
-<p>search(question, k)는 23장의 네 필드 문서 목록을 반환합니다. 기본 실행은 같은 교육용 벡터를 계산하는 로컬 검색과 고정 응답 모델입니다. prompt | model | parser는 실제 LCEL 라이브러리로 연결하지만 외부 LLM에 요청하지 않습니다.</p>
-</div>
-<details class="case-reference" id="flow-8"><summary>첫 RAG의 실행 순서</summary>
-<p>검색은 교육용 로컬 계산, 모델은 고정 응답입니다. 연결에는 실제 LCEL을 사용합니다.</p>
-<div class="table-scroll" tabindex="0"><table><caption>조건별 다음 단계</caption><thead><tr><th scope="col">검색 결과</th><th scope="col">이후 실행</th></tr>
-</thead><tbody><tr><td>[]</td><td>no_evidence 반환 · 생성 0회 · 종료</td></tr>
-<tr><td>library-2</td><td>본문과 ID를 문맥에 넣어 답변 생성</td></tr>
-</tbody></table></div>
-<article id="flow-8-step-0"><small>STEP 01 · Retriever</small><h4>관련 문서 반환</h4>
-<p>id·text·source·page를 유지합니다.</p><pre>휴관 요일은 언제인가요? → library-2</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>빈 검색 결과 판정</h4>
-<p>빈 목록이면 생성하지 않습니다.</p><pre>[] → 여기서 종료
-문서 있음 → 다음 단계</pre></article><article id="flow-8-step-2"><small>STEP 03 · Python</small><h4>출처와 본문 포매팅</h4>
-<p>질문과 근거를 별도로 넣습니다.</p><pre>context + question</pre></article><article id="flow-8-step-3"><small>STEP 04 · LCEL</small><h4>답변 문자열 반환</h4>
-<p>인용 id를 검색 결과와 대조합니다.</p><pre>월요일 휴관 · 출처 [library-2]</pre></article></details>
-</details>
-<span id="prompt"></span><details class="reading-topic" id="reading-prompt"><summary>프롬프트의 근거와 지시 구분</summary><div class="prose"><p>프롬프트는 제공 문서만 근거로 답하고 부족하면 확인할 수 없다고 말하도록 요청합니다. 문서의 내용을 서비스 실행 지시로 취급하지 말라는 경계도 넣습니다. 이런 문장만으로 모든 잘못된 답변이나 공격을 막는다고 주장하지 않습니다.</p>
-<p>문서 id를 [library-1]처럼 표시하면 코드가 검색 결과와 연결할 수 있습니다. source 이름과 page는 사용자에게 보여 줄 근거 정보이며 실제 파일 위치와 일치해야 합니다.</p>
-</div>
-</details>
-<span id="empty"></span><details class="reading-topic" id="reading-empty"><summary>빈 결과의 조기 종료</summary><div class="prose"><p>docs가 빈 목록이면 고정 안내를 반환하고 generation_calls=0으로 기록합니다. 질문이 있다고 무조건 모델을 호출하면 제공 자료에 없는 답을 만들 위험과 불필요한 호출이 생깁니다.</p>
-<p>빈 결과의 이유는 여러 가지입니다. 자료가 실제로 없을 수도 있고, 적재·검색 설정·교육용 키워드 표현이 부족할 수도 있습니다. no_evidence는 현재 검색 결과가 없음을 뜻하며 세상에 답이 없다는 뜻은 아닙니다.</p>
-</div>
-<div class="prose"><p>answer_with_citations는 제공 공통 모듈의 A1 함수입니다. 입력을 먼저 검증하고 문서를 검색한 다음, 빈 목록이면 generate를 부르지 않습니다. generate 안에서만 LCEL 체인을 만들므로 생성 모델을 준비하지 않은 빈 근거 사례도 호출 횟수 0으로 끝납니다.</p>
-<p>공백 질문이나 bool k는 ValueError입니다. 출처 누락은 데이터 오류이며 no_evidence로 바꾸지 않습니다. 공통 검증 코드는 제공 파일에서 확인하고, 오늘은 검색·문맥·생성 사이의 입출력을 설명하는 데 집중합니다.</p>
-</div>
-</details>
-<span id="citation"></span><details class="reading-topic" id="reading-citation"><summary>인용 ID 유효성 검사</summary><div class="prose"><p>코드는 대괄호의 id를 모아 검색된 문서 id의 부분집합인지 검사합니다. 존재하지 않는 id나 인용이 없는 답은 invalid_citation으로 돌려 검토가 필요함을 알립니다.</p>
+<span class="lesson-anchor" id="citation"></span><div class="lesson-explanation" id="reading-citation"><h3>인용 ID 유효성 검사</h3><div class="prose"><p>코드는 대괄호의 id를 모아 검색된 문서 id의 부분집합인지 검사합니다. 존재하지 않는 id나 인용이 없는 답은 invalid_citation으로 돌려 검토가 필요함을 알립니다.</p>
 <p>이 검사는 인용 형식을 확인할 뿐 문장의 모든 주장이 그 문서에서 나온다는 의미 검증은 아닙니다. “대출 기간은 100일 [library-1]”은 id가 맞아 형식 검사를 통과할 수 있지만 원문과 다릅니다. 사람이 원문을 읽거나 별도의 평가가 필요합니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>검색 목록과 실제 인용 목록</caption><thead><tr><th scope="col">항목</th><th scope="col">대출 질문 예</th></tr>
@@ -279,35 +224,65 @@ print(unanswered[<span class="tok-string">"status"</span>], unanswered[<span cla
 </tbody></table></div>
 <div class="prose"><p>sources는 문자열 ID 목록이 아니라 실제 인용된 id·text·source·page 객체 목록입니다. 검색한 두 번째 문서를 답변에서 사용하지 않았다면 sources에 넣지 않습니다. 팀 자료의 team-01:p-01 같은 콜론 ID도 그대로 인용할 수 있습니다.</p>
 <p>[library-1]과 [unknown]을 함께 쓴 답변은 일부만 맞더라도 invalid_citation입니다. 인용을 하나도 쓰지 않은 답변도 같은 상태입니다. invalid_citation은 검토 안내와 빈 sources를 반환하며, 잘못된 답변을 성공 답변으로 내보내지 않습니다.</p>
+</div></div>
+
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 유효 인용과 검색 목록 대조</h3>
+<div class="cell-before"><p>위의 검색 함수는 그대로 두고 올바른 문장과 ID를 반환하는 생성 함수를 전달하세요. sources에 든 문서의 쪽을 출력하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># 새 생성 함수를 만들고 answer_question을 호출하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5"><span class="tok-keyword">def</span> cite_closed(question, context):
+    <span class="tok-keyword">return</span> <span class="tok-string">"도서관은 월요일에 휴관합니다. [library-2]"</span>
+
+answer = answer_question(citation_question, search_closed, cite_closed, k=<span class="tok-number">1</span>)
+print(answer[<span class="tok-string">"status"</span>], answer[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"page"</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">answered 2</pre></div>
+<div class="cell-after"><p>answered와 2가 나옵니다. 사용자에게 전달할 sources에는 실제 인용한 문서 객체만 들어 있습니다.</p>
 </div>
 </details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>모의 연결과 실제 RAG 실행</summary><div class="prose"><p>rag.py는 공개 Q1의 개발 3개·확인 2개 질문을 실행해 rag/answer-cases.json에 저장합니다. fixed_model은 알려진 질문에 준비된 문장을 돌려주는 대본입니다. 확인 질문도 이미 공개되어 있으므로 새 질문에 대한 일반 성능이나 숨겨진 시험 점수라고 표현하지 않습니다.</p>
-</div>
-<div class="prose"><p>run_case는 검색을 한 번만 실행하고 그 문서 목록을 답변 함수에 넘깁니다. search_status는 retrieved/empty/error이고 result에는 A1 결과 또는 None이 들어갑니다. TimeoutError·ConnectionError를 검색 중 받으면 error_type을 남기고 result=None으로 둡니다. 생성 단계의 예외는 검색 오류로 잘못 분류하지 않고 호출자에게 전달합니다.</p>
-<p>공백 입력·출처 누락 같은 잘못된 데이터도 예외로 멈춥니다. 이 딕셔너리는 실험 기록입니다. 30~32장에서 같은 필드를 상태에 넣어 쓰지만, 지금 Graph 문법을 배울 필요는 없습니다.</p>
-</div>
-</details>
-<span id="questions"></span><details class="reading-topic" id="reading-questions"><summary>기준 질문별 실패 유형</summary><div class="prose"><p>data/questions.json의 question_id·question·expected_document_ids·answerable을 유지합니다. development는 수정할 때 보는 공개 개발 질문 3개, holdout은 수정 후 다시 확인할 공개 질문 2개입니다. 이번 수업 자료는 이미 모두 공개되어 있어 독립된 성능 측정용 비공개 자료가 아닙니다.</p>
-<p>expected_document_ids는 원문 ID입니다. 검색 문서는 청크 ID이므로 data/source-map.json의 document_id로 원문에 연결합니다. 현재 한 페이지가 한 청크여서 ID가 같지만, 나중에 청크를 더 나누면 같다고 가정할 수 없습니다. 검색 후보와 실제 인용 출처, 사람이 본 사실 일치를 각각 기록하세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>고정 Q1 질문</caption><thead><tr><th scope="col">구분·ID</th><th scope="col">질문 주제</th><th scope="col">기대 원문</th></tr>
-</thead><tbody><tr><td>development · dev-01</td><td>대출 기간</td><td>library-1</td></tr>
-<tr><td>development · dev-02</td><td>휴관 요일</td><td>library-2</td></tr>
-<tr><td>development · dev-03</td><td>주차 요금</td><td>없음</td></tr>
-<tr><td>holdout · holdout-01</td><td>반납함 시간</td><td>library-3</td></tr>
-<tr><td>holdout · holdout-02</td><td>카페 메뉴</td><td>없음</td></tr>
-</tbody></table></div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
+</article>
+<span class="lesson-anchor" id="questions"></span><div class="lesson-explanation" id="reading-questions"><h3>기대 근거와 실제 인용 구분하기</h3><p>휴관일 질문의 기준 근거는 library-2입니다. 검색 결과에 이 ID가 있는지, 답변이 실제로 이 ID를 인용했는지 따로 확인하세요. 마지막으로 ‘월요일’이라는 문장이 원문의 내용과 맞는지 읽습니다.</p></div>
+
 </section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+<section id="nb-empty" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
+<h2>빈 검색 결과의 생성 생략</h2>
+</div>
+</header>
+<p>주차 요금 정보가 없는 질문에 답을 써 달라고 부르면 그럴듯한 요금이 만들어질 수 있습니다. 빈 검색 결과는 생성기 앞에서 정상적으로 처리하고, 통신 실패는 오류로 남깁니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-skip-generator"><h3>검색 결과가 비었을 때 생성 호출 수 추적</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-skip-generator.mp4" aria-label="검색 결과가 비었을 때 생성 호출 수 추적" aria-describedby="workflow-skip-generator-caption"></video><figcaption id="workflow-skip-generator-caption">주차 요금 질문에 no_hits가 빈 목록을 돌려줍니다. 생성기로 넘긴 함수가 무엇이든 이 실행에서는 한 번도 불리지 않습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>질문</strong> · question = 주차 요금은 얼마인가요?</li><li><strong>검색</strong> · no_hits() = []</li><li><strong>근거 검사</strong> · if not docs = True</li><li><strong>근거 없음</strong> · generation_calls = 0</li></ol></figure>
+<article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 근거 부재와 생성 호출 수</h3>
+<div class="cell-before"><p>항상 빈 목록을 돌려주는 검색 함수를 건네고 상태와 generation_calls를 출력하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># 빈 결과를 돌려주는 검색 함수를 작성하세요.</span></code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7"><span class="tok-keyword">def</span> no_hits(question, k):
+    <span class="tok-keyword">return</span> []
+
+unanswered = answer_question(<span class="tok-string">"주차 요금은 얼마인가요?"</span>, no_hits, wrong_id)
+print(unanswered[<span class="tok-string">"status"</span>], unanswered[<span class="tok-string">"generation_calls"</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence 0</pre></div>
+<div class="cell-after"><p>no_evidence 0입니다. 생성기 자리에 잘못된 ID를 쓰는 함수가 있었어도 이번에는 호출하지 않았습니다. 시간 초과로 검색에 실패한 경우라면 ‘자료에 없음’과 구분해 알려야 합니다.</p>
+</div>
+</details>
+</article>
+<span class="lesson-anchor" id="empty"></span><div class="lesson-explanation" id="reading-empty"><h3>빈 문서 목록에서 생성 생략</h3><p>answer_question은 문서 검증 직후 docs가 비었는지 확인합니다. 빈 목록이면 no_evidence와 빈 sources를 바로 반환해 generation_calls가 0이 됩니다. 검색 함수가 예외를 낸 상황과는 다른 경로입니다.</p></div>
+
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>복습과 실습 점검</h2>
+</div>
+</header>
+<div class="prose"><p>본문 ‘월요일’을 ‘화요일’로만 바꾼 고정 답변을 넣으면 ID 검사가 무엇을 놓칠까요? 원문과 답 문장을 사람이 대조해야 하는 이유를 이 한 건으로 설명할 수 있습니다.</p>
+</div>
+</section>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://reference.langchain.com/python/langchain-core/runnables/base/RunnableSequence" target="_blank" rel="noopener noreferrer">LangChain RunnableSequence ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

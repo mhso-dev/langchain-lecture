@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 31 / EVIDENCE</p>
 <span class="sidebar-title">RAG 검색 예외와 인용 검사</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-evidence"><span>02</span>빈 검색 결과와 검색 시간 초과</a><a href="#nb-citation"><span>03</span>검색된 문서 ID로 인용 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>RAG 검색 예외와 인용 검사 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-evidence"><span>02</span>빈 검색 결과와 검색 시간 초과</a><a href="#nb-citation"><span>03</span>검색된 문서 ID로 인용 검증</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -76,6 +76,11 @@ print(found)</code></pre></figure>
 <div class="cell-after"><p>빈 목록이 돌아왔으므로 화면에는 자료에서 확인할 수 없다고 씁니다. 원문에 없는 가격을 모델에게 추측시키지 않습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="states"></span><div class="lesson-explanation" id="reading-states"><h3>정상 반환과 예외를 나누는 기준</h3><p>주차 질문은 검색을 마친 뒤 빈 리스트를 돌려줍니다. 검색 시간이 초과되면 함수는 리스트를 반환하기 전에 멈춥니다. 두 경우를 모두 근거 없음으로 처리하면 검색 서비스를 복구해야 하는 순간을 놓칩니다.</p></div>
+<span class="lesson-anchor" id="setup"></span><span class="lesson-anchor" id="reading-setup"></span>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-timeout-unwinds"><h3>검색 시간이 초과되면 리스트 대신 except로 이동합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-timeout-unwinds.mp4" aria-label="검색 시간이 초과되면 리스트 대신 except로 이동합니다" aria-describedby="workflow-timeout-unwinds-caption"></video><figcaption id="workflow-timeout-unwinds-caption">여기서는 Python 함수와 예외 처리문의 실행 위치를 따릅니다. 앞 셀의 정상 빈 리스트와 달리 slow_search에서 돌려받은 결과는 없습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>호출</strong> · question = 대출 기간은?</li><li><strong>slow_search</strong> · 발생 예외 = TimeoutError</li><li><strong>except</strong> · 출력할 메시지 = 검색 시간이 초과되었습니다.</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 검색 시간 초과 처리</h3>
 <div class="cell-before"><p>시간 초과만 일으키는 함수로 장애 경로 한 곳을 재현합니다.</p>
 <p>이 셀에서 직접 관찰할 것은 TimeoutError입니다. 검색기가 응답하지 않았으므로 문서가 없었다고 판단할 수 없습니다. 서비스로 제공할 때에는 오류를 기록하고 결과를 result=None으로 남길 수 있습니다.</p>
@@ -91,6 +96,8 @@ print(found)</code></pre></figure>
 <div class="cell-after"><p>TimeoutError가 출력됩니다. 이때는 검색 성공·빈 결과로 집계하지 않습니다. 재시도를 안내하고 결과 필드는 None으로 남깁니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="search"></span><div class="lesson-explanation" id="reading-search"><h3>TimeoutError가 전달되는 위치</h3><p>slow_search는 대출 질문을 받아도 자료를 돌려주지 못합니다. 실행은 except TimeoutError로 이동합니다. 이 셀이 출력하는 것은 예외 이름과 메시지입니다. 재검색이나 답변 생성은 이 코드에서 실행되지 않습니다.</p></div>
+
 </section>
 <section id="nb-citation" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>검색된 문서 ID로 인용 검증</h2>
@@ -112,6 +119,10 @@ print(cited <span class="tok-keyword">in</span> retrieved_ids)</code></pre></fig
 </div>
 </details>
 </article>
+<div class="lesson-explanation" id="reading-sources"><h3>이번 요청에서 받은 문서 ID 집합</h3><p>대출 질문으로 찾은 레코드에서 id를 하나씩 꺼내 집합을 만듭니다. 답변의 인용 ID는 이번 집합과 대조해야 합니다. 도서관 자료 전체에 존재하는 ID라도 이번에 검색하지 않은 문서를 가리킬 수 있습니다.</p></div>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>ID 대조 다음에 확인할 문장</h3><p>인용 ID가 일치하면 해당 문서가 검색되었다는 사실을 확인할 수 있습니다. 답변이 대출 기간을 999일이라고 썼다면 올바른 ID가 붙어 있어도 원문의 14일과 어긋납니다. 마지막에는 답변과 해당 문장의 뜻을 대조하세요.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-citation-against-retrieval"><h3>이번 검색에서 나온 ID만 인용 대조에 사용합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-citation-against-retrieval.mp4" aria-label="이번 검색에서 나온 ID만 인용 대조에 사용합니다" aria-describedby="workflow-citation-against-retrieval-caption"></video><figcaption id="workflow-citation-against-retrieval-caption">이 그림은 파이썬 집합 검사 순서입니다. 라이브러리에 존재하는 문서라도 이번 요청에서 반환하지 않은 ID이면 포함 검사 결과가 달라집니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>retrieve</strong> · 질문 = 대출 기간은?</li><li><strong>ID 집합</strong> · retrieved_ids = {&#x27;library-1&#x27;}</li><li><strong>포함 검사</strong> · cited = library-2</li><li><strong>출력</strong> · cited in retrieved_ids = False</li></ol></figure>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -120,49 +131,8 @@ print(cited <span class="tok-keyword">in</span> retrieved_ids)</code></pre></fig
 <div class="prose"><p>사용자가 ‘자료를 더 주어야 할 때’와 ‘잠시 뒤 다시 물어야 할 때’를 구분하는 안내를 한 문장씩 써 보세요.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>RAG 검색 예외와 인용 검사 심화 읽기</h2>
-</div>
-</header>
-<span id="states"></span><details class="reading-topic" id="reading-states"><summary>근거 부재와 서비스 실패</summary><div class="table-scroll" tabindex="0"><table><caption>검색 상태와 답변 결과를 분리</caption><thead><tr><th scope="col">위치/값</th><th scope="col">뜻</th><th scope="col">안내와 대응</th></tr>
-</thead><tbody><tr><td>search_status=pending</td><td>검색 전</td><td>대기</td></tr>
-<tr><td>search_status=retrieved</td><td>검증된 문서 목록 존재</td><td>A1 결과 확인</td></tr>
-<tr><td>search_status=empty</td><td>정상 빈 목록</td><td>result.status=no_evidence</td></tr>
-<tr><td>search_status=error</td><td>예상 연결 실패</td><td>result=None, error_type 기록</td></tr>
-<tr><td>result.status=answered</td><td>인용 ID 검사 통과</td><td>원문과 내용 대조</td></tr>
-<tr><td>result.status=invalid_citation</td><td>인용 없음·미검색 ID</td><td>원문·생성 조건 확인</td></tr>
-</tbody></table></div>
-<div class="prose"><p>검색 서버가 응답하지 않았을 때 no_evidence를 반환하면 사용자는 없는 자료를 보완하려고 할 수 있습니다. 운영 오류는 search_status=error와 result=None으로 남깁니다. A1의 answered/no_evidence/invalid_citation 세 결과와 섞지 않습니다.</p>
-<p>answered는 인용 형식 검사 통과를 뜻합니다. “대출은 999일입니다. [library-1]”처럼 올바른 ID에 틀린 문장을 붙여도 이 검사만으로는 거절하지 못합니다. 내용의 사실성은 원문 대조나 별도 평가가 필요합니다.</p>
-</div>
-</details>
-<span id="setup"></span><details class="reading-topic" id="reading-setup"><summary>실패 유형별 예상 출력</summary><div class="prose"><p>Python 3.12.x와 30장과 같은 langgraph·langchain-core 버전을 사용합니다. course_contracts.py와 data/는 같은 공통 스냅샷입니다. API 키가 없는 로컬 기본 실행이며, 30장에서 만든 R1 함수를 search_function 인수로 교체할 수 있습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>기본 실행에서 확인한 결과</caption><thead><tr><th scope="col">입력/조건</th><th scope="col">검색 상태</th><th scope="col">A1 결과</th></tr>
-</thead><tbody><tr><td>대출 기간은?</td><td>retrieved</td><td>answered, sources=[library-1]</td></tr>
-<tr><td>주차 요금은?</td><td>empty</td><td>no_evidence, 생성 호출 0</td></tr>
-<tr><td>대출 + 모의 TimeoutError</td><td>error</td><td>None, error_type=TimeoutError</td></tr>
-<tr><td>대출 + [not-in-results]</td><td>retrieved</td><td>invalid_citation, sources=[]</td></tr>
-</tbody></table></div>
-</details>
-<span id="search"></span><details class="reading-topic" id="reading-search"><summary>예상 예외의 상태 변환</summary><div class="prose"><p>입력 검사는 연결 오류 처리보다 앞에 있습니다. 공백 질문과 bool k는 잘못된 요청이므로 ValueError를 그대로 보여 줍니다. 검색 데이터에 text나 source가 없으면 DataContractError로 중단합니다. 이 오류까지 검색 장애로 삼으면 원본 문제를 고치지 못합니다.</p>
-<p>이 예제는 TimeoutError와 ConnectionError만 예상 연결 오류로 처리합니다. 실제 라이브러리는 다른 예외 타입을 사용할 수 있으므로 해당 어댑터에서 명시적으로 매핑해야 합니다. 예외 원문에는 주소나 내부 정보가 들어 있을 수 있어 상태에는 종류만 남깁니다. 실제 서비스에서 비공개 운영 로그를 어떻게 남길지는 별도 설계입니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>출처 메타데이터의 보존</summary><div class="prose"><p>A1은 answer의 대괄호 인용을 모으고 이번 documents의 ID 집합과 비교합니다. 인용이 없거나 목록 밖 ID가 하나라도 섞이면 invalid_citation입니다. 전체 문서 저장소에 존재하는 ID여도 이번 검색에서 받지 않았다면 허용하지 않습니다.</p>
-<p>sources의 각 항목은 id·text·source·page가 모두 있는 원문 객체입니다. 같은 ID를 여러 번 인용해도 출처 목록에는 한 번만 남습니다. 답변을 만드는 데 실제 쓰지 않은 검색 결과는 sources에 넣지 않습니다. 고정 생성기는 첫 문서 문장만 반환하므로 기본 k=2에서 검색 두 개와 인용 한 개가 정상입니다.</p>
-</div>
-</details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>고정 입력의 실패 경로 비교</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 착오</caption><thead><tr><th scope="col">증상</th><th scope="col">확인할 곳</th></tr>
-</thead><tbody><tr><td>연결 실패인데 자료가 없다고 안내</td><td>result=None과 search_status=error의 구분</td></tr>
-<tr><td>검색 두 개를 전부 출처로 표시</td><td>A1 sources의 인용 ID 필터</td></tr>
-<tr><td>이전 실패의 error_type이 남음</td><td>정상 search_node가 빈 문자열로 갱신하는지</td></tr>
-<tr><td>999일도 answered</td><td>ID 검사 한계, 원문 내용 대조 필요</td></tr>
-<tr><td>실제 Chroma 예외가 전파됨</td><td>실제 오류 타입의 명시적 어댑터 매핑</td></tr>
-</tbody></table></div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

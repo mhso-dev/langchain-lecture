@@ -33,6 +33,8 @@
 </div>
 </header>
 <p class="concept-intro">최소 재현 입력은 결함을 드러내는 가장 작은 사례입니다. 고친 뒤에는 실패 사례뿐 아니라 원래 정상인 입력의 결과도 확인합니다.</p><p>변경 기록 예시　결함 Q98-N01은 “장비A”를 장비 이름으로 읽지 못했습니다. 변경은 A·B 뒤에 더 이어지는 영문·숫자가 없을 때만 장비와 글자 사이에 공백을 넣은 한 규칙입니다. Q98-G01의 “장비AB”는 그대로 두고 기존 Q01도 유지합니다. 111장에서 새로 발견한 사용자 결함이 아니라 98장의 수정 사례를 후보판으로 다시 확인하는 예시입니다.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-preserve-working-input"><h3>붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-preserve-working-input.mp4" aria-label="붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기" aria-describedby="workflow-preserve-working-input-caption"></video><figcaption id="workflow-preserve-working-input-caption">이미 공백이 있는 정상 질문을 수정 후보에 넣습니다. 같은 문자열이 그대로 나오는지도 회귀 검사에 포함합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>기존 Q01</strong> · original = 장비 A의 점검 전 확인 사항은?</li><li><strong>패턴 대조</strong> · 장비 바로 뒤 글자 = 공백</li><li><strong>문자열 유지</strong> · 치환 횟수 = 0회</li><li><strong>기존값 대조</strong> · normalize(original) == original = True</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기존 정상 입력의 회귀 테스트</h3>
 <div class="cell-before"><p>후보판의 규칙을 이미 띄어쓰기가 있는 Q01에 다시 적용합니다.</p>
 <p>후보 카드에는 검사한 대상을 적으세요. 장비명 공백을 바로잡았다는 출력은 입력 정규화의 근거입니다. 최종 응답의 RULE-A까지 맞는지는 같은 질문을 끝까지 실행한 회귀 기록에서 따로 확인합니다.</p>

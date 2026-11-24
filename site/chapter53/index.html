@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 53 / SQL</p>
 <span class="sidebar-title">SQL SELECT·JOIN·GROUP BY</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-select-where"><span>02</span>WHERE와 ORDER BY로 최근 행 조회</a><a href="#nb-join-count"><span>03</span>JOIN과 GROUP BY를 이용한 집계</a><a href="#nb-postgres"><span>04</span>선택 실습 · PostgreSQL에서 집계 실행</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>SQL SELECT·JOIN·GROUP BY 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-select-where"><span>02</span>WHERE와 ORDER BY로 최근 행 조회</a><a href="#nb-join-count"><span>03</span>JOIN과 GROUP BY를 이용한 집계</a><a href="#nb-postgres"><span>04</span>선택 실습 · PostgreSQL에서 집계 실행</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -34,6 +34,11 @@
 </div>
 </header>
 <p class="concept-intro">SQL에서는 WHERE로 행을 고르고, JOIN으로 표를 연결하고, GROUP BY로 그룹별 값을 집계합니다.</p><p>관계형 데이터베이스는 같은 종류의 기록을 표에 저장합니다. course_users에는 사용자 한 명당 한 행, course_turns에는 질문 한 건당 한 행이 있습니다. 작은 예제는 같은 이름의 두 표를 SQLite 메모리에 만들고 SQL의 결과부터 관찰합니다. 강사가 준비한 PostgreSQL의 실제 테이블을 읽는 셀은 마지막에 있습니다.</p>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>SQL 조회 요구 정의</h3><div class="prose"><p>문서가 늘고 질문 기록이 쌓이면 ‘alice가 어떤 문서에 질문했는가?’처럼 여러 기록을 함께 보는 일이 생깁니다. 오늘은 Python 목록에 있던 데이터를 표의 행으로 생각하고, 필요한 행을 SQL로 골라 냅니다. SQL은 관계형 데이터베이스에 데이터 작업을 요청하는 언어입니다. PostgreSQL은 그 요청을 처리하는 데이터베이스 프로그램입니다.</p>
+<p>이전 팀 프로젝트에서 문서 하나와 질문 두 개를 골라 보세요. 실행 기록이 없다면 이 장의 가상 도서관·실습실 자료를 사용합니다. 앞선 52일 교재나 자기 코드의 실행 성공을 이번 실습의 조건으로 삼지 않습니다. 가상 자료를 실제 서비스 이용 기록으로 보고하지도 않습니다.</p>
+</div></div>
+<figure class="lesson-clip workflow-clip" id="workflow-where-order-limit"><h3>최근 질문 한 건을 고르는 세 연산</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-where-order-limit.mp4" aria-label="최근 질문 한 건을 고르는 세 연산" aria-describedby="workflow-where-order-limit-caption"></video><figcaption id="workflow-where-order-limit-caption">셀의 과제에서 결과가 만들어지는 논리 순서입니다. 먼저 alice를 고른 뒤 최신 ID를 앞에 두고 한 건만 반환합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>전체 질문</strong> · course_turns.id = 1, 2, 3</li><li><strong>WHERE</strong> · owner = &#x27;alice&#x27; = 1, 2</li><li><strong>ORDER BY</strong> · id DESC = 2, 1</li><li><strong>LIMIT</strong> · LIMIT 1 = 주말 운영은요?</li></ol></figure>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · SQLite 테이블과 테스트 데이터</h3>
 <div class="cell-before"><p>수업용 원자료에서 가져온 질문 세 건을 넣고 alice의 질문만 읽습니다. 이 셀을 다시 실행하면 새 메모리 DB로 시작합니다.</p>
 </div>
@@ -54,6 +59,18 @@ print(db.execute(<span class="tok-string">"SELECT question FROM course_turns WHE
 <div class="cell-after"><p>첫 두 행만 보입니다. WHERE가 bob의 행을 빼고 ORDER BY가 질문 ID의 오름차순으로 돌려줬습니다. SELECT 뒤의 question은 반환할 열입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="relation"></span><div class="lesson-explanation" id="reading-relation"><h3>질문 행의 owner와 사용자 행의 id</h3><p>course_turns의 한 행은 질문 한 번이고 course_users의 한 행은 사용자 한 명입니다. 질문 1번과 2번의 owner는 모두 alice입니다. 이후 두 테이블을 연결하면 질문 행을 복사해 이름을 저장하지 않고도 화면에 학습자 A라고 표시할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="select"></span><div class="lesson-explanation" id="reading-select"><h3>SELECT로 question 열만 읽기</h3><p>SELECT question은 반환할 열을 고릅니다. FROM course_turns는 읽을 테이블을 정합니다. WHERE와 ORDER BY가 어느 행을 어떤 순서로 고를지 정해도 최종 출력에 담기는 것은 question 열입니다.</p></div>
+<span class="lesson-anchor" id="filter"></span><div class="lesson-explanation" id="reading-filter"><h3>WHERE의 사용자 필터</h3><div class="prose"><p>WHERE는 각 행에 조건을 적용해 남길 행을 정합니다. 다음 문장은 course_turns에서 owner가 alice인 행만 고릅니다. 등호 하나는 SQL에서 비교를 뜻합니다. Python의 비교 연산자 ==를 그대로 옮기지 않습니다.</p>
+<p>SELECT에 question과 answer만 적었어도 WHERE에서 owner를 사용할 수 있습니다. 결과에 보여 주는 열과 행을 고르는 조건은 서로 다른 역할입니다. 누가 질문했는지 조건을 빠뜨리면 다른 사용자의 행도 함께 보게 됩니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>alice 질문의 예상 결과</caption><thead><tr><th scope="col">question</th><th scope="col">answer</th></tr>
+</thead><tbody><tr><td>언제 여나요?</td><td>평일 오전 9시입니다.</td></tr>
+<tr><td>주말 운영은요?</td><td>제공한 안내에 주말 운영 정보가 없습니다.</td></tr>
+</tbody></table></div>
+<div class="prose"><p>AND는 두 조건이 모두 맞는 행을 남깁니다. 조건을 바꿔 owner='nobody'로 실행하면 정상 결과가 0행입니다. 이 결과는 DB에 접속하지 못한 오류와 다릅니다. 0행이 나오면 조건과 데이터가 맞는지 먼저 확인합니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · ORDER BY와 LIMIT</h3>
 <div class="cell-before"><p>alice의 질문을 최근 ID부터 정렬하고 첫 행만 가져오세요. 질문 문장을 출력합니다.</p>
 <p>fetchone()은 결과 한 행을 가져옵니다. 한 열만 골라도 행은 ('주말 운영은요?',)처럼 묶여 있습니다. 뒤에 붙인 [0]이 그 행의 첫 열에서 질문 문자열을 꺼냅니다.</p>
@@ -66,6 +83,22 @@ print(db.execute(sql).fetchone()[<span class="tok-number">0</span>])</code></pre
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="order"></span><div class="lesson-explanation" id="reading-order"><h3>ORDER BY와 LIMIT</h3><div class="prose"><p>테이블은 출력 순서를 보장하는 목록이 아닙니다. 특정 순서가 필요하면 ORDER BY를 적습니다. ASC는 작은 값부터, DESC는 큰 값부터이며 ASC를 생략할 수 있습니다. 이 작은 샘플에서 질문 id가 큰 행을 마지막에 저장한 질문으로 다룹니다.</p>
+<p>LIMIT 1은 결과를 최대 한 행으로 줄입니다. 정렬 없이 LIMIT만 쓰면 어떤 한 행인지 의도대로 정할 수 없습니다. ‘가장 최근’이라는 요구를 실제 서비스에 적용할 때는 시간 열과 동점 처리도 설계해야 합니다. 오늘 예제에서는 고정된 id 기준을 사용합니다.</p>
+</div>
+<div class="worked-case" id="flow-6"><h3>같은 세 행에서 결과를 좁히기</h3>
+<p>같은 표에 WHERE, ORDER BY, LIMIT를 차례로 적용한 결과입니다. 각 칸에서 사라진 행과 자리가 바뀐 행을 구별하세요.</p>
+<article id="flow-6-step-0"><small>STEP 01 · course_turns</small><h4>SELECT의 원본 행</h4>
+<p>alice의 두 질문과 bob의 한 질문이 있습니다.</p><pre>id1 alice 언제 여나요?
+id2 alice 주말 운영은요?
+id3 bob 이용 절차는요?</pre></article><article id="flow-6-step-1"><small>STEP 02 · WHERE</small><h4>WHERE의 소유자 조건</h4>
+<p>owner 값이 같은 두 행을 남깁니다.</p><pre>id1 alice 언제 여나요?
+id2 alice 주말 운영은요?</pre></article><article id="flow-6-step-2"><small>STEP 03 · ORDER BY</small><h4>ID 내림차순 정렬</h4>
+<p>같은 두 행의 순서를 바꿉니다.</p><pre>id2 alice 주말 운영은요?
+id1 alice 언제 여나요?</pre></article><article id="flow-6-step-3"><small>STEP 04 · LIMIT</small><h4>LIMIT으로 첫 행 선택</h4>
+<p>정렬된 결과의 맨 앞 한 행을 반환합니다.</p><pre>id2 alice 주말 운영은요?</pre></article></div></div>
+<span class="lesson-anchor" id="history"></span><span class="lesson-anchor" id="reading-history"></span>
+
 </section>
 <section id="nb-join-count" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>JOIN과 GROUP BY를 이용한 집계</h2>
@@ -94,6 +127,18 @@ print(db.execute(sql).fetchall())</code></pre></figure>
 <div class="cell-after"><p>학습자 A는 두 건, 학습자 B는 한 건입니다. 이 INNER JOIN은 질문이 하나도 없는 사용자는 세지 않습니다. 그 사용자까지 표시하려면 LEFT JOIN과 COUNT할 열을 함께 검토하세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="group"></span><div class="lesson-explanation" id="reading-group"><h3>JOIN 결과를 사용자별로 묶기</h3><p>GROUP BY u.id, u.display_name은 같은 사용자의 질문을 한 묶음으로 만듭니다. COUNT(*)는 각 묶음의 행 수를 세어 학습자 A에 2, 학습자 B에 1을 돌려줍니다.</p></div>
+<span class="lesson-anchor" id="join"></span><div class="lesson-explanation" id="reading-join"><h3>JOIN의 사용자·질문 연결</h3><div class="prose"><p>질문 행에는 owner 값이 있지만 표시 이름은 사용자 테이블에 있습니다. JOIN은 두 테이블에서 조건에 맞는 행을 짝지어 한 결과로 보여 줍니다. ON t.owner = u.id는 질문의 owner와 사용자의 id가 같은 쌍을 고릅니다.</p>
+<p>AS u와 AS t는 테이블 별칭입니다. u.display_name은 사용자 표의 열, t.question은 질문 표의 열이라는 뜻입니다. 두 테이블에 id처럼 같은 이름이 있어도 별칭을 붙이면 어느 값을 뜻하는지 분명해집니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>이름이 붙은 예상 결과</caption><thead><tr><th scope="col">display_name</th><th scope="col">question</th></tr>
+</thead><tbody><tr><td>학습자 A</td><td>언제 여나요?</td></tr>
+<tr><td>학습자 A</td><td>주말 운영은요?</td></tr>
+<tr><td>학습자 B</td><td>이용 절차는요?</td></tr>
+</tbody></table></div>
+<div class="prose"><p>사용자 행이 두 개라고 JOIN 결과도 두 행인 것은 아닙니다. alice 한 행이 질문 두 행과 각각 연결되어 두 번 나타납니다. JOIN은 화면에서 같은 이름을 자동으로 하나로 합치지 않습니다. 조건 없이 모든 쌍을 만들면 이 샘플은 사용자 2행 × 질문 3행으로 여섯 쌍이 생깁니다.</p>
+</div></div>
+
 </section>
 <section id="nb-postgres" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>선택 실습 · PostgreSQL에서 집계 실행</h2>
@@ -117,6 +162,11 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 <div class="cell-after"><p>실제 DB에 초기 자료만 있다면 같은 두 행을 볼 수 있습니다. 후속 실습으로 행이 늘어난 DB에서는 집계도 바뀝니다. 안내만 출력됐다면 SQLite에서의 SQL 실행과 PostgreSQL의 실제 접속을 구분해 기록하세요. 서버 실습 전에는 수업용 PostgreSQL에 예제 표와 행이 있는지, 커널에 psycopg와 연결 설정이 있는지 확인하세요. 준비한 환경에서 HK_COURSE_USE_POSTGRES=1을 설정한 뒤 출력된 이름별 개수를 SQLite 결과와 대조하세요.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="environment"></span><div class="lesson-explanation" id="reading-environment"><h3>PostgreSQL에서 같은 집계 실행하기</h3><p>기본 실습은 메모리 SQLite에서 실행합니다. 선택 셀은 psycopg가 설치되고 HK_COURSE_USE_POSTGRES가 1로 설정된 환경에서 PostgreSQL에 접속합니다. 같은 테이블과 행이 준비되어 있다면 두 사용자 집계가 일치하는지 비교할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="errors"></span><span class="lesson-anchor" id="reading-errors"></span>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+<span class="lesson-anchor" id="reading-sources"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -125,123 +175,8 @@ pg_ready = find_spec(<span class="tok-string">"psycopg"</span>) <span class="tok
 <div class="prose"><p>필요한 행은 WHERE, 반환할 열은 SELECT, 표 간 연결 조건은 JOIN의 ON에 놓입니다. 동료에게 읽힐 결과에는 ID와 표시 이름 중 무엇이 필요한지 먼저 정해 보세요.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>SQL SELECT·JOIN·GROUP BY 심화 읽기</h2>
-</div>
-</header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>SQL 조회 요구 정의</summary><div class="prose"><p>문서가 늘고 질문 기록이 쌓이면 ‘alice가 어떤 문서에 질문했는가?’처럼 여러 기록을 함께 보는 일이 생깁니다. 오늘은 Python 목록에 있던 데이터를 표의 행으로 생각하고, 필요한 행을 SQL로 골라 냅니다. SQL은 관계형 데이터베이스에 데이터 작업을 요청하는 언어입니다. PostgreSQL은 그 요청을 처리하는 데이터베이스 프로그램입니다.</p>
-<p>이전 팀 프로젝트에서 문서 하나와 질문 두 개를 골라 보세요. 실행 기록이 없다면 이 장의 가상 도서관·실습실 자료를 사용합니다. 앞선 52일 교재나 자기 코드의 실행 성공을 이번 실습의 조건으로 삼지 않습니다. 가상 자료를 실제 서비스 이용 기록으로 보고하지도 않습니다.</p>
-</div>
-</details>
-<span id="relation"></span><details class="reading-topic" id="reading-relation"><summary>행·열·키의 관계</summary><div class="prose"><p>테이블은 같은 종류의 기록을 모은 표입니다. 행은 기록 한 건, 열은 그 기록의 속성입니다. course_users의 행 하나는 사용자 한 명이며 id와 display_name이 열입니다. 표시 이름은 바뀔 수 있으므로 다른 표가 사용자를 가리킬 때는 id를 사용합니다.</p>
-<p>기본키(PK)는 행을 구별하는 값입니다. 같은 테이블에 중복되거나 NULL인 기본키를 둘 수 없습니다. 외래키(FK)는 다른 테이블의 키를 참조해 존재하는 기록끼리 연결하게 하는 규칙입니다. course_documents.owner의 alice는 course_users.id의 alice를 가리킵니다. owner가 사람 이름을 자동으로 인증하는 기능은 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>오늘의 네 테이블</caption><thead><tr><th scope="col">테이블</th><th scope="col">한 행의 의미</th><th scope="col">주요 연결</th></tr>
-</thead><tbody><tr><td>course_users</td><td>사용자 한 명</td><td>id=alice 또는 bob</td></tr>
-<tr><td>course_documents</td><td>문서 한 개</td><td>owner → users.id</td></tr>
-<tr><td>course_conversations</td><td>대화 한 개</td><td>owner → users.id</td></tr>
-<tr><td>course_turns</td><td>질문과 답변 한 쌍</td><td>conversation_id → 대화, document_id → 문서</td></tr>
-</tbody></table></div>
-<div class="prose"><p>문서·대화 ID는 UUID라는 긴 식별자 형식을 씁니다. 값을 외울 필요 없이 같은 ID가 어디에 나타나는지 확인하세요. 질문 행의 id는 DB가 만든 번호입니다. 이 번호와 사용자 id는 이름이 같아도 역할이 다릅니다. 한 대화 안에 질문 행이 여러 개 있으므로 질문 수와 대화 수 역시 다릅니다.</p>
-<p>제공 스키마는 문서 ID와 owner를 함께 확인합니다. alice의 대화에 bob의 문서가 잘못 연결되는 일을 줄이기 위해서입니다. 복합 제약을 지금 직접 설계할 필요는 없습니다. 오늘은 같은 소유자의 기록끼리 이어지는 것을 먼저 읽습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>가상 샘플의 연결</caption><thead><tr><th scope="col">사용자</th><th scope="col">문서 제목</th><th scope="col">대화 제목</th><th scope="col">질문 수</th></tr>
-</thead><tbody><tr><td>alice / 학습자 A</td><td>도서관 이용 안내</td><td>도서관 질문</td><td>2</td></tr>
-<tr><td>bob / 학습자 B</td><td>실습실 안내</td><td>실습실 질문</td><td>1</td></tr>
-</tbody></table></div>
-</details>
-<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>실습 DB의 실행과 연결</summary><div class="prose"><p>Docker 설정 파일은 준비된 DB를 실행하기 위해 제공합니다. 오늘은 켜기·상태 확인·접속·멈추기를 사용합니다. 이미지와 볼륨의 원리는 71~72일에 배웁니다. 파일 이름과 명령을 직접 바꾸는 작업은 필요하지 않습니다.</p>
-</div>
-<div class="prose"><p>ps 결과에서 db가 healthy가 되면 다음 초기화 명령을 실행합니다. 제공 스크립트는 네 테이블과 가상 데이터를 한 번 준비합니다. 다시 실행해도 같은 초기 데이터를 중복 추가하지 않도록 만든 도구입니다. 내부 psql 제어문은 학생 필수 문법이 아닙니다.</p>
-</div>
-<div class="prose"><p>첫 결과는 course가 예상됩니다. 두 번째는 실제 설치 버전 문자열이므로 그대로 관찰표에 적습니다. 이 교재는 PostgreSQL 16 계열을 사용하도록 설계했지만 실제 이미지 실행 버전은 실행한 결과로 확인합니다. psql 창을 나갈 때는 역슬래시와 q를 붙인 \q를 입력합니다.</p>
-</div>
-</details>
-<span id="select"></span><details class="reading-topic" id="reading-select"><summary>SELECT의 열 선택</summary><div class="prose"><p>SELECT 다음에는 보고 싶은 열을, FROM 다음에는 읽을 테이블을 적습니다. 문장의 끝에는 세미콜론을 붙입니다. 줄을 나눠도 한 문장이며 psql은 세미콜론이 나올 때 실행합니다. SQL 키워드를 대문자로 쓰는 것은 읽기 위한 습관이고, 이 예제의 테이블·열 이름은 소문자입니다.</p>
-<p>문자열 값은 작은따옴표로 감쌉니다. SELECT id, display_name의 두 이름은 열을 가리키므로 문자열 따옴표를 붙이지 않습니다. 열 이름을 'id'라고 쓰면 id 열의 값을 읽는 대신 같은 글자 id를 출력하게 됩니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>사용자 조회의 예상 결과</caption><thead><tr><th scope="col">id</th><th scope="col">display_name</th></tr>
-</thead><tbody><tr><td>alice</td><td>학습자 A</td></tr>
-<tr><td>bob</td><td>학습자 B</td></tr>
-</tbody></table></div>
-<div class="prose"><p>queries.sql 전체 실행은 이 장 후반의 GROUP BY와 JOIN까지 읽은 뒤 진행합니다. 지금은 위의 SELECT 두 문장만 SQL 창에 입력하세요.</p>
-</div>
-</details>
-<span id="filter"></span><details class="reading-topic" id="reading-filter"><summary>WHERE의 사용자 필터</summary><div class="prose"><p>WHERE는 각 행에 조건을 적용해 남길 행을 정합니다. 다음 문장은 course_turns에서 owner가 alice인 행만 고릅니다. 등호 하나는 SQL에서 비교를 뜻합니다. Python의 비교 연산자 ==를 그대로 옮기지 않습니다.</p>
-<p>SELECT에 question과 answer만 적었어도 WHERE에서 owner를 사용할 수 있습니다. 결과에 보여 주는 열과 행을 고르는 조건은 서로 다른 역할입니다. 누가 질문했는지 조건을 빠뜨리면 다른 사용자의 행도 함께 보게 됩니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>alice 질문의 예상 결과</caption><thead><tr><th scope="col">question</th><th scope="col">answer</th></tr>
-</thead><tbody><tr><td>언제 여나요?</td><td>평일 오전 9시입니다.</td></tr>
-<tr><td>주말 운영은요?</td><td>제공한 안내에 주말 운영 정보가 없습니다.</td></tr>
-</tbody></table></div>
-<div class="prose"><p>AND는 두 조건이 모두 맞는 행을 남깁니다. 조건을 바꿔 owner='nobody'로 실행하면 정상 결과가 0행입니다. 이 결과는 DB에 접속하지 못한 오류와 다릅니다. 0행이 나오면 조건과 데이터가 맞는지 먼저 확인합니다.</p>
-</div>
-</details>
-<span id="order"></span><details class="reading-topic" id="reading-order"><summary>ORDER BY와 LIMIT</summary><div class="prose"><p>테이블은 출력 순서를 보장하는 목록이 아닙니다. 특정 순서가 필요하면 ORDER BY를 적습니다. ASC는 작은 값부터, DESC는 큰 값부터이며 ASC를 생략할 수 있습니다. 이 작은 샘플에서 질문 id가 큰 행을 마지막에 저장한 질문으로 다룹니다.</p>
-<p>LIMIT 1은 결과를 최대 한 행으로 줄입니다. 정렬 없이 LIMIT만 쓰면 어떤 한 행인지 의도대로 정할 수 없습니다. ‘가장 최근’이라는 요구를 실제 서비스에 적용할 때는 시간 열과 동점 처리도 설계해야 합니다. 오늘 예제에서는 고정된 id 기준을 사용합니다.</p>
-</div>
-<details class="case-reference" id="flow-6"><summary>같은 세 행에서 결과를 좁히기</summary>
-<p>같은 표에 WHERE, ORDER BY, LIMIT를 차례로 적용한 결과입니다. 각 칸에서 사라진 행과 자리가 바뀐 행을 구별하세요.</p>
-<article id="flow-6-step-0"><small>STEP 01 · course_turns</small><h4>SELECT의 원본 행</h4>
-<p>alice의 두 질문과 bob의 한 질문이 있습니다.</p><pre>id1 alice 언제 여나요?
-id2 alice 주말 운영은요?
-id3 bob 이용 절차는요?</pre></article><article id="flow-6-step-1"><small>STEP 02 · WHERE</small><h4>WHERE의 소유자 조건</h4>
-<p>owner 값이 같은 두 행을 남깁니다.</p><pre>id1 alice 언제 여나요?
-id2 alice 주말 운영은요?</pre></article><article id="flow-6-step-2"><small>STEP 03 · ORDER BY</small><h4>ID 내림차순 정렬</h4>
-<p>같은 두 행의 순서를 바꿉니다.</p><pre>id2 alice 주말 운영은요?
-id1 alice 언제 여나요?</pre></article><article id="flow-6-step-3"><small>STEP 04 · LIMIT</small><h4>LIMIT으로 첫 행 선택</h4>
-<p>정렬된 결과의 맨 앞 한 행을 반환합니다.</p><pre>id2 alice 주말 운영은요?</pre></article></details>
-</details>
-<span id="group"></span><details class="reading-topic" id="reading-group"><summary>GROUP BY 집계</summary><div class="prose"><p>행 하나씩 읽던 결과를 사용자별 합계로 바꾸겠습니다. COUNT(*)는 입력 행의 개수를 셉니다. GROUP BY owner는 owner가 같은 행을 한 묶음으로 만들고, 각 묶음에서 COUNT를 계산하게 합니다. AS turn_count는 출력 열에 붙이는 별칭입니다.</p>
-<p>여기서 세는 대상은 course_turns의 질문/답변 행입니다. alice가 대화 하나에서 질문 두 개를 했으므로 횟수는 2입니다. 대화 개수를 세고 싶다면 읽을 테이블과 셀 단위를 다시 정해야 합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>샘플의 예상 집계</caption><thead><tr><th scope="col">owner</th><th scope="col">묶음에 들어간 질문</th><th scope="col">turn_count</th></tr>
-</thead><tbody><tr><td>alice</td><td>언제 여나요? / 주말 운영은요?</td><td>2</td></tr>
-<tr><td>bob</td><td>이용 절차는요?</td><td>1</td></tr>
-</tbody></table></div>
-<div class="prose"><p>그룹 결과에 question을 함께 표시하면 alice 묶음의 어느 질문을 써야 할지 정해져 있지 않습니다. 오늘은 그룹 기준 owner와 집계 결과 count(*)만 선택합니다. GROUP BY 없이 전체를 세면 세 행을 한 번에 세어 3이 됩니다.</p>
-</div>
-</details>
-<span id="join"></span><details class="reading-topic" id="reading-join"><summary>JOIN의 사용자·질문 연결</summary><div class="prose"><p>질문 행에는 owner 값이 있지만 표시 이름은 사용자 테이블에 있습니다. JOIN은 두 테이블에서 조건에 맞는 행을 짝지어 한 결과로 보여 줍니다. ON t.owner = u.id는 질문의 owner와 사용자의 id가 같은 쌍을 고릅니다.</p>
-<p>AS u와 AS t는 테이블 별칭입니다. u.display_name은 사용자 표의 열, t.question은 질문 표의 열이라는 뜻입니다. 두 테이블에 id처럼 같은 이름이 있어도 별칭을 붙이면 어느 값을 뜻하는지 분명해집니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>이름이 붙은 예상 결과</caption><thead><tr><th scope="col">display_name</th><th scope="col">question</th></tr>
-</thead><tbody><tr><td>학습자 A</td><td>언제 여나요?</td></tr>
-<tr><td>학습자 A</td><td>주말 운영은요?</td></tr>
-<tr><td>학습자 B</td><td>이용 절차는요?</td></tr>
-</tbody></table></div>
-<div class="prose"><p>사용자 행이 두 개라고 JOIN 결과도 두 행인 것은 아닙니다. alice 한 행이 질문 두 행과 각각 연결되어 두 번 나타납니다. JOIN은 화면에서 같은 이름을 자동으로 하나로 합치지 않습니다. 조건 없이 모든 쌍을 만들면 이 샘플은 사용자 2행 × 질문 3행으로 여섯 쌍이 생깁니다.</p>
-</div>
-</details>
-<span id="history"></span><details class="reading-topic" id="reading-history"><summary>대화·문서 이력 조회</summary><div class="prose"><p>질문만 보면 어떤 대화와 문서에서 나온 질문인지 알기 어렵습니다. 이번에는 질문 행에서 conversation_id와 document_id를 따라가 제목을 붙입니다. 제공 데이터에서는 두 질문이 같은 도서관 대화·문서에 연결됩니다.</p>
-<p>JOIN은 연결되는 행이 있는 경우를 남깁니다. LEFT JOIN은 왼쪽 질문 행을 남겨 두고, 오른쪽 문서가 연결되지 않으면 문서 열을 NULL로 둡니다. 이 서비스는 문서 없이 나눈 대화도 기록할 수 있으므로 문서 부분을 LEFT JOIN으로 작성합니다. NULL은 데이터가 없는 상태이며 글자 'NULL'이나 숫자 0과 같지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>alice 이력의 예상 결과</caption><thead><tr><th scope="col">conversation</th><th scope="col">document</th><th scope="col">question</th></tr>
-</thead><tbody><tr><td>도서관 질문</td><td>도서관 이용 안내</td><td>언제 여나요?</td></tr>
-<tr><td>도서관 질문</td><td>도서관 이용 안내</td><td>주말 운영은요?</td></tr>
-</tbody></table></div>
-<div class="prose"><p>ON 안의 owner 비교는 같은 소유자의 대화·문서를 연결한다는 의도를 보여 줍니다. 이 조회문만으로 서비스 로그인이나 모든 권한 검사가 완성되는 것은 아닙니다. 지금은 가상 사용자를 조건으로 삼아 관계를 읽는 활동입니다.</p>
-</div>
-</details>
-<span id="errors"></span><details class="reading-topic" id="reading-errors"><summary>쿼리 결과 불일치 진단</summary><div class="table-scroll" tabindex="0"><table><caption>흔한 관찰과 다음 확인</caption><thead><tr><th scope="col">관찰</th><th scope="col">확인할 것</th><th scope="col">학습 기록</th></tr>
-</thead><tbody><tr><td>psql 입력이 계속 다음 줄로 넘어감</td><td>문장 끝 세미콜론과 따옴표가 닫혔는지</td><td>문장 완성 후 실행 여부</td></tr>
-<tr><td>column does not exist</td><td>열 이름·별칭·작은따옴표 사용</td><td>틀린 이름과 수정한 이름</td></tr>
-<tr><td>0 rows</td><td>조건 값과 실제 행의 값</td><td>정상 빈 결과인지</td></tr>
-<tr><td>예상보다 많은 행</td><td>JOIN 조건과 이미 추가한 데이터</td><td>원본 행과 결과 행의 대응</td></tr>
-<tr><td>Docker/DB 연결 오류</td><td>엔진 상태·포트·접속 설정</td><td>SQL 실행 전 환경 문제인지</td></tr>
-</tbody></table></div>
-<div class="prose"><p>오류 메시지는 원인을 찾는 단서입니다. SQL 문법 오류가 나기 전에 연결 자체가 실패했다면 WHERE를 바꾸어도 해결되지 않습니다. 반대로 0행은 문장이 실행됐을 가능성이 있으므로 연결 오류와 분리해 봅니다. 기존 자료를 지우는 방법부터 시도하지 않습니다.</p>
-</div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>DB 접속과 쿼리 실행 기록</summary><div class="prose"><p>query-results.sql과 observation.md를 저장합니다. 실행 폴더와 PGHOST·PGPORT·PGDATABASE·PGUSER는 재현 기록에 남길 수 있지만 비밀번호는 제외합니다. SQL 창은 \q로 닫고 DB는 필요한 경우 docker compose stop db로 멈춥니다. 같은 DB의 데이터를 다음 날 이어 씁니다.</p>
-<p>54일에는 오늘 읽은 표에 행을 추가·수정·삭제하고, 여러 변경을 함께 확정하거나 되돌리는 방법을 배웁니다. 그다음 Python 함수에서 값을 SQL과 분리해 전달합니다. 오늘 조회가 막힌 경우에도 같은 가상 자료와 제공 초기화 파일에서 다시 시작할 수 있습니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>공식 문서와 연계 단원</summary><div class="prose"><p>이 원고는 실제 PostgreSQL 실행 검증을 기다리는 검토용 교재입니다. 본문의 SQL 출력은 제공 데이터로 계산한 예상 결과이며 제작 환경에서 관찰한 DB 실행 결과가 아닙니다. 검증 범위는 VALIDATION.md에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

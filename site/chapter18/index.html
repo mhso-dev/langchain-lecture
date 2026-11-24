@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 18 / REVIEW</p>
 <span class="sidebar-title">도구 요청의 인자 검증과 실행 차단</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inspect"><span>02</span>JSON 객체와 빈 호출 ID 구분</a><a href="#nb-repair"><span>03</span>validate_request()의 필드별 검사</a><a href="#nb-explain"><span>04</span>허용 도구와 거부 원인 기록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>도구 요청의 인자 검증과 실행 차단 심화 읽기</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-inspect"><span>02</span>JSON 객체와 빈 호출 ID 구분</a><a href="#nb-repair"><span>03</span>validate_request()의 필드별 검사</a><a href="#nb-explain"><span>04</span>허용 도구와 거부 원인 기록</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -43,6 +43,8 @@
 <video autoplay loop muted playsinline aria-label="빈 인자와 빈 호출 ID는 다릅니다" src="visual-inspect.mp4"></video>
 <figcaption>대출 규칙 도구는 인자 없는 객체를 허용합니다. 공백 ID로는 결과를 연결할 수 없고 등록하지 않은 이름은 실행 대상에서 제외됩니다.</figcaption></figure>
 <!-- /lesson-visual visual-inspect -->
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="diagnose"></span><div class="lesson-explanation" id="reading-diagnose"><h3>요청에서 확인할 세 필드</h3><p>get_loan_rule 요청 한 건을 놓고 name과 call_id, arguments를 각각 읽어 보세요. 도구에 인자가 없어도 요청을 식별하는 ID는 필요합니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · arguments의 빈 JSON 객체</h3>
 <div class="cell-before"><p>겉보기에는 내용이 없어도 문자열을 풀었을 때 어떤 값이 남는지가 중요합니다.</p>
 </div>
@@ -62,6 +64,8 @@ print(bool(call_id.strip()))</code></pre></figure>
 <div class="cell-after"><p>False이므로 결과를 연결할 이름이 없습니다. strip을 빼면 원래 세 칸의 길이 때문에 유효하다고 잘못 판단할 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="paths"></span><div class="lesson-explanation" id="reading-paths"><h3>빈 인자 객체와 빈 호출 ID</h3><p>get_loan_rule은 별도로 받을 인자가 없어 문자열 &#x27;{}&#x27;를 풀면 빈 딕셔너리가 됩니다. 반면 공백만 있는 call_id는 strip()한 뒤 비어 있으므로 나중에 결과와 짝지을 수 없습니다.</p></div>
+
 </section>
 <section id="nb-repair" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>validate_request()의 필드별 검사</h2>
@@ -74,6 +78,21 @@ print(bool(call_id.strip()))</code></pre></figure>
 <tr><td>arguments를 문자열 {"day":"weekend"}로 변경</td><td>False</td><td>JSON을 푼 안쪽 객체에 인자가 생김</td></tr>
 <tr><td>바깥 item에만 day를 추가하고 arguments는 "{}" 유지</td><td>True</td><td>풀이 함수는 바깥의 부가 필드를 읽지 않음</td></tr>
 </tbody></table></div>
+
+<span class="lesson-anchor" id="contract"></span><div class="lesson-explanation" id="reading-contract"><h3>검사 함수의 입력·출력 계약</h3><div class="prose"><p>validate_request는 호출 요청을 검사해 bool을 반환합니다. 딕셔너리가 아닌 값이나 잘못된 요청에는 False를 반환합니다. 실제 도구나 모델을 실행하지 않고 입력도 수정하지 않습니다.</p>
+<p>허용 이름은 get_loan_rule 하나입니다. call_id는 공백이 아닌 문자열, arguments는 JSON 문자열이며 파싱 결과가 빈 객체 {}여야 합니다. bytes나 이미 만들어진 딕셔너리는 JSON 문자열이 아니므로 거부합니다. 잘못된 JSON·추가 인자·누락된 필드에도 False를 반환합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>입출력 예</caption><thead><tr><th scope="col">입력의 차이</th><th scope="col">반환</th></tr>
+</thead><tbody><tr><td>허용 이름·c1·{}</td><td>True</td></tr>
+<tr><td>다른 함수 이름</td><td>False</td></tr>
+<tr><td>빈 call_id</td><td>False</td></tr>
+<tr><td>arguments=[]</td><td>False</td></tr>
+<tr><td>깨진 JSON</td><td>False</td></tr>
+<tr><td>arguments를 풀었을 때 필드가 있는 객체</td><td>False</td></tr>
+<tr><td>공백·비문자열 ID 또는 누락된 필드</td><td>False</td></tr>
+<tr><td>None·리스트 입력</td><td>False</td></tr>
+<tr><td>문자열이 아닌 arguments 또는 JSON null</td><td>False</td></tr>
+</tbody></table></div></div>
 <article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · validate_request() 완성</h3>
 <div class="cell-before"><p>사전, 도구 이름, 공백이 아닌 문자열 ID, 문자열로 온 빈 JSON 객체 순서로 검사하세요. 변환에 실패해도 예외 대신 False를 돌려줍니다.</p>
 <p>get_loan_rule은 인자를 받지 않습니다. 요청 바깥에서 name과 call_id를 읽고, arguments 문자열을 풀어 빈 객체인지 확인하세요. day를 어느 쪽에 넣었는지에 따라 검사 결과가 달라집니다.</p>
@@ -100,12 +119,19 @@ print(validate_request(item))</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="implement"></span><div class="lesson-explanation" id="reading-implement"><h3>요청 필드의 검증 순서</h3><div class="prose"><p>처음부터 한 줄로 모든 조건을 쓰지 말고 이름, ID, JSON 파싱, 객체 내용의 순서로 나누세요. JSON 읽기가 실패하는 경우는 try/except로 처리합니다. 파싱이 성공해도 리스트나 숫자이면 객체 조건을 통과하지 못해야 합니다.</p>
+<p>각 조건을 추가할 때 하나의 정상 사례와 하나의 실패 사례를 직접 호출해 봅니다. True와 "True"는 다릅니다. 이 함수는 문자열이 아닌 bool을 반환해야 합니다.</p>
+</div></div>
+
 </section>
 <section id="nb-explain" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>허용 도구와 거부 원인 기록</h2>
 </div>
 </header>
 <p>이제 증상을 보고 필요한 부분으로 돌아갑니다. 인자를 풀지 못한 경우라면 15장의 arguments를, 요청 ID와 결과 ID가 다르면 16장 왕복을, 상한이 보이면 17장 마지막 반복을 다시 살펴보세요.</p>
+
+<span class="lesson-anchor" id="assessment"></span><div class="lesson-explanation" id="reading-assessment"><h3>원본 요청의 필드를 하나씩 바꿔 검사</h3><p>원본 item에서 도구 이름, 호출 ID, arguments 중 하나만 바꾸어 실행하세요. 어떤 필드가 True를 False로 바꾸었는지 바로 알아볼 수 있습니다. 특히 문자열 &#x27;null&#x27;과 &#x27;{}&#x27;를 각각 넣었을 때의 차이를 확인하세요.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-reject-name"><h3>알 수 없는 도구 이름은 인자를 읽기 전에 멈춥니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-reject-name.mp4" aria-label="알 수 없는 도구 이름은 인자를 읽기 전에 멈춥니다" aria-describedby="workflow-reject-name-caption"></video><figcaption id="workflow-reject-name-caption">name만 other_lookup으로 바꾼 bad의 call_id는 c1으로 유지됩니다. 실패를 기록할 때 어떤 요청에서 이름 검사가 막혔는지 함께 남길 수 있습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>요청 받기</strong> · call_id = c1</li><li><strong>허용 이름</strong> · 받은 이름 = other_lookup</li><li><strong>이름 거부</strong> · allowed = False</li></ol></figure>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 허용하지 않은 도구 이름 판별</h3>
 <div class="cell-before"><p>도구 이름이 허용 목록과 다른 요청을 받았습니다. 프로그램이 기록할 값 한 개를 계산합니다.</p>
 </div>
@@ -116,6 +142,8 @@ print(allowed)</code></pre></figure>
 <div class="cell-after"><p>False는 도구 선택 검사 결과입니다. 대출 기간이 0일이거나 데이터가 비어 있다는 뜻으로 바꿔 적으면 안 됩니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="integrate"></span><div class="lesson-explanation" id="reading-integrate"><h3>검증 결과에서 실행 여부 결정하기</h3><p>bad에서는 call_id가 c1이지만 name이 other_lookup입니다. 허용된 이름과 다르면 도구 함수를 호출하지 않습니다. 이후 진단에는 이 요청의 ID와 받은 이름을 함께 남깁니다.</p></div>
+
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · call_id와 name으로 실패 기록</h3>
 <div class="cell-before"><p>요청 ID c1과 실패한 필드 이름을 한 문장으로 연결하세요. 실제 실행 결과를 만들지 마세요.</p>
 </div>
@@ -126,6 +154,9 @@ print(allowed)</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="peer"></span><div class="lesson-explanation" id="reading-peer"><h3>재현 가능한 실패 로그</h3><div class="prose"><p>동료에게 비밀키나 가상환경 폴더를 주지 않습니다. 이번 기본 실행은 표준 라이브러리만 사용하므로 파일을 복사하고 같은 명령으로 실행할 수 있습니다. 동료의 운영체제에서 실행하지 않았다면 확인하지 않았다고 기록합니다.</p>
+</div></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -133,80 +164,11 @@ print(allowed)</code></pre></figure>
 </header>
 <div class="prose"><p>기본 과제에서 잘못된 요청이 도구 실행 전에 멈췄는지 확인하세요. 더 연습하려면 보충 자료의 검사 중 한 건만 골라 입력, 멈춘 단계, 도구 호출 여부를 적으세요. 보충 자료에 나온 14건은 서로 다른 사례를 찾아볼 때 씁니다.</p>
 </div>
+
+<span class="lesson-anchor" id="handoff"></span><div class="lesson-explanation" id="reading-handoff"><h3>검사할 데이터의 경계</h3><p>검사 함수는 전달받은 요청을 읽고 True 또는 False를 돌려줍니다. 요청 원본을 그대로 두면 어떤 필드 때문에 실행을 중단했는지 나중에도 같은 입력으로 대조할 수 있습니다.</p></div>
+<span class="lesson-anchor" id="sources"></span><span class="lesson-anchor" id="reading-sources"></span>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>도구 요청의 인자 검증과 실행 차단 심화 읽기</h2>
-</div>
-</header>
-<span id="diagnose"></span><details class="reading-topic" id="reading-diagnose"><summary>도구 요청의 진단 기준</summary><div class="prose"><p>오늘은 새 프레임워크를 추가하지 않습니다. 함수·JSON·SDK·도구 요청·실행·루프에서 막힌 부분을 찾고, 자신이 수정한 코드를 동료에게 설명하는 날입니다. 진단은 점수 경쟁이 아니라 보충 경로 선택에 사용합니다.</p>
-<p>learning-record.md에 각 항목을 혼자 설명 가능, 예제를 보면 가능, 도움 필요로 표시합니다. 확신이 없으면 코드의 실제 값이나 실행 결과를 보여 주며 설명할 수 있는지 확인하세요.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>진단 항목</caption><thead><tr><th scope="col">영역</th><th scope="col">질문</th><th scope="col">확인할 행동</th></tr>
-</thead><tbody><tr><td>함수</td><td>입력과 반환값이 무엇인가요?</td><td>호출 결과를 변수에 받아 출력</td></tr>
-<tr><td>JSON</td><td>문자열과 딕셔너리는 어떻게 다른가요?</td><td>json.loads 전후 타입 설명</td></tr>
-<tr><td>요청</td><td>함수 이름이 나오면 실행된 건가요?</td><td>function_call과 실행 코드 구분</td></tr>
-<tr><td>결과</td><td>어느 요청의 결과인지 어떻게 알죠?</td><td>call_id 연결</td></tr>
-<tr><td>반복</td><td>언제 끝나나요?</td><td>완료·한도 상태 확인</td></tr>
-<tr><td>실패</td><td>형식 통과면 정답인가요?</td><td>의미 오류 사례 설명</td></tr>
-</tbody></table></div>
-<div class="prose"><p>17일 agent-loop/trace.json의 정상·상한·공백 답변 기록을 가져오세요. 파일이 없으면 제공 예제 재현으로 진입하고 그 차이를 남깁니다. 이 장의 agent_loop.py와 test_loop.py는 고정된 17일 파일과 같습니다. learning-record.md는 학생이 채우는 빈 양식이며 그 파일의 존재가 학습 완료를 뜻하지 않습니다.</p>
-</div>
-</details>
-<span id="paths"></span><details class="reading-topic" id="reading-paths"><summary>실패 유형별 보충 실습</summary><div class="table-scroll" tabindex="0"><table><caption>같은 2H 안의 보충 경로</caption><thead><tr><th scope="col">경로</th><th scope="col">대상</th><th scope="col">활동과 완료 확인</th></tr>
-</thead><tbody><tr><td>A 입력과 함수</td><td>Python·JSON이 막힘</td><td>3장 함수와 15장 인자 파싱을 다시 실행하고 타입을 설명</td></tr>
-<tr><td>B 요청과 결과</td><td>SDK·도구 실행이 혼동됨</td><td>11장 모의 응답과 16장 왕복에서 실행 주체 표시</td></tr>
-<tr><td>C 반복과 실패</td><td>종료·로그가 어려움</td><td>17장 상한·중복 ID 사례를 실행하고 종료 원인 설명</td></tr>
-</tbody></table></div>
-<div class="prose"><p>모든 경로를 한꺼번에 수행하지 않습니다. 가장 필요한 하나를 골라 2시간 안에서 설명·재실행·수정을 반복합니다. 일찍 마쳤다면 다른 경로의 설명을 동료에게 듣되 기본 과제 시간을 줄이지 않습니다.</p>
-</div>
-</details>
-<span id="contract"></span><details class="reading-topic" id="reading-contract"><summary>검사 함수의 입력·출력 계약</summary><div class="prose"><p>validate_request는 호출 요청을 검사해 bool을 반환합니다. 딕셔너리가 아닌 값이나 잘못된 요청에는 False를 반환합니다. 실제 도구나 모델을 실행하지 않고 입력도 수정하지 않습니다.</p>
-<p>허용 이름은 get_loan_rule 하나입니다. call_id는 공백이 아닌 문자열, arguments는 JSON 문자열이며 파싱 결과가 빈 객체 {}여야 합니다. bytes나 이미 만들어진 딕셔너리는 JSON 문자열이 아니므로 거부합니다. 잘못된 JSON·추가 인자·누락된 필드에도 False를 반환합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>입출력 예</caption><thead><tr><th scope="col">입력의 차이</th><th scope="col">반환</th></tr>
-</thead><tbody><tr><td>허용 이름·c1·{}</td><td>True</td></tr>
-<tr><td>다른 함수 이름</td><td>False</td></tr>
-<tr><td>빈 call_id</td><td>False</td></tr>
-<tr><td>arguments=[]</td><td>False</td></tr>
-<tr><td>깨진 JSON</td><td>False</td></tr>
-<tr><td>arguments를 풀었을 때 필드가 있는 객체</td><td>False</td></tr>
-<tr><td>공백·비문자열 ID 또는 누락된 필드</td><td>False</td></tr>
-<tr><td>None·리스트 입력</td><td>False</td></tr>
-<tr><td>문자열이 아닌 arguments 또는 JSON null</td><td>False</td></tr>
-</tbody></table></div>
-</details>
-<span id="implement"></span><details class="reading-topic" id="reading-implement"><summary>요청 필드의 검증 순서</summary><div class="prose"><p>처음부터 한 줄로 모든 조건을 쓰지 말고 이름, ID, JSON 파싱, 객체 내용의 순서로 나누세요. JSON 읽기가 실패하는 경우는 try/except로 처리합니다. 파싱이 성공해도 리스트나 숫자이면 객체 조건을 통과하지 못해야 합니다.</p>
-<p>각 조건을 추가할 때 하나의 정상 사례와 하나의 실패 사례를 직접 호출해 봅니다. True와 "True"는 다릅니다. 이 함수는 문자열이 아닌 bool을 반환해야 합니다.</p>
-</div>
-</details>
-<span id="integrate"></span><details class="reading-topic" id="reading-integrate"><summary>검증 함수와 도구 실행 연결</summary><div class="prose"><p>함수 검사를 마쳤다면 제공한 agent_loop.py를 실행하고 validate_request가 들어갈 위치를 설명합니다. 실제로 연결하려면 get_hours 요청까지 허용하는 기존 루프의 계약과 지금의 단일 도구 계약을 조정해야 합니다. 서로 다른 범위를 그대로 섞지 않습니다.</p>
-<p>이번 통합 과제의 핵심은 코드 위치와 책임을 설명하는 것입니다. 사용자 질문 → 모델 응답 → 함수 이름·인자 검사 → 도구 실행 → 결과 반환 → 다음 모델 응답의 순서를 기록하세요.</p>
-</div>
-<div class="prose"><p>20개 루프 검사는 bool 상한·질문형·공백 답변·잘못된 ID도 확인합니다. 공백 답변은 empty_answer, 잘못된 질문이나 상한은 호출 전 예외입니다. 도구 상한 0은 유효하며 요청 실행을 금지합니다. 검사 통과와 자신의 구현·설명은 다른 증거입니다.</p>
-</div>
-</details>
-<span id="peer"></span><details class="reading-topic" id="reading-peer"><summary>재현 가능한 실패 로그</summary><div class="prose"><p>동료에게 비밀키나 가상환경 폴더를 주지 않습니다. 이번 기본 실행은 표준 라이브러리만 사용하므로 파일을 복사하고 같은 명령으로 실행할 수 있습니다. 동료의 운영체제에서 실행하지 않았다면 확인하지 않았다고 기록합니다.</p>
-</div>
-</details>
-<span id="assessment"></span><details class="reading-topic" id="reading-assessment"><summary>검증 과제의 완료 기준</summary><div class="table-scroll" tabindex="0"><table><caption>개인 완료 기준</caption><thead><tr><th scope="col">영역</th><th scope="col">관찰 가능한 증거</th></tr>
-</thead><tbody><tr><td>구현</td><td>입력 계약과 14개 검사 통과</td></tr>
-<tr><td>이해</td><td>요청과 실행·call_id·종료를 설명</td></tr>
-<tr><td>실패</td><td>정상과 다른 결과 한 개의 원인 분석</td></tr>
-<tr><td>재현</td><td>환경·명령·출력이 있는 기록</td></tr>
-<tr><td>정직한 범위</td><td>모의·실제·미실행을 구분</td></tr>
-</tbody></table></div>
-<div class="prose"><p>검사만 통과하고 설명이 어려우면 이해 항목을 보충합니다. 설명은 되지만 실행이 막히면 환경과 입력 처리부터 다시 봅니다. 모든 사람에게 같은 추가 분량을 주기보다 막힌 지점을 기록하고 다음 학습 전에 필요한 최소 과제를 정합니다.</p>
-</div>
-<div class="prose"><p>다음 장은 LangChain의 LCEL로 입력과 출력을 연결합니다. 라이브러리 문법이 바뀌어도 함수의 입출력과 검증 경계는 계속 적용됩니다.</p>
-</div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>후속 체인에 전달할 입력 계약</summary><div class="prose"><p>examples/loop-review/explanation.md를 채워 사용자 입력, 모델 요청, 도구 요청, 코드 검사, 실행 결과, 종료를 자기 말로 연결합니다. learning-record.md에는 자신에게 필요한 보충과 미확인 환경을 남깁니다. 두 파일 모두 처음에는 빈 양식입니다.</p>
-</div>
-</details>
-<span id="sources"></span><details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
+
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

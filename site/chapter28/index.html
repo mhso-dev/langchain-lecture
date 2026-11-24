@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 28 / MESSAGES</p>
 <span class="sidebar-title">LangGraph의 메시지 리듀서 add_messages</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-overwrite"><span>02</span>기본 덮어쓰기와 add_messages의 누적</a><a href="#nb-replace-id"><span>03</span>동일한 메시지 ID로 내용 갱신</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#readings"><span>05</span>LangGraph의 메시지 리듀서 add_messages 심화 읽기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-overwrite"><span>02</span>기본 덮어쓰기와 add_messages의 누적</a><a href="#nb-replace-id"><span>03</span>동일한 메시지 ID로 내용 갱신</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#sources"><span>05</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -33,7 +33,9 @@
 </div>
 </header>
 
-<p class="concept-intro">리듀서는 상태에 새 값이 들어왔을 때 기존 값과 결합하는 규칙입니다. add_messages는 메시지 ID에 따라 새 메시지를 추가하거나 기존 메시지를 갱신합니다.</p><article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기본 상태 갱신의 덮어쓰기</h3>
+<p class="concept-intro">리듀서는 상태에 새 값이 들어왔을 때 기존 값과 결합하는 규칙입니다. add_messages는 메시지 ID에 따라 새 메시지를 추가하거나 기존 메시지를 갱신합니다.</p>
+<figure class="lesson-clip workflow-clip" id="workflow-plain-update"><h3>PlainState에서 사용자의 질문이 사라지는 순간</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-plain-update.mp4" aria-label="PlainState에서 사용자의 질문이 사라지는 순간" aria-describedby="workflow-plain-update-caption"></video><figcaption id="workflow-plain-update-caption">respond는 두 스키마에서 똑같이 동작합니다. 기본 갱신에서는 반환한 리스트가 messages 필드 전체를 대체합니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · messages = [h1]</li><li><strong>respond</strong> · 노드의 반환 = messages = [a1]</li><li><strong>END</strong> · 최종 messages = [a1]</li></ol></figure>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 기본 상태 갱신의 덮어쓰기</h3>
 <div class="cell-before"><p>제공 셀입니다. 두 상태 정의와 응답 함수는 그대로 두고 PlainState에서 돌아온 메시지 종류를 확인하세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 28줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Annotated, TypedDict
@@ -68,6 +70,20 @@ print([m.type <span class="tok-keyword">for</span> m <span class="tok-keyword">i
 <div class="cell-after"><p>ai 하나가 남았습니다. respond가 사용자 질문은 읽었지만 AIMessage 한 개만 돌려줬기 때문입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="messages"></span><div class="lesson-explanation" id="reading-messages"><h3>문자열 목록과 메시지 객체</h3><div class="prose"><p>HumanMessage는 사용자 발화, AIMessage는 모델 측 발화의 역할을 표현합니다. 이 예제는 LLM 없이도 AIMessage 객체를 생성하므로 객체 타입만 보고 실제 모델 호출이 있었다고 판단하지 않습니다. content는 내용, id는 메시지를 구별하고 수정할 때 쓰는 식별자입니다.</p>
+<p>역할과 내용을 함께 보존하면 뒤에서 모델에 입력을 구성하거나 도구 결과를 다룰 때 어떤 발화인지 구분할 수 있습니다. 도구 호출 메시지까지 한꺼번에 추가하지 않고 이번에는 human과 ai 두 역할만 사용합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>읽을 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">예</th><th scope="col">해석</th></tr>
+</thead><tbody><tr><td>type</td><td>human / ai</td><td>발화 역할</td></tr>
+<tr><td>content</td><td>대출 기간은?</td><td>내용</td></tr>
+<tr><td>id</td><td>h1 / a1</td><td>메시지 식별자</td></tr>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>리듀서의 리스트 결합 규칙</h3><div class="prose"><p>PlainState의 messages는 새 리스트를 반환하면 이전 값이 교체됩니다. ChatState의 Annotated 표기는 messages의 타입과 함께 add_messages 갱신 규칙을 지정합니다. Python의 Annotated가 스스로 저장하거나 대화를 이어 주는 것은 아닙니다. LangGraph가 그 규칙을 읽어 상태 업데이트에 적용합니다.</p>
+<p>add_messages는 새 ID를 가진 메시지를 추가하고 기존 ID와 같은 메시지는 해당 위치의 내용을 갱신합니다. 문자열이 같은지 비교해 중복을 제거하는 기능으로 이해하면 안 됩니다. 단순 리스트 덧셈과도 다릅니다.</p>
+</div></div>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-reducer-update"><h3>add_messages가 있는 그래프는 같은 응답을 누적합니다</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-reducer-update.mp4" aria-label="add_messages가 있는 그래프는 같은 응답을 누적합니다" aria-describedby="workflow-reducer-update-caption"></video><figcaption id="workflow-reducer-update-caption">ChatState에서는 h1이 있는 목록에 새 ID a1을 합칩니다. 달라진 것은 노드 코드가 아니라 messages의 갱신 규칙입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>START</strong> · messages = [h1]</li><li><strong>respond</strong> · 노드의 반환 = messages = [a1]</li><li><strong>END</strong> · 최종 messages = [h1, a1]</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · add_messages로 메시지 누적</h3>
 <div class="cell-before"><p>입력과 respond는 그대로 두고 스키마만 바꿉니다.</p>
 </div>
@@ -77,6 +93,12 @@ print([(m.id, m.type) <span class="tok-keyword">for</span> m <span class="tok-ke
 <div class="cell-after"><p>h1 뒤에 a1이 보입니다. 서로 다른 ID를 받은 메시지는 순서대로 남습니다. 응답 함수가 이전 메시지까지 다시 보낼 필요가 없습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="node"></span><div class="lesson-explanation" id="reading-node"><h3>새 응답 메시지의 부분 갱신</h3><div class="prose"><p>respond는 현재 메시지 목록에서 마지막 사용자 메시지를 찾아 응답 한 개를 반환합니다. messages에는 새 응답만 들어 있습니다. ChatState의 갱신 규칙이 기존 사용자 발화와 이 변경분을 합칩니다.</p>
+<p>상태의 목록을 직접 append한 뒤 전체 목록을 반환하는 방식은 어떤 변경분을 적용했는지 흐리게 만듭니다. 이 예제처럼 입력은 읽고 새 목록을 반환하면 단위 검사가 쉬워집니다. 응답 ID a1은 단일 응답 비교용 고정값입니다. 다중 응답에 그대로 재사용하는 정책은 아닙니다.</p>
+</div></div>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>기본 갱신과 리듀서 비교</h3><div class="prose"><p>Python 3.12.x, langgraph 1.2.22, langchain-core 1.8.0 기준입니다. 실제 API 키는 필요 없습니다. 두 그래프는 같은 initial을 받지만 서로 다른 스키마를 사용합니다. 실행 전에 최종 메시지의 개수와 역할을 예상하세요.</p>
+</div></div>
+
 </section>
 <section id="nb-replace-id" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>동일한 메시지 ID로 내용 갱신</h2>
@@ -103,6 +125,16 @@ print(len(changed), changed[<span class="tok-number">0</span>].content)</code></
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="ids"></span><div class="lesson-explanation" id="reading-ids"><h3>같은 ID를 주었을 때 목록 길이 예측하기</h3><p>initial에는 h1 한 개가 있습니다. 그 발화를 반납 질문으로 정정하려면 같은 h1을 붙입니다. 내용만 똑같이 쓰고 다른 ID를 주면 add_messages는 별개의 발화로 처리합니다.</p></div>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>누락 발화 복원 테스트</h3><div class="table-scroll" tabindex="0"><table><caption>오류와 확인</caption><thead><tr><th scope="col">문제</th><th scope="col">확인할 지점</th><th scope="col">조치</th></tr>
+</thead><tbody><tr><td>질문이 사라짐</td><td>PlainState 여부</td><td>필요한 갱신 규칙 적용</td></tr>
+<tr><td>동일 문장이 여러 개</td><td>ID가 서로 다른지</td><td>내용과 ID 의도를 따로 확인</td></tr>
+<tr><td>이전 답변이 바뀜</td><td>응답 ID 재사용</td><td>수정이 아니라 새 답변이면 새 ID</td></tr>
+<tr><td>사용자 메시지가 필요합니다</td><td>빈 목록·역할</td><td>HumanMessage 입력 확인</td></tr>
+<tr><td>새 invoke에서 이전 기록 없음</td><td>체크포인터 없음</td><td>이 장은 자동 대화 지속을 구현하지 않음</td></tr>
+</tbody></table></div></div>
+<span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -111,59 +143,8 @@ print(len(changed), changed[<span class="tok-number">0</span>].content)</code></
 <div class="prose"><p>학생이 말을 한 번 더 한 상황과 이전 발화를 수정한 상황을 구별해 보세요. 두 경우에 선택할 ID가 달라집니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>LangGraph의 메시지 리듀서 add_messages 심화 읽기</h2>
-</div>
-</header>
-<span id="messages"></span><details class="reading-topic" id="reading-messages"><summary>문자열 목록과 메시지 객체</summary><div class="prose"><p>HumanMessage는 사용자 발화, AIMessage는 모델 측 발화의 역할을 표현합니다. 이 예제는 LLM 없이도 AIMessage 객체를 생성하므로 객체 타입만 보고 실제 모델 호출이 있었다고 판단하지 않습니다. content는 내용, id는 메시지를 구별하고 수정할 때 쓰는 식별자입니다.</p>
-<p>역할과 내용을 함께 보존하면 뒤에서 모델에 입력을 구성하거나 도구 결과를 다룰 때 어떤 발화인지 구분할 수 있습니다. 도구 호출 메시지까지 한꺼번에 추가하지 않고 이번에는 human과 ai 두 역할만 사용합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>읽을 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">예</th><th scope="col">해석</th></tr>
-</thead><tbody><tr><td>type</td><td>human / ai</td><td>발화 역할</td></tr>
-<tr><td>content</td><td>대출 기간은?</td><td>내용</td></tr>
-<tr><td>id</td><td>h1 / a1</td><td>메시지 식별자</td></tr>
-</tbody></table></div>
-</details>
-<span id="schema"></span><details class="reading-topic" id="reading-schema"><summary>리듀서의 리스트 결합 규칙</summary><div class="prose"><p>PlainState의 messages는 새 리스트를 반환하면 이전 값이 교체됩니다. ChatState의 Annotated 표기는 messages의 타입과 함께 add_messages 갱신 규칙을 지정합니다. Python의 Annotated가 스스로 저장하거나 대화를 이어 주는 것은 아닙니다. LangGraph가 그 규칙을 읽어 상태 업데이트에 적용합니다.</p>
-<p>add_messages는 새 ID를 가진 메시지를 추가하고 기존 ID와 같은 메시지는 해당 위치의 내용을 갱신합니다. 문자열이 같은지 비교해 중복을 제거하는 기능으로 이해하면 안 됩니다. 단순 리스트 덧셈과도 다릅니다.</p>
-</div>
-</details>
-<span id="node"></span><details class="reading-topic" id="reading-node"><summary>새 응답 메시지의 부분 갱신</summary><div class="prose"><p>respond는 현재 메시지 목록에서 마지막 사용자 메시지를 찾아 응답 한 개를 반환합니다. messages에는 새 응답만 들어 있습니다. ChatState의 갱신 규칙이 기존 사용자 발화와 이 변경분을 합칩니다.</p>
-<p>상태의 목록을 직접 append한 뒤 전체 목록을 반환하는 방식은 어떤 변경분을 적용했는지 흐리게 만듭니다. 이 예제처럼 입력은 읽고 새 목록을 반환하면 단위 검사가 쉬워집니다. 응답 ID a1은 단일 응답 비교용 고정값입니다. 다중 응답에 그대로 재사용하는 정책은 아닙니다.</p>
-</div>
-</details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>기본 갱신과 리듀서 비교</summary><div class="prose"><p>Python 3.12.x, langgraph 1.2.22, langchain-core 1.8.0 기준입니다. 실제 API 키는 필요 없습니다. 두 그래프는 같은 initial을 받지만 서로 다른 스키마를 사용합니다. 실행 전에 최종 메시지의 개수와 역할을 예상하세요.</p>
-</div>
-</details>
-<span id="ids"></span><details class="reading-topic" id="reading-ids"><summary>메시지 ID에 따른 교체·추가</summary><div class="prose"><p>corrected는 h1 메시지의 내용을 바꿉니다. appended는 h2를 새로 추가하므로 내용이 같아도 두 메시지가 됩니다. 수정하려던 메시지에 새로운 ID를 주면 기존 기록은 남고 새 항목이 추가됩니다. 반대로 새로운 답변에 기존 ID를 재사용하면 이전 답변이 교체될 수 있습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>예측표</caption><thead><tr><th scope="col">이전 ID/내용</th><th scope="col">새 ID/내용</th><th scope="col">관찰할 변화</th></tr>
-</thead><tbody><tr><td>h1/대출</td><td>h1/반납</td><td>1개, 내용 수정</td></tr>
-<tr><td>h1/대출</td><td>h2/대출</td><td>2개, 새 메시지 추가</td></tr>
-<tr><td>h1/대출</td><td>h2/반납</td><td>2개, 새 메시지 추가</td></tr>
-</tbody></table></div>
-</details>
-<span id="practice"></span><details class="reading-topic" id="reading-practice"><summary>누락 발화 복원 테스트</summary><div class="table-scroll" tabindex="0"><table><caption>오류와 확인</caption><thead><tr><th scope="col">문제</th><th scope="col">확인할 지점</th><th scope="col">조치</th></tr>
-</thead><tbody><tr><td>질문이 사라짐</td><td>PlainState 여부</td><td>필요한 갱신 규칙 적용</td></tr>
-<tr><td>동일 문장이 여러 개</td><td>ID가 서로 다른지</td><td>내용과 ID 의도를 따로 확인</td></tr>
-<tr><td>이전 답변이 바뀜</td><td>응답 ID 재사용</td><td>수정이 아니라 새 답변이면 새 ID</td></tr>
-<tr><td>사용자 메시지가 필요합니다</td><td>빈 목록·역할</td><td>HumanMessage 입력 확인</td></tr>
-<tr><td>새 invoke에서 이전 기록 없음</td><td>체크포인터 없음</td><td>이 장은 자동 대화 지속을 구현하지 않음</td></tr>
-</tbody></table></div>
-</details>
-<span id="handoff"></span><details class="reading-topic" id="reading-handoff"><summary>메시지 상태의 변경 기록</summary><div class="prose"><p>templates/graph/message-updates.json을 작업 폴더의 graph/message-updates.json으로 복사합니다. expected_before_run은 실행 전에, observed는 실제 실행 후에 채웁니다. null은 아직 확인하지 않았다는 뜻이며 통과가 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>기록할 증거</caption><thead><tr><th scope="col">위치</th><th scope="col">기록</th></tr>
-</thead><tbody><tr><td>entry_evidence</td><td>11장 SDK 기록/26장 상태표/27장 종료 기록의 실제 확인</td></tr>
-<tr><td>plain / reducer</td><td>이전 입력, 노드 반환분, 최종 메시지 id·type·content</td></tr>
-<tr><td>ID 세 조합</td><td>같은 ID 수정, 새 ID 추가를 이전/변경분/최종 목록으로 기록</td></tr>
-<tr><td>separate_invoke / fixed_a1</td><td>새 입력만 준 호출과 이전 목록까지 명시적으로 준 호출을 구분</td></tr>
-</tbody></table></div>
-<div class="prose"><p>graph/message-updates.json에 이전 목록·변경분·최종 목록, 실행 조건과 예상/관찰 차이를 기록합니다. SDK 기록의 mode는 그대로 인계하고 오늘의 규칙 응답과 구분합니다. 29장은 별도 invoke의 기록 부재와 고정 a1 교체 사례를 가져와 체크포인터와 새 응답 ID가 필요한 이유를 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 15 / FUNCTION CALLING</p>
 <span class="sidebar-title">Function Calling의 도구 명세와 호출 요청</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-schema"><span>02</span>JSON Schema의 enum과 required</a><a href="#nb-request-item"><span>03</span>function_call의 arguments와 call_id</a><a href="#nb-observe"><span>04</span>메시지와 도구 호출 구분</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>Function Calling의 도구 명세와 호출 요청 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-schema"><span>02</span>JSON Schema의 enum과 required</a><a href="#nb-request-item"><span>03</span>function_call의 arguments와 call_id</a><a href="#nb-observe"><span>04</span>메시지와 도구 호출 구분</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -38,6 +38,8 @@
 <!-- END MOTION -->
 
 
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="entry"></span><div class="lesson-explanation" id="reading-entry"><h3>출력 형식과 호출할 함수</h3><p>12장의 출력 스키마가 응답 데이터의 모양을 정했다면, 여기서는 get_library_hours가 받을 인자의 모양을 기술합니다. parameters에서 day가 필수인지, 어떤 값을 받을 수 있는지 찾아보세요.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · parameters의 enum</h3>
 <div class="cell-before"><p>아래 사전은 함수의 파이썬 본문 없이도 모델에 보낼 수 있는 기능 설명입니다.</p>
 </div>
@@ -59,6 +61,15 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 <div class="cell-after"><p>weekday와 weekend가 허용됩니다. 이 명세는 주소나 실제 개관 시간을 제공하지 않습니다. 운영 시간을 조회하는 함수는 다음 장에서 실행합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>함수 구현과 호출 명세</h3><div class="prose"><p>Python 함수는 프로그램이 실행할 코드입니다. 도구 명세는 모델에게 어떤 기능이 있고 어떤 인자를 받는지 알려 주는 설명입니다. Function Calling에서 모델은 이 명세를 보고 함수 이름과 인자를 포함한 요청을 만들 수 있습니다.</p>
+<p>여기서 사용자가 만든 함수는 애플리케이션이 실행해야 합니다. 모델 응답 안에 함수 이름이 나타났다고 내 컴퓨터에서 함수가 실행된 것은 아닙니다. 이번 장은 요청 관찰까지 다루며 실행·결과 반환은 다음 장에서 구현합니다.</p>
+</div>
+<div class="table-scroll" tabindex="0"><table><caption>서로 다른 세 가지</caption><thead><tr><th scope="col">대상</th><th scope="col">내용</th><th scope="col">이번 장</th></tr>
+</thead><tbody><tr><td>구현</td><td>실제로 실행되는 Python 코드</td><td>아직 실행하지 않음</td></tr>
+<tr><td>명세</td><td>이름·설명·인자 스키마</td><td>작성</td></tr>
+<tr><td>호출 요청</td><td>선택한 함수 이름과 인자</td><td>읽기·관찰</td></tr>
+</tbody></table></div></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 필수 필드 목록 required</h3>
 <div class="cell-before"><p>parameters의 어느 칸에 필수 이름 목록이 있는지 찾아 출력하세요.</p>
 </div>
@@ -69,13 +80,20 @@ print(TOOL[<span class="tok-string">"parameters"</span>][<span class="tok-string
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="schema"></span><div class="lesson-explanation" id="reading-schema"><h3>도서관 도구의 인자 스키마</h3><div class="prose"><p>name은 코드에서 찾을 기능의 식별자입니다. description에는 언제 사용하는지와 하지 않는 일을 설명합니다. parameters는 인자의 모양을 정합니다. 이번 day는 weekday와 weekend만 받습니다.</p>
+<p>required는 day가 필요함을 뜻하고 additionalProperties=False는 다른 필드 추가를 허용하지 않는 스키마 설정입니다. strict=True를 사용해 지원되는 형식 제약을 요청하지만 실제 실행 전에는 애플리케이션도 입력을 검사해야 합니다.</p>
+</div></div>
+
 </section>
 <section id="nb-request-item" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>function_call의 arguments와 call_id</h2>
 </div>
 </header>
 <p>호출 요청의 arguments는 JSON이 적힌 문자열입니다. 프로그램이 함수에 넘기기 전에 내용을 풀고 명세에 맞는지 검사해야 합니다.</p>
-<figure class="lesson-clip" id="concept-clip"><h3>도구 호출 요청과 실제 실행</h3><video autoplay loop muted playsinline aria-label="도구 호출 요청과 실제 실행" src="concept.mp4"></video><figcaption>인쇄된 요청서가 나와도 공구함은 닫혀 있습니다. 프로그램이 요청을 읽고 함수를 실행하는 시점을 공구함이 열리는 장면과 연결해 보세요.</figcaption></figure><article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · arguments의 JSON 디코딩</h3>
+<figure class="lesson-clip" id="concept-clip"><h3>도구 호출 요청과 실제 실행</h3><video autoplay loop muted playsinline aria-label="도구 호출 요청과 실제 실행" src="concept.mp4"></video><figcaption>인쇄된 요청서가 나와도 공구함은 닫혀 있습니다. 프로그램이 요청을 읽고 함수를 실행하는 시점을 공구함이 열리는 장면과 연결해 보세요.</figcaption></figure>
+<span class="lesson-anchor" id="sdk"></span><div class="lesson-explanation" id="reading-sdk"><h3>요청의 tools와 응답의 호출 항목</h3><p>모델에 전달할 tools 목록에는 이 장의 TOOL처럼 이름·설명·인자 규칙을 담습니다. 모델이 도구를 요청하면 응답 항목에서 name, arguments, call_id를 읽습니다. 이 장의 예제는 준비된 응답 항목을 직접 검사합니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-scan-output"><h3>같은 output 목록에서 호출 항목만 모으기</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-scan-output.mp4" aria-label="같은 output 목록에서 호출 항목만 모으기" aria-describedby="workflow-scan-output-caption"></video><figcaption id="workflow-scan-output-caption">inspect_calls는 먼저 type을 확인합니다. message에서 건너뛴 자리에 가짜 호출을 채우지 않고, function_call에서만 이름과 인자를 읽습니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>type 확인</strong> · items[0].type = message</li><li><strong>계속</strong> · calls = []</li><li><strong>항목 순회</strong> · items[1] = function_call</li><li><strong>type 확인</strong> · function_call 여부 = True</li><li><strong>JSON 해석</strong> · arguments의 day = weekend</li><li><strong>호출 추가</strong> · 추가한 call_id = call_demo_1</li></ol></figure>
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · arguments의 JSON 디코딩</h3>
 <div class="cell-before"><p>모델 응답의 모양을 본떠 만든 요청입니다. 호출 ID와 함수명을 그대로 보관합니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 4줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">call = {<span class="tok-string">"type"</span>: <span class="tok-string">"function_call"</span>, <span class="tok-string">"call_id"</span>: <span class="tok-string">"call_demo_1"</span>, <span class="tok-string">"name"</span>: <span class="tok-string">"get_library_hours"</span>,
@@ -86,6 +104,8 @@ print(args[<span class="tok-string">"day"</span>])</code></pre></figure>
 <div class="cell-after"><p>weekend는 확인해 달라고 제안한 인자입니다. 실제 함수가 지금까지 한 번도 실행되지 않았으므로 주말 운영 시간은 아직 모릅니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="call"></span><div class="lesson-explanation" id="reading-call"><h3>호출 ID와 JSON 인자 문자열</h3><p>call의 arguments는 문자열이라 json.loads를 거쳐야 day를 읽을 수 있습니다. call_id는 그대로 남겨 둡니다. 모델이 같은 이름의 함수를 두 번 요청해도 각각의 결과가 원래 요청으로 돌아가려면 ID가 필요합니다.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · function_call과 call_id 추출</h3>
 <div class="cell-before"><p>응답 목록의 첫 항목은 호출 요청이 아닙니다. type을 기준으로 골라야 합니다.</p>
 <p>args는 arguments를 풀어서 읽은 값입니다. 다음 단계에서 어느 요청에 답했는지 찾으려면 name·arguments·call_id가 든 호출 원본도 보관해야 합니다. 여기까지는 요청을 읽었을 뿐, 허용된 함수인지와 요일이 올바른지는 실행 전에 검사합니다.</p>
@@ -107,12 +127,20 @@ print(inspect_calls(items)[<span class="tok-number">0</span>][<span class="tok-s
 <div class="cell-after"><p>call_demo_1은 골라낸 요청의 식별자입니다. 결과를 돌려줄 때 이 ID가 있어야 어느 요청에 대한 답인지 연결할 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="inspect"></span><div class="lesson-explanation" id="reading-inspect"><h3>출력 목록에서 호출 선별</h3><div class="prose"><p>모델 응답의 output에는 여러 종류의 항목이 들어갈 수 있습니다. 각 항목의 type을 보고 function_call만 읽습니다. 일반 문장에 “함수를 실행했습니다”라고 쓰여 있어도 호출 요청으로 처리하지 않습니다.</p>
+<p>inspect_calls는 인자가 JSON 객체인지까지만 검사합니다. day의 허용값이나 name의 실행 가능 여부는 아직 검사하지 않으며 어떤 함수도 실행하지 않습니다. 이 범위를 다음 장의 실행 검증과 혼동하지 마세요.</p>
+</div></div>
+
 </section>
 <section id="nb-observe" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>메시지와 도구 호출 구분</h2>
 </div>
 </header>
 <p>모델은 도구를 항상 요청하는 것이 아닙니다. 사용자에게 전달할 문장만 담긴 응답이라면 실행할 함수도 없습니다.</p>
+
+<span class="lesson-anchor" id="cases"></span><div class="lesson-explanation" id="reading-cases"><h3>모호한 도구 설명의 영향</h3><div class="prose"><p>설명에 “모든 질문을 처리한다”라고 적으면 기능의 경계가 사라집니다. 운영 시간만 조회하는 도구에는 날짜별 예약 가능 여부나 도서 재고를 처리한다고 적지 않습니다. 실제 구현이 할 수 있는 일만 설명하세요.</p>
+<p>인자가 필요한 이유도 분명해야 합니다. day가 요일 이름인지 평일/주말 구분인지 설명되지 않으면 사용자 질문과 스키마가 어긋날 수 있습니다. 허용값과 설명을 함께 읽고 지원하지 않는 질문은 추가 확인 대상으로 남깁니다.</p>
+</div></div>
 <article class="notebook-cell" data-cell="5" data-task="1"><h3>과제 05 · 도구 호출 없는 message</h3>
 <div class="cell-before"><p>글로만 답한 items를 만들고 inspect_calls에 전달해 보세요.</p>
 </div>
@@ -124,6 +152,9 @@ print(inspect_calls(items))</code></pre></figure>
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="task"></span><div class="lesson-explanation" id="reading-task"><h3>호출 요청의 관찰 기록</h3><div class="prose"><p>다음 장은 요청의 이름과 인자를 검사하고 Python 함수를 실제로 실행한 뒤 같은 call_id로 결과를 돌려줍니다.</p>
+</div></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -132,74 +163,15 @@ print(inspect_calls(items))</code></pre></figure>
 <div class="prose"><p>함수 이름, call_id, arguments의 day를 각각 한 번 짚어 보세요. 명세에 있는 이름을 보냈다는 기록과 실제 도구의 실행 기록을 나눠 두면 다음 장에서 결과가 빠진 곳을 찾을 수 있습니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>Function Calling의 도구 명세와 호출 요청 심화 읽기</h2>
-</div>
-</header>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>응답 스키마와 도구 명세</summary><div class="prose"><p>첫 1H 중 15분을 세 기록에 5분씩 나눕니다. 3일 functions/tests.md에서 함수의 입력·반환·예외를, 6일 api-client/results.json에서 통신 실패와 응답 형식 실패를, 12일 structured-output/cases.json에서 정상·거절·미완료를 구분한 근거를 읽습니다. 개인 기록이 없으면 아래 제공 코드로 재개하고 제공 자료를 읽었다고 표시합니다.</p>
-<p>3일의 함수 약속은 도구 명세의 입력 범위를 설명하는 바탕입니다. 6일의 전송 성공과 내용 검증 구분은 모델 응답 관찰에도 필요합니다. 12일 Notice는 답변의 형태이고 오늘 TOOL.parameters는 요청할 함수의 인자 형태입니다. 거절·미완료·빈 응답을 정상 결과와 구분했던 규칙도 다시 확인합니다.</p>
-</div>
-</details>
-<span id="concept"></span><details class="reading-topic" id="reading-concept"><summary>함수 구현과 호출 명세</summary><div class="prose"><p>Python 함수는 프로그램이 실행할 코드입니다. 도구 명세는 모델에게 어떤 기능이 있고 어떤 인자를 받는지 알려 주는 설명입니다. Function Calling에서 모델은 이 명세를 보고 함수 이름과 인자를 포함한 요청을 만들 수 있습니다.</p>
-<p>여기서 사용자가 만든 함수는 애플리케이션이 실행해야 합니다. 모델 응답 안에 함수 이름이 나타났다고 내 컴퓨터에서 함수가 실행된 것은 아닙니다. 이번 장은 요청 관찰까지 다루며 실행·결과 반환은 다음 장에서 구현합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>서로 다른 세 가지</caption><thead><tr><th scope="col">대상</th><th scope="col">내용</th><th scope="col">이번 장</th></tr>
-</thead><tbody><tr><td>구현</td><td>실제로 실행되는 Python 코드</td><td>아직 실행하지 않음</td></tr>
-<tr><td>명세</td><td>이름·설명·인자 스키마</td><td>작성</td></tr>
-<tr><td>호출 요청</td><td>선택한 함수 이름과 인자</td><td>읽기·관찰</td></tr>
-</tbody></table></div>
-</details>
-<span id="schema"></span><details class="reading-topic" id="reading-schema"><summary>도서관 도구의 인자 스키마</summary><div class="prose"><p>name은 코드에서 찾을 기능의 식별자입니다. description에는 언제 사용하는지와 하지 않는 일을 설명합니다. parameters는 인자의 모양을 정합니다. 이번 day는 weekday와 weekend만 받습니다.</p>
-<p>required는 day가 필요함을 뜻하고 additionalProperties=False는 다른 필드 추가를 허용하지 않는 스키마 설정입니다. strict=True를 사용해 지원되는 형식 제약을 요청하지만 실제 실행 전에는 애플리케이션도 입력을 검사해야 합니다.</p>
-</div>
-</details>
-<span id="call"></span><details class="reading-topic" id="reading-call"><summary>function_call 응답 구조</summary><div class="prose"><p>arguments는 이 응답 형태에서 JSON 내용이 들어 있는 문자열입니다. json.loads로 읽으면 Python 딕셔너리가 됩니다. 문자열을 Python 코드로 실행하는 eval을 사용하지 않습니다.</p>
-<p>call_id는 이번 호출 요청과 나중의 결과를 연결하는 식별자입니다. 같은 함수를 여러 번 요청할 수 있으므로 함수 이름만으로 어느 결과인지 구분하면 안 됩니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>반드시 구분할 것</caption><thead><tr><th scope="col">필드</th><th scope="col">역할</th></tr>
-</thead><tbody><tr><td>type</td><td>일반 메시지인지 호출 요청인지 구분</td></tr>
-<tr><td>name</td><td>어떤 등록 기능을 요청했는지</td></tr>
-<tr><td>arguments</td><td>그 기능에 전달할 입력</td></tr>
-<tr><td>call_id</td><td>요청과 결과를 연결할 식별자</td></tr>
-</tbody></table></div>
-<div class="prose"><p>다음 장의 execute_call은 원본 요청 안의 JSON 문자열을 직접 검사합니다. inspect_calls나 inspect_response의 parsed_calls를 그대로 실행 입력으로 넘기지 않습니다. 관찰을 위해 파싱한 값과 실행 경계가 받을 원본 요청을 파일에서도 나눠 보관하세요.</p>
-</div>
-</details>
-<span id="inspect"></span><details class="reading-topic" id="reading-inspect"><summary>출력 목록에서 호출 선별</summary><div class="prose"><p>모델 응답의 output에는 여러 종류의 항목이 들어갈 수 있습니다. 각 항목의 type을 보고 function_call만 읽습니다. 일반 문장에 “함수를 실행했습니다”라고 쓰여 있어도 호출 요청으로 처리하지 않습니다.</p>
-<p>inspect_calls는 인자가 JSON 객체인지까지만 검사합니다. day의 허용값이나 name의 실행 가능 여부는 아직 검사하지 않으며 어떤 함수도 실행하지 않습니다. 이 범위를 다음 장의 실행 검증과 혼동하지 마세요.</p>
-</div>
-</details>
-<span id="sdk"></span><details class="reading-topic" id="reading-sdk"><summary>SDK 요청에 tools 지정</summary><div class="prose"><p>request_tool은 호출 목록만 반환하지 않고 status·response_kind·raw_output·parsed_calls·refusals·mode·tool_executions를 포함한 관찰 기록을 반환합니다. incomplete 응답에 파싱 가능한 요청이 있어도 response_kind는 not_completed이며 실행 가능한 완료 요청으로 취급하지 않습니다. 이 장은 어떤 도구도 실행하지 않습니다.</p>
-<p>parsed_calls=[]만으로 성공적인 일반 답변이라고 판단하지 않습니다. message·refusal·empty·not_completed를 함께 읽습니다. message 역시 도구를 실행했다는 증거가 아닙니다. raw_output은 원본 arguments 문자열을 보존하고 parsed_calls는 관찰용 딕셔너리를 담습니다.</p>
-</div>
-<div class="prose"><p>tools=[TOOL]은 사용할 수 있는 명세를 전달합니다. 기본 선택 설정에서는 모델이 일반 답변을 하거나 도구 호출을 요청할 수 있습니다. 도구를 등록했다는 사실만으로 호출이 반드시 발생한다고 가정하지 않습니다.</p>
-<p>parallel_tool_calls=False는 이 실습에서 병렬 호출을 제한하기 위한 옵션입니다. 모델·API 지원 조건을 확인해야 하며, 이 함수가 실제 요청을 성공시켰다는 검증은 아직 하지 않았습니다. 기본 실행은 직접 만든 호출 자료만 읽습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>관찰 기록을 읽는 기준</caption><thead><tr><th scope="col">응답</th><th scope="col">response_kind</th><th scope="col">실제 도구 실행</th></tr>
-</thead><tbody><tr><td>completed + function_call</td><td>tool_requests</td><td>0</td></tr>
-<tr><td>incomplete + function_call</td><td>not_completed</td><td>0</td></tr>
-<tr><td>completed + 일반 텍스트</td><td>message</td><td>0</td></tr>
-<tr><td>completed + 명시적 거절</td><td>refusal</td><td>0</td></tr>
-<tr><td>completed + 빈 내용</td><td>empty</td><td>0</td></tr>
-</tbody></table></div>
-</details>
-<span id="cases"></span><details class="reading-topic" id="reading-cases"><summary>모호한 도구 설명의 영향</summary><div class="prose"><p>설명에 “모든 질문을 처리한다”라고 적으면 기능의 경계가 사라집니다. 운영 시간만 조회하는 도구에는 날짜별 예약 가능 여부나 도서 재고를 처리한다고 적지 않습니다. 실제 구현이 할 수 있는 일만 설명하세요.</p>
-<p>인자가 필요한 이유도 분명해야 합니다. day가 요일 이름인지 평일/주말 구분인지 설명되지 않으면 사용자 질문과 스키마가 어긋날 수 있습니다. 허용값과 설명을 함께 읽고 지원하지 않는 질문은 추가 확인 대상으로 남깁니다.</p>
-</div>
-</details>
-<span id="task"></span><details class="reading-topic" id="reading-task"><summary>호출 요청의 관찰 기록</summary><div class="prose"><p>다음 장은 요청의 이름과 인자를 검사하고 Python 함수를 실제로 실행한 뒤 같은 call_id로 결과를 돌려줍니다.</p>
-</div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://developers.openai.com/api/docs/guides/function-calling" target="_blank" rel="noopener noreferrer">OpenAI Function Calling ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

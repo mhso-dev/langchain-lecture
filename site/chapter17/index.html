@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 17 / AGENT LOOP</p>
 <span class="sidebar-title">도구 호출 루프와 종료 조건</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-tools"><span>02</span>도구 결과를 대화 기록에 누적</a><a href="#nb-loop"><span>03</span>최종 응답과 최대 호출 횟수</a><a href="#nb-duplicate"><span>04</span>call_id 중복 검사</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>도구 호출 루프와 종료 조건 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-two-tools"><span>02</span>도구 결과를 대화 기록에 누적</a><a href="#nb-loop"><span>03</span>최종 응답과 최대 호출 횟수</a><a href="#nb-duplicate"><span>04</span>call_id 중복 검사</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -34,6 +34,8 @@
 </div>
 </header>
 <p class="concept-intro">도구 호출 루프는 모델이 다음 도구를 요청할 때마다 실행 결과를 기록하고 다시 호출합니다. 최종 답변과 호출 상한은 서로 다른 종료 사유입니다.</p><p>두 도구를 쓰기 위해 이 장에서는 이름을 get_hours와 get_loan_rule로 정했습니다. 함수 이름이 달라도 각 요청과 결과를 같은 call_id로 연결한다는 원칙은 16장과 같습니다.</p>
+
+<span class="lesson-anchor" id="input"></span><div class="lesson-explanation" id="reading-input"><h3>모델 호출 예산과 도구 실행</h3><p>한 번의 모델 응답은 도구 요청일 수도 있고 최종 문장일 수도 있습니다. 두 도구 결과를 읽고 최종 문장까지 받으려면 이 예제의 max_calls가 3이어야 합니다.</p></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · 첫 function_call 실행</h3>
 <div class="cell-before"><p>제공된 execute는 이름·인자를 검사하고 조회 값을 JSON으로 묶습니다. 하나의 도구 결과부터 읽으세요.</p>
 </div>
@@ -59,6 +61,8 @@ print(json.loads(first_result[<span class="tok-string">"output"</span>])[<span c
 <div class="cell-after"><p>c1 요청에서 찾은 10:00~16:00입니다. 다음 요청은 대출 기간을 묻기 때문에 새 식별자 c2를 써야 합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="tools"></span><div class="lesson-explanation" id="reading-tools"><h3>서로 다른 두 도구의 인자</h3><p>get_hours는 day가 weekday 또는 weekend인지 확인한 후 hours를 반환합니다. get_loan_rule은 빈 인자 객체를 받아 loan_days에 14를 넣습니다. 한 도구의 인자 규칙을 다른 도구에 그대로 적용할 수 없습니다.</p></div>
+
 <article class="notebook-cell" data-cell="2" data-task="0"><h3>셀 02 · 연속 도구 호출과 대화 이력</h3>
 <div class="cell-before"><p>먼저 처리한 c1의 요청·응답 뒤에 c2의 요청과 결과를 넣습니다.</p>
 </div>
@@ -71,6 +75,23 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 <div class="cell-after"><p>마지막 도구에서 반환한 값은 14일입니다. 아직 최종 안내는 기록에 없습니다. 모델은 두 결과를 본 뒤 답을 쓰기 위해 한 번 더 호출돼야 합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="state"></span><div class="lesson-explanation" id="reading-state"><h3>도구 요청과 결과가 쌓이는 이력</h3><p>history의 첫 항목은 사용자 질문입니다. 그 뒤에는 c1의 호출과 결과가 한 쌍으로 들어 있고, 이어서 c2의 호출과 결과가 추가됩니다. 마지막 결과 안쪽의 loan_days를 읽으면 14입니다.</p></div>
+<span class="lesson-anchor" id="trace"></span><div class="lesson-explanation" id="reading-trace"><h3>응답을 다음 모델 입력으로 전달</h3><div class="worked-case" id="flow-8"><h3>두 도구와 최종 답변</h3>
+<p>모델 출력은 고정 응답입니다. 아래 호출 수는 외부 API 호출 수가 아닙니다.</p>
+<article id="flow-8-step-0"><small>STEP 01 · 모의 모델</small><h4>첫 번째 도구 요청</h4>
+<p>첫 모델 응답의 call_id c1을 확인합니다.</p><pre>get_hours(day=weekend)
+누적 모델 응답 1회 · 도구 실행 0회</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>운영 시간 함수 실행</h4>
+<p>검사한 도구를 실행하고 같은 c1로 결과를 history에 추가합니다.</p><pre>function_call_output: c1
+누적 모델 응답 1회 · 도구 실행 1회</pre></article><article id="flow-8-step-2"><small>STEP 03 · 모의 모델</small><h4>후속 도구 요청</h4>
+<p>두 번째 모델 응답이 다른 도구를 요청합니다.</p><pre>get_loan_rule(): c2
+누적 모델 응답 2회 · 도구 실행 1회</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python</small><h4>대출 기간 함수 실행</h4>
+<p>14일을 반환하고 다음 모델 요청의 맥락에 넣습니다.</p><pre>function_call_output: c2
+누적 모델 응답 2회 · 도구 실행 2회</pre></article><article id="flow-8-step-4"><small>STEP 05 · 모의 모델</small><h4>최종 응답의 종료 조건</h4>
+<p>세 번째 모델 응답에는 도구 요청이 없습니다.</p><pre>completed
+누적 모델 응답 3회 · 도구 실행 2회</pre></article></div>
+<div class="prose"><p>응답을 보고 요청 수와 실행 수를 따로 셉니다. function_call은 실행 요청이며 결과는 Python의 execute가 만듭니다. 실제 모델을 붙일 때만 도구 선택이 모델의 판단이 됩니다.</p>
+</div></div>
+
 </section>
 <section id="nb-loop" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>최종 응답과 최대 호출 횟수</h2>
@@ -86,6 +107,9 @@ print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-st
 <video autoplay loop muted playsinline aria-label="두 도구 뒤에 모델 호출이 한 번 더 필요한 이유" src="visual-loop.mp4"></video>
 <figcaption>도구 결과 두 개가 기록된 시점에도 최종 안내 문장은 아직 없습니다. 대본의 세 번째 모델 응답이 message일 때 completed가 됩니다.</figcaption></figure>
 <!-- /lesson-visual visual-loop -->
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="loop"></span><div class="lesson-explanation" id="reading-loop"><h3>도구를 실행한 뒤의 다음 응답</h3><p>주말 시간과 대출 기간을 함께 묻는 질문에 첫 응답은 운영 시간, 둘째 응답은 대출 규칙을 요청합니다. 이 장은 세 모델 응답을 script에 미리 담아 두고, 어떤 입력에서 history가 늘어나거나 루프가 끝나는지 관찰합니다.</p></div>
+<figure class="lesson-clip workflow-clip" id="workflow-last-call"><h3>요청 c2가 이력에 있어도 실행 결과가 없는 이유</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-last-call.mp4" aria-label="요청 c2가 이력에 있어도 실행 결과가 없는 이유" aria-describedby="workflow-last-call-caption"></video><figcaption id="workflow-last-call-caption">max_calls를 2로 낮추면 두 번째 모델 응답을 기록한 뒤 상한에 걸립니다. 마지막 이력 항목은 c2의 호출 요청입니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>모델 응답</strong> · 두 번째 응답 = get_loan_rule</li><li><strong>이력 추가</strong> · history의 마지막 ID = c2</li><li><strong>예산 확인</strong> · number / max_calls = 2 / 2</li><li><strong>상한 종료</strong> · status = model_limit</li></ol></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 최종 메시지에서 루프 종료</h3>
 <div class="cell-before"><p>회차마다 먼저 응답 종류를 읽습니다. 최종 응답을 받거나 상한에 닿으면 함수를 빠져나갑니다.</p>
 <p>모델이 더 요청할 도구가 없다고 답하면 이 루프는 끝납니다. 요청 ID 중복을 막으려면 execute(item)를 부르기 전에 이미 처리한 ID인지 확인해야 합니다. 실행 뒤에 ID를 비교하면 같은 도구가 이미 두 번 작동했을 수 있습니다.</p>
@@ -111,6 +135,10 @@ print(trace[<span class="tok-string">"model_calls"</span>], trace[<span class="t
 <div class="cell-after"><p>세 번째 응답의 type이 message여서 최종 문장을 읽고 끝납니다. 대본에서 사용한 모의 모델 응답은 세 번, 도구 실행은 두 번입니다. 전체 구현은 미완료 응답도 따로 기록합니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="code"></span><div class="lesson-explanation" id="reading-code"><h3>응답 종류와 호출 상한 검사 순서</h3><p>run_script는 응답 항목을 history에 넣은 뒤 type을 확인합니다. message이면 completed로 끝납니다. 도구 요청이고 이미 max_calls에 도달했다면 model_limit을 반환합니다. 예산이 남을 때만 도구를 실행해 결과를 history에 붙입니다.</p></div>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>복수 도구 실행 로그</h3><div class="prose"><p>모델 응답 세 번은 도구 요청 두 번과 최종 답변 한 번입니다. 도구 실행 두 번과 모델 요청 세 번을 같은 숫자로 세면 안 됩니다. 기본 실행은 로컬 고정 응답이라 실제 API 토큰·요금·지연은 측정하지 않습니다.</p>
+</div></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · max_calls 초과 판정</h3>
 <div class="cell-before"><p>최대 두 번까지만 모델을 부를 수 있게 바꿔 종료 이유와 history 마지막 항목의 ID를 출력하세요.</p>
 </div>
@@ -122,6 +150,8 @@ print(limited[<span class="tok-string">"status"</span>], limited[<span class="to
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="limits"></span><div class="lesson-explanation" id="reading-limits"><h3>호출 예산이 3일 때와 2일 때</h3><p>max_calls가 3이면 두 도구를 실행한 뒤 세 번째 모델 응답에서 최종 문장을 얻습니다. 2이면 두 번째 요청 c2를 받은 시점에 model_limit을 반환해 c2의 도구 결과는 생성되지 않습니다.</p></div>
+
 </section>
 <section id="nb-duplicate" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>call_id 중복 검사</h2>
@@ -140,6 +170,8 @@ print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword"
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="records"></span><div class="lesson-explanation" id="reading-records"><h3>같은 호출 ID를 다시 받았을 때</h3><p>seen에 c1을 넣고 첫 요청의 ID를 대조하면 True가 나옵니다. 이 셀은 중복 검사 한 가지를 따로 실행합니다. run_script에서도 같은 요청의 재실행을 막으려면 도구를 부르기 전에 이 검사를 연결해야 합니다.</p></div>
+
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -148,99 +180,15 @@ print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword"
 <div class="prose"><p>대화 기록에서 c2가 마지막일 때와 c2의 결과가 마지막일 때를 비교해 보세요. 같은 ID가 보이더라도 하나는 요청, 하나는 실행 뒤 기록입니다. 호출 상한을 두는 위치에 따라 실제 실행 횟수가 달라집니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>도구 호출 루프와 종료 조건 심화 읽기</h2>
-</div>
-</header>
-<span id="loop"></span><details class="reading-topic" id="reading-loop"><summary>연속 도구 호출의 조건</summary><div class="prose"><p>사용자가 운영 시간과 대출 기간을 함께 묻는다면 모델이 서로 다른 두 기능의 결과를 필요로 할 수 있습니다. 16장의 한 번 왕복을 반복하면 결과를 받은 뒤 다음 도구를 요청하거나 답변을 마칠 수 있습니다.</p>
-<p>실제 모델을 연결한 루프에서는 모델이 도구 선택을 요청하고 Python이 실행 조건을 검사합니다. 기본 실행의 scripted_model은 순서가 정해진 모의 응답이므로 모델의 자율 판단을 검증한 것은 아닙니다.</p>
-</div>
-</details>
-<span id="tools"></span><details class="reading-topic" id="reading-tools"><summary>두 도구의 입력과 반환값</summary><div class="table-scroll" tabindex="0"><table><caption>등록한 도구</caption><thead><tr><th scope="col">이름</th><th scope="col">입력</th><th scope="col">반환</th></tr>
-</thead><tbody><tr><td>get_hours</td><td>day=weekday 또는 weekend</td><td>가상 운영 시간</td></tr>
-<tr><td>get_loan_rule</td><td>빈 객체 {}</td><td>가상 대출 기간 14일</td></tr>
-</tbody></table></div>
-<div class="prose"><p>두 도구는 수업용 가상 값을 읽습니다. 16일의 get_library_hours를 get_hours라는 짧은 이름으로 바꾸고, 반환에서 hours를 직접 꺼내는 형태로 정리했습니다. 함수 이름과 반환 구조가 달라졌으므로 16일 파일을 이름만 바꿔 그대로 연결하지 않습니다.</p>
-<p>16일 run_turn은 왕복 한 번과 final_reply를 보여 주었습니다. 이번 run_agent는 반복 횟수와 tools 목록을 반환합니다. 이 장은 텍스트 답변이 없는 거절 응답도 empty_answer로 종료합니다. 거절 내용을 사용자에게 표시하는 기능은 아직 없으므로 실제 서비스의 완성된 거절 처리라고 설명하지 않습니다.</p>
-</div>
-</details>
-<span id="state"></span><details class="reading-topic" id="reading-state"><summary>history의 요청·결과 메시지</summary><div class="prose"><p>history는 현재 요청에서 모델에 전달할 입력 목록입니다. 사용자 메시지, 모델의 output 항목, 도구 결과를 순서대로 보관합니다. 이번 루프는 함수 호출마다 새 목록을 만들며 여러 사용자의 장기 기억을 구현하지 않습니다.</p>
-<p>seen은 이미 처리한 호출 ID 집합이고 executed는 실행 결과 목록입니다. 두 변수의 역할은 다릅니다. 호출 ID를 중복 검사한다고 같은 의미의 질문 반복을 모두 막는 것은 아닙니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>루프의 변수</caption><thead><tr><th scope="col">변수</th><th scope="col">목적</th></tr>
-</thead><tbody><tr><td>history</td><td>다음 모델 요청에 전달할 맥락</td></tr>
-<tr><td>seen</td><td>같은 호출 ID 재처리 방지</td></tr>
-<tr><td>executed</td><td>도구 실행 시도와 결과 기록</td></tr>
-<tr><td>number</td><td>이번 모델 요청 번호</td></tr>
-</tbody></table></div>
-</details>
-<span id="input"></span><details class="reading-topic" id="reading-input"><summary>질문 검증과 호출 예산</summary><div class="prose"><p>question은 공백이 아닌 문자열이어야 합니다. 숫자·None·리스트를 받으면 TypeError, 공백만 있으면 ValueError가 발생합니다. 잘못된 입력은 모델을 부르기 전에 거부합니다. 호출을 시작하지 않았으므로 루프의 status 반환값과 구분합니다.</p>
-<p>상한은 bool을 제외한 정수입니다. Python에서 bool은 int의 하위 타입이므로 isinstance(value, int)만 검사하면 True를 1처럼 받습니다. 먼저 bool 여부를 제외한 뒤 정수와 범위를 확인합니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>허용 입력과 범위</caption><thead><tr><th scope="col">인자</th><th scope="col">유효한 값</th><th scope="col">거부할 예</th></tr>
-</thead><tbody><tr><td>question</td><td>공백이 아닌 str</td><td>None, 3, 공백 문자열</td></tr>
-<tr><td>max_model_calls</td><td>1 이상의 int, bool 제외</td><td>0, -1, 2.5, True</td></tr>
-<tr><td>max_tool_calls</td><td>0 이상의 int, bool 제외</td><td>-1, 1.5, False</td></tr>
-</tbody></table></div>
-<div class="prose"><p>도구 상한 0은 오류가 아닙니다. 도구 요청을 실행하지 않겠다는 정책이며, 모델이 텍스트로 바로 답하면 completed가 될 수 있습니다. 모델 상한 0은 모델을 한 번도 호출할 수 없으므로 입력 오류로 처리합니다.</p>
-</div>
-</details>
-<span id="code"></span><details class="reading-topic" id="reading-code"><summary>루프 한 회의 실행 순서</summary><div class="prose"><p>위 함수는 입력 검사 뒤 history를 만들고 모델을 부릅니다. 미완료 응답이면 중단하고, 도구 요청이 없으면 텍스트를 모아 공백 여부를 검사합니다. 공백만인 답변은 empty_answer입니다. answer에는 받은 텍스트를 그대로 보존합니다.</p>
-<p>도구 요청이 있으면 개수, 공백이 아닌 문자열 ID와 재사용 여부, 도구 상한, 남은 모델 호출 기회를 확인합니다. 마지막 모델 호출에서 또 도구를 요청하면 실행하지 않고 model_limit로 끝냅니다. 이 순서는 도구 결과를 모델에 다시 돌려줄 기회를 남기기 위한 수업 정책입니다.</p>
-</div>
-</details>
-<span id="limits"></span><details class="reading-topic" id="reading-limits"><summary>횟수 상한과 종료 사유</summary><div class="table-scroll" tabindex="0"><table><caption>상태의 뜻</caption><thead><tr><th scope="col">status</th><th scope="col">뜻</th></tr>
-</thead><tbody><tr><td>completed</td><td>도구 요청 없이 공백이 아닌 텍스트 답변을 받음</td></tr>
-<tr><td>empty_answer</td><td>도구 요청이 없고 텍스트가 없거나 공백뿐임; 거절 전용 응답도 포함</td></tr>
-<tr><td>incomplete</td><td>모델 응답 미완료</td></tr>
-<tr><td>model_limit</td><td>모델 호출 상한으로 종료</td></tr>
-<tr><td>tool_limit</td><td>도구 실행 시도 상한</td></tr>
-<tr><td>invalid_call_id</td><td>호출 ID 누락·공백·비문자열·재사용</td></tr>
-<tr><td>multiple_calls_rejected</td><td>이번 수업의 한 번에 한 도구 정책 위반</td></tr>
-</tbody></table></div>
-<div class="prose"><p>completed는 루프가 텍스트로 끝났다는 뜻이지 답변 정확성 평가를 통과했다는 뜻이 아닙니다. 도구가 실패한 뒤 모델이 “조회 실패”라고 답해도 루프는 정상 종료할 수 있습니다. 결과 내용과 종료 상태를 따로 읽으세요.</p>
-<p>max_tool_calls는 정상 성공뿐 아니라 실행 검증 결과가 오류인 도구 요청 처리도 셉니다. 반복된 잘못된 인자가 비용과 시간을 계속 쓰지 않도록 제한합니다.</p>
-</div>
-</details>
-<span id="run"></span><details class="reading-topic" id="reading-run"><summary>복수 도구 실행 로그</summary><div class="prose"><p>모델 응답 세 번은 도구 요청 두 번과 최종 답변 한 번입니다. 도구 실행 두 번과 모델 요청 세 번을 같은 숫자로 세면 안 됩니다. 기본 실행은 로컬 고정 응답이라 실제 API 토큰·요금·지연은 측정하지 않습니다.</p>
-</div>
-</details>
-<span id="trace"></span><details class="reading-topic" id="reading-trace"><summary>응답을 다음 모델 입력으로 전달</summary><details class="case-reference" id="flow-8"><summary>두 도구와 최종 답변</summary>
-<p>모델 출력은 고정 응답입니다. 아래 호출 수는 외부 API 호출 수가 아닙니다.</p>
-<article id="flow-8-step-0"><small>STEP 01 · 모의 모델</small><h4>첫 번째 도구 요청</h4>
-<p>첫 모델 응답의 call_id c1을 확인합니다.</p><pre>get_hours(day=weekend)
-누적 모델 응답 1회 · 도구 실행 0회</pre></article><article id="flow-8-step-1"><small>STEP 02 · Python</small><h4>운영 시간 함수 실행</h4>
-<p>검사한 도구를 실행하고 같은 c1로 결과를 history에 추가합니다.</p><pre>function_call_output: c1
-누적 모델 응답 1회 · 도구 실행 1회</pre></article><article id="flow-8-step-2"><small>STEP 03 · 모의 모델</small><h4>후속 도구 요청</h4>
-<p>두 번째 모델 응답이 다른 도구를 요청합니다.</p><pre>get_loan_rule(): c2
-누적 모델 응답 2회 · 도구 실행 1회</pre></article><article id="flow-8-step-3"><small>STEP 04 · Python</small><h4>대출 기간 함수 실행</h4>
-<p>14일을 반환하고 다음 모델 요청의 맥락에 넣습니다.</p><pre>function_call_output: c2
-누적 모델 응답 2회 · 도구 실행 2회</pre></article><article id="flow-8-step-4"><small>STEP 05 · 모의 모델</small><h4>최종 응답의 종료 조건</h4>
-<p>세 번째 모델 응답에는 도구 요청이 없습니다.</p><pre>completed
-누적 모델 응답 3회 · 도구 실행 2회</pre></article></details>
-<div class="prose"><p>응답을 보고 요청 수와 실행 수를 따로 셉니다. function_call은 실행 요청이며 결과는 Python의 execute가 만듭니다. 실제 모델을 붙일 때만 도구 선택이 모델의 판단이 됩니다.</p>
-</div>
-</details>
-<span id="records"></span><details class="reading-topic" id="reading-records"><summary>실패 기록의 공통 형식</summary><div class="table-scroll" tabindex="0"><table><caption>기본 검사에서 읽을 값</caption><thead><tr><th scope="col">사례</th><th scope="col">status</th><th scope="col">모델 응답 수</th><th scope="col">도구 시도 수</th></tr>
-</thead><tbody><tr><td>정상</td><td>completed</td><td>3</td><td>2</td></tr>
-<tr><td>모델 상한 2</td><td>model_limit</td><td>2</td><td>1</td></tr>
-<tr><td>도구 상한 0</td><td>tool_limit</td><td>1</td><td>0</td></tr>
-<tr><td>공백 최종 답</td><td>empty_answer</td><td>1</td><td>0</td></tr>
-<tr><td>중복 ID</td><td>invalid_call_id</td><td>2</td><td>1</td></tr>
-<tr><td>도구 오류 후 설명</td><td>completed</td><td>2</td><td>1</td></tr>
-<tr><td>미완료 응답</td><td>incomplete</td><td>1</td><td>0</td></tr>
-</tbody></table></div>
-</details>
-<details class="reading-topic" id="reading-sources"><summary>참고 문헌과 연계 단원</summary><div class="prose"><p>본문과 예제의 확인 범위는 VALIDATION.md에 기록합니다. Windows/WSL 실기와 실제 수강생의 소요 시간은 현장에서 확인합니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>
 <ul class="references"><li><a href="https://developers.openai.com/api/docs/guides/function-calling" target="_blank" rel="noopener noreferrer">OpenAI Function Calling ↗</a><span></span></li>
-</ul></section>
+</ul>
+<span class="lesson-anchor" id="reading-sources"></span>
+</section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

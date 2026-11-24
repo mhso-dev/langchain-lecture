@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 55 / AGENT FOUNDATION</p>
 <span class="sidebar-title">create_agent의 도구 등록과 메시지 왕복</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#readings"><span>06</span>create_agent의 도구 등록과 메시지 왕복 심화 읽기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -53,6 +53,8 @@ print(result[<span class="tok-string">"hours"</span>])</code></pre></figure>
 <div class="cell-after"><p>10:00~16:00은 함수가 시간표에서 꺼낸 값입니다. 요청의 c1은 시간이 들어갈 칸이 아니라 도구 결과를 원래 요청과 짝지을 식별자입니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="responsibility"></span><div class="lesson-explanation" id="reading-responsibility"><h3>요청에서 함수 인자 꺼내기</h3><p>request 전체에는 이름과 ID도 있습니다. get_hours에 넘기는 값은 request[&quot;args&quot;] 안의 day 하나입니다. ID는 결과를 돌려줄 요청을 찾을 때 씁니다.</p></div>
+
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 요청과 결과의 ID 연결</h3>
 <div class="cell-before"><p>두 번째 요청 c2의 응답에서 대출 기간을 꺼내세요. 목록 위치 대신 호출 ID를 쓰세요.</p>
 </div>
@@ -65,6 +67,8 @@ print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'lo
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="entry"></span><span class="lesson-anchor" id="reading-entry"></span>
+
 </section>
 <section id="nb-trace" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
 <h2>대화 기록에서 도구 호출 수 집계</h2>
@@ -89,6 +93,8 @@ print(roles.count(<span class="tok-string">"tool"</span>), roles.count(<span cla
 <div class="cell-after"><p>2 3이 보입니다. 두 번의 도구 요청에 응답한 뒤 세 번째 모델 메시지가 최종 문장을 냈습니다. 이 기록은 고정 대본의 호출 횟수를 보여 주며 외부 모델 요금은 측정하지 않았습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="comparison"></span><div class="lesson-explanation" id="reading-comparison"><h3>역할별 메시지 세기</h3><p>roles에서 ai는 세 번, tool은 두 번 나타납니다. 마지막 ai는 두 도구의 결과를 받은 뒤 답변만 쓰기 때문에 ToolMessage가 하나 더 생기지 않습니다.</p></div>
+
 <article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 04 · 대응 결과가 없는 호출</h3>
 <div class="cell-before"><p>c1과 c2를 요청했지만 c1만 회신했습니다. 회신을 기다리는 ID를 출력하세요.</p>
 </div>
@@ -103,6 +109,9 @@ print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-key
 </div>
 </details>
 </article>
+<span class="lesson-anchor" id="boundaries"></span><span class="lesson-anchor" id="reading-boundaries"></span>
+<span class="lesson-anchor" id="task"></span><span class="lesson-anchor" id="reading-task"></span>
+
 </section>
 <section id="nb-invoke" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><p class="eyebrow"></p>
 <h2>create_agent에 두 도구 등록</h2>
@@ -126,6 +135,12 @@ print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-key
 <div class="cell-after"><p>bind_tools가 대본 모델을 그대로 돌려줍니다. 네트워크나 결제 계정 없이 같은 요청 순서를 반복해서 볼 수 있습니다.</p>
 </div>
 </article>
+<span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>모델과 도구 사이에서 누가 함수를 실행할까?</h3><p>모델이 내보낸 tool_calls에는 함수 이름과 인자, 요청 ID가 들어갑니다. create_agent는 등록한 Python 함수를 실행하고 그 결과를 대화에 붙여 다시 모델을 부릅니다. 마지막 모델 응답에 도구 요청이 없으면 이번 실행이 끝납니다.</p></div>
+<span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
+<span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>같은 도구 요청을 다시 관찰하기</h3><p>ClassroomModel이 내놓을 세 응답은 코드에 미리 적혀 있습니다. 그래서 노트북을 다시 실행해도 첫 도구는 get_hours, 두 번째 도구는 get_loan_rule입니다. 여기서 비교할 수 있는 것은 실행 순서입니다.</p></div>
+
+
+<figure class="lesson-clip workflow-clip" id="workflow-tool-id-roundtrip"><h3>같은 모델로 돌아가는 두 도구 요청</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-tool-id-roundtrip.mp4" aria-label="같은 모델로 돌아가는 두 도구 요청" aria-describedby="workflow-tool-id-roundtrip-caption"></video><figcaption id="workflow-tool-id-roundtrip-caption">두 도구는 차례로 실행됩니다. 결과를 모델에게 돌려줄 때까지 c1과 c2가 각각 어느 요청의 ID인지 따라가세요.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>고정 모델</strong> · 첫 요청 ID = c1</li><li><strong>get_hours</strong> · c1 반환 = 10:00~16:00</li><li><strong>고정 모델</strong> · 다음 요청 ID = c2</li><li><strong>get_loan_rule</strong> · c2 반환 = 14</li><li><strong>고정 모델</strong> · 다음 도구 요청 수 = 0</li><li><strong>최종 응답</strong> · 답변의 두 값 = 10:00~16:00 · 14일</li></ol></figure>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3>셀 06 · create_agent의 도구 왕복</h3>
 <div class="cell-before"><p>각 도구가 실제로 불렸을 때의 반환값을 호출 ID와 함께 읽습니다.</p>
 <p>셀 01의 같은 이름 함수는 사전을 반환해서 hours 키를 읽었습니다. 여기에서 새로 정의하는 도구는 문자열을 돌려줍니다. 메시지에서 호출 ID를 먼저 찾은 뒤 그 ID와 짝을 이룬 ToolMessage의 content를 읽으세요.</p>
@@ -154,14 +169,17 @@ c2 14</pre></div>
 <div class="cell-after"><p>c1 뒤에 시간, c2 뒤에 14가 찍힙니다. 호출 ID와 내용은 실제로 돌려받은 ToolMessage에서 꺼냈습니다. 이 실습에서는 도구 요청과 마지막 답 문장을 대본에 미리 적었고, 함수의 반환값은 실행 중에 얻었습니다. 도구 결과의 tool_call_id에서 c1과 c2를 찾아 각 반환값을 연결하세요.</p>
 </div>
 </article>
-<details class="case-reference" id="flow-9"><summary>셀 06에서 두 도구의 반환값은 어디로 갈까요?</summary>
+<span class="lesson-anchor" id="roundtrip"></span><div class="lesson-explanation" id="reading-roundtrip"><h3>tool_call_id로 결과 찾기</h3><p>첫 번째 ToolMessage의 c1은 주말 시간에 대한 결과를, 두 번째 메시지의 c2는 대출 일수에 대한 결과를 가리킵니다. 도구 두 개를 등록해도 어느 요청의 결과인지 ID로 찾아낼 수 있습니다.</p></div>
+<span class="lesson-anchor" id="exit"></span><span class="lesson-anchor" id="reading-exit"></span>
+
+<div class="worked-case" id="flow-9"><h3>셀 06에서 두 도구의 반환값은 어디로 갈까요?</h3>
 <p>모델 메시지 세 개와 도구 메시지 두 개를 순서대로 따라가세요. 호출 ID를 읽으면 어떤 요청에 온 값인지 알 수 있습니다.</p>
 <article id="flow-9-step-0"><small>STEP 01 · 모델</small><h4>운영 시간 도구 요청</h4>
 <p>첫 모델 메시지에는 도구 이름과 요청 ID가 있습니다.</p><pre>c1 · get_hours</pre></article><article id="flow-9-step-1"><small>STEP 02 · 도구</small><h4>운영 시간 도구의 결과</h4>
 <p>도구 메시지의 tool_call_id는 첫 요청의 ID인 c1입니다.</p><pre>c1 · 10:00~16:00</pre></article><article id="flow-9-step-2"><small>STEP 03 · 모델</small><h4>대출 기간 도구 요청</h4>
 <p>다음 모델 메시지가 두 번째 요청을 냅니다.</p><pre>c2 · get_loan_rule</pre></article><article id="flow-9-step-3"><small>STEP 04 · 도구</small><h4>대출 기간 도구의 결과</h4>
 <p>이 값은 c2가 요청한 대출 일수입니다.</p><pre>c2 · 14</pre></article><article id="flow-9-step-4"><small>STEP 05 · 모델</small><h4>최종 모델 응답</h4>
-<p>추가 도구 요청이 없어 왕복이 끝납니다.</p><pre>모델 메시지 3개 · 도구 메시지 2개</pre></article></details>
+<p>추가 도구 요청이 없어 왕복이 끝납니다.</p><pre>모델 메시지 3개 · 도구 메시지 2개</pre></article></div>
 </section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>복습과 실습 점검</h2>
@@ -170,77 +188,8 @@ c2 14</pre></div>
 <div class="prose"><p>운영 시간 문장 하나를 골라 함수의 반환값과 요청 ID를 거슬러 올라가세요. 56장에서는 이 왕복의 어느 지점에서 잘못된 값을 막을지 정합니다.</p>
 </div>
 </section>
-<section id="readings" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
-<h2>create_agent의 도구 등록과 메시지 왕복 심화 읽기</h2>
-</div>
-</header>
-<details class="reading-topic" id="reading-start"><summary>create_agent의 실행 루프</summary><div class="prose"><p>17일에는 모델의 도구 요청을 읽고 함수를 실행한 뒤 결과를 돌려주는 반복문을 직접 만들었습니다. 34일에는 같은 검색 함수를 Graph의 노드와 조건 간선에 연결했습니다. 오늘은 create_agent에 모델과 도구를 등록하고, 실제 메시지 왕복이 같은 결과를 만드는지 확인합니다.</p>
-<p>구현의 길이만 비교하지 않습니다. 어떤 코드가 도구를 고르는지, 누가 실행하는지, 어디에서 멈추는지 설명할 수 있어야 전환 후에도 오류를 찾을 수 있습니다. 제공 코드를 모두 새로 작성하는 수업은 아닙니다. 핵심 호출부를 읽고 대본 한 조건을 바꾸며 관찰합니다.</p>
-</div>
-</details>
-<span id="entry"></span><details class="reading-topic" id="reading-entry"><summary>기존 도구 실행 로그</summary><div class="prose"><p>17일 agent-loop/trace.json에서 c1의 요청과 응답을 짝짓고 모델 호출 수와 실제 도구 실행 수를 각각 셉니다. 34일 rag/node-tool-comparison.csv에서는 같은 질문인데도 필수 검색과 선택 검색의 횟수가 달랐던 행을 고릅니다. 파일이 없으면 제공 예시를 사용했다고 진입 기록에 적습니다.</p>
-<p>52일 project/demo-and-retrospective.md에서 루프나 Graph를 연결하며 어려웠던 부분과 계속 유지할 출처·오류 규칙을 찾아봅니다. 현재 제공된 52 파일은 빈 양식입니다. 개인·팀의 실제 회고가 없으면 미수신으로 남기고 17·34 제공 사례로 보충합니다. 빈 칸을 가상의 학생 성취로 채우지 않습니다.</p>
-<p>39일 채택 기록은 제공 예시로 읽습니다. 실패행을 남기는 방식과 원문 의미 대조를 가져오되, 39의 작은 청크 인덱스를 오늘 원문 3개 비교에 섞지 않습니다.</p>
-</div>
-</details>
-<span id="environment"></span><details class="reading-topic" id="reading-environment"><summary>에이전트 예제의 실행 환경</summary><div class="prose"><p>실습은 Python 3.12 환경에서 진행합니다. 확인한 설치 버전은 langchain 1.5.0, langchain-core 1.8.0, langgraph 1.2.22, pydantic 2.14.2, langsmith 0.14.17입니다. 이름이 비슷해도 langchain과 langchain-core는 다른 배포 패키지입니다.</p>
-<p>examples 폴더 안에 실행 코드·원문·고정 입력을 모두 넣었습니다. 다른 장의 폴더나 prototype이 없어도 실행할 수 있습니다. 파일을 개별로 받으면 data와 inputs의 하위 경로를 유지합니다. API 키는 필요하지 않습니다.</p>
-</div>
-</details>
-<span id="responsibility"></span><details class="reading-topic" id="reading-responsibility"><summary>프레임워크와 앱의 책임</summary><div class="table-scroll" tabindex="0"><table><caption>세 방식의 책임 비교</caption><thead><tr><th scope="col">책임</th><th scope="col">17 수동 루프</th><th scope="col">34 Graph</th><th scope="col">55 create_agent</th></tr>
-</thead><tbody><tr><td>도구 목록·인자 검사</td><td>직접 매핑/검사</td><td>제공 Tool과 검사</td><td>등록한 Tool과 검사</td></tr>
-<tr><td>다음 요청 결정</td><td>대본 SDK 응답</td><td>ScriptedRouter</td><td>ScriptedChatModel</td></tr>
-<tr><td>요청→실행→응답</td><td>직접 반복문</td><td>연결한 노드/간선</td><td>프레임워크의 도구 루프</td></tr>
-<tr><td>종료 정책</td><td>직접 상한/오류 처리</td><td>조건 간선/상한</td><td>middleware와 반환 검사</td></tr>
-<tr><td>근거·의미·비용 확인</td><td>개발자</td><td>개발자</td><td>개발자</td></tr>
-</tbody></table></div>
-<div class="prose"><p>create_agent는 도구를 등록하고 메시지 왕복을 이어 주는 실행 구조입니다. 모델이 내놓은 tool_calls는 실행 요청이고, 실제 Python 함수 호출은 프레임워크가 수행합니다. system_prompt에 규칙을 적는 것만으로 호출 상한이나 허용 목록이 강제되지는 않습니다.</p>
-<p>수동 루프 비교 예제는 17일의 운영 시간 도구와 대출 기간 도구를 그대로 사용합니다. 정상 질문 ‘주말 시간과 대출 기간은?’은 도구 2회·모델 3회로 끝납니다. 이것은 요청 ID·도구 결과·최종 문장의 정상 동등성 비교입니다. 종료 정책 전체가 같다는 뜻도, Q1 검색 성능 비교도 아닙니다.</p>
-</div>
-</details>
-<span id="model"></span><details class="reading-topic" id="reading-model"><summary>고정 응답 모델의 역할</summary><div class="prose"><p>오늘의 목적은 모델 품질보다 메시지와 실행 정책을 확인하는 것입니다. 같은 순서의 요청을 돌려주는 모델을 쓰면 도구 실행이 한 번 더 일어났는지 정확히 비교할 수 있습니다. 이 모델은 질문을 이해하지 않으며, 키워드를 포함한 질문에 준비된 요청을 보냅니다.</p>
-<p>create_agent는 모델의 bind_tools를 호출해 사용할 도구 스키마를 전달합니다. 제공 ScriptedChatModel은 이름을 기록하고 자신을 반환합니다. _generate는 대본에서 다음 AIMessage를 꺼냅니다. 두 메서드는 읽기용 제공 코드이며 오늘 새로 구현할 과제가 아닙니다. 도구 선택 성능이나 토큰 효율을 여기서 추정하지 않습니다.</p>
-</div>
-</details>
-<span id="roundtrip"></span><details class="reading-topic" id="reading-roundtrip"><summary>search_documents의 단일 호출</summary><div class="prose"><p>checked_search는 검색 결과의 메타데이터뿐 아니라 실제 도구 요청의 k보다 많이 반환했는지도 검사합니다. 바깥 함수의 k가 2여도 도구가 k1을 요청했다면 결과는 최대 1개여야 합니다. 이 검사가 빠지면 같은 입력 비교라는 전제가 깨집니다.</p>
-<p>invoke에 HumanMessage를 넣으면 대본이 tool_calls를 냅니다. 프레임워크는 등록한 search_documents를 실행하고 같은 요청 ID를 가진 ToolMessage를 만든 뒤 모델을 다시 부릅니다. 대본의 ‘검색 선택을 마쳤습니다’는 사용자가 받을 최종 답변이 아닙니다. 도구 artifact를 공통 A1으로 보내 별도의 고정 생성 콜백과 인용 검사를 수행합니다.</p>
-</div>
-</details>
-<span id="comparison"></span><details class="reading-topic" id="reading-comparison"><summary>같은 입력에서 에이전트 비교</summary><div class="prose"><p>compare_frameworks.py는 입력 해시를 먼저 검사합니다. 17 보수 생산자의 정상 반환 전체를 대조하고, 35일 고정 Q1 다섯 질문을 34 Graph와 55 create_agent에 똑같이 보냅니다. 원문 3개·k1을 유지하며 documents, result, 검색/생성 횟수와 검색 상태를 비교합니다.</p>
-<p>36 기준선은 필수 검색이라 주차·카페에도 검색 1회가 있습니다. 34·55는 대본이 검색을 생략하여 0회입니다. A1 결과가 같아도 실행 경로는 다를 수 있습니다. 이 차이는 주어진 대본 정책으로 생긴 것이므로 실제 LLM이 불필요한 검색을 줄였다고 설명하지 않습니다.</p>
-<p>37·39의 작은 청크 실험과 채택 판단은 읽기 근거로 보존합니다. 인덱스가 다른 결과를 한 표의 같은 조건으로 합치지 않습니다. Q1은 개발 3개·공개 확인 2개이며 공개 확인 질문도 이미 제공되어 있습니다.</p>
-</div>
-</details>
-<span id="boundaries"></span><details class="reading-topic" id="reading-boundaries"><summary>빈 검색 결과와 도구 예외</summary><div class="table-scroll" tabindex="0"><table><caption>확인해야 할 실패 경계</caption><thead><tr><th scope="col">상황</th><th scope="col">기록</th><th scope="col">해석</th></tr>
-</thead><tbody><tr><td>주차를 검색하지 않음</td><td>not_requested / A1 no_evidence</td><td>선택 정책에 따라 근거 없음</td></tr>
-<tr><td>검색 TimeoutError</td><td>error_type=TimeoutError / result=null</td><td>운영 오류; 빈 목록으로 숨기지 않음</td></tr>
-<tr><td>k 초과·출처 누락</td><td>data_contract_error / result=null</td><td>검색 계약 위반</td></tr>
-<tr><td>빈/공백 모델 응답</td><td>empty_model_response / result=null</td><td>정상 종료 문장 아님</td></tr>
-<tr><td>명시적 거절 메시지</td><td>model_refusal / result=null</td><td>제공 두 거절 형식 검사</td></tr>
-<tr><td>미검색 ID 인용</td><td>A1 invalid_citation / sources=[]</td><td>답변 인용 검증 실패</td></tr>
-</tbody></table></div>
-<div class="prose"><p>상한 2로 연속 검색 대본을 실행하면 55에서는 모델 2회·검색 2회 뒤 모델 상한 오류가 납니다. 모델 호출을 제한하는 기본 middleware만으로 마지막 모델 응답 뒤의 도구 실행까지 막는 것은 아닙니다. 56일에는 다음 답변을 받을 예산이 없을 때 새 검색을 막아 모델 2회·검색 1회로 멈추게 합니다.</p>
-<p>answered는 공통 인용 형식 검사를 통과했다는 상태입니다. ‘999일 [library-1]’처럼 실제 ID에 틀린 사실을 붙일 수 있으므로 원문 14일과의 의미 대조는 따로 필요합니다. 오류 메시지는 종류만 기록하고 예외 원문을 복사하지 않습니다.</p>
-</div>
-<div class="table-scroll" tabindex="0"><table><caption>횟수와 비용을 읽는 기준</caption><thead><tr><th scope="col">필드</th><th scope="col">오늘 확인 범위</th></tr>
-</thead><tbody><tr><td>model_calls</td><td>실제 대본 모델 진입 수</td></tr>
-<tr><td>retrieval_calls</td><td>검색 함수 진입 수; 실패 시도 포함</td></tr>
-<tr><td>generation_calls</td><td>A1의 로컬 생성 콜백; 모델 호출과 합산 금지</td></tr>
-<tr><td>external_llm_calls / monetary_cost</td><td>확인된 기본 로컬 경로는 0; 사용자 주입은 null</td></tr>
-<tr><td>provider_usage</td><td>미측정 null; 대본으로 토큰 추정하지 않음</td></tr>
-</tbody></table></div>
-</details>
-<span id="task"></span><details class="reading-topic" id="reading-task"><summary>조건 변경 후 호출 경로 검증</summary><div class="table-scroll" tabindex="0"><table><caption>형성 피드백</caption><thead><tr><th scope="col">기준</th><th scope="col">판정 방법</th></tr>
-</thead><tbody><tr><td>책임·메시지 대응</td><td>코드/관찰과 설명이 맞으면 근거충족</td></tr>
-<tr><td>같은 조건의 비교</td><td>실행 또는 근거가 없으면 미확인</td></tr>
-<tr><td>실행 모드·실패·출처</td><td>오류/미측정을 성공으로 해석하면 수정필요</td></tr>
-</tbody></table></div>
-</details>
-<span id="exit"></span><details class="reading-topic" id="reading-exit"><summary>도구 실행 결과 인계</summary><div class="prose"><p>56일에는 등록한 도구 이름·Strict 입력 스키마·A1 결과·메시지 기록·호출 수·모드를 넘깁니다. agent/framework-comparison.md와 본인 runs 기록을 함께 보관합니다. 다음 장은 구조화 초안과 실행 Context, 허용 목록·상한을 연결합니다. Skill·기억·MCP·웹 서버를 오늘 미리 구현하지 않습니다.</p>
-</div>
-</details>
-</section>
-<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
+
+<section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
 </div>
 </header>

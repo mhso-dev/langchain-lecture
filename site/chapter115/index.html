@@ -62,6 +62,8 @@ print(f'{rule[<span class="tok-string">"source"</span>]} {rule[<span class="tok-
 </div>
 </header>
 <p>장면표 예시 · Q01은 이 장 셀 01에서 답과 규정 절을 가리킵니다. Q02는 96장 노트북의 ‘장비가 빠진 질문 표시’에서 되묻는 문장을 보여 주세요. Q03은 이 장 과제 02의 교체 일정 안내를 사용합니다. 서버가 열리지 않으면 이 노트북 순서로 시연하고 실제 발표 시간은 리허설 뒤에 기록하세요.</p>
+
+<figure class="lesson-clip workflow-clip" id="workflow-fallback-demo"><h3>라이브 서버가 열리지 않을 때 이어지는 세 가지 시연</h3><video autoplay muted loop playsinline preload="metadata" src="workflow-fallback-demo.mp4" aria-label="라이브 서버가 열리지 않을 때 이어지는 세 가지 시연" aria-describedby="workflow-fallback-demo-caption"></video><figcaption id="workflow-fallback-demo-caption">서버에 연결할 수 없는 상황을 가정한 대체 시연 순서입니다. 각 노트북에서 정상 답, 추가 질문, 근거 없음의 증거를 차례로 보여 줍니다.</figcaption><ol class="workflow-transcript" aria-label="실행 경로와 상태"><li><strong>서버 확인</strong> · 전환 조건 = 서버가 열리지 않음</li><li><strong>Q01 정상 답</strong> · 115장 셀 01 = 전원 표시등 · 2.1절</li><li><strong>Q02 추가 질문</strong> · 96장 추가 질문 = 장비 A인가요, 장비 B인가요?</li><li><strong>Q03 일정 문의</strong> · 115장 과제 02 = no_evidence · []</li></ol></figure>
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 실패 사례 시연</h3>
 <div class="cell-before"><p>Q03의 저장 응답에서 답과 출처 목록을 보고 청중에게 전달할 문구를 쓰세요.</p>
 <p>서버 없이 시연할 때 Q01은 이 장 셀 01, Q03은 바로 아래 과제 02의 출력을 사용하세요. Q02가 필요하면 96장의 ‘장비가 빠진 질문 표시’ 예로 이동해 되묻는 문장을 보여 주세요.</p>
