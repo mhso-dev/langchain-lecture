@@ -121,7 +121,6 @@ with ZipFile(HERE/"resources.zip") as original, ZipFile(resources,"w") as packed
     for path in sorted((HERE/"cases").glob("*")):
         if path.is_file():
             put(packed,"daily_resources/cases/"+path.name,path.read_bytes())
-links=[]
 with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
     for entry in data.namelist():
         raw=data.read(entry)
@@ -164,12 +163,9 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
         raw=encode(notebook)
         (DAILY/name).write_bytes(raw)
         put(archive,name,raw)
-        link=f'<a href="{name}" download>개인 과제 노트북</a>'
-        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
+        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a></p></section>'
         if 81 <= n <= 85:
-            section = (f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {duration}분</h2>'
-                       f'<p><a href="#workshop">로컬 예제와 풀이</a>를 실행한 뒤 <a href="#service">수업 서비스에 적용하기</a>에서 실제 실행을 기록하세요.</p>'
-                       f'<p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/index.html">전체 과제</a></p></section>')
+            section = section.replace("</section>", '<p><a href="#workshop">로컬 예제와 풀이</a> · <a href="#service">서비스에 적용하기</a></p></section>')
         if n == 80:
             section=section.replace("</section>",'<p><a href="../daily/codex-harness.ipynb" download>선택 실습 · 이전 판 Codex 하네스 노트북</a></p></section>')
         if n in (20,21,22,23,24,25,35):
@@ -191,8 +187,25 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
                 original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
             original["cells"].extend(extras)
             file.write_bytes(encode(original))
-        lesson=f'<a href="../chapter{n:02}/index.html#daily-lab">수업 교재</a> · ' if n<=116 else ''
-        links.append(f'<li id="day{n:03}"><h2>{n}일 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
+        # Show the supplied starter and worked answer beside the assignment.
+        snippets = []
+        labels = {"solo-input":"입력 자료 준비", "solo-implementation":"구현할 코드", "solo-variation":"다른 입력으로 확인하기",
+                  "solo-bench":"기준 구현과 대조하기", "setup":"실습 준비", "example":"실행 예제", "task":"직접 작성하기"}
+        for item in cells:
+            key = item["id"]
+            raw = "".join(item["source"])
+            if key in labels and item["cell_type"] == "code":
+                snippets.append(f'<h3>{labels[key]}</h3><pre><code>{escape(raw)}</code></pre>')
+            elif key in {"solo-answer", "answer"} and raw.startswith("<details"):
+                snippets.append(raw.replace("<details>", '<details class="notebook-answer">', 1))
+        if n <= 116:
+            if snippets:
+                text = page.read_text()
+                page.write_text(text.replace(section, section[:-10]+"".join(snippets)+"</section>", 1))
+        else:
+            folder = OUT / f"chapter{n:02}"
+            folder.mkdir(exist_ok=True)
+            (folder / "index.html").write_text(section[:-10]+"".join(snippets)+"</section>")
 
     put(archive,"codex-harness.ipynb",(DAILY/"codex-harness.ipynb").read_bytes())
 first = OUT/"chapter01"/"index.html"
@@ -212,15 +225,6 @@ if pdf_kit.exists():
     with ZipFile(pdf_kit,"w") as updated:
         for name,raw in contents.items():
             put(updated,name,raw)
-docs=' · '.join(f'<a href="{p.relative_to(DAILY).as_posix()}">{p.name}</a>' for p in sorted((DAILY/"daily_resources").rglob("*")) if p.suffix in (".txt",".pdf"))
-header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
-page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>선택 실습 · 이전 판 Codex 하네스</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
-(DAILY/"index.html").write_text(page)
-for index in [OUT/"index.html", OUT/"updates/index.html"]:
-    s=index.read_text()
-    href='daily/index.html' if index.parent==OUT else '../daily/index.html'
-    index.write_text(s.replace('</header>',f'<p><a style="color:white" href="{href}">일반 수업·특강 개인 실습 · 과제와 원본 자료</a></p></header>',1))
-
 index=OUT/"updates/index.html"
 changed=[*range(20,26),35,*range(43,53),55,56,64,66,67,*range(80,117)]
 entries=[]
@@ -246,8 +250,8 @@ for day in [1]+[int(item[0]) for item in spec]:
         all_changed.append(f'<li><a href="../{folder.name}/index.html#daily-lab">{escape(title)}</a></li>')
     else:
         title=next(row[1] for row in spec if int(row[0])==day)
-        all_changed.append(f'<li><a href="../daily/index.html#day{day:03}">{day}일 · {escape(title)}</a></li>')
-edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../daily/index.html">78개 작업 의뢰서</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
+        all_changed.append(f'<li><a href="../chapter{day:02}/index.html#daily-lab">{day}일 · {escape(title)}</a></li>')
+edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../schedule.html">실습이 포함된 일차별 교재</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
 index.write_text(history.replace("<main>","<main>"+edition+news,1))
 
 publish_results(OUT)

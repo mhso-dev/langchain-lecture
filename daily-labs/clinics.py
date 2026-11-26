@@ -131,11 +131,24 @@ for number, scheduled_title, goal in schedule:
     link = f'../daily/{file.name}'
     box = (f'<section class="lesson-section" id="applied-clinic"><h2>{escape(title)}</h2><p>{escape(explanation)}</p>'
            f'{sample_html}<h3>{label} · {timing}</h3><p>{escape(task)}</p><p><a href="{link}" download>실습 노트북</a> · '
+           f'<a href="../daily/resources.zip" download>입력 자료 받기</a> · '
            f'<a href="../topics/{unit["slug"]}/index.html">{escape(unit["title"])} 통합 예제</a></p></section>')
     h = html.read_text()
+    if 'href="../daily/resources.zip"' in h:
+        box = box.replace('<a href="../daily/resources.zip" download>입력 자료 받기</a> · ', "")
     if day == 1:
         h = re.sub(r'<section class="lesson-section" id="daily-lab">.*?</section>', '<section id="daily-lab"><a href="#applied-clinic">첫 개인 실습</a></section>', h, count=1, flags=re.S)
-    html.write_text(h.replace('</main>',box+'</main>',1))
+    if day == 1:
+        starter = escape("".join(lab["cells"][1]["source"]))
+        box = box.replace("</section>", f"<h3>입력 자료 만들기</h3><pre><code>{starter}</code></pre></section>")
+    # Keep both parts of a day's practice together, before the end-of-chapter controls.
+    marker = h.find('id="daily-lab"')
+    end = h.find("</section>", marker) if marker >= 0 else -1
+    if end >= 0:
+        end += len("</section>")
+        html.write_text(h[:end]+box+h[end:])
+    else:
+        html.write_text(h.replace("</main>",box+"</main>",1))
 
 with ZipFile(daily / "all-labs.zip") as old, ZipFile(daily / "labs.tmp", "w", ZIP_DEFLATED) as archive:
     for entry in old.infolist():
@@ -144,8 +157,3 @@ with ZipFile(daily / "all-labs.zip") as old, ZipFile(daily / "labs.tmp", "w", ZI
     for name, path in new_downloads.items():
         archive.write(path, name)
 (daily / "labs.tmp").replace(daily / "all-labs.zip")
-idx = daily / "index.html"
-h = idx.read_text().replace('2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다.', '일반 수업 75일과 특강 4일은 개인 실습, 프로젝트 41일은 팀 산출물 점검에 60~120분을 씁니다.').replace('개인 실습 78개와 자료 전체 받기','120일 실습과 자료 전체 받기')
-extra_days = [1, *range(43, 53), *range(86, 117)]
-links = ''.join(f'<li><a href="../chapter{n:02}/index.html#applied-clinic">{n}일 · {escape(schedule[n-1][1])}</a></li>' for n in extra_days)
-idx.write_text(h.replace('</main>', '<section><h2>첫날 과제와 팀 프로젝트 실습</h2><ul>'+links+'</ul></section></main>', 1))

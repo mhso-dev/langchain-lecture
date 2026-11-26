@@ -65,7 +65,7 @@ def notebook_body(book):
 
 def guide_links(n, full):
     labels = []
-    skip = {'start', 'sources', 'recap', 'daily-lab', 'plan'}
+    skip = {'start', 'sources', 'recap', 'plan'}
     for anchor, title in re.findall(r'<section\b[^>]*?\bid="([^"]+)"[^>]*>(?:(?!</section>).)*?<h2[^>]*>(.*?)</h2>', full, re.S):
         if anchor not in skip and plain(title):
             labels.append((anchor, plain(title)))
@@ -107,7 +107,14 @@ for unit in units:
             targets = [(key, label) for key, label in targets if key != 'workshop']
         search_terms += [str(n), name, *(label for _, label in targets)]
         links = ''.join(f'<li><a href="../../{route}#{escape(key)}">{escape(label)}</a></li>' for key, label in targets)
-        readings.append(f'<article class="reading" id="material-{n}"><h3><a href="../../{route}">{escape(name)}</a></h3><ul>{links}</ul></article>')
+        lab = json.loads((OUT/'daily'/f'day{n:03}.ipynb').read_text())
+        prompts = {c['id']: ''.join(c['source']) for c in lab['cells'] if c['cell_type'] == 'markdown'}
+        if 'clinic-brief' in prompts:
+            exercise = prompts['clinic-brief'].split('\n\n')[3]
+        else:
+            exercise = prompts['solo-part-a'].split('\n\n', 1)[1]
+        inline_task = f'<p><strong>직접 해보기</strong> {escape(exercise)}</p>'
+        readings.append(f'<article class="reading" id="material-{n}"><h3><a href="../../{route}">{escape(name)}</a></h3>{inline_task}<ul>{links}</ul></article>')
         # Show its wider learning context at the normal entry point of every resource.
         crumb = (f'<aside class="unit-crumb" aria-label="관련 단원"><a href="../topics/{slug}/index.html">'
                  f'{escape(title)} · 단원 본문</a><a href="../topics/{slug}/index.html#material-{n}">함께 읽을 자료</a></aside>')
@@ -143,7 +150,7 @@ groups = ''
 for cat in ('학습 단원', '팀 프로젝트와 현장 활동'):
     cards = ''.join(card for category, card in all_cards if category == cat)
     groups += f'<section class="collection"><h2>{cat}</h2><div class="grid">{cards}</div></section>'
-home = ('<nav class="bar" aria-label="교재 탐색"><a href="schedule.html">일차별 수업표</a><a href="daily/index.html">개인 실습 자료</a>'
+home = ('<nav class="bar" aria-label="교재 탐색"><a href="schedule.html">일차별 수업표</a>'
         '<a href="updates/index.html#topic-edition">개정 내역</a></nav><header><div class="wrap"><h1>LLM 개발 실습 교재</h1>'
         '<p>해결하려는 문제로 단원을 고르세요. 예제를 실행하고 입력을 바꿔 본 뒤, 더 연습하고 싶은 개념은 같은 단원의 세부 자료에서 이어 갑니다.</p></div></header>'
         '<main id="main" class="wrap catalog"><label for="topic-search">개념·도구·자료 번호로 찾기</label> '
@@ -156,7 +163,7 @@ updates.write_text(updates.read_text().replace('<main>','<main><section id="topi
     '<p>학생용 첫 화면을 문제별 단원으로 바꾸고 관련 예제와 실습을 연결했습니다. 일차별 수업표는 별도로 열 수 있습니다.</p><ul>'+change_list+'</ul></section>',1))
 
 # Older editions and companion pages use different labels for the same home page.
-for extra in [OUT / name / 'index.html' for name in ('daily', 'execution', 'updates')] + sorted(OUT.glob('codex*/index.html')):
+for extra in [OUT / name / 'index.html' for name in ('execution', 'updates')] + sorted(OUT.glob('codex*/index.html')):
     content, count = re.subn(r'(<a\b[^>]*href="\.\./index\.html"[^>]*>)(?:← )?전체 (?:교재|목차)(</a>)', r'\g<1>교재 홈\2', extra.read_text())
     if not count:
         raise ValueError(f'{extra}: 교재 홈 링크 누락')
@@ -165,5 +172,12 @@ for extra in [OUT / name / 'index.html' for name in ('daily', 'execution', 'upda
 practice_links = ''.join(f'<li><a href="../chapter{day:02}/index.html#applied-clinic">{day}일 · {escape(title)}</a></li>'
                          for day, title in [(75,"복구 검사"),(76,"실패 테스트"),(77,"배포 조건"),(78,"화면 상태"),(79,"API 연동"),(80,"변경 요청 인수 시험")])
 updates.write_text(updates.read_text().replace('<main>', '<main><section id="live-practice"><h2>실제 모델 호출과 확장 실습</h2>'
-    '<p><a href="../chapter62/index.html#workshop">MCP 조회와 실제 모델 연결</a> · <a href="../daily/index.html">개인·팀별 120일 실습</a></p>'
+    '<p><a href="../chapter62/index.html#workshop">MCP 조회와 실제 모델 연결</a> · <a href="../schedule.html">실습이 포함된 일차별 교재</a></p>'
     '<h3>Codex로 이어 만드는 서비스</h3><ul>'+practice_links+'</ul></section>',1))
+
+# Keep bookmarks from the retired exercise index working without a separate reader.
+(OUT/'daily/index.html').write_text(r"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>교재로 이동</title>
+<script>const day = /^#day(\d{1,3})$/.exec(location.hash);const n = day ? Number(day[1]) : 0;
+const anchor = (n >= 43 && n <= 52 || n >= 86 && n <= 116) ? "applied-clinic" : "daily-lab";
+location.replace(n >= 1 && n <= 120 ? "../chapter"+String(n).padStart(2,"0")+"/index.html#"+anchor : "../schedule.html");</script>
+<noscript><meta http-equiv="refresh" content="0;url=../schedule.html"></noscript></head><body><a href="../schedule.html">일차별 교재로 이동</a></body></html>""")
