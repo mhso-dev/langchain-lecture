@@ -74,6 +74,11 @@ def main():
                 errors.append(f"{path.relative_to(ROOT)} -> {link}")
             elif url.fragment and target in pages and unquote(url.fragment) not in pages[target].ids:
                 errors.append(f"{path.relative_to(ROOT)} -> {link} (앵커 누락)")
+    for file in ROOT.rglob("*"):
+        if file.suffix in {".html", ".ipynb", ".py"}:
+            content = file.read_text()
+            if any(name in content for name in ("FakeMessagesListChatModel", "FakeListChatModel")):
+                errors.append(f"{file.relative_to(ROOT)} 수업용 모델 대역이 남았습니다")
     catalog = pages[ROOT / "index.html"]
     units = json.loads((ROOT.parent / "coursebook/units.json").read_text())
     for unit in units:

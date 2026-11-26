@@ -85,13 +85,13 @@ print(result)</code></pre></figure>
 <span class="lesson-anchor" id="direct"></span><div class="lesson-explanation" id="reading-direct"><h3>LangChain 도구가 호출하는 MCP 도구</h3><p>61장의 get_library_hours를 호출하는 쪽은 이제 LangChain 도구 lookup입니다. 두 이름 사이에서 day가 그대로 전달되는지 보세요.</p><div class="worked-case" id="flow-6"><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
 <p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p>
 <article id="flow-6-step-0"><small>STEP 01 · 모델</small><h4>평일 인자의 도구 요청</h4>
-<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>lookup(day="weekday") · id=hours-1</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션의 호출 전달</h4>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>lookup(day="weekday") · id=call_qUxLpAH8lHUWDNL4WinDU43n</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션의 호출 전달</h4>
 <p>lookup은 현재 열린 세션에서 서버 도구를 부릅니다.</p><pre>session.call_tool("get_library_hours", {"day": "weekday"})</pre></article><article id="flow-6-step-2"><small>STEP 03 · 서버</small><h4>서버의 시간표 조회</h4>
 <p>서버가 요청 요일과 시간을 돌려줍니다. 어댑터가 요일을 확인하고 hours를 반환합니다.</p><pre>day = weekday
 hours = 09:00~18:00</pre></article><article id="flow-6-step-3"><small>STEP 04 · 프레임워크</small><h4>입력 요일과 반환값 대조</h4>
-<p>도구가 돌려준 시간이 같은 ID의 도구 메시지 본문에 들어갑니다.</p><pre>ToolMessage · tool_call_id=hours-1
+<p>도구가 돌려준 시간이 같은 ID의 도구 메시지 본문에 들어갑니다.</p><pre>ToolMessage · tool_call_id=call_qUxLpAH8lHUWDNL4WinDU43n
 content = 09:00~18:00</pre></article><article id="flow-6-step-4"><small>STEP 05 · 셀 04</small><h4>ToolMessage로 결과 반환</h4>
-<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>hours-1 09:00~18:00</pre></article></div></div>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>call_qUxLpAH8lHUWDNL4WinDU43n 09:00~18:00</pre></article></div></div>
 <span class="lesson-anchor" id="adapter"></span><div class="lesson-explanation" id="reading-adapter"><h3>응답의 어느 값을 모델에 넘길까?</h3><p>MCP는 day와 hours 등이 담긴 결과를 돌려줍니다. lookup은 reply.isError를 먼저 확인하고 반환된 day가 요청과 일치할 때에만 hours 문자열을 넘깁니다.</p></div>
 <span class="lesson-anchor" id="session"></span><div class="lesson-explanation" id="reading-session"><h3>열린 세션의 수명</h3><p>make_lookup(session)은 도구가 쓸 세션을 기억합니다. 실제 lookup.ainvoke도 async with 블록 안에서 실행해야 합니다. 블록이 끝나면 연결 수명도 끝납니다.</p></div>
 
@@ -159,7 +159,7 @@ for message in state[&quot;messages&quot;]:
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>모델이 MCP 서버의 값을 받는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 m["질문을 받은 실제 모델"] -->|실행 시 생성한 호출 ID| a["lookup 어댑터"] --> c["MCP 세션"] --> s["서버 시간표 도구"]
 s --> v["응답 값 확인"] --> t["ToolMessage"] --> m
-m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_agent에 등록한 lookup이 열린 MCP 세션을 사용합니다. 도구의 반환값은 hours-1에 대응하는 ToolMessage로 모델 대화에 합류합니다.</figcaption></figure>
+m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_agent에 등록한 lookup이 열린 MCP 세션을 사용합니다. 도구의 반환값은 call_qUxLpAH8lHUWDNL4WinDU43n에 대응하는 ToolMessage로 모델 대화에 합류합니다.</figcaption></figure>
 
 <aside id="guided-reading" class="lesson-note"><h3>MCP 결과가 모델의 대화에 들어오는 지점</h3><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter61/index.html">61장 FastMCP 도구 등록과 클라이언트 호출</a></p></aside>
 
