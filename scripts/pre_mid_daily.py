@@ -59,7 +59,7 @@ for day, task in enumerate(TASKS, 1):
         choices.append(link("../pre-mid/python-basics/lesson.ipynb", "A 수업 노트북"))
     if day <= 5:
         choices.append(link("../pre-mid/python-patterns/lesson.ipynb", "B 수업 노트북"))
-    rows.append(f'<li id="day{day:03}"><h2>{day}일 · {escape(title)}</h2><p>{task}</p><p>{" · ".join(choices)}</p></li>')
+    rows.append(f'<li id="day{day:03}"><h2>{escape(title)}</h2><p>{task}</p><p>{" · ".join(choices)}</p></li>')
 
 page = DAILY / "index.html"
 html = page.read_text()
@@ -69,15 +69,18 @@ html = html[:start] + "".join(rows) + html[end:]
 html = html.replace("2일부터 일반 수업 74일", "첫날부터 일반 수업 75일")
 html = html.replace("개인 실습 78개와 자료 전체 받기", "수업 노트북과 실습 자료 전체 받기")
 html = html.replace('<a href="#day002">2일</a>', '<a href="#day001">1일</a> · <a href="#day008">8일</a>')
+# Jump links use the same task title as the destination.
+headings = dict(re.findall(r'<li id="(day\d+)"><h2>([^<]+)</h2>', html))
+html = re.sub(r'<a href="#(day\d+)">\d+일</a>', lambda m: f'<a href="#{m[1]}">{headings[m[1]]}</a>', html)
 page.write_text(html)
 
 # Keep the workbook and its relative Markdown links together when the ZIP is extracted.
 materials = {path.relative_to(OUT).as_posix(): path.read_bytes() for path in sorted(BOOK.rglob("*"))
              if path.is_file() and path.suffix in {".ipynb", ".md", ".pdf", ".csv", ".txt"}}
 materials["1-13일_실습_안내.txt"] = (
-    "1~13일은 pre-mid 폴더에서 선택한 과정의 lesson.ipynb와 practice.md를 함께 여세요.\n"
-    "1~5일은 diagnostic으로 시작해 python-basics 또는 python-patterns 중 하나를 고릅니다.\n"
-    "6~7일은 team-git, 8~10일은 prompt-workshop, 11~13일은 chat-workshop입니다.\n"
+    "pre-mid 폴더에서 선택한 과정의 lesson.ipynb와 practice.md를 함께 여세요.\n"
+    "diagnostic으로 시작해 python-basics 또는 python-patterns 중 하나를 고릅니다.\n"
+    "이후 team-git, prompt-workshop, chat-workshop 순서로 진행합니다.\n"
     "공지와 대여 규정, 녹음기 설명서는 pre-mid/documents에 있습니다.\n"
 ).encode()
 for archive_name, additions in [
