@@ -177,7 +177,7 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
             original["cells"].extend(extras)
             file.write_bytes(encode(original))
         lesson=f'<a href="../chapter{n:02}/index.html#daily-lab">수업 교재</a> · ' if n<=116 else ''
-        links.append(f'<li id="day{n:03}"><h2>{escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
+        links.append(f'<li id="day{n:03}"><h2>{n}장 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
 
     combined=[cell("markdown","setup","## 내 Codex 하네스 만들기\n\n80~85일의 학생 작업을 같은 로컬 Git 저장소에서 이어 간다. WSL과 macOS에서 전체 묶음을 풀고 daily_resources 옆에서 노트북을 연다. 설치한 Codex CLI로 로그인하고 git, Python, mcp 패키지를 준비한다. 각 단계는 노트북을 실행한 다음 로컬 Codex에서 직접 시험해야 끝난다.")]
     for number in range(80,86):
@@ -208,7 +208,7 @@ if pdf_kit.exists():
             put(updated,name,raw)
 docs=' · '.join(f'<a href="{p.relative_to(DAILY).as_posix()}">{p.name}</a>' for p in sorted((DAILY/"daily_resources").rglob("*")) if p.suffix in (".txt",".pdf"))
 header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
-page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
+page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>80~85장 Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
 (DAILY/"index.html").write_text(page)
 for index in [OUT/"index.html", OUT/"updates/index.html"]:
     s=index.read_text()

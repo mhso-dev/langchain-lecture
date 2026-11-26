@@ -59,7 +59,7 @@ for day, task in enumerate(TASKS, 1):
         choices.append(link("../pre-mid/python-basics/lesson.ipynb", "A 수업 노트북"))
     if day <= 5:
         choices.append(link("../pre-mid/python-patterns/lesson.ipynb", "B 수업 노트북"))
-    rows.append(f'<li id="day{day:03}"><h2>{escape(title)}</h2><p>{task}</p><p>{" · ".join(choices)}</p></li>')
+    rows.append(f'<li id="day{day:03}"><h2>{day}장 · {escape(title)}</h2><p>{task}</p><p>{" · ".join(choices)}</p></li>')
 
 page = DAILY / "index.html"
 html = page.read_text()
@@ -78,9 +78,9 @@ page.write_text(html)
 materials = {path.relative_to(OUT).as_posix(): path.read_bytes() for path in sorted(BOOK.rglob("*"))
              if path.is_file() and path.suffix in {".ipynb", ".md", ".pdf", ".csv", ".txt"}}
 materials["1-13일_실습_안내.txt"] = (
-    "pre-mid 폴더에서 선택한 과정의 lesson.ipynb와 practice.md를 함께 여세요.\n"
-    "diagnostic으로 시작해 python-basics 또는 python-patterns 중 하나를 고릅니다.\n"
-    "이후 team-git, prompt-workshop, chat-workshop 순서로 진행합니다.\n"
+    "1~13장은 pre-mid 폴더에서 선택한 과정의 lesson.ipynb와 practice.md를 함께 여세요.\n"
+    "1~5장은 diagnostic으로 시작해 python-basics 또는 python-patterns 중 하나를 고릅니다.\n"
+    "6~7장은 team-git, 8~10장은 prompt-workshop, 11~13장은 chat-workshop에서 진행합니다.\n"
     "공지와 대여 규정, 녹음기 설명서는 pre-mid/documents에 있습니다.\n"
 ).encode()
 for archive_name, additions in [
