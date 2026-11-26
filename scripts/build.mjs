@@ -37,8 +37,8 @@ for (const [index, chapter] of chapters.entries()) {
     const template = readFileSync(join(folder, file), 'utf8');
     if (!template.includes('<!-- COURSE_NAV -->')) throw new Error(chapter + ' 탐색 메뉴 위치 누락');
     const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1))
-      .replace(/<(p|span)(?: class="chapter-tag")?>DAY(?:\s*\/)?\s*\d+(?: \/ (?:\d+|FINAL PROJECT|ROUTING))?<\/\1>/g, '')
-      .replace(/<span>교육일 \d+ · (8H|8시간)<\/span>/g, '<span>$1</span>');
+      .replace(/(>(?:\s*))DAY(?:\s*\/)?\s*(\d+)(?: \/ \d+)?(?=\s*(?:\/|<))/g, (_, prefix, n) => prefix + Number(n) + '장')
+      .replace(/<span>교육일 (\d+) · (8H|8시간)<\/span>/g, (_, n, hours) => '<span>' + Number(n) + '장 · ' + hours + '</span>');
     writeFileSync(join(output, chapter, file), page);
   }
 }

@@ -79,7 +79,7 @@ function renderLesson(slug, label) {
   const following = {
     'team-git': ['../prompt-workshop/index.html', '다음 · 첫 모델 호출'],
     'prompt-workshop': ['../chat-workshop/index.html', '다음 · 대화 이어 가기'],
-    'chat-workshop': ['../../chapter14/index.html', '다음 · 분류 함수와 조건부 라우팅'],
+    'chat-workshop': ['../../chapter14/index.html', '다음 · 14장 분류 함수와 조건부 라우팅'],
     'python-basics': ['../team-git/index.html', '다음 · 팀 Git과 GitHub'],
     'python-patterns': ['../team-git/index.html', '다음 · 팀 Git과 GitHub'],
   };
@@ -164,7 +164,7 @@ for (const [offset, [slug, anchor, title, patternAnchor]] of days.entries()) {
   const match = new RegExp('<article class="card"[^>]*><a href="' + chapter + '/index\\.html">[\\s\\S]*?</article>');
   if (!match.test(catalog)) throw new Error(chapter + ' 기존 목차를 찾을 수 없습니다.');
   const extra = patternAnchor ? `<a href="pre-mid/python-patterns/index.html#${patternAnchor}">B · 디자인 패턴 실습</a>` : '';
-  catalog = catalog.replace(match, `<article class="card" data-search="${day}일차 ${title} ${day <= 7 ? "Python Git" : "OpenAI SDK 프롬프트 챗봇"}" data-available="true"><a href="${chapter}/index.html"><h3>${title}</h3><span class="open">${patternAnchor ? 'A · 문법 실습' : '교재 읽기'} →</span></a>${extra}</article>`);
+  catalog = catalog.replace(match, `<article class="card" data-search="${day}일차 ${title} ${day <= 7 ? "Python Git" : "OpenAI SDK 프롬프트 챗봇"}" data-available="true"><a href="${chapter}/index.html"><span class="day">${day}장 · 8H</span><h3>${title}</h3><span class="open">${patternAnchor ? 'A · 문법 실습' : '교재 읽기'} →</span></a>${extra}</article>`);
 }
 catalog = catalog.replace('<h2>Python·개발 환경</h2>', '<h2>Python과 팀 Git</h2>')
   .replace('<h2>서비스·SDK·도구 루프</h2>', '<h2>OpenAI SDK와 프롬프트·챗봇</h2>')
