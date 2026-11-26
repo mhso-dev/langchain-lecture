@@ -1,4 +1,4 @@
-"""Replay the first unit's examples and its folded answers in separate processes."""
+"""Check published notebook parity, replay offline exercises and compile live workshops."""
 import argparse
 from contextlib import redirect_stdout
 from html import unescape
@@ -56,8 +56,33 @@ def check_html(path):
             assert block.strip() in page.blocks, (path, cell["id"], "HTML 코드 또는 출력 불일치")
 
 
+def live_workshop(path, book):
+    marked_live = book.get("metadata", {}).get("execution") == "live-workshop"
+    if path.parent.name in {"prompt-workshop", "chat-workshop"}:
+        assert marked_live, f"{path} must declare live-workshop before CI can check it"
+    return marked_live
+
+
+def compile_workshop(path, book):
+    """Validate syntax without running paid requests, package installation or a web server."""
+    for cell in book["cells"]:
+        if cell["cell_type"] != "code":
+            continue
+        source = "".join(cell["source"])
+        lines = source.splitlines(keepends=True)
+        if lines and lines[0].startswith("%%writefile "):
+            lines = lines[1:]
+        source = "".join("\n" if line.startswith("%pip ") else line for line in lines)
+        compile(source, f"{path.name}:{cell['id']}", "exec")
+    print(f"{path.relative_to(ROOT)} · 코드 문법 및 배포 일치 확인 (라이브 실행 제외)")
+
+
 def replay(path, mode):
-    cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+    book = json.loads(path.read_text(encoding="utf-8"))
+    if live_workshop(path, book):
+        compile_workshop(path, book)
+        return
+    cells = book["cells"]
     namespace = {"__name__": "__main__"}
     count = 0
     for index, cell in enumerate(cells):
@@ -90,5 +115,9 @@ if __name__ == "__main__":
     else:
         for path in sorted(ROOT.rglob("*.ipynb")):
             check_html(path)
+            book = json.loads(path.read_text(encoding="utf-8"))
+            if live_workshop(path, book):
+                compile_workshop(path, book)
+                continue
             for mode in ("starter", "solution"):
                 subprocess.run([sys.executable, __file__, "--path", str(path), "--mode", mode], check=True)
