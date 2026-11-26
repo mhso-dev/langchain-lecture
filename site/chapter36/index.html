@@ -21,6 +21,7 @@
 <p class="hero-description">고정된 후보 순위로 Recall@k와 첫 적중 순위의 역수를 계산합니다. 검색 적중 여부와 생성 답변의 사실·인용 정확성은 따로 평가합니다.</p>
 <div class="hero-meta"><span>입문 이후</span><span>교육일 036 · 8H</span><span>35장 질문 JSONL·판정표·manifest</span></div>
 </header>
+<section class="lesson-section" id="curriculum-practice"><h2>검색 실패와 인용 오류를 따로 기록하기</h2><p>검색기가 정답 조항을 찾았어도 답변이 다른 기간을 말할 수 있습니다.</p><ol><li>질문별 Recall@K와 첫 적중 역순위를 기록하고 질문별 역순위의 평균으로 MRR@K를 구하세요.</li><li>기대한 조항이 없으면 검색 실패, 조항을 찾았지만 답의 값이 다르면 답변 오류로 표시하세요. 정답과 같은 값을 말해도 인용 문장에 그 내용이 있는지 다시 확인하세요.</li></ol></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>

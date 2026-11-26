@@ -12,3 +12,9 @@ jobs:
           node-version: 22
       - run: node scripts/build.mjs
       - run: python3 scripts/check.py
+      - run: python3 scripts/check_day_links.py
+      - name: 모바일·데스크톱에서 일차 이동
+        run: |
+          python3 -m venv /tmp/course-browser
+          /tmp/course-browser/bin/pip install --quiet playwright
+          /tmp/course-browser/bin/python scripts/check_day_browser.py

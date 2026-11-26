@@ -16,7 +16,7 @@ def publish_results(out):
         notebook=out/stem/(stem+".ipynb")
         if sha256(notebook.read_bytes()).hexdigest()!=record["sha256"]:
             continue
-        entry_pattern=rf'(<a href="{stem}/index.html">.*?<h3>([^<]+)</h3>\s*)<span class="state hold">실행 검증 대기</span>'
+        entry_pattern=rf'(<a href="{stem}/index.html">(?:(?!</a>).)*?<h3>([^<]+)</h3>\s*)<span class="state hold">실행 검증 대기</span>'
         match=re.search(entry_pattern,source,re.S)
         if not match:
             raise ValueError(f"{day}장 실행 표기를 찾을 수 없습니다.")

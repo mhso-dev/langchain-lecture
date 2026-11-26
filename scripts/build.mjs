@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,25 +20,10 @@ function publishable(path) {
 }
 cpSync(source, output, { recursive: true, filter: publishable });
 
-function courseNav(day) {
-  const link = (n, text) => '<a href="../' + chapterName(n) + '/index.html">' + text + '</a>';
-  const links = ['<a href="../index.html">전체 목차</a>', '<span>' + day + '장</span>'];
-  const previous = day === 53 ? 42 : day - 1;
-  const next = day === 42 ? 53 : day + 1;
-  if (day > 1) links.push(link(previous, '이전 장'));
-  if (day !== 85 && day < chapters.length) links.push(link(next, '다음 장'));
-  return '<nav class="course-nav" aria-label="교재 탐색">' + links.join(' ') + '</nav>';
-}
-for (const [index, chapter] of chapters.entries()) {
-  const folder = join(source, chapter);
-  const notebook = JSON.parse(readFileSync(join(folder, chapter + '.ipynb'), 'utf8'));
+for (const chapter of chapters) {
+  const notebook = JSON.parse(readFileSync(join(source, chapter, chapter + '.ipynb'), 'utf8'));
   if (notebook.nbformat !== 4 || !notebook.cells.length) throw new Error(chapter + ' 노트북 오류');
-  for (const file of readdirSync(folder).filter(name => name === 'index.html')) {
-    const template = readFileSync(join(folder, file), 'utf8');
-    if (!template.includes('<!-- COURSE_NAV -->')) throw new Error(chapter + ' 탐색 메뉴 위치 누락');
-    const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1));
-    writeFileSync(join(output, chapter, file), page);
-  }
 }
 execFileSync('python3', [fileURLToPath(new URL('../daily-labs/generate.py', import.meta.url)), output], { stdio: 'inherit' });
+execFileSync('python3', [fileURLToPath(new URL('./course_navigation.py', import.meta.url)), output], { stdio: 'inherit' });
 console.log(chapters.length + '개 장과 학생 노트북을 dist에 생성했습니다.');

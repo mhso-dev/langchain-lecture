@@ -10,3 +10,10 @@
   .course-nav~.sidebar{top:calc(var(--chapter-navigation-height) + var(--top))}
   .course-nav~main :where([id]){scroll-margin-top:calc(var(--chapter-navigation-height) + var(--top) + 1rem)}
 }
+.course-nav{position:sticky;z-index:30;top:0;display:flex;align-items:center;gap:clamp(.35rem,2vw,1.2rem);width:100%;margin:0;font-size:clamp(.8rem,2.7vw,.95rem)}
+.course-nav .day-picker{position:static;margin:0;padding:0;border:0;color:inherit;background:none}
+.course-nav summary{display:list-item;padding:.25em .65em;border:1px solid #9bbab0;border-radius:.35em;cursor:pointer;font:inherit;color:inherit;background:none;list-style:revert}
+.course-nav .day-list{position:absolute;top:100%;right:.5rem;left:auto;width:min(30rem,calc(100vw - 1rem));max-height:65vh;overflow:auto;overscroll-behavior:contain;padding:.5rem 1rem 1rem;background:white;border:1px solid #aec6bb;border-radius:0 0 .5rem .5rem;color:#193d31;box-shadow:0 .6rem 1.5rem #18392c30;white-space:normal}
+.day-list section{margin:.5rem 0 1rem}.day-list h3{margin:.5rem 0;font:700 1rem/1.5 system-ui}.course-nav .day-list a{display:block;padding:.4rem .5rem;border-radius:.25rem;text-decoration:none}.day-list a:hover,.day-list a:focus-visible,.day-list a[aria-current]{background:#e2f1ea}.day-list b{margin-right:.4rem}
+.day-footer{display:flex;justify-content:center;flex-wrap:wrap;gap:1.3rem;padding:1.25rem 0}.day-footer a{text-decoration:underline}
+@media print{.course-nav,.day-footer{display:none}}

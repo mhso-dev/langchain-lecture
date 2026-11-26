@@ -25,7 +25,7 @@ class Page(HTMLParser):
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
-        if tag == "details" and not {"notebook-answer", "checkpoint"}.intersection(attrs.get("class", "").split()):
+        if tag == "details" and "day-picker" not in attrs.get("class","").split() and not {"notebook-answer", "checkpoint"}.intersection(attrs.get("class", "").split()):
             self.closed_lesson_blocks.append(attrs.get("id", attrs.get("class", "details")))
         if "id" in attrs:
             if attrs["id"] in self.ids:

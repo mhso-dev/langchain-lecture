@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>SQLite 스키마 변경과 부분 업데이트 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
+<script defer src="../assets/deep-link.js"></script>
+
+
+<link rel="stylesheet" href="../assets/practice-space.css"><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<nav class="course-nav"><a href="../chapter80/index.html">80일차 수업</a><a href="../index.html">전체 목차</a><span>선택 자료 · 이전 판</span></nav>
+<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
+</header>
+<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY / 084</p>
+<span class="sidebar-title">SQLite 스키마 변경과 부분 업데이트</span></div>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-migration"><span>02</span>ALTER TABLE과 기존 행의 기본값</a><a href="#nb-patch"><span>03</span>값 바인딩과 수정 필드 검증</a><a href="#workshop"><span>04</span>PATCH에서 생략한 날짜와 지운 날짜 구분하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
+<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
+<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
+</aside>
+<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 084</span><span class="template-badge">학생용 교재</span></div>
+<h1>SQLite 스키마 변경과 부분 업데이트</h1>
+<p class="hero-description">기존 투두 데이터에 마감일과 우선순위를 추가합니다. SQL 이관 직후의 옛 행과 각 필드를 수정한 뒤의 값을 비교해 누락·초기화 오류를 확인합니다.</p>
+<div class="hero-meta"><span>교육일 84 · 8시간</span><span>선수 수업 · 83장 완료 상태 갱신과 회귀 검사</span></div>
+</header>
+<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
+<h2>실습 노트북과 실행 환경</h2>
+</div>
+</header>
+<a class="download" href="chapter84.ipynb" download="chapter84.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>84장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">PATCH에서 생략한 날짜와 지운 날짜 구분하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
+</div>
+
+<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="section-01"></span><span class="lesson-anchor" id="reading-section-01"></span>
+<span class="lesson-anchor" id="section-02"></span><span class="lesson-anchor" id="reading-section-02"></span>
+</section>
+<section id="nb-migration" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
+<h2>ALTER TABLE과 기존 행의 기본값</h2>
+</div>
+</header>
+<p class="concept-intro">우선순위를 추가하기 전에 만든 행을 새 화면에서 열면 마감일과 우선순위에 무엇이 보일까요?</p><p>새로 만들 때와 예전 행을 읽을 때 모두 due_date는 비어 있을 수 있고 priority의 기본값은 normal입니다. PostgreSQL에서는 날짜 타입을 사용합니다. 여기서는 SQLite의 ISO 날짜 문자열과 CHECK 조건으로 같은 동작을 좁혀 봅니다.</p>
+<!-- MOTION schema-extension -->
+
+<!-- END MOTION -->
+
+
+<span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>기존 세 열에 추가하는 두 필드</h3><p>due_date는 날짜가 정해지지 않았으면 NULL로 둘 수 있습니다. priority에는 low, normal, high만 들어갈 수 있으며 기본값은 normal입니다. 추가 직후 1번 행의 제목과 완료는 그대로 남습니다.</p></div>
+<span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · ALTER TABLE로 열 추가</h3>
+<div class="cell-before"><p>변경 전의 복습 한 건을 넣고 ADD COLUMN을 적용합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">import</span> sqlite3
+db = sqlite3.connect(<span class="tok-string">":memory:"</span>)
+db.execute(<span class="tok-string">"CREATE TABLE todos(id INTEGER PRIMARY KEY, title TEXT NOT NULL, completed INTEGER NOT NULL)"</span>)
+db.execute(<span class="tok-string">"INSERT INTO todos VALUES(1, '복습', 0)"</span>)
+db.execute(<span class="tok-string">"ALTER TABLE todos ADD COLUMN due_date TEXT"</span>)
+db.execute(<span class="tok-string">"ALTER TABLE todos ADD COLUMN priority TEXT NOT NULL DEFAULT 'normal' CHECK(priority IN ('low','normal','high'))"</span>)
+print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM todos WHERE id=1"</span>).fetchone())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습', None, 'normal')</pre></div>
+<div class="cell-after"><p id="example-analysis">변경 전부터 있던 1번 행에서 새 날짜는 None, 우선순위는 normal로 읽힙니다. 기존 행을 화면에 표시할 때에는 마감일을 비워 둔 상태도 처리해야 합니다.</p></div>
+</article>
+<span class="lesson-anchor" id="section-05"></span><div class="lesson-explanation" id="reading-section-05"><h3>ALTER TABLE 이후 기존 행 읽기</h3><p>먼저 기존 형식으로 복습 한 행을 넣은 다음 열을 추가합니다. 기존 행을 다시 조회하면 새 due_date는 None, 기본값이 있는 priority는 normal입니다.</p></div>
+
+</section>
+<section id="nb-patch" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
+<h2>값 바인딩과 수정 필드 검증</h2>
+</div>
+</header>
+<p>마감일과 우선순위가 함께 온 경우에는 두 열만 고치는 고정 SQL을 선택할 수 있습니다. 입력에서 직접 열 이름을 만들어 붙이지 않습니다. 한 필드가 누락된 요청과 일부러 null을 보내 날짜를 지우는 요청도 구분합니다.</p>
+<!-- lesson-visual visual-patch -->
+<span class="lesson-anchor" id="visual-patch"></span>
+<!-- /lesson-visual visual-patch -->
+
+<span class="lesson-anchor" id="section-06"></span><div class="lesson-explanation" id="reading-section-06"><h3>날짜 문자열을 바인딩하기 전에 확인하기</h3><p>date.fromisoformat으로 실제 달력 날짜인지 검사한 뒤 isoformat 결과를 TEXT 열에 저장합니다. 이 셀에서 날짜를 검사하는 곳은 Python입니다.</p></div>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · UPDATE의 값 바인딩</h3>
+<div class="cell-before"><p>날짜 문자열은 실제 달력 날짜인지 확인한 뒤 SQL 자리표시자에 넣습니다.</p>
+<p>날짜와 우선순위를 저장한 다음, 같은 행의 제목만 바꿔 보세요. 제목 변경 뒤에도 날짜는 2027-04-02, 우선순위는 high여야 합니다. 다음 과제에서 날짜를 직접 비울 때와 비교합니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">from</span> datetime <span class="tok-keyword">import</span> date
+due = date.fromisoformat(<span class="tok-string">"2027-04-02"</span>).isoformat()
+<span class="tok-keyword">with</span> db:
+    db.execute(<span class="tok-string">"UPDATE todos SET due_date=?, priority=? WHERE id=?"</span>, (due, <span class="tok-string">"high"</span>, <span class="tok-number">1</span>))
+print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM todos WHERE id=1"</span>).fetchone())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습', '2027-04-02', 'high')</pre></div>
+<div class="cell-after"><p>복습·2027-04-02·high가 나옵니다. 바인딩 값은 SQL에 적힌 열 순서와 같습니다. 이 SQL은 마감일과 우선순위 두 열을 명시합니다. 다음 셀에서는 제목만 지정해 나머지 값이 보존되는지 확인합니다.</p>
+</div>
+</article>
+<aside id="guided-reading" class="lesson-note"><h3>일부 필드만 수정하는 요청</h3><p><mark>보내지 않은 필드와 명시적으로 비울 필드를 구별해야 합니다.</mark> 기한만 수정했을 때 기존 우선순위가 사라지는지 확인하세요. 열을 추가하기 전에 만들어 둔 행에서도 같은 요청을 실행하면 이전 데이터의 기본값까지 점검할 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../codex82/index.html">82장 SQLite 영속성과 instr() 부분 문자열 검색</a></p></aside>
+
+<span class="lesson-anchor" id="section-07"></span><span class="lesson-anchor" id="reading-section-07"></span>
+
+<article class="notebook-cell" data-cell="3" data-task="0"><h3>부분 수정 시 기존 값 보존</h3>
+<div class="cell-before"><p>아래 셀을 실행한 뒤 바로 앞의 결과와 비교하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">with</span> db:
+    db.execute(<span class="tok-string">"UPDATE todos SET title=? WHERE id=?"</span>, (<span class="tok-string">"복습 완료 예정"</span>, <span class="tok-number">1</span>))
+print(db.execute(<span class="tok-string">"SELECT title, due_date, priority FROM todos WHERE id=1"</span>).fetchone())</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('복습 완료 예정', '2027-04-02', 'high')</pre></div>
+<div class="cell-after"><p>UPDATE에 title만 적었습니다. 날짜와 우선순위를 다시 읽어 두 값이 유지되는지 대조하세요.</p>
+</div>
+</article>
+<span class="lesson-anchor" id="section-08"></span><div class="lesson-explanation" id="reading-section-08"><h3>UPDATE에서 생략한 열과 NULL을 넣은 열</h3><p>제목만 SET 하면 기존 기한과 우선순위가 유지됩니다. 기한을 지우려면 due_date를 SET 대상에 포함하고 None을 전달합니다. 필드를 건너뛴 동작과 값을 지운 동작을 출력에서 구별하세요.</p></div>
+
+<article class="notebook-cell" data-cell="4" data-task="1"><h3>과제 03 · NULL과 필드 생략 구분</h3>
+<div class="cell-before"><p>1번 할 일의 마감일만 지우세요. 변경하기 직전의 날짜와 변경 뒤의 날짜·우선순위를 조회해, 열을 생략한 이전 UPDATE와 비교하세요.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"># 날짜를 먼저 조회하고, due_date만 NULL로 갱신한 뒤 같은 행을 다시 읽으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">query = "SELECT due_date, priority FROM todos WHERE id=?"
+before = db.execute(query, (1,)).fetchone()
+with db:
+    db.execute("UPDATE todos SET due_date=? WHERE id=?", (None, 1))
+after = db.execute(query, (1,)).fetchone()
+print(before)
+print(after)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">('2027-04-02', 'high')
+(None, 'high')</pre></div>
+<div class="cell-after"><p>앞 셀의 제목 변경에서는 SET에 due_date가 없어 날짜가 남았습니다. 여기서는 None을 명시해 그 값만 NULL로 바꿨습니다. 다시 비교할 때는 날짜를 입력한 셀부터 실행하세요.</p>
+</div>
+</details>
+</article>
+<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>허용하지 않는 우선순위가 저장되지 않는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+nbefore["기존 행"]
+  nwrite["UPDATE"]
+  ncheck["CHECK"]
+  nerror["예외 처리"]
+  nread["SELECT"]
+  nbefore --> nwrite
+  nwrite --> ncheck
+  ncheck --> nerror
+  nerror --> nread</script><figcaption>앞에서 high로 정한 1번 행을 urgent로 바꾸려고 시도합니다. UPDATE의 입력값과 실패 후 SELECT의 값을 비교하세요.</figcaption></figure>
+
+
+<span class="lesson-anchor" id="workflow-check-rollback"></span><span class="lesson-anchor" id="workflow-check-rollback-caption"></span>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="example-cell-5">셀 04 · 허용 우선순위 검증</h3>
+<div class="cell-before"><p>셀 04는 priority에 urgent를 쓰고 같은 행을 다시 읽습니다. 예외 메시지와 조회한 값을 함께 보면 실패한 변경이 저장됐는지 판별할 수 있습니다.</p>
+</div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-6"><span class="tok-keyword">try</span>:
+    <span class="tok-keyword">with</span> db:
+        db.execute(<span class="tok-string">"UPDATE todos SET priority=? WHERE id=?"</span>, (<span class="tok-string">"urgent"</span>, <span class="tok-number">1</span>))
+<span class="tok-keyword">except</span> sqlite3.IntegrityError:
+    print(<span class="tok-string">"허용하지 않는 우선순위"</span>)
+print(db.execute(<span class="tok-string">"SELECT priority FROM todos WHERE id=1"</span>).fetchone()[<span class="tok-number">0</span>])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">허용하지 않는 우선순위
+high</pre></div>
+<div class="cell-after"><p>오류 뒤에도 high가 남습니다. 코드 검토에서는 기본값뿐 아니라 잘못된 입력을 모두 검사한 뒤 한 번에 반영하는지 살펴보세요.</p>
+</div>
+</article>
+<span class="lesson-anchor" id="section-09"></span><div class="lesson-explanation" id="reading-section-09"><h3>CHECK 실패 후 저장값 확인하기</h3><p>urgent는 허용 목록에 없어 IntegrityError가 발생합니다. except 뒤에서 같은 행의 priority를 다시 읽으면 실패한 문자열 대신 직전의 high가 남습니다.</p></div>
+<span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
+
+</section>
+<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>PATCH에서 생략한 날짜와 지운 날짜 구분하기</h2></div></header>
+<p>기존 수업에서는 SQL로 마감일을 설정하고 다른 열을 갱신했습니다. 이번에는 화면이 보낸 JSON에서 날짜 필드가 빠진 경우와 명시적으로 null이 들어온 경우를 구분해 저장합니다.</p>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-1">셀 07 · 두 요청에서 실제로 보낸 필드 읽기</h3><div class="cell-before"><p>두 JSON 모두 우선순위는 high입니다. 하나에는 날짜가 없고 다른 하나에는 null이 있습니다. Pydantic의 exclude_unset으로 어떤 필드를 보냈는지 비교하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from datetime import date
+from typing import Literal
+from pydantic import BaseModel, ConfigDict
+
+class TodoPatch(BaseModel):
+    model_config = ConfigDict(extra=&quot;forbid&quot;)
+    due_date: date | None = None
+    priority: Literal[&quot;low&quot;, &quot;normal&quot;, &quot;high&quot;] = &quot;normal&quot;
+
+kept = TodoPatch(priority=&quot;high&quot;)
+cleared = TodoPatch(priority=&quot;high&quot;, due_date=None)
+print(kept.model_dump(mode=&quot;json&quot;, exclude_unset=True))
+print(cleared.model_dump(mode=&quot;json&quot;, exclude_unset=True))</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;priority&#x27;: &#x27;high&#x27;}
+{&#x27;due_date&#x27;: None, &#x27;priority&#x27;: &#x27;high&#x27;}</pre></div><div class="cell-after"><p>첫 줄에는 priority만, 둘째 줄에는 due_date와 값 None도 들어 있습니다. 모델 속성만 읽으면 두 요청 모두 날짜가 None으로 보이므로, 어느 요청이 지우기를 선택했는지 놓칠 수 있습니다.</p></div>
+</article>
+<article class="notebook-cell" data-cell="8" data-task="1"><h3 id="workshop-step-2">과제 08 · 보낸 열만 갱신해 두 요청을 같은 행에서 비교하기</h3><div class="cell-before"><p>이 장 셀 01에서 만든 db에 두 열이 추가된 상태로 시작합니다. 실습용 DB 복사본에 기준 날짜 2027-04-02를 설정합니다. 모델이 받은 필드만 UPDATE하도록 함수를 작성해 kept, cleared 순서로 적용하고 매번 저장된 날짜·우선순위를 읽으세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">import sqlite3
+patch_db = sqlite3.connect(&quot;:memory:&quot;)
+db.backup(patch_db)
+with patch_db:
+    patch_db.execute(&quot;UPDATE todos SET due_date=?, priority=? WHERE id=1&quot;, (&quot;2027-04-02&quot;, &quot;normal&quot;))
+# 고정한 두 UPDATE와 모델이 받은 필드 목록을 사용해 갱신 함수를 작성하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">import sqlite3
+patch_db = sqlite3.connect(&quot;:memory:&quot;)
+db.backup(patch_db)
+with patch_db:
+    patch_db.execute(&quot;UPDATE todos SET due_date=?, priority=? WHERE id=1&quot;, (&quot;2027-04-02&quot;, &quot;normal&quot;))
+
+def apply_patch_values(connection, todo_id, patch):
+    fields = patch.model_dump(mode=&quot;json&quot;, exclude_unset=True)
+    with connection:
+        if &quot;due_date&quot; in fields:
+            connection.execute(&quot;UPDATE todos SET due_date=? WHERE id=?&quot;, (fields[&quot;due_date&quot;], todo_id))
+        if &quot;priority&quot; in fields:
+            connection.execute(&quot;UPDATE todos SET priority=? WHERE id=?&quot;, (fields[&quot;priority&quot;], todo_id))
+    return connection.execute(&quot;SELECT due_date, priority FROM todos WHERE id=?&quot;, (todo_id,)).fetchone()
+
+print(apply_patch_values(patch_db, 1, kept))
+print(apply_patch_values(patch_db, 1, cleared))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;2027-04-02&#x27;, &#x27;high&#x27;)
+(None, &#x27;high&#x27;)</pre></div><p>첫 요청 뒤에는 날짜가 유지되고 high로 바뀝니다. 두 번째에는 날짜가 None이 됩니다. 두 열은 한 트랜잭션 안에서 바뀌며 사용자 입력으로 SQL 열 이름을 조립하지 않습니다.</p></details>
+</article>
+<aside class="lesson-note"><p><mark>날짜 키가 빠진 요청은 유지, 날짜 키의 값이 null인 요청은 삭제입니다.</mark> 두 요청을 똑같이 보내도록 화면 코드를 짜면 사용자가 우선순위만 바꿔도 마감일이 사라질 수 있습니다. 저장 함수에 도달하기 전 브라우저의 요청 본문부터 확인하세요.</p></aside><p>85장의 배포 확인에는 변경 전 항목 하나를 남겨 두고, 새 앱이 우선순위를 수정한 뒤에도 해당 항목의 날짜를 읽는지 포함하세요.</p>
+</section>
+<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
+<h2>복습과 실습 점검</h2>
+</div>
+</header>
+<div class="prose"><p>마감일을 지우고도 high가 남는 것과 urgent를 거절한 뒤 high가 남는 것은 이유가 다릅니다. 첫 UPDATE에서는 priority 열을 생략했고, 두 번째 UPDATE는 CHECK에서 실패했습니다.</p>
+</div>
+
+<span class="lesson-anchor" id="section-11"></span><span class="lesson-anchor" id="reading-section-11"></span>
+<span class="lesson-anchor" id="section-12"></span><span class="lesson-anchor" id="reading-section-12"></span>
+</section>
+
+<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+</article>
+</main>
+<div class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
+</noscript>
+<script src="../assets/reader.js"></script>
+<script src="../assets/menu-focus.js"></script></body></html>

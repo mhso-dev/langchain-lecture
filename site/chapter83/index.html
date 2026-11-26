@@ -1,182 +1,44 @@
-<!doctype html>
-<html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>멱등적인 완료 상태 갱신 · LLM Learning Studio</title><link rel="stylesheet" href="../assets/reader-2.css"><link rel="stylesheet" href="../assets/reading-details.css"><link rel="stylesheet" href="../assets/course-nav.css">
-<script defer src="../assets/deep-link.js"></script>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>도구 호출 경로(Trajectory) 평가 · 83일차</title><link rel="stylesheet" href="../assets/catalog.css"><link rel="stylesheet" href="../assets/course-nav.css"></head><body><!-- COURSE_NAV -->
+<header><p>LangSmith 기반 LLMOps · 83일차 · 8시간</p><h1>도구 호출 경로(Trajectory) 평가</h1><p>승인을 받기 전에 확정 도구를 불러도 마지막 답변은 “처리했습니다”일 수 있습니다. 답변 문구와 별도로 요청 ID, 승인 시점, 실제 저장 건수를 확인합니다.</p></header><main id="main"><p><a class="download" href="chapter83.ipynb" download>수업 노트북 (.ipynb)</a></p><section class="lesson-section" id="guided-reading"><h2>도구 인자가 같은 요청을 가리키나요?</h2><pre style="white-space:pre-wrap;overflow:auto"><code>expected_id = &quot;T07&quot;
+events = [(&quot;lookup_user&quot;, &quot;T07&quot;), (&quot;lookup_policy&quot;, &quot;T07&quot;), (&quot;approve&quot;, &quot;T07&quot;), (&quot;commit&quot;, &quot;T08&quot;)]
+def valid_path(events, request_id, writes):
+    approved = False
+    commits = 0
+    lookups = set()
+    for name, target in events:
+        if target != request_id:
+            return False
+        if name not in {&quot;lookup_user&quot;, &quot;lookup_policy&quot;, &quot;approve&quot;, &quot;commit&quot;}:
+            return False
+        if name.startswith(&quot;lookup_&quot;):
+            lookups.add(name)
+        if name == &quot;approve&quot;:
+            if lookups != {&quot;lookup_user&quot;, &quot;lookup_policy&quot;}:
+                return False
+            approved = True
+        if name == &quot;commit&quot;:
+            if not approved:
+                return False
+            commits += 1
+    return commits == 1 and writes == [request_id]
 
-
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
-<body>
-<a class="skip-link" href="#main">본문으로 건너뛰기</a>
-<!-- COURSE_NAV -->
-<header class="topbar"><a class="brand" href="#main"><span class="brand-icon" aria-hidden="true">L<span>↗</span></span><span>LLM <strong>Learning Studio</strong></span></a><div class="top-actions"><span class="edition">AI ENGINEERING · 2027</span><button class="print-button js-only" type="button" data-print>인쇄 / PDF</button><button class="menu-button js-only" type="button" aria-expanded="false" aria-controls="sidebar">목차</button></div>
-</header>
-<aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY / 083</p>
-<span class="sidebar-title">멱등적인 완료 상태 갱신</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-reproduce"><span>02</span>토글 방식과 중복 요청 재현</a><a href="#nb-fix"><span>03</span>목표 상태 대입과 회귀 검사</a><a href="#workshop"><span>04</span>삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</a><a href="#recap"><span>05</span>복습과 실습 점검</a></nav>
-<div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
-<span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
-</aside>
-<main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">DAY / 083</span><span class="template-badge">학생용 교재</span></div>
-<h1>멱등적인 완료 상태 갱신</h1>
-<p class="hero-description">완료 요청을 두 번 보냈을 때 체크 표시가 풀리는 오류를 재현합니다. 현재 상태를 뒤집는 구현과 요청의 completed 값을 대입하는 구현을 같은 입력으로 비교합니다.</p>
-<div class="hero-meta"><span>교육일 83 · 8시간</span><span>선수 수업 · 7장 테스트 · 82장 완료 상태 저장</span></div>
-</header>
-<section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
-<h2>실습 노트북과 실행 환경</h2>
-</div>
-</header>
-<a class="download" href="chapter83.ipynb" download="chapter83.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>83장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
-</div>
-</section>
-<section id="nb-reproduce" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
-<h2>토글 방식과 중복 요청 재현</h2>
-</div>
-</header>
-<p class="concept-intro">같은 완료 요청을 다시 보냈더니 체크가 풀렸습니다. 재전송 뒤에도 결과가 같아야 하는 조건을 멱등성이라고 합니다.</p><section class="practice-space" id="practice-space" data-text-results data-practice="switches"><h3>같은 완료 요청의 반복과 멱등성</h3><p>같은 목표 상태를 반복 전송했을 때 두 구현의 최종 completed 값을 비교합니다.</p><label>요청 횟수 <input type="range" min="0" max="4" step="1" value="2"><span class="practice-value">2</span></label><output aria-live="polite">완료 요청을 두 번 보냈을 때 토글 구현의 최종값은 False, 목표값을 대입한 구현은 True입니다.</output></section><!-- MOTION toggle-rocker -->
-
-<!-- END MOTION -->
-
-
-
-<span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="section-01"></span><span class="lesson-anchor" id="reading-section-01"></span>
-<span class="lesson-anchor" id="section-02"></span><div class="lesson-explanation" id="reading-section-02"><h3>동일한 요청을 두 번 보내기</h3><p>결함을 보려면 같은 딕셔너리에 목표 True를 두 번 전달해야 합니다. 호출할 때마다 새 딕셔너리를 만들면 첫 번째 요청만 반복하는 셈이어서 두 번째 호출의 문제를 발견할 수 없습니다.</p></div>
-<span class="lesson-anchor" id="workflow-toggle-twice"></span><span class="lesson-anchor" id="workflow-toggle-twice-caption"></span>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3 id="example-cell-1">셀 01 · 반복 요청으로 토글 오류 재현</h3>
-<div class="cell-before"><p>아래 결함은 수업용으로 의도해 넣었습니다. 두 번째 결과를 첫 번째와 비교하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> faulty_update(item, completed):
-    item[<span class="tok-string">"completed"</span>] = <span class="tok-keyword">not</span> item[<span class="tok-string">"completed"</span>]
-    <span class="tok-keyword">return</span> item[<span class="tok-string">"completed"</span>]
-
-item = {<span class="tok-string">"id"</span>: <span class="tok-number">1</span>, <span class="tok-string">"title"</span>: <span class="tok-string">"복습"</span>, <span class="tok-string">"completed"</span>: <span class="tok-keyword">False</span>}
-print(faulty_update(item, <span class="tok-keyword">True</span>))
-print(faulty_update(item, <span class="tok-keyword">True</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True
-False</pre></div>
-<div class="cell-after"><p id="example-analysis">같은 행에 True를 두 번 전달했는데 두 번째 호출 뒤에 False가 남습니다. 첫 번째 응답을 받지 못해 같은 요청을 다시 보낸 상황에서도 이 문제가 생길 수 있습니다.</p></div><div class="example-table"><table><caption>동일한 완료 요청을 두 번 보낸 결과</caption><thead><tr><th scope="col">수정 방식</th><th scope="col">초기 상태</th><th scope="col">첫 요청</th><th scope="col">재전송</th></tr></thead><tbody><tr><td>현재 값 반전</td><td>False</td><td>True</td><td>False</td></tr><tr><td>목표값 대입</td><td>False</td><td>True</td><td>True</td></tr></tbody></table></div>
-</article>
-<figure class="workflow-reading" id="guided-workflow" data-workflow><h3>같은 완료 요청이 두 번째에 미완료를 만드는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
-ninput["완료 요청"]
-  nflip["상태 반전"]
-  nyes["완료"]
-  nno["미완료"]
-  ninput --> nflip
-  nflip --> nyes
-  nyes --> ninput
-  nflip --> nno</script><figcaption>faulty_update는 전달받은 목표 값 대신 현재 값을 뒤집습니다. 요청이 두 번 들어왔을 때의 실제 출력을 읽어 보세요.</figcaption></figure>
-
-<span class="lesson-anchor" id="section-03"></span><div class="lesson-explanation" id="reading-section-03"><h3>호출 횟수에 따라 바뀌는 토글</h3><p>faulty_update는 전달된 completed 인자를 사용하지 않습니다. 현재 값에 not을 적용하므로 이미 완료된 행도 같은 요청을 한 번 더 받으면 미완료가 됩니다.</p></div>
-<span class="lesson-anchor" id="section-04"></span><span class="lesson-anchor" id="reading-section-04"></span>
-<span class="lesson-anchor" id="section-05"></span><span class="lesson-anchor" id="reading-section-05"></span>
-
-</section>
-<section id="nb-fix" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>목표 상태 대입과 회귀 검사</h2>
-</div>
-</header>
-
-
-<span class="lesson-anchor" id="section-06"></span><span class="lesson-anchor" id="reading-section-06"></span>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 목표 상태 대입의 멱등성</h3>
-<div class="cell-before"><p>completed에 요청값을 저장하는 함수를 작성하세요. 같은 행에 True를 두 번 전달하고 두 번째 호출 뒤에 반환값과 실제 저장값을 함께 출력하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">def update(item, completed):
-    # 호출자가 넘긴 딕셔너리에 목표 상태를 반영하고 저장값을 반환하세요.
-    pass</code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 7줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">def update(item, completed):
-    item["completed"] = completed
-    return item["completed"]
-
-item = {"id": 1, "title": "복습", "completed": False}
-update(item, True)
-print(update(item, True), item["completed"])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True True</pre></div>
-<div class="cell-after"><p>첫 번째 True는 두 번째 호출의 반환값이고, 그 옆의 True는 딕셔너리에서 다시 읽은 값입니다. 반환만 하고 행을 수정하지 않은 함수라면 두 값이 다릅니다.</p>
-</div>
-</details>
-</article>
-<aside id="guided-reading" class="lesson-note"><h3>같은 완료 요청이 두 번 도착하면</h3><p><mark>토글은 두 번 실행하면 원래대로 돌아가지만 목표값 대입은 같은 상태를 유지합니다.</mark> 처음부터 두 번 연속 요청을 보내고 두 번째 응답까지 보세요. 한 번만 시험하면 두 구현 모두 완료로 보여 차이를 놓칩니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter81/index.html">81장 FastAPI로 구현하는 할 일 CRUD</a></p></aside>
-
-<span class="lesson-anchor" id="section-07"></span><div class="lesson-explanation" id="reading-section-07"><h3>목표 상태의 직접 대입</h3><p>수정한 함수는 호출자가 원하는 값을 item[&quot;completed&quot;]에 대입해야 합니다. 같은 True를 여러 번 대입해도 저장값은 True로 유지되고, False를 전달한 경우에만 완료가 해제됩니다.</p></div>
-
-
-<article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · 완료 해제의 회귀 테스트</h3>
-<div class="cell-before"><p>과제 02에서 완성한 update에 True, True, False를 보내고 매번 반환값과 같은 행의 저장값을 확인합니다.</p>
-<p>과제 02에서 작성한 update를 실행한 뒤 이 셀로 오세요. 같은 True 요청을 두 번 보내고 이어 False로 되돌립니다. 셀을 고쳤다면 함수 정의 셀부터 다시 실행하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 15줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">row = {<span class="tok-string">"id"</span>: <span class="tok-number">5</span>, <span class="tok-string">"title"</span>: <span class="tok-string">"복습"</span>, <span class="tok-string">"completed"</span>: <span class="tok-keyword">False</span>}
-first = update(row, <span class="tok-keyword">True</span>)
-after_first = row.copy()
-second = update(row, <span class="tok-keyword">True</span>)
-after_second = row.copy()
-last = update(row, <span class="tok-keyword">False</span>)
-<span class="tok-keyword">if</span> first <span class="tok-keyword">is</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> second <span class="tok-keyword">is</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> last <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
-    print(<span class="tok-string">"과제 02의 update를 완성하고 정의 셀부터 다시 실행하세요."</span>)
-<span class="tok-keyword">else</span>:
-    <span class="tok-keyword">assert</span> first <span class="tok-keyword">is</span> <span class="tok-keyword">True</span> <span class="tok-keyword">and</span> second <span class="tok-keyword">is</span> <span class="tok-keyword">True</span>, <span class="tok-string">"같은 완료 요청을 반복해도 True를 반환해야 합니다."</span>
-    expected = {<span class="tok-string">"id"</span>: <span class="tok-number">5</span>, <span class="tok-string">"title"</span>: <span class="tok-string">"복습"</span>, <span class="tok-string">"completed"</span>: <span class="tok-keyword">True</span>}
-    <span class="tok-keyword">assert</span> after_first == expected <span class="tok-keyword">and</span> after_second == expected, <span class="tok-string">"두 완료 요청 모두 원래 행에 저장되어야 합니다."</span>
-    <span class="tok-keyword">assert</span> last <span class="tok-keyword">is</span> <span class="tok-keyword">False</span>, <span class="tok-string">"완료 해제 요청은 False를 반환해야 합니다."</span>
-    <span class="tok-keyword">assert</span> row == {<span class="tok-string">"id"</span>: <span class="tok-number">5</span>, <span class="tok-string">"title"</span>: <span class="tok-string">"복습"</span>, <span class="tok-string">"completed"</span>: <span class="tok-keyword">False</span>}, <span class="tok-string">"같은 행의 ID·제목·완료 값을 확인하세요."</span>
-    print(<span class="tok-string">"검사 통과"</span>, row)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제 02의 update를 완성하고 정의 셀부터 다시 실행하세요.</pre></div>
-<div class="cell-after"><p>시작본의 pass는 None을 반환합니다. 세 번 모두 None이면 검사를 통과 처리하지 않고 과제 02를 완성하라는 안내를 출력합니다. 정답을 넣고 과제 02와 이 셀을 다시 실행했을 때의 마지막 줄은 다음과 같습니다.</p>
-<p>검사 통과 {'id': 5, 'title': '복습', 'completed': False}</p>
-<p>완료 요청을 두 번 보낸 뒤 해제했으므로 마지막 값은 False입니다. 요청할 때마다 상태를 뒤집는 구현은 두 번째 True 검사에서 멈춥니다.</p>
-</div>
-</article>
-<span class="lesson-anchor" id="section-08"></span><div class="lesson-explanation" id="reading-section-08"><h3>반환값과 실제 저장값을 따로 검사하기</h3><p>first와 second의 반환값이 모두 True인지 보고, 두 시점에 복사한 행의 id·title·completed도 대조합니다. True를 반환하기만 하고 딕셔너리를 고치지 않은 함수라면 행 비교에서 드러납니다.</p></div>
-<span class="lesson-anchor" id="section-10"></span><span class="lesson-anchor" id="reading-section-10"></span>
-
-</section>
-<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>삭제 뒤 순번이 바뀐 목록에서 잘못된 수정 재현하기</h2></div></header>
-<p>앞에서는 같은 완료 요청을 반복했을 때 값이 뒤집히는 오류를 고쳤습니다. 이번 오류는 응답이 성공인데도 다른 항목이 완료됩니다. 재현 입력을 먼저 만들고 Codex가 제안한 수정이 이웃 항목까지 보존하는지 검사합니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · ID를 리스트 위치로 사용한 수정 코드 실행하기</h3><div class="cell-before"><p>삭제가 있었던 목록에는 ID 2와 7만 남았습니다. ID 2를 완료하려고 다음 함수를 호출한 뒤 두 행의 상태를 출력하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">def after_deletion():
-    return [{&quot;id&quot;: 2, &quot;completed&quot;: False}, {&quot;id&quot;: 7, &quot;completed&quot;: False}]
-
-def update_at_position(rows, todo_id, value):
-    rows[todo_id - 1][&quot;completed&quot;] = value
-
-repro = after_deletion()
-update_at_position(repro, 2, True)
-print([(entry[&quot;id&quot;], entry[&quot;completed&quot;]) for entry in repro])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(2, False), (7, True)]</pre></div><div class="cell-after"><p>출력은 2번 False, 7번 True입니다. 2에서 1을 빼면 리스트 위치 1이 되고, 삭제가 있었던 이 목록에서 그 위치는 ID 7입니다. 예외가 발생하지 않는 잘못된 수정입니다.</p></div>
-</article>
-<article class="notebook-cell" data-cell="6" data-task="1"><h3 id="workshop-step-2">과제 06 · ID가 일치하는 행만 바꾸는 회귀 검사 작성하기</h3><div class="cell-before"><p>수정 대상이 있으면 True, 없으면 False를 반환하게 고치세요. ID 2에 두 차례 같은 완료 요청을 보낸 뒤 없는 9번도 시도합니다. 마지막에는 7번이 여전히 미완료인지 assert로 검사하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6"># change_by_id(rows, todo_id, value)와 회귀 검사를 작성하세요.
-# after_deletion()으로 매번 새 재현 목록을 만드세요.</code></pre></figure>
-<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">def change_by_id(rows, todo_id, value):
-    for row in rows:
-        if row[&quot;id&quot;] == todo_id:
-            row[&quot;completed&quot;] = value
-            return True
-    return False
-
-checked_rows = after_deletion()
-assert change_by_id(checked_rows, 2, True)
-assert change_by_id(checked_rows, 2, True)
-assert not change_by_id(checked_rows, 9, True)
-assert checked_rows == [{&quot;id&quot;: 2, &quot;completed&quot;: True}, {&quot;id&quot;: 7, &quot;completed&quot;: False}]
-print(checked_rows)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[{&#x27;id&#x27;: 2, &#x27;completed&#x27;: True}, {&#x27;id&#x27;: 7, &#x27;completed&#x27;: False}]</pre></div><p>이번에는 2번만 True입니다. 두 번째 요청과 없는 번호에 대한 검사도 통과한 뒤 목록이 출력됐습니다. 수정 전후의 재현 입력을 그대로 유지해야 다른 조건을 우연히 통과한 경우를 가릴 수 있습니다.</p></details>
-</article>
-<aside class="lesson-note"><p><mark>수정 성공 응답과 실제로 바뀐 행의 ID를 대조하세요.</mark> 연속 ID 1, 2만 넣은 테스트는 ID와 위치가 어긋나는 결함을 드러내지 못합니다. 삭제 이후의 목록을 Codex에 재현 입력으로 전달하세요.</p></aside><p>다음 요구 변경에서도 기존 행과 건드리지 않아야 할 이웃 행을 검증 목록에 남깁니다.</p>
-</section>
-<section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
-<h2>복습과 실습 점검</h2>
-</div>
-</header>
-<div class="prose"><p>수정한 함수에 False를 보내면 이미 완료된 행의 체크가 풀려야 합니다. 항상 True를 반환하는 구현은 완료 요청 두 번만으로는 걸러지지 않으므로 다음 셀에서 해제 후 값도 확인합니다.</p>
-</div>
-
-<span class="lesson-anchor" id="section-09"></span><span class="lesson-anchor" id="reading-section-09"></span>
-<span class="lesson-anchor" id="section-11"></span><span class="lesson-anchor" id="reading-section-11"></span>
-<span class="lesson-anchor" id="section-12"></span><span class="lesson-anchor" id="reading-section-12"></span>
-</section>
-
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
-</article>
-</main>
-<div class="toast" role="status" aria-live="polite"></div>
-<noscript><p class="no-script">본문과 모든 단계는 그대로 읽을 수 있습니다. 코드 복사와 읽기 진행 표시에는 JavaScript가 필요합니다.</p>
-</noscript>
-<script src="../assets/reader.js"></script>
-<script src="../assets/menu-focus.js"></script></body></html>
+print(valid_path(events, expected_id, [&quot;T08&quot;]))</code></pre><h3>실행 결과</h3><pre style="white-space:pre-wrap;overflow:auto"><code>False
+</code></pre><p>승인된 대상은 T07인데 마지막 도구의 인자와 저장 기록은 T08입니다. 승인 이벤트는 앱이 사람의 확인을 기록한 값입니다. 모델이 승인했다고 말한 내용은 여기에 넣지 않습니다.</p></section><section class="lesson-section" id="workshop"><h2>직접 해 보기</h2><p>독립적인 두 조회 순서만 바꾼 경우, 승인 전에 확정한 경우, 같은 요청을 두 번 저장한 경우를 각각 검사하세요. 마지막 사례에서는 호출 기록은 한 번으로 두세요.</p><pre style="white-space:pre-wrap;overflow:auto"><code># valid_path에 실행 사건과 실제 저장 ID 목록을 각각 전달하세요.</code></pre><details class="notebook-answer"><summary>풀이와 실행 결과</summary><pre style="white-space:pre-wrap;overflow:auto"><code>lookups = [(&quot;lookup_user&quot;, &quot;T07&quot;), (&quot;lookup_policy&quot;, &quot;T07&quot;)]
+approval, commit = (&quot;approve&quot;, &quot;T07&quot;), (&quot;commit&quot;, &quot;T07&quot;)
+print(valid_path(lookups[::-1] + [approval, commit], &quot;T07&quot;, [&quot;T07&quot;]))
+print(valid_path(lookups + [commit, approval], &quot;T07&quot;, [&quot;T07&quot;]))
+print(valid_path(lookups + [approval, commit], &quot;T07&quot;, [&quot;T07&quot;, &quot;T07&quot;]))</code></pre><pre style="white-space:pre-wrap;overflow:auto"><code>True
+False
+False
+</code></pre></details></section><section class="lesson-section" id="service"><h2>수업 서비스에 적용하기</h2><p>agentevals를 설치한 커널에서 아래 셀을 실행하세요. 같은 도구에 다른 요청 ID를 넣었을 때 strict 평가 점수가 어떻게 바뀌는지 확인합니다. 팀 서비스에서는 조회 순서의 교환을 허용할 부분과 승인이 앞서야 할 부분을 나눕니다. LangSmith 메시지에서 읽은 호출과 앱의 저장 로그를 요청 ID로 연결해 두 결과를 제출하세요.</p><pre style="white-space:pre-wrap;overflow:auto"><code>run_integration = False
+if run_integration:
+    import json
+    from agentevals.trajectory.match import create_trajectory_match_evaluator
+    def trajectory(ticket):
+        return [{&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&quot;, &quot;tool_calls&quot;: [
+            {&quot;id&quot;:&quot;call1&quot;, &quot;type&quot;:&quot;function&quot;, &quot;function&quot;:{
+                &quot;name&quot;:&quot;lookup&quot;, &quot;arguments&quot;:json.dumps({&quot;ticket&quot;:ticket})}}]}]
+    check = create_trajectory_match_evaluator(trajectory_match_mode=&quot;strict&quot;,
+                                              tool_args_match_mode=&quot;exact&quot;)
+    for ticket in [&quot;T07&quot;, &quot;T08&quot;]:
+        print(ticket, check(outputs=trajectory(ticket), reference_outputs=trajectory(&quot;T07&quot;))[&quot;score&quot;])</code></pre><p><a href="https://github.com/langchain-ai/agentevals">공식 문서</a></p></section><section id="recap"><h2>제출 전 확인</h2><p>AgentEvals와 사용자 정의 검사로 도구 선택·인자·선후 관계·중복 호출을 검증한다. 순서를 바꿔도 되는 조회와 승인 후 수행할 확정 작업을 구분하고, 실제 처리 횟수는 앱 기록과 대조한다.</p></section><footer class="lesson-footer"><a href="#main">본문 처음으로</a></footer></main></body></html>
