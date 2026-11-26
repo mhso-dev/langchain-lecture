@@ -104,7 +104,7 @@ nowner["소유자 확인"]
   nhit --> nresult
   nnone --> nresult</script><figcaption>이 예제의 answer는 로컬 함수입니다. 답변과 generation_calls 필드를 노트북에서 어떻게 만드는지 보세요.</figcaption></figure>
 
-<aside id="guided-reading" class="lesson-note"><h3>근거를 찾지 못한 서비스 응답</h3><p><mark>답변 문구만 읽으면 검색이 비었는지 생성에 실패했는지 구분하기 어렵습니다.</mark> 같은 응답에서 status와 출처 목록을 함께 확인하세요. 팀이 화면을 만들 때에도 근거 없는 답 옆에 이전 문서가 붙는 일을 막을 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter24/index.html">24장 LCEL로 구성하는 RAG와 인용 검증</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>근거를 찾지 못한 서비스 응답</h3><p><mark>답변 문구만 읽으면 검색이 비었는지 생성에 실패했는지 구분하기 어렵습니다.</mark> 같은 응답에서 status와 출처 목록을 함께 확인하세요. 팀이 화면을 만들 때에도 근거 없는 답 옆에 이전 문서가 붙는 일을 막을 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter20/index.html">20장 판본을 선택하고 인용 쪽수 확인하기</a></p></aside>
 
 <span class="lesson-anchor" id="envelope"></span><div class="lesson-explanation" id="reading-envelope"><h3>처리 결과와 답변 상태를 따로 읽기</h3><p>run_status는 요청 처리가 끝났는지를, result.status는 문서로 답할 수 있었는지를 나타냅니다. 주차 질문은 처리가 끝나도 no_evidence입니다.</p></div>
 <span class="lesson-anchor" id="owner"></span><div class="lesson-explanation" id="reading-owner"><h3>검색보다 먼저 확인하는 소유자</h3><p>answer는 owners에서 대화의 소유자를 조회해 전달받은 owner와 비교합니다. 일치하지 않으면 PermissionError가 발생하므로 search가 그 요청의 자료를 읽지 않습니다.</p></div>

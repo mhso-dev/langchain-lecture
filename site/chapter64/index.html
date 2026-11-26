@@ -116,7 +116,7 @@ w -->|같은 thread_id로 resume| c
 i -->|approve| y["문의 저장 · completed"] --> e["END"]
 i -->|그 외| n["저장 생략 · declined"] --> e</script><figcaption>첫 진입은 interrupt에서 멈춥니다. Command(resume=…)를 같은 스레드에 전달하면 confirm이 처음부터 다시 실행되고, interrupt가 반환한 결정값으로 저장 여부를 정합니다.</figcaption></figure>
 
-<aside id="guided-reading" class="lesson-note"><h3>승인 뒤에 다시 실행되는 코드</h3><p><mark>같은 thread_id로 재개하면 confirm 노드가 처음부터 다시 실행됩니다.</mark> 처음에는 interrupt에서 기다리므로 문의가 저장되지 않습니다. 재개하면 승인값을 읽고 저장하거나 거절로 끝납니다. 저장을 interrupt 앞으로 옮기면 승인 전에 쓰기가 일어납니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter29/index.html">29장 체크포인터와 thread_id를 이용한 대화 저장</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>승인 뒤에 다시 실행되는 코드</h3><p><mark>같은 thread_id로 재개하면 confirm 노드가 처음부터 다시 실행됩니다.</mark> 처음에는 interrupt에서 기다리므로 문의가 저장되지 않습니다. 재개하면 승인값을 읽고 저장하거나 거절로 끝납니다. 저장을 interrupt 앞으로 옮기면 승인 전에 쓰기가 일어납니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter35/index.html">35장 메시지 상태와 대화별 체크포인트</a></p></aside>
 
 <span class="lesson-anchor" id="context"></span><span class="lesson-anchor" id="reading-context"></span>
 <span class="lesson-anchor" id="resume"></span><div class="lesson-explanation" id="reading-resume"><h3>같은 스레드에서 결정을 전달하기</h3><p>Command(resume=&quot;approve&quot;)를 처음과 같은 config로 전달합니다. 중단됐던 confirm 노드는 처음부터 다시 실행되고 interrupt 자리는 이번에 받은 결정을 돌려줍니다. 등록 코드를 그 뒤에 두면 대기 시점에 부작용이 생기지 않습니다.</p></div>

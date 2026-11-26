@@ -2,6 +2,9 @@
 from html import escape
 from pathlib import Path
 import re
+import json
+import posixpath
+from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 OUT = Path(__file__).resolve().parents[1] / "dist"
@@ -29,6 +32,26 @@ def link(href, title):
     return f'<a href="{escape(href, quote=True)}">{escape(title)}</a>'
 
 
+def root_copy(notebook_path):
+    """Keep the root-level day notebook's links pointing into the unzipped course."""
+    book = json.loads(notebook_path.read_bytes())
+    unit = notebook_path.parent.relative_to(OUT).as_posix()
+
+    def fix_link(match):
+        target = urlsplit(match.group(2))
+        if target.scheme or target.netloc or not target.path or target.path.startswith("/"):
+            return match.group(0)
+        path = posixpath.normpath(posixpath.join(unit, target.path))
+        return match.group(1) + urlunsplit(target._replace(path=path)) + ")"
+
+    for cell in book["cells"]:
+        if cell["cell_type"] == "markdown":
+            source = "".join(cell["source"])
+            source = re.sub(r"(\[[^\]\n]*\]\()([^\s)]+)\)", fix_link, source)
+            cell["source"] = source.splitlines(keepends=True)
+    return (json.dumps(book, ensure_ascii=False, indent=1) + "\n").encode()
+
+
 rows = []
 downloads = {}
 for day, task in enumerate(TASKS, 1):
@@ -40,7 +63,7 @@ for day, task in enumerate(TASKS, 1):
     href, title = route.groups()
     unit = href.split("/")[2]
     name = f"day{day:03}.ipynb"
-    raw = (BOOK / unit / "lesson.ipynb").read_bytes()
+    raw = root_copy(BOOK / unit / "lesson.ipynb")
     (DAILY / name).write_bytes(raw)
     downloads[name] = raw
     choices = [link(href, "수업 교재")]
@@ -61,31 +84,60 @@ for day, task in enumerate(TASKS, 1):
         choices.append(link("../pre-mid/python-patterns/lesson.ipynb", "B 수업 노트북"))
     rows.append(f'<li id="day{day:03}"><h2>{day}장 · {escape(title)}</h2><p>{task}</p><p>{" · ".join(choices)}</p></li>')
 
+for n in range(14, 43):
+    slug = f"chapter{n:02}"
+    raw = (OUT / slug / (slug + ".ipynb")).read_bytes()
+    book = json.loads(raw)
+    title = "".join(book["cells"][0]["source"]).partition("\n")[0].lstrip("# ")
+    md_cells = [(cell["id"], "".join(cell["source"])) for cell in book["cells"] if cell["cell_type"] == "markdown"]
+    # Take students to the exercise in the same chapter they downloaded.
+    practice = next(((key, text) for key, text in reversed(md_cells)
+                     if re.search(r"^## .*?(?:실습|과제|연습|도전|직접)", text, re.M)), None)
+    anchor = f"#section-{practice[0]}-1" if practice else ""
+    name = f"day{n:03}.ipynb"
+    (DAILY / name).write_bytes(raw)
+    downloads[name] = raw
+    choices = [link(f"../{slug}/index.html{anchor}", "본문에서 실습하기"), link(name, "수업 노트북")]
+    rows.append(f'<li id="day{n:03}"><h2>{escape(title)}</h2><p>{" · ".join(choices)}</p></li>')
+
 page = DAILY / "index.html"
 html = page.read_text()
-start = html.index('<li id="day002">')
-end = html.index('<li id="day014">', start)
-html = html[:start] + "".join(rows) + html[end:]
-html = html.replace("2일부터 일반 수업 74일", "첫날부터 일반 수업 75일")
-html = html.replace("개인 실습 78개와 자료 전체 받기", "수업 노트북과 실습 자료 전체 받기")
+start = html.index('<li id="day053">')
+html = html[:start] + "".join(rows) + html[start:]
+html = html.replace("2일부터 일반 수업 74일", "첫 수업부터 일반 수업 75장")
+html = html.replace("개인 실습 78개와 자료 전체 받기", "전체 과정 노트북과 실습 자료 받기")
 html = html.replace('<a href="#day002">2일</a>', '<a href="#day001">1일</a> · <a href="#day008">8일</a>')
-# Jump links use the same task title as the destination.
 headings = dict(re.findall(r'<li id="(day\d+)"><h2>([^<]+)</h2>', html))
 html = re.sub(r'<a href="#(day\d+)">\d+일</a>', lambda m: f'<a href="#{m[1]}">{headings[m[1]]}</a>', html)
+html = html.replace('<main>', '<main><p><a href="pre-mid.zip" download>중간 프로젝트 전 1~42장 노트북과 실습 자료 받기</a></p>', 1)
 page.write_text(html)
 
-# Keep the workbook and its relative Markdown links together when the ZIP is extracted.
+# Preserve all relative paths used by the notebooks and support modules.
 materials = {path.relative_to(OUT).as_posix(): path.read_bytes() for path in sorted(BOOK.rglob("*"))
-             if path.is_file() and path.suffix in {".ipynb", ".md", ".pdf", ".csv", ".txt"}}
-materials["1-13일_실습_안내.txt"] = (
-    "1~13장은 pre-mid 폴더에서 선택한 과정의 lesson.ipynb와 practice.md를 함께 여세요.\n"
-    "1~5장은 diagnostic으로 시작해 python-basics 또는 python-patterns 중 하나를 고릅니다.\n"
-    "6~7장은 team-git, 8~10장은 prompt-workshop, 11~13장은 chat-workshop에서 진행합니다.\n"
-    "공지와 대여 규정, 녹음기 설명서는 pre-mid/documents에 있습니다.\n"
+             if path.is_file() and path.suffix not in {".html", ".pyc"} and "__pycache__" not in path.parts}
+materials["수업_시작.txt"] = (
+    "압축을 모두 풀고 이 폴더에서 Jupyter를 시작하세요.\n"
+    "1~13장은 pre-mid 폴더의 수업 노트북과 활동지를 함께 엽니다. "
+    "첫 수업은 diagnostic, 이후 python-basics 또는 python-patterns를 선택합니다. "
+    "6~7장은 team-git, 8~10장은 prompt-workshop, 11~13장은 chat-workshop입니다.\n"
+    "14~42장은 이 폴더의 chapter 번호 노트북을 엽니다. pre-mid/documents에는 원문, 실습 자료, 참고 답안이 있습니다. "
+    "해당 장의 환경 준비 안내를 따라 주세요.\n"
 ).encode()
+canonical = {f"chapter{n:02}.ipynb": downloads[f"day{n:03}.ipynb"] for n in range(14,43)}
+
+
+def write_files(archive, files):
+    for name, raw in files.items():
+        archive.writestr(ZipInfo(name, (2026, 11, 26, 0, 0, 0)), raw, compress_type=ZIP_DEFLATED)
+
+
+with ZipFile(DAILY / "pre-mid.zip", "w") as archive:
+    write_files(archive, {**canonical, **materials})
+# Preserve the original chapter-20 exercise bookmark with the current materials.
+(OUT / "chapter20" / "chapter20-lab.zip").write_bytes((DAILY / "pre-mid.zip").read_bytes())
 for archive_name, additions in [
-    ("all-labs.zip", {**downloads, **materials}),
-    ("resources.zip", {k: v for k, v in materials.items() if not k.endswith(".ipynb")}),
+    ("all-labs.zip", {**downloads, **canonical, **materials}),
+    ("resources.zip", materials),
 ]:
     target = DAILY / archive_name
     temp = target.with_suffix(".tmp")
@@ -93,7 +145,5 @@ for archive_name, additions in [
         for info in old.infolist():
             if info.filename not in additions:
                 new.writestr(info, old.read(info))
-        for name, raw in additions.items():
-            info = ZipInfo(name, (2026, 11, 26, 0, 0, 0))
-            new.writestr(info, raw, compress_type=ZIP_DEFLATED)
+        write_files(new, additions)
     temp.replace(target)

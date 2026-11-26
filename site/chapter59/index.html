@@ -50,7 +50,7 @@ print(recent)</code></pre></figure>
 </div>
 <p id="example-analysis">최근 두 발화만 전달한 결과에는 제출 기한과 슬라이드 수가 남고 발표 장소는 빠졌습니다. 장소를 다시 물었을 때 모델이 대답하지 못한다면 먼저 입력에 회의실 B가 남아 있는지 확인합니다. 저장된 이력과 이번 호출에 포함한 문맥은 다를 수 있습니다.</p>
 </article>
-<aside id="guided-reading" class="lesson-note"><h3>최근 두 발화에서 사라진 단서</h3><p><mark>최근 기록의 길이를 줄이면 앞서 확정한 장소가 문맥 밖으로 밀릴 수 있습니다.</mark> 마지막 두 발화만으로 발표 장소에 답할 수 있는지 보세요. 요약에 장소를 남겼다면 잃어버린 원문이 무엇인지 따로 확인해야 잘못된 요약을 계속 쓰지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter29/index.html">29장 체크포인터와 thread_id를 이용한 대화 저장</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>최근 두 발화에서 사라진 단서</h3><p><mark>최근 기록의 길이를 줄이면 앞서 확정한 장소가 문맥 밖으로 밀릴 수 있습니다.</mark> 마지막 두 발화만으로 발표 장소에 답할 수 있는지 보세요. 요약에 장소를 남겼다면 잃어버린 원문이 무엇인지 따로 확인해야 잘못된 요약을 계속 쓰지 않습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter35/index.html">35장 메시지 상태와 대화별 체크포인트</a></p></aside>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="goals"></span><span class="lesson-anchor" id="reading-goals"></span>
 <span class="lesson-anchor" id="turns"></span><span class="lesson-anchor" id="reading-turns"></span>
@@ -130,7 +130,7 @@ print("\n".join([updated_summary, *recent]))</code></pre></figure>
 </section>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</h2></div></header>
-<p>발표 장소를 처음에 알려 준 뒤 마감과 분량을 추가한 상황입니다. 마지막 두 메시지만 보내면 처음 장소가 빠집니다. 29장의 체크포인터에 전체 기록을 남겨 두고, 이번 요청에 건넬 문자열만 작게 만들어 봅니다.</p>
+<p>발표 장소를 처음에 알려 준 뒤 마감과 분량을 추가한 상황입니다. 마지막 두 메시지만 보내면 처음 장소가 빠집니다. 35장의 체크포인터에 전체 기록을 남겨 두고, 이번 요청에 건넬 문자열만 작게 만들어 봅니다.</p>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 같은 스레드에서 전체 할 일 복원하기</h3><div class="cell-before"><p>수업용 대화의 각 문장을 HumanMessage로 저장합니다. 기록을 보관하는 노드는 모델을 호출하지 않습니다. 체크포인트에 어떤 메시지가 보존되는지와 최근 두 메시지에 무엇이 보이는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import StateGraph, MessagesState, START, END

@@ -30,6 +30,7 @@ def run(day, solved, full):
             if item.suffix in ('.pdf','.txt','.json','.csv'):
                 shutil.copy2(item,item.name)
         Path('daily_resources').symlink_to(ROOT/'dist/daily/daily_resources',target_is_directory=True)
+        Path('pre-mid').symlink_to(ROOT/'dist/pre-mid', target_is_directory=True)
         scope={'__name__':'__main__'}
         for idx,cell in enumerate(cells):
             if cell['cell_type']!='code':
@@ -42,10 +43,6 @@ def run(day, solved, full):
                     match=re.search(r'<pre[^>]*><code[^>]*>(.*?)</code></pre>',following,re.S)
                     if match:code=html.unescape(match[1])
             if full:
-                if day==22:__import__('chromadb')
-                if day in (40,41):__import__('streamlit')
-                if day==38:
-                    code=code.replace('model_dir = None','model_dir = Path(os.environ["COURSE_MODEL_DIR"])')
                 if day==60:code=code.replace('run_profile_db = False','run_profile_db = True')
                 if day==71:
                     code=code.replace('image_id = ""','image_id = "python:3.12-slim"')

@@ -120,4 +120,4 @@ if __name__ == "__main__":
                 compile_workshop(path, book)
                 continue
             for mode in ("starter", "solution"):
-                subprocess.run([sys.executable, __file__, "--path", str(path), "--mode", mode], check=True)
+                subprocess.run([sys.executable, __file__, "--path", str(path), "--mode", mode], check=True, cwd=path.parent)

@@ -12,6 +12,8 @@ def publish_results(out):
     rows=[]
     for record in evidence["chapters"]:
         day=record["day"]
+        if day <= 42:
+            continue  # This run was recorded for the previous edition.
         stem=f"chapter{day:02}"
         notebook=out/stem/(stem+".ipynb")
         if sha256(notebook.read_bytes()).hexdigest()!=record["sha256"]:

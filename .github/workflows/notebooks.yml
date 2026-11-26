@@ -7,6 +7,8 @@ on:
       - 'scripts/run_daily.py'
       - '.github/workflows/notebooks.yml'
       - 'daily-labs/**'
+      - 'site/pre-mid/**'
+      - 'scripts/check_pre_mid_release.py'
       - 'site/chapter*/**'
 permissions:
   contents: read
@@ -17,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [lessons, containers, rerank]
+        group: [lessons, containers]
     services:
       postgres:
         image: postgres:16
@@ -46,22 +48,19 @@ jobs:
           python -m pip install --quiet pypdf pyyaml jsonschema fastapi httpx
           case "${{ matrix.group }}" in
             lessons)
-              python -m pip install --quiet 'langchain>=1,<2' 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
+              python -m pip install --quiet 'langchain>=1,<2' langchain-openai python-dotenv 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
               psql -v ON_ERROR_STOP=1 -c "CREATE TABLE course_users(id text PRIMARY KEY,display_name text); CREATE TABLE course_turns(id int PRIMARY KEY, owner text); INSERT INTO course_users VALUES ('alice','학습자 A'),('bob','학습자 B'); INSERT INTO course_turns VALUES (1,'alice'),(2,'alice'),(3,'bob');"
-              echo 'DAYS=14 15 16 20 22 23 24 25 30 31 32 35 36 37 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77' >> "$GITHUB_ENV"
+              echo 'DAYS=15 16 33 34 35 36 37 38 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77' >> "$GITHUB_ENV"
               ;;
             containers)
               docker pull python:3.12-slim
               docker pull pgvector/pgvector:pg16
               echo 'DAYS=71 72' >> "$GITHUB_ENV"
               ;;
-            rerank)
-              python -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
-              python -m pip install --quiet sentence-transformers
-              python -c "from huggingface_hub import snapshot_download; print('COURSE_MODEL_DIR='+snapshot_download('BAAI/bge-reranker-v2-m3',allow_patterns=['*.json','*.model','*.safetensors','tokenizer*']))" >> "$GITHUB_ENV"
-              echo 'DAYS=38' >> "$GITHUB_ENV"
-              ;;
           esac
+      - name: 배포 묶음의 문서·그래프·평가 코드 연동
+        if: matrix.group == 'lessons'
+        run: python scripts/check_pre_mid_release.py --handoff
       - run: python scripts/run_chapters.py --full --out execution $DAYS
       - name: 개인 과제 셀과 Codex 연속 노트북 실행
         if: matrix.group == 'lessons'

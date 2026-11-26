@@ -1,2 +1,3 @@
 *.pdf binary
 site/assets/mermaid/mermaid.tiny.js -diff linguist-vendored
+site/pre-mid/documents/transfer/pages.csv whitespace=cr-at-eol

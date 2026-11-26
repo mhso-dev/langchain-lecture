@@ -14,9 +14,9 @@ if (chapters.length !== 116 || chapters.some((name, i) => name !== chapterName(i
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
 // Keep retired teaching media in the source archive and exclude it from the student site.
-const retiredFiles = new Set(['.DS_Store', 'three.min.js', 'pdf-layers.js', 'pdf-layers.css', 'chunk-lab.html']);
+const retiredFiles = new Set(['.DS_Store', 'three.min.js', 'pdf-layers.js', 'pdf-layers.css', 'chunk-lab.html', '__pycache__', '.ipynb_checkpoints']);
 function publishable(path) {
-  return !retiredFiles.has(basename(path)) && !/\.(?:mp4|webm|gif|png|jpe?g|webp)$/i.test(path);
+  return !path.endsWith('.pyc') && !retiredFiles.has(basename(path)) && !/\.(?:mp4|webm|gif|png|jpe?g|webp)$/i.test(path);
 }
 cpSync(source, output, { recursive: true, filter: publishable });
 
@@ -33,6 +33,7 @@ for (const [index, chapter] of chapters.entries()) {
   const folder = join(source, chapter);
   const notebook = JSON.parse(readFileSync(join(folder, chapter + '.ipynb'), 'utf8'));
   if (notebook.nbformat !== 4 || !notebook.cells.length) throw new Error(chapter + ' 노트북 오류');
+  if (index < 42) continue; // The pre-project reader renders these routes from canonical notebooks.
   for (const file of readdirSync(folder).filter(name => name === 'index.html')) {
     const template = readFileSync(join(folder, file), 'utf8');
     if (!template.includes('<!-- COURSE_NAV -->')) throw new Error(chapter + ' 탐색 메뉴 위치 누락');
