@@ -118,13 +118,13 @@ for unit in units:
             content = content.replace('<span>8H · Jev 선택 실습 2H</span>', '<span>Jev 선택 실습</span>')
             content = re.sub(r'<p>LangSmith 기반 LLMOps · \d+일차 · 8시간</p>', '<p>LangSmith 기반 LLMOps</p>', content)
         path.write_text(content)
-    top = (f'<nav class="bar" aria-label="교재 탐색"><a href="../../index.html">주제별 교재</a>'
+    top = (f'<nav class="bar" aria-label="교재 탐색"><a href="../../index.html">교재 홈</a>'
            f'<a href="../../schedule.html">일차별 수업표</a></nav>')
     toc_links = ''.join(f'<li><a href="#{key}">{escape(label)}</a></li>' for key, label in toc)
     hero = f'<header><div class="wrap"><h1>{escape(title)}</h1><p>{escape(lead)}</p>{action}</div></header>'
     related = '<section id="readings"><h2>함께 읽을 자료와 연습</h2>'+''.join(readings)+'</section>'
     outline = f'<nav class="outline" aria-label="이 단원 목차"><h2>단원 목차</h2><ul>{toc_links}<li><a href="#readings">함께 읽을 자료와 연습</a></li></ul></nav>'
-    foot = '<footer><a href="../../index.html">주제별 목차로 돌아가기</a></footer>'
+    foot = '<footer><a href="../../index.html">교재 홈</a></footer>'
     scripts = ''
     if 'data-workflow' in body:
         scripts = '<script defer src="../../assets/mermaid/mermaid.tiny.js"></script><script defer src="../../assets/workflows.js"></script>'
@@ -137,7 +137,7 @@ for unit in units:
 
 catalog = OUT/'index.html'
 schedule = catalog.read_text().replace('<h1>AI 엔지니어링 수업 교재</h1>', '<h1>일차별 수업표</h1>')
-schedule = schedule.replace('</header>','<p><a href="index.html">주제별 교재로 돌아가기</a></p></header>', 1)
+schedule = schedule.replace('</header>','<p><a style="color:inherit" href="index.html">교재 홈</a></p></header>', 1)
 (OUT/'schedule.html').write_text(schedule)
 groups = ''
 for cat in ('학습 단원', '팀 프로젝트와 현장 활동'):
@@ -154,3 +154,10 @@ change_list = ''.join(f'<li><a href="../topics/{u["slug"]}/index.html">{escape(u
 updates = OUT/'updates/index.html'
 updates.write_text(updates.read_text().replace('<main>','<main><section id="topic-edition"><h2>주제별 교재와 통합 실습</h2>'
     '<p>학생용 첫 화면을 문제별 단원으로 바꾸고 관련 예제와 실습을 연결했습니다. 일차별 수업표는 별도로 열 수 있습니다.</p><ul>'+change_list+'</ul></section>',1))
+
+# Older editions and companion pages use different labels for the same home page.
+for extra in [OUT / name / 'index.html' for name in ('daily', 'execution', 'updates')] + sorted(OUT.glob('codex*/index.html')):
+    content, count = re.subn(r'(<a\b[^>]*href="\.\./index\.html"[^>]*>)(?:← )?전체 (?:교재|목차)(</a>)', r'\g<1>교재 홈\2', extra.read_text())
+    if not count:
+        raise ValueError(f'{extra}: 교재 홈 링크 누락')
+    extra.write_text(content)

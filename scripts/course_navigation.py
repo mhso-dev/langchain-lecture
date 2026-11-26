@@ -55,9 +55,9 @@ for day, (title, goal) in days.items():
         file.write_text(f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{day}일차 · {title}</title><link rel="stylesheet" href="../assets/catalog.css"><link rel="stylesheet" href="../assets/course-nav.css"></head><body><!-- COURSE_NAV --><header><p>특강·현장실습 · {day}일차</p><h1>{title}</h1><p>{goal}</p></header><main id="main"><section id="daily-lab">{work}</section><p><a href="../daily/resources.zip">공통 자료 받기</a></p></main></body></html>')
     page = file.read_text()
     assert page.count("<!-- COURSE_NAV -->") == 1, file
-    nav = f'<nav id="course-days" class="course-nav" aria-label="일차별 교재"><a href="../index.html">전체 목차</a><span>{day}일차</span>{chooser(day)}{adjacent(day)}</nav>'
+    nav = f'<nav id="course-days" class="course-nav" aria-label="일차별 교재"><a href="../index.html">교재 홈</a><span>{day}일차</span>{chooser(day)}{adjacent(day)}</nav>'
     page = page.replace("<!-- COURSE_NAV -->", nav)
-    page = page.replace("</main>", f'<nav class="day-footer" aria-label="본문 끝 일차 이동">{adjacent(day)} <a href="#course-days">일차 선택 ↑</a></nav></main>', 1)
+    page = page.replace("</main>", f'<nav class="day-footer" aria-label="본문 끝 일차 이동">{adjacent(day)} <a href="../index.html">교재 홈</a> <a href="#course-days">일차 선택 ↑</a></nav></main>', 1)
     file.write_text(page)
 
 catalog = OUT/"index.html"

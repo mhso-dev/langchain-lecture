@@ -38,6 +38,11 @@ with sync_playwright() as browser_api:
         nav.locator('a[href="../chapter120/index.html"]').click()
         assert "/chapter120/" in page.url and not nav.locator("[rel=next]").count()
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        home = (root/"index.html").as_uri()
+        for section in ("chapter120", "topics/state-graph"):
+            page.goto((root/section/"index.html").as_uri())
+            page.get_by_role("link", name="교재 홈", exact=True).last.click()
+            assert page.url == home and search.is_visible()
         page.close()
         print(f"{width}px · 42→43→85→86→120일 이동")
     browser.close()
