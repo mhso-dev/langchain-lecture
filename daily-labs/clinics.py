@@ -6,6 +6,7 @@ from html import escape
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 from codex_studio import CASES
+from todo_agent_workshop import STAGES, lesson, publish_bundle
 
 source = Path(__file__).parent
 out = Path(sys.argv[1])
@@ -67,7 +68,8 @@ def encode(book):
     return json.dumps(book, ensure_ascii=False, indent=1) + "\n"
 
 
-new_downloads = {}
+publish_bundle(daily / "todo-agent.zip")
+new_downloads = {"todo-agent.zip": daily / "todo-agent.zip"}
 for number, scheduled_title, goal in schedule:
     day = int(number)
     folder = out / f"chapter{day:02}"
@@ -112,6 +114,10 @@ for number, scheduled_title, goal in schedule:
         if items:
             sample_html += '<h3>함께 실행할 예제</h3><ul>'+items+'</ul>'
             cells.append(markdown("connected-examples","### 함께 실행할 예제\n\n"+"\n".join(f"- [{title}](https://langchain-lecture.vercel.app/chapter{other:02}/index.html#{key})" for key,title in links)))
+    agent_section = ""
+    if day in STAGES:
+        agent_section, agent_cells = lesson(day)
+        cells.extend(agent_cells)
     core = json.loads(chapter.read_text())
     core["cells"].extend(cells)
     chapter.write_text(encode(core))
@@ -133,6 +139,7 @@ for number, scheduled_title, goal in schedule:
            f'{sample_html}<h3>{label} · {timing}</h3><p>{escape(task)}</p><p><a href="{link}" download>실습 노트북</a> · '
            f'<a href="../daily/resources.zip" download>입력 자료 받기</a> · '
            f'<a href="../topics/{unit["slug"]}/index.html">{escape(unit["title"])} 통합 예제</a></p></section>')
+    box += agent_section
     h = html.read_text()
     if 'href="../daily/resources.zip"' in h:
         box = box.replace('<a href="../daily/resources.zip" download>입력 자료 받기</a> · ', "")
