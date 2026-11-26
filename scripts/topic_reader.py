@@ -161,3 +161,9 @@ for extra in [OUT / name / 'index.html' for name in ('daily', 'execution', 'upda
     if not count:
         raise ValueError(f'{extra}: 교재 홈 링크 누락')
     extra.write_text(content)
+
+practice_links = ''.join(f'<li><a href="../chapter{day:02}/index.html#applied-clinic">{day}일 · {escape(title)}</a></li>'
+                         for day, title in [(75,"복구 검사"),(76,"실패 테스트"),(77,"배포 조건"),(78,"화면 상태"),(79,"API 연동"),(80,"변경 요청 인수 시험")])
+updates.write_text(updates.read_text().replace('<main>', '<main><section id="live-practice"><h2>실제 모델 호출과 확장 실습</h2>'
+    '<p><a href="../chapter62/index.html#workshop">MCP 조회와 실제 모델 연결</a> · <a href="../daily/index.html">개인·팀별 120일 실습</a></p>'
+    '<h3>Codex로 이어 만드는 서비스</h3><ul>'+practice_links+'</ul></section>',1))

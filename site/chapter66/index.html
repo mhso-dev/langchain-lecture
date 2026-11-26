@@ -53,7 +53,7 @@
 
 handoff = evidence_role(<span class="tok-string">"과제는 어디에 내나요?"</span>)
 print(answer_role(handoff))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div>
 <div class="cell-after"><p>답변 끝의 p2는 근거 담당이 전달한 ID입니다. 문장을 만드는 쪽에서 새로 붙인 문서 번호가 아닙니다.</p>
 </div>
 <p id="example-analysis">두 역할 사이에서 최종 문장만 전달하면 두 번째 역할은 p2의 어느 구절을 읽었는지 확인하기 어렵습니다. 원래 질문과 근거 ID를 함께 넘겨야 인계 전후의 요청이 같은지, 답변이 같은 근거를 사용했는지 대조할 수 있습니다.</p>
@@ -77,7 +77,7 @@ ninput["질문"]
 <span class="tok-comment"># handoff의 질문 필드를 확인하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">question = <span class="tok-string">'과제는 어디에 내나요?'</span>
 print(question == handoff[<span class="tok-string">'question'</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True입니다. 문서가 같더라도 질문이 바뀌면 두 방식의 결과를 같은 과제로 비교하기 어렵습니다.</p>
 </div>
 </details>
@@ -104,7 +104,7 @@ print(question == handoff[<span class="tok-string">'question'</span>])</code></p
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">single = {<span class="tok-string">"model_calls"</span>: <span class="tok-number">2</span>, <span class="tok-string">"mandatory_retrieval_calls"</span>: <span class="tok-number">1</span>}
 two_roles = {<span class="tok-string">"model_calls"</span>: <span class="tok-number">4</span>, <span class="tok-string">"mandatory_retrieval_calls"</span>: <span class="tok-number">1</span>}
 print(two_roles[<span class="tok-string">"model_calls"</span>] - single[<span class="tok-string">"model_calls"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">2</pre></div>
 <div class="cell-after"><p>출력 2는 제공 기록의 4회에서 2회를 뺀 값입니다. 필수 검색은 양쪽 모두 1회입니다. 호출당 토큰이나 단가는 기록에 없어 추가 비용은 계산할 수 없습니다.</p>
 </div>
 </article>
@@ -126,7 +126,7 @@ print(two_roles[<span class="tok-string">"model_calls"</span>] - single[<span cl
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">parking = evidence_role("주차비는 얼마인가요?")
 print(parking["question"])
 print(parking["text"])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">주차비는 얼마인가요?
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">주차비는 얼마인가요?
 과제는 학습 관리 페이지의 과제함에 제출합니다.</pre></div><div class="cell-after"><p>넘겨받은 질문은 정확하지만 근거는 과제 제출 안내입니다. evidence_role이 어떤 질문에도 같은 문서를 반환하기 때문입니다. 이 경우에는 근거를 새로 찾거나 빈 근거로 종료해야 하며, 같은 자료를 다른 역할에 한 번 더 넘겨도 주차비를 알 수 없습니다.</p></div></details></article>
 </section>
 
@@ -140,7 +140,7 @@ print(parking["text"])</code></pre></figure>
 
 miss = lookup_handoff(&quot;주차비는 얼마인가요?&quot;)
 print(miss)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;주차비는 얼마인가요?&#x27;, &#x27;status&#x27;: &#x27;no_evidence&#x27;, &#x27;evidence&#x27;: None}</pre></div><div class="cell-after"><p>질문은 보존됐고 상태는 no_evidence, evidence는 None입니다. 여기까지는 조회 역할의 책임입니다. 답변 역할에 다시 자료를 찾게 하기보다, 넘겨받은 상태로 답할 수 있는지 판단하게 합니다.</p></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">{&#x27;question&#x27;: &#x27;주차비는 얼마인가요?&#x27;, &#x27;status&#x27;: &#x27;no_evidence&#x27;, &#x27;evidence&#x27;: None}</pre></div><div class="cell-after"><p>질문은 보존됐고 상태는 no_evidence, evidence는 None입니다. 여기까지는 조회 역할의 책임입니다. 답변 역할에 다시 자료를 찾게 하기보다, 넘겨받은 상태로 답할 수 있는지 판단하게 합니다.</p></div>
 </article>
 <figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>조회 에이전트의 도구 결과가 작성 에이전트에 도착하는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
     research["조회 에이전트의 모델"] --> choice{"새 도구 요청이 있는가?"}
@@ -162,14 +162,17 @@ def render_handoff(packet):
 
 service = RunnableLambda(lookup_handoff) | RunnableLambda(render_handoff)
 print(service.invoke(&quot;주차비는 얼마인가요?&quot;))
-print(service.invoke(&quot;과제를 어디에 제출하나요?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">관련 안내를 찾지 못했습니다.
+print(service.invoke(&quot;과제를 어디에 제출하나요?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">관련 안내를 찾지 못했습니다.
 과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div><p>첫 질문은 보류되고 두 번째에는 과제함 안내와 출처 ID가 나옵니다. 두 역할을 각각 호출해 보면 어떤 단계에서 no_evidence가 생겼는지 찾을 수 있습니다. 이 체인은 Python 함수를 연결했으므로 역할의 경계를 확인하는 데 모델 호출 비용이 들지 않습니다.</p></details>
 </article>
 <article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-3">셀 07 · 한 에이전트의 검색 요청과 근거 확인하기</h3><div class="cell-before"><p>이번에는 실제 create_agent 그래프를 실행합니다. 검색 요청을 만드는 모델의 응답 순서만 고정하고, 도구는 방금 작성한 조회 함수를 호출합니다. 최종 문장을 읽기 전에 근거가 든 도구 메시지를 따로 꺼내세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">from langchain.agents import create_agent
-from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
-from langchain_core.messages import AIMessage
-from langchain_core.tools import tool
 from langsmith import tracing_context
+import os
+from langchain_openai import ChatOpenAI
+
+# 수업 커널에 %pip install langchain-openai 를 실행하고 OPENAI_API_KEY를 설정하세요.
+model = ChatOpenAI(model=os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;, timeout=45, max_retries=1)
+from langchain_core.tools import tool
 
 @tool
 def assignment_source(question: str) -&gt; str:
@@ -178,34 +181,18 @@ def assignment_source(question: str) -&gt; str:
     if packet[&quot;evidence&quot;] is None:
         return &quot;자료 없음&quot;
     return answer_role(packet[&quot;evidence&quot;])
-
-class ResearchModel(FakeMessagesListChatModel):
-    def bind_tools(self, tools, **kwargs):
-        return self
-
 query = &quot;과제를 어디에 제출하나요?&quot;
-request_source = AIMessage(content=&quot;&quot;, tool_calls=[{
-    &quot;name&quot;: &quot;assignment_source&quot;, &quot;args&quot;: {&quot;question&quot;: query}, &quot;id&quot;: &quot;source-1&quot;,
-}])
-research_agent = create_agent(ResearchModel(responses=[
-    request_source, AIMessage(content=&quot;문서에서 제출 방법을 확인했습니다.&quot;),
-]), tools=[assignment_source])
+research_agent = create_agent(model, tools=[assignment_source], system_prompt=&quot;assignment_source로 문서 근거를 조회하세요.&quot;)
 with tracing_context(enabled=False):
     research_log = research_agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, query)]})[&quot;messages&quot;]
-evidence_line = next(m.content for m in research_log if m.type == &quot;tool&quot;)
-print([m.type for m in research_log], evidence_line)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;human&#x27;, &#x27;ai&#x27;, &#x27;tool&#x27;, &#x27;ai&#x27;] 과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div><div class="cell-after"><p>한 그래프에서 human → ai → tool → ai가 기록됩니다. 첫 ai는 조회 요청이고 마지막 ai는 조회를 마친 대본의 문장입니다. 다음 역할이 문서 ID까지 확인하려면 마지막 인사말 대신 실제 도구 결과인 evidence_line을 넘겨야 합니다.</p></div>
+results = [m.content for m in research_log if m.type == &quot;tool&quot;]
+if not results or results[-1] == &quot;자료 없음&quot;:
+    raise ValueError(&quot;작성에 전달할 문서 근거가 없습니다.&quot;)
+evidence_line = results[-1]
+print(evidence_line)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">과제는 학습 관리 페이지의 과제함에 제출합니다. [course-guide-v1:p2]</pre></div><div class="cell-after"><p>조회에서 받은 ToolMessage를 작성 모델의 입력으로 전달하세요. 근거를 얻지 못한 실행은 작성 단계 전에 중단하고, 최종 답변에서 문서 ID가 보존됐는지 확인합니다.</p></div>
 </article>
-<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-4">셀 08 · 두 번째 에이전트가 받아 본 문자열 검산하기</h3><div class="cell-before"><p>작성 역할은 전달받은 문장을 그대로 반환하는 로컬 테스트 모델에 연결합니다. 두 그래프를 거친 기록에서 실제로 붙은 ai 메시지 수를 세세요. 문장을 다듬는 성능은 이 테스트에서 평가하지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">from langchain_core.language_models.chat_models import SimpleChatModel
-
-class ReadBack(SimpleChatModel):
-    @property
-    def _llm_type(self):
-        return &quot;handoff-readback&quot;
-    def _call(self, messages, **kwargs):
-        return messages[-1].content
-
-writer_agent = create_agent(ReadBack(), tools=[])
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-4">셀 08 · 두 번째 에이전트가 받아 본 문자열 검산하기</h3><div class="cell-before"><p>조회에서 받은 ToolMessage를 작성 모델의 입력으로 전달하세요. 근거를 얻지 못한 실행은 작성 단계 전에 중단하고, 최종 답변에서 문서 ID가 보존됐는지 확인합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">writer_agent = create_agent(model, tools=[], system_prompt=&quot;주어진 근거만 사용하고 문서 ID와 함께 한 문장으로 안내하세요.&quot;)
 with tracing_context(enabled=False):
     writer_log = writer_agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, evidence_line)]})[&quot;messages&quot;]
 print(writer_log[-1].content)

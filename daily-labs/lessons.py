@@ -80,7 +80,7 @@ for date in ('2026-06-30','2026-07-01'):
     print(n,pages[n-1]['valid_from'],pages[n-1]['valid_to'],page_text(n).splitlines()[1])""",'연말 시간 질문은 14쪽, 연초 시간 질문은 17쪽, 행 수 불일치 질문은 두 기간 모두 15쪽이다. 별도 텍스트 공지를 색인에 추가하고 편람과 공지에서 같은 판정을 얻는지 확인한다.'),
 35:lesson('긴 편람으로 검색 전후를 채점하기','evaluation.csv는 채점할 때만 연다. 먼저 B01~B10에 대한 자기 검색 결과를 만든 뒤, 근거 없는 B10은 보류 항목으로 따로 집계한다.',HAND+"""gold = list(csv.DictReader((source/'evaluation.csv').open(encoding='utf-8')))
 print([(r['case_id'],r['page'] or '보류') for r in gold[-4:]])""",'B07·B08은 날짜 경계, B09는 유지된 조항, B10은 자료 없음이다. 검색 설정 한 가지를 바꾸고 답 있는 9개 중 정답 쪽이 top 3에 있는 비율과 B10의 보류 성공 여부를 각각 기록한다.'),
-55:lesson('create_agent가 실제로 도구를 실행한 지점','한 번의 에이전트 실행에도 모델의 호출 제안, 도구의 반환, 최종 메시지가 따로 남는다. 고정 모델로 호출 순서를 고정한 뒤 ToolMessage와 tool_call_id가 어디서 생기는지 본다.',AGENT+"""from roles import ClassroomModel
+55:lesson('create_agent가 실제로 도구를 실행한 지점','한 번의 에이전트 실행에도 모델의 호출 제안, 도구의 반환, 최종 메시지가 따로 남는다. 실제 모델이 조회를 요청한 뒤 ToolMessage와 tool_call_id가 어디서 생기는지 본다.',AGENT+"""from roles import course_model
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langchain_core.messages import AIMessage
@@ -88,10 +88,9 @@ from langchain_core.messages import AIMessage
 def read_case(case_id: str) -> str:
     \"\"\"접수 번호의 가상 상태를 조회한다.\"\"\"
     return '접수' if case_id == 'T01' else '없음'
-ask = AIMessage(content='',tool_calls=[dict(name='read_case',args={'case_id':'T01'},id='call1')])
-agent = create_agent(ClassroomModel(responses=[ask,AIMessage(content='조회 종료')]),tools=[read_case])
+agent = create_agent(course_model(), tools=[read_case], system_prompt='상태는 read_case로 조회한 뒤 답하세요.')
 messages = agent.invoke({'messages':[('user','T01 상태')]})['messages']
-print([(m.type,getattr(m,'tool_call_id',None),m.content) for m in messages])""",'tool 메시지의 call1이 앞선 모델 제안과 짝을 이룬다. 도구 인수를 T99로 바꾸고 어떤 메시지만 달라지는지 예측한다. 실모델로 바꿀 때는 고정 응답 대신 실제 선택 여부를 이 기록으로 확인한다.'),
+print([(m.type,getattr(m,'tool_call_id',None),m.content) for m in messages])""",'실제 tool_call_id로 요청과 결과를 연결한다. 사용자 질문의 T01을 T99로 바꾸고 도구 인자, 조회 결과와 최종 안내가 어떻게 달라지는지 기록한다.'),
 56:lesson('하네스에서 도구 호출 상한을 적용하기','호출 횟수는 실제 도구에 진입하기 직전에 센다. 모델이 같은 요청을 반복해도 한 요청의 예산 안에서 끝나야 한다.',"""def budgeted(limit):
     trace = []
     def dispatch(tool, value):

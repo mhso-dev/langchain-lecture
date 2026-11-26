@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 11 / SDK</p>
 <span class="sidebar-title">OpenAI Responses API의 요청·응답 구조</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request-input"><span>02</span>사용자 메시지의 role과 content</a><a href="#nb-sdk-mock"><span>03</span>MockTransport를 이용한 SDK 호출</a><a href="#nb-usage"><span>04</span>usage와 응답 완료 상태</a><a href="#workshop"><span>05</span>후속 질문이 어느 응답을 이어받는지 확인하기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-request-input"><span>02</span>사용자 메시지의 role과 content</a><a href="#nb-sdk-mock"><span>03</span>OpenAI Responses API 호출</a><a href="#nb-usage"><span>04</span>usage와 응답 완료 상태</a><a href="#workshop"><span>05</span>후속 질문이 어느 응답을 이어받는지 확인하기</a><a href="#recap"><span>06</span>복습과 실습 점검</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -32,7 +32,7 @@
 <h2>사용자 메시지의 role과 content</h2>
 </div>
 </header>
-<p class="concept-intro">SDK는 Python에서 요청을 만들고 응답을 읽게 해 주는 라이브러리입니다. 고정 응답으로도 메시지, 출력 본문, 사용량 필드를 따로 살펴볼 수 있습니다.</p><p>SDK는 파이썬 코드에서 서비스의 요청과 응답을 다루게 해 주는 라이브러리입니다. 먼저 보내려는 내용만 조립하면 실제 통신 없이도 모델 이름과 사용자 메시지가 어느 칸에 들어 있는지 볼 수 있습니다.</p>
+<p class="concept-intro">SDK는 Python에서 요청을 만들고 응답을 읽게 해 주는 라이브러리입니다. 실제 응답에서 메시지, 출력 본문, 사용량 필드를 따로 살펴볼 수 있습니다.</p><p>SDK는 파이썬 코드에서 서비스의 요청과 응답을 다루게 해 주는 라이브러리입니다. 먼저 보내려는 내용만 조립하면 실제 통신 없이도 모델 이름과 사용자 메시지가 어느 칸에 들어 있는지 볼 수 있습니다.</p>
 
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="concept"></span><div class="lesson-explanation" id="reading-concept"><h3>API·SDK·토큰의 관계</h3><div class="prose"><p>API는 프로그램이 서비스와 요청·응답을 주고받는 규약입니다. Python SDK는 그 규약을 Python 객체와 메서드로 사용하도록 돕는 라이브러리입니다. SDK를 설치하는 것과 서버에 모델 요청을 보내는 것은 별개의 일입니다.</p>
 <p>모델은 요청의 입력을 처리하고 출력을 생성합니다. 토큰은 모델이 텍스트 등을 처리할 때 사용하는 단위이며 한국어 글자 수와 일치하지 않습니다. 사용량 필드의 입력 토큰·출력 토큰과 답변 글자 수를 같은 값으로 취급하지 않습니다.</p>
@@ -42,16 +42,21 @@
 </thead><tbody><tr><td>내 Python 코드</td><td>입력 구성·호출·출력 기록</td></tr>
 <tr><td>OpenAI SDK</td><td>요청 직렬화·응답 객체 처리</td></tr>
 <tr><td>실제 API 서버</td><td>선택 모델 실행</td></tr>
-<tr><td>MockTransport</td><td>HTTP 전송 대신 고정 응답 반환</td></tr>
+<tr><td>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</td><td>실제 서비스에 요청하고 응답 읽기</td></tr>
 </tbody></table></div></div>
-<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>호출 전 입력 검증</h3><div class="prose"><p>첫 요청에 필요한 값은 모델 이름과 사용자 질문입니다. 셀 01에서 request["input"][0]["content"]를 읽으면 어떤 질문이 모의 서버까지 전달될지 호출 전에 확인할 수 있습니다.</p>
+<span class="lesson-anchor" id="practice"></span><div class="lesson-explanation" id="reading-practice"><h3>호출 전 입력 검증</h3><div class="prose"><p>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</p>
 </div></div>
 <article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · role과 content 구성</h3>
-<div class="cell-before"><p>model은 예제의 대역 이름입니다. 실제 계정에서 선택할 모델과 구분하세요.</p>
+<div class="cell-before"><p>model은 계정에서 사용할 실제 모델의 이름입니다. 실제 계정에서 선택할 모델과 구분하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">question = <span class="tok-string">"SDK가 하는 일을 한 문장으로 설명하세요."</span>
-request = {<span class="tok-string">"model"</span>: <span class="tok-string">"classroom-mock"</span>, <span class="tok-string">"input"</span>: [{<span class="tok-string">"role"</span>: <span class="tok-string">"user"</span>, <span class="tok-string">"content"</span>: question}], <span class="tok-string">"max_output_tokens"</span>: <span class="tok-number">300</span>}
-print(request[<span class="tok-string">"input"</span>][<span class="tok-number">0</span>][<span class="tok-string">"content"</span>])</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">import os
+from openai import OpenAI
+
+client = OpenAI(timeout=45, max_retries=1)
+model_name = os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;
+question = &quot;SDK가 하는 일을 한 문장으로 설명하세요.&quot;
+request = {&quot;model&quot;: model_name, &quot;input&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}], &quot;max_output_tokens&quot;: 300}
+print(request[&quot;input&quot;][0][&quot;content&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">SDK가 하는 일을 한 문장으로 설명하세요.</pre></div>
 <div class="cell-after"><p>원래 질문이 그대로 나옵니다. max_output_tokens는 생성할 출력의 한도이고 입력 문장 길이나 실제 생성 토큰 수가 아닙니다.</p>
 </div>
@@ -62,10 +67,10 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 
 </section>
 <section id="nb-sdk-mock" class="lesson-section"><header class="section-heading"><span class="section-number">03</span><div><p class="eyebrow"></p>
-<h2>MockTransport를 이용한 SDK 호출</h2>
+<h2>OpenAI Responses API 호출</h2>
 </div>
 </header>
-<p>아래는 제공 셀입니다. OpenAI SDK와 HTTPX가 설치된 커널에서는 SDK의 responses.create를 실제로 호출합니다. 전송은 로컬의 MockTransport가 받아 고정 응답을 돌려주므로 계정과 모델 서버를 쓰지 않습니다.</p>
+<p>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</p>
 <!-- MOTION offline-response -->
 
 <!-- END MOTION -->
@@ -73,28 +78,11 @@ print(request[<span class="tok-string">"input"</span>][<span class="tok-number">
 <!-- lesson-visual visual-sdk-mock -->
 <span class="lesson-anchor" id="visual-sdk-mock"></span>
 <!-- /lesson-visual visual-sdk-mock -->
-<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 모의 SDK 응답 생성</h3>
+<article class="notebook-cell" data-cell="2" data-task="0"><h3 id="example-cell-2">셀 02 · 요청 모델과 출력 길이 확인</h3>
 <div class="cell-before"><p>제공 함수는 요청에서 user 역할을 확인하고, message 하나와 사용량 예시가 든 HTTP 응답을 준비합니다.</p>
 <p>제공 함수는 네트워크 대신 예제 응답을 만듭니다. 셀 03에서는 본문을, 과제 04에서는 같은 응답의 사용량을 읽습니다. 처음에는 함수 안의 생성 코드보다 반환된 응답 한 건을 따라가세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2"><span class="tok-keyword">import</span> json
-<span class="tok-keyword">from</span> importlib.util <span class="tok-keyword">import</span> find_spec
-sdk_available = find_spec(<span class="tok-string">"httpx"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span> <span class="tok-keyword">and</span> find_spec(<span class="tok-string">"openai"</span>) <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>
-<span class="tok-keyword">if</span> sdk_available:
-    <span class="tok-keyword">import</span> httpx
-    <span class="tok-keyword">from</span> openai <span class="tok-keyword">import</span> OpenAI
-
-<span class="tok-keyword">def</span> mock_response(request):
-    body = json.loads(request.content)
-    <span class="tok-keyword">assert</span> body[<span class="tok-string">"input"</span>][<span class="tok-number">0</span>][<span class="tok-string">"role"</span>] == <span class="tok-string">"user"</span>
-    <span class="tok-keyword">return</span> httpx.Response(<span class="tok-number">200</span>, json={
-        <span class="tok-string">"id"</span>: <span class="tok-string">"resp_local"</span>, <span class="tok-string">"object"</span>: <span class="tok-string">"response"</span>, <span class="tok-string">"created_at"</span>: <span class="tok-number">0</span>,
-        <span class="tok-string">"model"</span>: <span class="tok-string">"classroom-mock"</span>, <span class="tok-string">"status"</span>: <span class="tok-string">"completed"</span>,
-        <span class="tok-string">"output"</span>: [{<span class="tok-string">"id"</span>: <span class="tok-string">"msg_local"</span>, <span class="tok-string">"type"</span>: <span class="tok-string">"message"</span>,
-                    <span class="tok-string">"role"</span>: <span class="tok-string">"assistant"</span>, <span class="tok-string">"status"</span>: <span class="tok-string">"completed"</span>,
-                    <span class="tok-string">"content"</span>: [{<span class="tok-string">"type"</span>: <span class="tok-string">"output_text"</span>, <span class="tok-string">"text"</span>: <span class="tok-string">"가상 안내를 확인했습니다."</span>, <span class="tok-string">"annotations"</span>: []}]}],
-        <span class="tok-string">"usage"</span>: {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>},
-    })</code></pre></figure>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-2">print(request[&quot;model&quot;], request[&quot;max_output_tokens&quot;])</code></pre></figure>
 
 <div class="cell-after"><p>이 셀은 함수를 정의합니다. 아직 요청을 보내지 않았으므로 답변 출력이 없습니다.</p>
 </div>
@@ -110,26 +98,20 @@ nreply["응답 받기"]
 
 <aside id="guided-reading" class="lesson-note"><h3>가상 응답으로 확인할 수 있는 범위</h3><p><mark>MockTransport는 요청을 받아 준비한 응답을 돌려줍니다.</mark> SDK가 어떤 메시지를 보냈고 응답에서 어느 필드를 읽었는지 추적하세요. 문장이 자연스럽게 출력됐다는 사실만으로 모델 서버의 응답 시간이나 생성 품질을 평가할 수는 없습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter06/index.html">6장 HTTP 요청과 JSON 응답 처리</a></p></aside>
 
-<span class="lesson-anchor" id="setup"></span><div class="lesson-explanation" id="reading-setup"><h3>모의 응답 환경 구성</h3><div class="prose"><p>이 모의 실행은 SDK가 요청을 구성하고 응답을 읽는지 확인합니다. 실제 모델의 답변 품질·사용 가능 모델·계정 권한·요금·네트워크는 확인하지 않습니다.</p>
+<span class="lesson-anchor" id="setup"></span><div class="lesson-explanation" id="reading-setup"><h3>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</h3><div class="prose"><p>이 호출은 SDK가 요청을 구성하고 응답을 읽는지 확인합니다. 실제 모델의 답변 품질·사용 가능 모델·계정 권한·요금·네트워크는 확인하지 않습니다.</p>
 </div></div>
 
 <article class="notebook-cell" data-cell="3" data-task="0"><h3>셀 03 · output_text 읽기</h3>
-<div class="cell-before"><p>고정 응답에 적힌 안내 문장을 SDK가 꺼낸 값과 대조하세요.</p>
+<div class="cell-before"><p>응답 객체의 output_text에서 실제 반환 문장을 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3"><span class="tok-keyword">if</span> sdk_available:
-    transport = httpx.MockTransport(mock_response)
-    <span class="tok-keyword">with</span> OpenAI(api_key=<span class="tok-string">"classroom-placeholder"</span>, base_url=<span class="tok-string">"https://example.invalid/v1"</span>,
-                http_client=httpx.Client(transport=transport), max_retries=<span class="tok-number">0</span>) <span class="tok-keyword">as</span> client:
-        response = client.responses.create(**request)
-    print(response.output_text)
-<span class="tok-keyword">else</span>:
-    print(<span class="tok-string">"OpenAI SDK와 HTTPX가 설치된 수업 커널에서 모의 호출을 실행하세요."</span>)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">가상 안내를 확인했습니다.</pre></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-3">response = client.responses.create(**request)
+print(response.output_text)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">SDK(소프트웨어 개발 키트)는 개발자가 특정 플랫폼이나 애플리케이션을 만들고 통합할 수 있도록 도구, 라이브러리, 문서 등을 제공하는 패키지입니다.</pre></div>
 <div class="cell-after"><p>SDK가 꺼낸 본문은 ‘가상 안내를 확인했습니다.’입니다. 이 문장은 제공 함수의 응답 본문에서 왔습니다. 실제 서비스 모델의 생성 결과나 품질을 보여 주지는 않습니다.</p>
 </div>
 </article>
 <span class="lesson-anchor" id="request"></span><div class="lesson-explanation" id="reading-request"><h3>SDK 요청 함수</h3><div class="prose"><p>셀 03에서 request 앞에 붙인 별표 두 개는 셀 01에서 만든 사전을 responses.create의 이름 있는 인자로 풀어 전달합니다. 이 요청에는 model, input, max_output_tokens가 들어 있습니다. 한도를 300으로 두어도 응답의 실제 총량은 usage에서 별도로 읽습니다.</p>
-<p>모의 전송 함수는 JSON을 담은 HTTP 응답을 반환합니다. 이를 받은 SDK가 response 객체를 만들고, response.output_text가 그 안의 텍스트를 꺼냅니다. 상태와 사용량은 각각 response.status와 response.usage에서 읽을 수 있습니다.</p>
+<p>SDK는 API의 HTTP 응답을 응답 객체로 변환합니다. 이를 받은 SDK가 response 객체를 만들고, response.output_text가 그 안의 텍스트를 꺼냅니다. 상태와 사용량은 각각 response.status와 response.usage에서 읽을 수 있습니다.</p>
 </div></div>
 
 </section>
@@ -143,17 +125,17 @@ nreply["응답 받기"]
 <article class="notebook-cell" data-cell="4" data-task="1"><h3 id="example-cell-4">과제 04 · usage의 토큰 합계</h3>
 <div class="cell-before"><p>제공 응답과 같은 사용량 사전입니다. 사용량이 보고된 경우 총 토큰 수를 출력하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">usage = {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>}
-<span class="tok-comment"># 응답의 총량을 꺼내세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">usage = {<span class="tok-string">"input_tokens"</span>: <span class="tok-number">10</span>, <span class="tok-string">"output_tokens"</span>: <span class="tok-number">8</span>, <span class="tok-string">"total_tokens"</span>: <span class="tok-number">18</span>}
-print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">18</pre></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4">usage = response.usage.model_dump()
+# 응답의 총량을 꺼내세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">usage = response.usage.model_dump()
+print(usage[&quot;total_tokens&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">18</pre></div>
 <div class="cell-after"><p>18은 제공 응답에 넣어 둔 수치입니다. 실제 요청의 경우에는 모델·입력마다 달라지며 사용량이 빠진 경우도 따로 남깁니다.</p>
 </div>
 </details>
 </article>
 <span class="lesson-anchor" id="response"></span><div class="lesson-explanation" id="reading-response"><h3>응답 객체의 본문과 사용량</h3><div class="prose"><p>Responses API의 output에는 텍스트 외의 항목도 들어갈 수 있습니다. 첫 번째 항목의 첫 번째 필드가 항상 답변이라고 가정하지 않고 SDK의 output_text를 사용합니다. status와 usage도 따로 확인합니다.</p>
-<p>이번 모의 응답은 항상 “가상 안내를 확인했습니다.”를 반환합니다. 질문을 바꾸어도 같은 답이 나오는 것은 모델이 실행되지 않기 때문입니다. 이를 답변 모델의 성능으로 평가하면 안 됩니다.</p>
+<p>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>결과 필드</caption><thead><tr><th scope="col">필드</th><th scope="col">해석</th></tr>
 </thead><tbody><tr><td>mode</td><td>mock 또는 live 실행 구분</td></tr>
@@ -184,38 +166,21 @@ print(usage[<span class="tok-string">"total_tokens"</span>])</code></pre></figur
         return reply["text"]
     return "응답 대기"
 
-print(display_text(partial))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">응답 대기</pre></div><div class="cell-after"><p>text 값이 있는지만 검사하면 미완료인 ‘가상 안’까지 표시합니다. 같은 사전에서 status만 completed로 바꾸면 함수가 본문을 돌려주는지도 확인하세요.</p></div></details></article>
+print(display_text(partial))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">응답 대기</pre></div><div class="cell-after"><p>text 값이 있는지만 검사하면 미완료인 ‘가상 안’까지 표시합니다. 같은 사전에서 status만 completed로 바꾸면 함수가 본문을 돌려주는지도 확인하세요.</p></div></details></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>후속 질문이 어느 응답을 이어받는지 확인하기</h2></div></header>
-<p>처음 보낸 질문의 답을 받은 뒤 “한 가지 예를 들어 주세요”라고 묻겠습니다. OpenAI SDK가 실제로 만든 요청 본문을 기록하고, 네트워크 응답은 앞에서 쓴 모의 서버로 대신합니다. 이 셀에는 openai와 httpx가 필요합니다.</p>
-<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-1">셀 07 · 응답의 ID와 요청 본문을 함께 읽기</h3><div class="cell-before"><p>검수용 서버는 요청을 한 건 받을 때마다 다른 응답 ID를 붙입니다. 첫 질문을 보내고 SDK 응답 객체의 ID와 서버가 받은 질문을 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">import json
-import httpx
-from openai import OpenAI
-
-sent_bodies = []
-def record_exchange(incoming):
-    sent_bodies.append(json.loads(incoming.content))
-    payload = mock_response(incoming).json()
-    payload[&quot;id&quot;] = f&quot;resp_local_{len(sent_bodies)}&quot;
-    return httpx.Response(200, json=payload)
-
-def send_locally(payload):
-    transport = httpx.MockTransport(record_exchange)
-    with OpenAI(api_key=&quot;classroom-placeholder&quot;, base_url=&quot;https://example.invalid/v1&quot;,
-                http_client=httpx.Client(transport=transport), max_retries=0) as client:
-        return client.responses.create(**payload)
-
-first_turn = send_locally(request)
-print(first_turn.id, sent_bodies[-1][&quot;input&quot;][0][&quot;content&quot;])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">resp_local_1 SDK가 하는 일을 한 문장으로 설명하세요.</pre></div><div class="cell-after"><p>resp_local_1은 첫 응답이 돌아올 때 정해졌습니다. 출력 문장과 별개로 이 ID를 보관해 두면 다음 요청에 어느 대화를 잇는지 명시할 수 있습니다.</p></div>
+<p>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</p>
+<article class="notebook-cell" data-cell="7" data-task="0"><h3 id="workshop-step-1">셀 07 · 응답의 ID와 요청 본문을 함께 읽기</h3><div class="cell-before"><p>검수용 서버는 요청을 한 건 받을 때마다 다른 응답 ID를 붙입니다. 첫 질문을 보내고 SDK 응답 객체의 ID와 서버가 받은 질문을 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7">first_turn = client.responses.create(**request)
+print(first_turn.id, first_turn.output_text)</code></pre></figure>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">응답 ID 예시 SDK가 하는 일을 한 문장으로 설명하세요.</pre></div><div class="cell-after"><p>첫 응답의 id를 꺼내 후속 요청에 전달합니다. 출력 문장과 별개로 이 ID를 보관해 두면 다음 요청에 어느 대화를 잇는지 명시할 수 있습니다.</p></div>
 </article>
 <article class="notebook-cell" data-cell="8" data-task="1"><h3 id="workshop-step-2">과제 08 · 첫 응답에 후속 질문 연결하기</h3><div class="cell-before"><p>첫 요청의 설정은 유지하고 input만 새 사용자 메시지로 바꾸세요. previous_response_id에 first_turn.id를 넣어 한 번 보내고 서버가 받은 이전 ID와 새 질문을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">followup_input = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;한 가지 예를 들어 주세요.&quot;}]
-# 새 요청을 만들어 send_locally에 넘기세요.</code></pre></figure>
+# 새 요청을 만들어 client.responses.create에 넘기세요.</code></pre></figure>
 <details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">followup_input = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;한 가지 예를 들어 주세요.&quot;}]
 next_request = {**request, &quot;input&quot;: followup_input, &quot;previous_response_id&quot;: first_turn.id}
-next_turn = send_locally(next_request)
-sent = sent_bodies[-1]
-print(sent[&quot;previous_response_id&quot;], sent[&quot;input&quot;][0][&quot;content&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">resp_local_1 한 가지 예를 들어 주세요.</pre></div><p>두 번째 요청 본문에 첫 응답 ID와 새 질문이 함께 들어갔습니다. 모의 서버는 받은 질문에 따라 글을 생성하지 않으므로, 여기서 확인할 수 있는 것은 SDK가 조립해 보낸 요청까지입니다.</p></details>
+next_turn = client.responses.create(**next_request)
+sent = next_request
+print(sent[&quot;previous_response_id&quot;], sent[&quot;input&quot;][0][&quot;content&quot;])</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">&lt;첫 응답 ID&gt; 한 가지 예를 들어 주세요.</pre></div><p>실제 응답의 ID와 usage를 읽고 후속 요청에 previous_response_id를 전달하세요.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>후속 질문을 보낼 때 필요한 연결 값은 앞 응답 객체의 id입니다.</mark> 앞 답변의 본문을 previous_response_id에 넣으면 서버가 응답을 식별할 수 없습니다. 이 연습에서는 기록한 요청을 읽어 ID를 넣은 자리와 새 질문이 들어간 자리를 구분할 수 있습니다.</p></aside><p>실서비스에서 대화를 이어갈 때는 화면에 보여 줄 답변과 다음 요청에 필요한 응답 ID를 따로 보관하세요.</p>
 </section>

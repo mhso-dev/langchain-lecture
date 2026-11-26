@@ -116,7 +116,8 @@ if set(NOTES) != {int(row[0]) for row in spec}:
 resources=DAILY/"resources.zip"
 with ZipFile(HERE/"resources.zip") as original, ZipFile(resources,"w") as packed:
     for name in original.namelist():
-        put(packed,name,original.read(name))
+        override = HERE / "live-resources" / name.removeprefix("daily_resources/")
+        put(packed,name,override.read_bytes() if override.is_file() else original.read(name))
     for path in sorted((HERE/"cases").glob("*")):
         if path.is_file():
             put(packed,"daily_resources/cases/"+path.name,path.read_bytes())

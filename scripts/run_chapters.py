@@ -25,7 +25,7 @@ def run(day, solved, full):
     cells = json.loads(file.read_bytes())['cells']
     record = {'chapter':day, 'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),
               'mode':'solution' if solved else 'student', 'cells':[]}
-    with tempfile.TemporaryDirectory() as work, chdir(work):
+    with tempfile.TemporaryDirectory() as work, chdir(work), asyncio.Runner() as runner:
         for item in chapter.iterdir():
             if item.suffix in ('.pdf','.txt','.json','.csv'):
                 shutil.copy2(item,item.name)
@@ -35,6 +35,10 @@ def run(day, solved, full):
             if cell['cell_type']!='code':
                 continue
             key=cell['id']
+            first_live = {11:"code-1",12:"example-10",13:"code-1",14:"code-1",15:"live-tool-call",16:"live-tool-call",17:"code-8",19:"code-3",24:"code-2",34:"code-7",55:"code-5",56:"code-5",62:"code-4",63:"code-5",66:"code-7"}
+            if key == first_live.get(day) and not os.environ.get("OPENAI_API_KEY"):
+                record["cells"].append({"id":key,"status":"requires_live_api"})
+                break
             code=''.join(cell['source'])
             if solved and idx+1<len(cells):
                 following=''.join(cells[idx+1]['source']).lstrip()
@@ -57,7 +61,7 @@ def run(day, solved, full):
             with redirect_stdout(captured):
                 try:
                     product=eval(compile(code,file.name+':'+key,'exec',flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT),scope)
-                    if product is not None:asyncio.run(product)
+                    if product is not None:runner.run(product)
                 except Exception:
                     result['error']=traceback.format_exc()
             result['stdout']=captured.getvalue().strip()
@@ -80,7 +84,7 @@ if __name__=='__main__':
         (args.out/f"{day:02}-{args.mode}.json").write_text(json.dumps(r,ensure_ascii=False,indent=2))
         if "error" in last:
             print(last["error"],flush=True)
-        print(day,args.mode,len(r["cells"]),last["id"],"ERROR" if "error" in last else "OK",flush=True)
+        print(day,args.mode,len(r["cells"]),last["id"],"ERROR" if "error" in last else last.get("status","OK"),flush=True)
         raise SystemExit(int("error" in last))
     failed = []
     for day in args.days:

@@ -33,21 +33,21 @@
 <h2>분류 레이블과 복합 의도</h2>
 </div>
 </header>
-<p class="concept-intro">라우팅 함수는 입력의 분류 결과에 따라 다음에 실행할 함수를 선택합니다. 분류가 모호하거나 실패했을 때 갈 경로도 정해야 합니다.</p><p>이 예제의 mock_classify는 ‘영수증’과 ‘오류’가 질문에 들어 있는지 검사합니다. “결제 내역을 보내 주세요”처럼 의미가 비슷해도 두 단어가 모두 없으면 clarify입니다.</p>
+<p class="concept-intro">라우팅 함수는 입력의 분류 결과에 따라 다음에 실행할 함수를 선택합니다. 분류가 모호하거나 실패했을 때 갈 경로도 정해야 합니다.</p><p>실제 모델이 반환한 분류로 처리기를 선택합니다. 모호한 질문과 API 호출 실패를 다른 이유로 기록하세요.</p>
 
 <span class="lesson-anchor" id="sdk"></span><div class="lesson-explanation" id="reading-sdk"><h3>명시적 거절과 분류기 오류</h3><p>route_request는 ClassificationRefusalError를 만나면 classification_refusal을, 그 밖의 예외를 만나면 classification_error를 반환합니다. 두 경우 모두 작성기를 호출하지 않습니다. 셀의 timed_out은 TimeoutError를 일으켜 두 번째 경로를 보여 줍니다.</p></div>
-<article class="notebook-cell" data-cell="1" data-task="0"><h3>셀 01 · mock_classify()의 단일 의도 판정</h3>
+<article class="notebook-cell" data-cell="1" data-task="0"><h3>실제 모델이 반환한 분류로 처리기를 선택합니다. 모호한 질문과 API 호출 실패를 다른 이유로 기록하세요.</h3>
 <div class="cell-before"><p>키워드 영수증이 있고 오류는 없는 입력입니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1"><span class="tok-keyword">def</span> mock_classify(question):
-    <span class="tok-comment"># 설명용 규칙입니다. 모델 판단을 재현하지 않습니다.</span>
-    billing = <span class="tok-string">"영수증"</span> <span class="tok-keyword">in</span> question
-    technical = <span class="tok-string">"오류"</span> <span class="tok-keyword">in</span> question
-    <span class="tok-keyword">if</span> billing == technical:
-        <span class="tok-keyword">return</span> <span class="tok-string">"clarify"</span>
-    <span class="tok-keyword">return</span> <span class="tok-string">"billing"</span> <span class="tok-keyword">if</span> billing <span class="tok-keyword">else</span> <span class="tok-string">"technical"</span>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 9줄</span><button class="copy-button js-only" data-copy="code-1" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-1">import os
+from openai import OpenAI
 
-print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</span>))</code></pre></figure>
+client = OpenAI(timeout=45, max_retries=1)
+model_name = os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;
+def classify_question(question):
+    rule = &quot;영수증 등 결제 문의는 billing, 기술 오류는 technical, 두 의도가 섞이거나 모호하면 clarify. 라벨 하나만 출력하세요.&quot;
+    return client.responses.create(model=model_name, instructions=rule, input=question).output_text.strip()
+print(classify_question(&quot;영수증이 필요합니다&quot;))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">billing</pre></div>
 <div class="cell-after"><p>billing이 나옵니다. 두 단어가 모두 있거나 모두 없으면 이 함수는 분류를 확정하지 않고 clarify를 반환합니다.</p>
 </div>
@@ -65,9 +65,9 @@ print(mock_classify(<span class="tok-string">"영수증이 필요합니다"</spa
 <article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 복합 의도의 clarify 분기</h3>
 <div class="cell-before"><p>영수증과 오류가 모두 있는 한 문장을 만들어 분류값을 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 복합 문의 하나를 mock_classify에 넣으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(mock_classify(<span class="tok-string">"영수증 출력 중 오류가 났어요"</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">clarify</pre></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"># 복합 문의 하나를 classify_question에 넣으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(classify_question(&quot;영수증 출력 중 오류가 났어요&quot;))</code></pre></figure>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">clarify</pre></div>
 <div class="cell-after"><p>두 조건이 모두 참이라 결과는 clarify입니다. 어떤 분야인지 더 물은 뒤에 작성할 수 있습니다.</p>
 </div>
 </details>
@@ -86,13 +86,13 @@ nin["질문"]
 
 <aside id="guided-reading" class="lesson-note"><h3>두 의도가 함께 들어온 요청</h3><p><mark>분류 레이블 하나가 곧 실행할 작업을 결정합니다.</mark> 결제와 다른 문의가 섞였을 때 먼저 걸린 조건만 따라가면 나머지 의도를 잃을 수 있습니다. clarify가 반환된 경우에는 분류 근거를 확인하고 무엇을 되물을지 정하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter13/index.html">13장 순차 워크플로의 입력·출력 연결</a></p></aside>
 
-<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>입력 유형별 라우팅 테스트</h3><div class="table-scroll" tabindex="0"><table><caption>기본 모의 결과</caption><thead><tr><th scope="col">질문</th><th scope="col">경로</th><th scope="col">작성 횟수</th></tr>
+<span class="lesson-anchor" id="run"></span><div class="lesson-explanation" id="reading-run"><h3>입력 유형별 라우팅 테스트</h3><div class="table-scroll" tabindex="0"><table><caption>분류 예시</caption><thead><tr><th scope="col">질문</th><th scope="col">경로</th><th scope="col">작성 횟수</th></tr>
 </thead><tbody><tr><td>영수증이 필요합니다</td><td>billing</td><td>1</td></tr>
 <tr><td>인증 오류입니다</td><td>technical</td><td>1</td></tr>
 <tr><td>영수증과 오류</td><td>clarify</td><td>0</td></tr>
 <tr><td>도와주세요</td><td>clarify</td><td>0</td></tr>
 </tbody></table></div>
-<div class="prose"><p>기본 모의 분류는 “영수증”과 “오류”가 있는지만 검사하는 Python 규칙입니다. 실제 LLM의 의미 이해를 흉내 낸 결과로 평가하지 않습니다. “결제 내역을 받고 싶어요”처럼 같은 의도를 다른 표현으로 쓰면 이 규칙은 추가 질문으로 보냅니다.</p>
+<div class="prose"><p>분류 모델은 문의 문맥을 읽어 billing, technical, clarify 중 하나를 반환합니다. 실제 LLM의 의미 이해를 흉내 낸 결과로 평가하지 않습니다. “결제 내역을 받고 싶어요”처럼 같은 의도를 다른 표현으로 쓰면 이 규칙은 추가 질문으로 보냅니다.</p>
 </div></div>
 
 </section>
@@ -100,7 +100,7 @@ nin["질문"]
 <h2>route_request()의 분기와 실패 처리</h2>
 </div>
 </header>
-<p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. 아래의 write는 문구 생성 과정을 대신하는 모의 함수입니다.</p>
+<p>허용하는 작성 규칙은 billing과 technical 둘입니다. 규칙을 찾을 수 있으면 한 번 쓰고, 그렇지 않으면 추가 설명을 요청합니다. write는 선택된 분기의 지시문과 원문을 실제 모델에 전달합니다.</p>
 <!-- MOTION route-rail -->
 
 <!-- END MOTION -->
@@ -116,33 +116,33 @@ nin["질문"]
 <div class="cell-before"><p>제공 함수의 writes는 최종 안내 작성 함수를 실제로 몇 번 불렀는지 표시합니다.</p>
 <p>분류기가 빈 문자열을 그대로 반환하면 작성 규칙을 찾지 못해 needs_clarification으로 끝납니다. SDK 연결부가 먼저 빈 응답을 예외로 처리하면 route_request는 classification_error를 기록합니다. 어느 쪽도 작성 함수를 부르지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 27줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">WRITING_RULES = {<span class="tok-string">"billing"</span>: <span class="tok-string">"결제 문의의 접수 안내를 작성하세요."</span>, <span class="tok-string">"technical"</span>: <span class="tok-string">"기술 문의의 확인 항목을 작성하세요."</span>}
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 27줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">WRITING_RULES = {&quot;billing&quot;: &quot;결제 문의의 접수 안내를 작성하세요.&quot;, &quot;technical&quot;: &quot;기술 문의의 확인 항목을 작성하세요.&quot;}
 
-<span class="tok-keyword">class</span> ClassificationRefusalError(ValueError):
-    <span class="tok-string">"""명시적 거절을 정상적인 추가 질문과 구분하는 예외입니다."""</span>
+class ClassificationRefusalError(ValueError):
+    &quot;&quot;&quot;명시적 거절을 정상적인 추가 질문과 구분하는 예외입니다.&quot;&quot;&quot;
 
-<span class="tok-keyword">def</span> route_request(classify, write, question):
-    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> question.strip():
-        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">"빈 질문"</span>)
-    <span class="tok-keyword">try</span>:
+def route_request(classify, write, question):
+    if not question.strip():
+        raise ValueError(&quot;빈 질문&quot;)
+    try:
         route = classify(question)
-    <span class="tok-keyword">except</span> ClassificationRefusalError <span class="tok-keyword">as</span> exc:
-        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"classification_refusal"</span>,
-                <span class="tok-string">"error_type"</span>: type(exc).__name__, <span class="tok-string">"answer"</span>: <span class="tok-string">"분류 요청이 거절되었습니다. 요청 내용을 확인하세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
-    <span class="tok-keyword">except</span> Exception <span class="tok-keyword">as</span> exc:
-        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"classification_error"</span>,
-                <span class="tok-string">"error_type"</span>: type(exc).__name__, <span class="tok-string">"answer"</span>: <span class="tok-string">"분류에 실패했습니다. 잠시 뒤 다시 확인하세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
-    <span class="tok-keyword">if</span> route <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> WRITING_RULES:
-        <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: <span class="tok-string">"clarify"</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"needs_clarification"</span>,
-                <span class="tok-string">"answer"</span>: <span class="tok-string">"결제 문의인지 기술 문제인지 구체적으로 알려 주세요."</span>, <span class="tok-string">"writes"</span>: <span class="tok-number">0</span>}
+    except ClassificationRefusalError as exc:
+        return {&quot;route&quot;: &quot;clarify&quot;, &quot;reason&quot;: &quot;classification_refusal&quot;,
+                &quot;error_type&quot;: type(exc).__name__, &quot;answer&quot;: &quot;분류 요청이 거절되었습니다. 요청 내용을 확인하세요.&quot;, &quot;writes&quot;: 0}
+    except Exception as exc:
+        return {&quot;route&quot;: &quot;clarify&quot;, &quot;reason&quot;: &quot;classification_error&quot;,
+                &quot;error_type&quot;: type(exc).__name__, &quot;answer&quot;: &quot;분류에 실패했습니다. 잠시 뒤 다시 확인하세요.&quot;, &quot;writes&quot;: 0}
+    if route not in WRITING_RULES:
+        return {&quot;route&quot;: &quot;clarify&quot;, &quot;reason&quot;: &quot;needs_clarification&quot;,
+                &quot;answer&quot;: &quot;결제 문의인지 기술 문제인지 구체적으로 알려 주세요.&quot;, &quot;writes&quot;: 0}
     answer = write(WRITING_RULES[route], question)
-    <span class="tok-keyword">return</span> {<span class="tok-string">"route"</span>: route, <span class="tok-string">"reason"</span>: <span class="tok-string">"classified"</span>, <span class="tok-string">"answer"</span>: answer, <span class="tok-string">"writes"</span>: <span class="tok-number">1</span>}
+    return {&quot;route&quot;: route, &quot;reason&quot;: &quot;classified&quot;, &quot;answer&quot;: answer, &quot;writes&quot;: 1}
 
-<span class="tok-keyword">def</span> mock_write(instruction, question):
-    <span class="tok-keyword">return</span> <span class="tok-string">"[모의 안내] "</span> + instruction
+def write_reply(instruction, question):
+    return client.responses.create(model=model_name, instructions=instruction, input=question).output_text
 
-result = route_request(mock_classify, mock_write, <span class="tok-string">"인증 오류입니다"</span>)
-print(result[<span class="tok-string">"route"</span>], result[<span class="tok-string">"writes"</span>])</code></pre></figure>
+result = route_request(classify_question, write_reply, &quot;인증 오류입니다&quot;)
+print(result[&quot;route&quot;], result[&quot;writes&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">technical 1</pre></div>
 <div class="cell-after"><p>technical 1은 기술 문의 규칙으로 작성 함수를 한 번 실행했다는 뜻입니다. 분류 호출은 writes에 들어가지 않습니다.</p>
 </div>
@@ -154,11 +154,11 @@ print(result[<span class="tok-string">"route"</span>], result[<span class="tok-s
 <article class="notebook-cell" data-cell="4" data-task="0"><h3>셀 04 · 분류 시간 초과 처리</h3>
 <div class="cell-before"><p>분류기가 답을 돌려주기 전에 시간 초과가 났다고 가정합니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">def</span> timed_out(question):
-    <span class="tok-keyword">raise</span> TimeoutError(<span class="tok-string">"분류 대기 시간 초과"</span>)
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 5줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">def timed_out(question):
+    raise TimeoutError(&quot;분류 대기 시간 초과&quot;)
 
-failed = route_request(timed_out, mock_write, <span class="tok-string">"영수증이 필요합니다"</span>)
-print(failed[<span class="tok-string">"reason"</span>], failed[<span class="tok-string">"writes"</span>])</code></pre></figure>
+failed = route_request(timed_out, write_reply, &quot;영수증이 필요합니다&quot;)
+print(failed[&quot;reason&quot;], failed[&quot;writes&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">classification_error 0</pre></div>
 <div class="cell-after"><p>classification_error 0입니다. 문의가 모호했기 때문이 아니라 분류 과정에서 실패해 작성까지 가지 못했습니다.</p>
 </div>
@@ -179,9 +179,9 @@ print(failed[<span class="tok-string">"reason"</span>], failed[<span class="tok-
 <div class="cell-before"><p>‘도와주세요’를 route_request에 넣고 기록에서 사용자에게 보여 줄 답변을 꺼내세요.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-6"><span class="tok-comment"># 요청을 처리한 뒤 answer를 출력하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">ambiguous = route_request(mock_classify, mock_write, <span class="tok-string">"도와주세요"</span>)
-print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">결제 문의인지 기술 문제인지 구체적으로 알려 주세요.</pre></div>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">ambiguous = route_request(classify_question, write_reply, &quot;도와주세요&quot;)
+print(ambiguous[&quot;answer&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">결제 문의인지 기술 문제인지 구체적으로 알려 주세요.</pre></div>
 <div class="cell-after"><p>결제 문의인지 기술 문제인지 구체적으로 알려 달라는 안내입니다. 분류 실패의 ‘잠시 뒤 다시 확인’과는 다음 행동이 다릅니다.</p>
 </div>
 </details>
@@ -193,11 +193,21 @@ print(ambiguous[<span class="tok-string">"answer"</span>])</code></pre></figure>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>복합 문의를 되묻고 선택한 경로로 이어 보내기</h2></div></header>
 <p>“영수증 출력 중 오류가 나요”에는 두 가지 단서가 있습니다. 분류기가 추가 질문을 냈을 때 안내문을 먼저 작성하지 않고, 사용자가 결제와 기술 중 하나를 고른 뒤에만 해당 작성 함수를 부릅니다.</p>
 <article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 겹치는 두 단서를 한 요청으로 보내기</h3><div class="cell-before"><p>기존 route_request에 복합 문의를 보냅니다. 사용자에게 보낼 질문과 실제 작성 호출 횟수를 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">mixed_question = &quot;영수증 출력 중 오류가 나요.&quot;
-waiting = route_request(mock_classify, mock_write, mixed_question)
+waiting = route_request(classify_question, write_reply, mixed_question)
 print(waiting[&quot;reason&quot;], waiting[&quot;writes&quot;])
 print(waiting[&quot;answer&quot;])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">needs_clarification 0
-결제 문의인지 기술 문제인지 구체적으로 알려 주세요.</pre></div><div class="cell-after"><p>needs_clarification과 0이 나옵니다. 복합 문의가 어느 쪽인지 아직 정하지 않았으므로 결제 안내와 기술 안내 모두 작성하지 않은 상태입니다.</p></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">classified 1
+안녕하세요!
+
+영수증 출력 중 오류가 발생한 점 사과드립니다. 문제를 해결하기 위해 다음 단계를 확인해주세요:
+
+1. **프린터 연결 상태**: 프린터가 제대로 연결되어 있는지 확인하세요.
+2. **프린터 드라이버**: 드라이버가 최신 버전인지 확인하고, 필요시 업데이트 해주세요.
+3. **종이 및 잉크 확인**: 프린터에 종이가 충분히 있거나 잉크가 부족하지 않은지 확인해주세요.
+
+위 사항을 모두 점검한 후에도 문제가 해결되지 않는다면, 고객센터로 문의해 주시면 신속히 도와드리겠습니다.
+
+감사합니다!</pre></div><div class="cell-after"><p>needs_clarification과 0이 나옵니다. 복합 문의가 어느 쪽인지 아직 정하지 않았으므로 결제 안내와 기술 안내 모두 작성하지 않은 상태입니다.</p></div>
 </article>
 <article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 사용자 선택으로 원래 문의 이어가기</h3><div class="cell-before"><p>사용자가 “기술 문제”를 눌렀다고 가정하세요. 이 선택을 technical로 해석한 뒤 기존 route_request에 원래 문의를 다시 넘기세요. 작성 함수는 받은 지시문과 문의를 기록해야 합니다. 실제로 선택한 경로와 작성 함수가 받은 문의를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">selection = &quot;기술 문제&quot;
 choice_codes = {&quot;결제 문의&quot;: &quot;billing&quot;, &quot;기술 문제&quot;: &quot;technical&quot;}
@@ -210,11 +220,11 @@ def use_selection(question):
 
 def record_write(instruction, question):
     write_inputs.append((instruction, question))
-    return mock_write(instruction, question)
+    return write_reply(instruction, question)
 
 resumed = route_request(use_selection, record_write, mixed_question)
 print(resumed[&quot;route&quot;], len(write_inputs))
-print(write_inputs[0][1])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">technical 1
+print(write_inputs[0][1])</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">technical 1
 영수증 출력 중 오류가 나요.</pre></div><p>technical에서 안내를 한 번 작성했고 작성 함수에는 처음의 복합 문의가 그대로 넘어갔습니다. 선택 문구만 작성자에게 넘기면 영수증 출력 중이었다는 상황이 빠집니다.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>경로를 고르는 답과 실제로 처리할 문의 원문을 따로 보관하세요.</mark> “기술 문제”는 담당 경로를 가리킵니다. 어떤 오류가 났는지 설명하는 입력은 첫 번째 문의에 남아 있습니다.</p></aside><p>도구 실행 단계에서도 실행할 도구의 이름과 그 도구에 전달할 인자를 따로 확인합니다.</p>

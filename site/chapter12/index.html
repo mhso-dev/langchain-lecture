@@ -29,7 +29,7 @@
 </div>
 <a class="download" href="chapter12.ipynb" download="chapter12.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>Jupyter Notebook 수업 파일 받기 (.ipynb)</strong><small>Jupyter Notebook에서 파일을 열고 Run All Cells(모든 셀 실행)를 선택하세요. 교재와 노트북의 셀 번호는 같습니다.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">완성돼 보이는 JSON을 언제 공지로 넘길까요?</a></p><div class="prose"><p>예제 셀 01–10은 그대로 실행하세요. ‘과제’ 셀에서는 ... 부분을 채운 뒤 그 셀을 다시 실행합니다. 문제 바로 아래의 정답을 펼치면 내 코드와 출력을 비교할 수 있습니다.</p>
 </div>
-<div class="prose"><p>Python 3.12 커널에 openai 3.35.1, httpx 0.28.1, pydantic 2.14.1, langchain-classic 1.0.8, langchain-core 1.6.12가 필요합니다. 파서 패키지가 없다면 첫 실행 전에 노트북 셀에서 %pip install langchain-classic==1.0.8 langchain-core==1.6.12 를 실행하고 커널을 다시 시작하세요. 노트북에는 모의 응답이 들어 있어 API 키 없이 실습할 수 있습니다.</p>
+<div class="prose"><p>실제 API 응답을 검사합니다. 연결 시간 초과는 재시도 대상으로 분류하고 응답이 완료됐을 때만 본문을 읽습니다.</p>
 </div>
 <div class="table-scroll" tabindex="0"><table><caption>교시별 실습 순서</caption><thead><tr><th scope="col">수업</th><th scope="col">함께 읽을 사례</th><th scope="col">판단할 내용</th></tr>
 </thead><tbody><tr><td>1–2교시</td><td>공지 한 건을 세 필드로 옮기기</td><td>시작일 미정과 항목 누락</td></tr>
@@ -61,7 +61,7 @@
 raw = <span class="tok-string">'{"title":"독서 모임","start":null,"audience":"adult"}'</span>
 notice = json.loads(raw)
 print(notice[<span class="tok-string">"start"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 01 실행 결과</p><pre tabindex="0">None</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None</pre></div>
 <div class="prose"><p>notice["start"]가 None을 반환했습니다. start가 누락된 응답에 같은 인덱싱을 적용하면 KeyError가 발생합니다.</p><p id="example-analysis">notice.get("start")는 키가 없을 때도, 키의 값이 None일 때도 None을 반환합니다. "start" in notice로 키가 있는지 먼저 검사하면 누락된 응답을 검토 목록에 보내고, 날짜만 미정인 공지에는 ‘추후 안내’를 표시할 수 있습니다.</p><div class="example-table"><table><caption>시작일의 세 가지 입력</caption><thead><tr><th scope="col">JSON 입력</th><th scope="col">"start" in notice</th><th scope="col">notice["start"]</th></tr></thead><tbody><tr><td>{"start": null}</td><td>True</td><td>None</td></tr><tr><td>{}</td><td>False</td><td>KeyError</td></tr><tr><td>{"start": "2027-04-02"}</td><td>True</td><td>"2027-04-02"</td></tr></tbody></table></div>
 </div>
 <p class="decision-note"><mark>시작일이 미정이어도 start 항목은 있어야 합니다.</mark></p>
@@ -101,7 +101,7 @@ print(has_start(missing))</code></pre></figure>
     audience: Literal[<span class="tok-string">"adult"</span>, <span class="tok-string">"child"</span>, <span class="tok-string">"unknown"</span>]
 
 print(Notice.model_json_schema()[<span class="tok-string">"required"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 02 실행 결과</p><pre tabindex="0">['title', 'start', 'audience']</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;title&#x27;, &#x27;start&#x27;, &#x27;audience&#x27;]</pre></div>
 <div class="prose"><p>출력 목록에 start도 들어 있습니다. str | None은 날짜를 문자열로 적거나 미정일 때 None을 쓰도록 허용합니다. 기본값을 지정하지 않았으므로 start 자체를 빼면 오류가 납니다. audience에는 Literal에 적은 세 값만 쓸 수 있고, extra="forbid" 때문에 세 항목 외에 다른 항목을 덧붙여도 오류가 납니다.</p>
 </div>
 <div class="prose"><p>원문은 독서 모임 공지인데, 모델이 행사명을 ‘요리 모임’으로 잘못 읽었다고 해 봅시다. 이 응답을 Notice에 넣으면 어떻게 될까요?</p>
@@ -111,7 +111,7 @@ checked = Notice.model_validate(reply_notice)
 print(checked.title)</code></pre></figure>
 
 
-<div class="output"><p class="eyebrow">셀 03 실행 결과</p><pre tabindex="0">요리 모임</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">요리 모임</pre></div>
 <aside id="guided-reading" class="lesson-note"><h3>형식 검사를 통과한 잘못된 제목</h3><p><mark>제목이 문자열이라는 조건은 원문의 행사명과 일치하는지 검사하지 않습니다.</mark> ‘요리 모임’도 문자열이므로 제목 필드에 들어갈 수 있습니다. 파싱한 객체의 title을 원문 행사명 옆에 놓고 읽으면, 다음 단계에서 어떤 검증이 더 필요한지 드러납니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter11/index.html">11장 OpenAI Responses API의 요청·응답 구조</a></p></aside>
 <div class="prose"><p>오류 없이 ‘요리 모임’이 나옵니다. 두 번째 줄에서 Notice가 확인한 것은 title에 문자열이 들어 있는지입니다. 공지 원문은 이 함수에 건네지도 않았으니, 행사명이 바뀌었는지는 알아낼 수 없습니다.</p>
 </div>
@@ -199,7 +199,7 @@ request_options = {<span class="tok-string">"input"</span>: <span class="tok-str
                    <span class="tok-string">"instructions"</span>: <span class="tok-string">"원문에 없는 시작일은 null로 기록하세요."</span>,
                    <span class="tok-string">"text"</span>: {<span class="tok-string">"format"</span>: format_spec}}
 print(format_spec[<span class="tok-string">"schema"</span>][<span class="tok-string">"properties"</span>][<span class="tok-string">"audience"</span>][<span class="tok-string">"enum"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 04 실행 결과</p><pre tabindex="0">['adult', 'child', 'unknown']</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;adult&#x27;, &#x27;child&#x27;, &#x27;unknown&#x27;]</pre></div>
 <div class="prose"><p>이 셀은 요청에 넣을 request_options를 만듭니다. 실제로 SDK를 호출하는 코드는 셀 09에 있습니다. 요청에서 형식을 지정해도 모델이 응답을 거절하거나 응답이 도중에 끊길 수 있으니, 받은 내용은 따로 검사합니다.</p>
 </div>
 </section>
@@ -219,7 +219,7 @@ response = {<span class="tok-string">"status"</span>: <span class="tok-string">"
     <span class="tok-keyword">return</span> parts
 
 print(message_parts(response)[<span class="tok-number">0</span>][<span class="tok-string">"text"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 05 실행 결과</p><pre tabindex="0">{"title":"독서 모임","start":null,"audience":"adult"}</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&quot;title&quot;:&quot;독서 모임&quot;,&quot;start&quot;:null,&quot;audience&quot;:&quot;adult&quot;}</pre></div>
 <div class="prose"><p>output의 첫 항목은 reasoning이고, 공지가 들어 있는 message는 그 뒤에 있습니다. message_parts는 message를 찾아 content를 꺼냅니다. 화면에 찍힌 본문은 아직 JSON 문자열이므로 공지로 쓰기 전에 Notice로 검사합니다.</p>
 </div>
 <article class="practice-question"><h3>과제 03 · output_text 조각 결합</h3>
@@ -288,7 +288,7 @@ print(join_text(parts_to_read))</code></pre></figure>
     <span class="tok-string">"output"</span>: [{<span class="tok-string">"type"</span>: <span class="tok-string">"message"</span>, <span class="tok-string">"content"</span>: []}],
 }
 print(inspect_response(empty_reply))</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 07 실행 결과</p><pre tabindex="0">{'ok': False, 'reason': 'empty'}</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;ok&#x27;: False, &#x27;reason&#x27;: &#x27;empty&#x27;}</pre></div>
 <div class="prose"><p>completed는 응답이 끝났다는 표시입니다. 이 응답은 content가 빈 목록이어서 공지 data를 만들 수 없습니다. 검사 결과에서 reason이 empty이면 사용자에게 전달할 공지를 꺼내지 않습니다.</p>
 </div>
 <article class="practice-question"><h3>과제 04 · 검증 성공 데이터만 반환</h3>
@@ -327,7 +327,7 @@ text = <span class="tok-string">""</span>
     <span class="tok-keyword">if</span> event[<span class="tok-string">"type"</span>] == <span class="tok-string">"response.output_text.delta"</span>:
         text += event[<span class="tok-string">"delta"</span>]
 print(text)</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 08 실행 결과</p><pre tabindex="0">안녕하세요.</pre></div>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">안녕하세요.</pre></div>
 <div class="prose"><p>화면에는 마침표까지 찍혔지만 events에는 response.completed가 없습니다. 받은 글자는 보여 줄 수 있어도 응답이 끝났다고 판단할 근거는 없습니다. 완료 이벤트가 오면 SDK의 event.response.usage에서 사용량을 읽을 수 있습니다. 완료 신호가 와도 사용량 값이 비어 있을 수 있으므로, 사용량만 보고 완료 여부를 판단하면 안 됩니다.</p>
 </div>
 <article class="practice-question"><h3>과제 05 · response.completed 판별</h3>
@@ -358,30 +358,23 @@ print(is_complete(last_events))</code></pre></figure>
 </div>
 </header>
 <p>이번에는 셀 06의 검사기를 SDK 호출에 연결합니다. 정상적으로 응답을 받으면 reply.model_dump()로 딕셔너리를 만들어 inspect_response에 건넵니다.</p>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 09 · responses.create()와 model_dump()</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-19" type="button" aria-label="셀 09 · responses.create()와 model_dump() 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 09 · responses.create()와 model_dump()"><code id="code-19"><span class="tok-keyword">from</span> openai <span class="tok-keyword">import</span> OpenAI, APITimeoutError
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 09 · responses.create()와 model_dump()</span><span class="code-actions"><span>python · 8줄</span><button class="copy-button js-only" data-copy="code-19" type="button" aria-label="셀 09 · responses.create()와 model_dump() 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 09 · responses.create()와 model_dump()"><code id="code-19">import os
+from openai import OpenAI, APITimeoutError
 
-<span class="tok-keyword">def</span> request_notice(client):
-    <span class="tok-keyword">try</span>:
-        reply = client.responses.create(model=<span class="tok-string">"classroom-mock"</span>, **request_options)
-    <span class="tok-keyword">except</span> APITimeoutError:
-        <span class="tok-keyword">return</span> {<span class="tok-string">"ok"</span>: <span class="tok-keyword">False</span>, <span class="tok-string">"reason"</span>: <span class="tok-string">"timeout"</span>}
-    <span class="tok-keyword">return</span> inspect_response(reply.model_dump())</code></pre></figure>
+def request_notice(client):
+    try:
+        reply = client.responses.create(model=os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;, **request_options)
+    except APITimeoutError:
+        return {&quot;ok&quot;: False, &quot;reason&quot;: &quot;timeout&quot;}
+    return inspect_response(reply.model_dump())</code></pre></figure>
 <div class="prose"><p>기다리던 중 APITimeoutError가 발생하면 검사할 reply가 없습니다. 이때 request_notice는 reason에 timeout을 담아 돌려줍니다.</p>
 </div>
 <div class="prose"><p>timeout_transport는 요청을 받자마자 읽기 시간 초과 예외를 일으킵니다. 실습은 실제 대기 시간을 측정하지 않습니다. SDK가 이 예외를 호출 함수에 어떻게 전달하는지 확인하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 10 · MockTransport로 시간 초과 재현</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-20" type="button" aria-label="셀 10 · MockTransport로 시간 초과 재현 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 10 · MockTransport로 시간 초과 재현"><code id="code-20"><span class="tok-keyword">import</span> httpx
-
-<span class="tok-keyword">def</span> timeout_transport(request):
-    <span class="tok-keyword">raise</span> httpx.ReadTimeout(<span class="tok-string">"classroom timeout"</span>, request=request)
-
-<span class="tok-keyword">with</span> OpenAI(
-    api_key=<span class="tok-string">"classroom-placeholder"</span>,
-    max_retries=<span class="tok-number">0</span>,
-    http_client=httpx.Client(transport=httpx.MockTransport(timeout_transport)),
-) <span class="tok-keyword">as</span> client:
-    print(request_notice(client))</code></pre></figure>
-<div class="output"><p class="eyebrow">셀 10 실행 결과</p><pre tabindex="0">{'ok': False, 'reason': 'timeout'}</pre></div>
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>셀 10 · MockTransport로 시간 초과 재현</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-20" type="button" aria-label="셀 10 · MockTransport로 시간 초과 재현 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="셀 10 · MockTransport로 시간 초과 재현"><code id="code-20">with OpenAI(timeout=45, max_retries=1) as client:
+    result = request_notice(client)
+    print(result)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;ok&#x27;: True, &#x27;data&#x27;: {&#x27;title&#x27;: &#x27;성인 독서 모임 안내&#x27;, &#x27;start&#x27;: None, &#x27;audience&#x27;: &#x27;adult&#x27;}}</pre></div>
 <div class="prose"><p>셀 07에서는 응답을 받았지만 내용이 비어 있어 empty가 나왔습니다. 여기서는 응답을 받기 전에 APITimeoutError가 발생합니다. request_notice가 돌려준 timeout은 서버가 보낸 응답 상태와 구별해야 합니다.</p>
 </div>
 </section>
@@ -449,7 +442,7 @@ def final_notice(events):
     return None
 
 print(final_notice(notice_events))
-print(final_notice(finished_events))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None
+print(final_notice(finished_events))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">None
 독서 모임</pre></div><p>미리보기만 있을 때는 None이고, 정상 종료와 스키마 검사까지 확인한 뒤에는 독서 모임입니다. 마지막 조각을 받고 연결이 끊기면 화면의 JSON이 온전해 보여도 이 함수는 공지를 넘기지 않습니다.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>마지막 중괄호와 정상 종료 이벤트는 서로 다른 신호입니다.</mark> 완료 이벤트를 받았더라도 거절이나 빈 본문이면 기존 검사 함수가 실패 사유를 냅니다. 화면에 텍스트가 나타나는 시점과 다음 작업이 시작되는 시점을 따로 정하세요.</p></aside><p>여러 모델 호출을 이을 때는 다음 단계에 보낼 값이 준비된 시점을 먼저 정하세요.</p>

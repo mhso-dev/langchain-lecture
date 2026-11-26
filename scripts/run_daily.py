@@ -4,6 +4,7 @@ import asyncio
 from contextlib import chdir, redirect_stdout
 import io
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import subprocess
@@ -11,7 +12,7 @@ import sys
 from zipfile import ZipFile
 
 DAILY = Path(__file__).resolve().parents[1]/"dist"/"daily"
-DAYS = [*range(2,43),*range(53,86),*range(117,121)]
+DAYS = list(range(1,121))
 
 def replay(file):
     scope = {"__name__":"__main__"}
@@ -36,6 +37,10 @@ def run_set(names,out):
     with TemporaryDirectory() as work, chdir(work):
         Path("daily_resources").symlink_to(DAILY/"daily_resources",target_is_directory=True)
         for name in names:
+            if name in {"day055.ipynb", "day064.ipynb", "day066.ipynb", "day067.ipynb"} and not os.environ.get("OPENAI_API_KEY"):
+                print(name, "실제 모델 실습 미실행 · OPENAI_API_KEY 필요", flush=True)
+                (out/(Path(name).stem+".json")).write_text(json.dumps({"status":"requires_live_api"}))
+                continue
             records = replay(DAILY/name)
             (out/(Path(name).stem+".json")).write_text(json.dumps(records,ensure_ascii=False,indent=2))
             print(name,len(records),"OK",flush=True)
@@ -46,7 +51,7 @@ if __name__ == "__main__":
     if len(sys.argv)>2:
         run_set(sys.argv[2:],out)
     else:
-        assert len(list(DAILY.glob("day*.ipynb"))) == len(DAYS) == 78
+        assert len(list(DAILY.glob("day*.ipynb"))) == len(DAYS) == 120
         with ZipFile(DAILY/"all-labs.zip") as z:
             for d in DAYS:
                 name = f"day{d:03}.ipynb"

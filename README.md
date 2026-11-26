@@ -51,3 +51,7 @@ Vercel에서 이 저장소를 연결하고 운영 브랜치를 `main`으로 사�
 2026년 11월 23일판 단일 HTML(102,132,697바이트)에서 장별 본문·학생 노트북·시각 자료를 분리했다. 원문에 있던 교육 검수 상태는 각 장에 표시한다. 개발용 기록과 강사 전용 자료는 상위 강의 프로젝트에서 관리한다.
 
 [제목·실습·영상의 116장 개정 기록](reports/concept-edition.md)
+
+## 실제 모델과 일일 실습
+
+모델 실습에는 수업 커널의 환경 변수 `OPENAI_API_KEY`가 필요하다. `OPENAI_MODEL`로 도구 호출과 구조화 출력을 지원하는 모델을 지정할 수 있다. SDK 예제에는 openai, LangChain 예제에는 langchain-openai를 설치한다. 자료에서 답을 찾는 순수 함수는 네트워크 없이 별도로 시험할 수 있다. 매일의 연결 개념과 실습은 `daily-labs/extensions.txt`, 6회 Codex 사례는 `daily-labs/codex_studio.py`에서 수정한다. [전체 편성과 실행 검수](reports/live-model-practice.md)

@@ -254,7 +254,32 @@ call_1 10:00~16:00</pre></div><p>loan-3 요청은 3권을, call_1 요청은 주�
 </ul>
 <span class="lesson-anchor" id="reading-sources"></span>
 </section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<section class="lesson-section" id="live-tool"><h2>실제 모델에 도구 결과를 돌려주기</h2><p>응답에 포함된 호출 ID를 사용해 함수 실행 결과를 다시 전달합니다. 첫 응답의 인자와 최종 안내 시간이 실제 함수 결과와 맞는지 확인하세요.</p><pre><code>import os
+from openai import OpenAI
+client = OpenAI(timeout=45, max_retries=1)
+model_name = os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;
+TOOL = {
+    &quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_library_hours&quot;,
+    &quot;description&quot;: &quot;가상 도서관의 요일별 운영 시간을 조회합니다. 실제 예약이나 계정 변경은 하지 않습니다.&quot;,
+    &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {&quot;day&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;weekday&quot;, &quot;weekend&quot;]}},
+        &quot;required&quot;: [&quot;day&quot;], &quot;additionalProperties&quot;: False,
+    },
+    &quot;strict&quot;: True,
+}
+reply = client.responses.create(model=model_name, tools=[TOOL],
+    instructions=&quot;도서관 운영 시간은 등록된 도구를 조회하세요.&quot;,
+    input=&quot;주말에 몇 시에 문을 여나요?&quot;)
+calls = [item for item in reply.output if item.type == &quot;function_call&quot;]
+for item in calls:
+    print(item.name, item.arguments, item.call_id)
+if calls:
+    results = [execute_call(item.model_dump()) for item in calls]
+    final = client.responses.create(model=model_name, previous_response_id=reply.id, input=results)
+    print(final.output_text)
+else:
+    print(&quot;도구 요청 없음&quot;, reply.output_text)</code></pre></section><footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>

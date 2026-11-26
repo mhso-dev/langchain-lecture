@@ -2,6 +2,7 @@
 from contextlib import redirect_stdout
 from html import unescape
 from io import StringIO
+import os
 import json
 from pathlib import Path
 import re
@@ -16,6 +17,13 @@ def replay(notebook, use_answers):
     programs = answers = 0
     for i, cell in enumerate(cells):
         if cell["cell_type"] != "code":
+            continue
+        if "live-model" in cell.get("metadata", {}).get("tags", []):
+            program = compile("".join(cell["source"]), notebook.name, "exec")
+            if os.environ.get("OPENAI_API_KEY"):
+                exec(program, kernel)
+            else:
+                print(f"{notebook.name}: API 키 없음 · 실제 모델 셀 미실행")
             continue
         programs += 1
         code = "".join(cell["source"])

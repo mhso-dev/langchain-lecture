@@ -72,7 +72,7 @@ def execute(item):
 first = {&quot;type&quot;: &quot;function_call&quot;, &quot;name&quot;: &quot;get_hours&quot;, &quot;call_id&quot;: &quot;c1&quot;, &quot;arguments&quot;: &#x27;{&quot;day&quot;:&quot;weekend&quot;}&#x27;}
 first_result = execute(first)
 print(json.loads(first_result[&quot;output&quot;])[&quot;hours&quot;])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>c1 요청에서 찾은 10:00~16:00입니다. 다음 요청은 대출 기간을 묻기 때문에 새 식별자 c2를 써야 합니다.</p>
 </div>
 <p id="example-analysis">원래 질문은 주말 운영 시간과 대출 기간을 함께 요구합니다. 첫 도구 결과에는 10:00~16:00만 있습니다. 이 시점에 루프를 끝내면 대출 기간은 비어 있습니다. 실제 에이전트에서는 모델이 다음 호출을 결정합니다. 이 실습에서는 미리 정해 둔 두 번째 요청 c2로 대출 기간을 조회합니다.</p>
@@ -87,7 +87,7 @@ second = {<span class="tok-string">"type"</span>: <span class="tok-string">"func
 history.append(second)
 history.append(execute(second))
 print(json.loads(history[-<span class="tok-number">1</span>][<span class="tok-string">"output"</span>])[<span class="tok-string">"loan_days"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">14</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">14</pre></div>
 <div class="cell-after"><p>마지막 도구에서 반환한 값은 14일입니다. 아직 최종 안내는 기록에 없습니다. 모델은 두 결과를 본 뒤 답을 쓰기 위해 한 번 더 호출돼야 합니다.</p>
 </div>
 </article>
@@ -141,7 +141,7 @@ answer = {<span class="tok-string">"type"</span>: <span class="tok-string">"mess
 script = [first, second, answer]
 trace = run_script(script, max_calls=<span class="tok-number">3</span>)
 print(trace[<span class="tok-string">"model_calls"</span>], trace[<span class="tok-string">"history"</span>][-<span class="tok-number">1</span>][<span class="tok-string">"text"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">3 주말 운영 시간은 10:00~16:00이고 대출 기간은 14일입니다.</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">3 주말 운영 시간은 10:00~16:00이고 대출 기간은 14일입니다.</pre></div>
 <div class="cell-after"><p>세 번째 응답은 message이므로 반복을 끝냅니다. 응답 목록이 먼저 바닥나면 함수 마지막 줄에서 incomplete를 반환합니다. 외부 모델을 부르지 않고도 두 종료 경로를 따로 재현할 수 있습니다.</p>
 </div>
 </article>
@@ -155,7 +155,7 @@ print(trace[<span class="tok-string">"model_calls"</span>], trace[<span class="t
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-4"><span class="tok-comment"># max_calls를 줄여 trace를 다시 얻으세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-5">limited = run_script(script, max_calls=<span class="tok-number">2</span>)
 print(limited[<span class="tok-string">"status"</span>], limited[<span class="tok-string">"history"</span>][-<span class="tok-number">1</span>][<span class="tok-string">"call_id"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">model_limit c2</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">model_limit c2</pre></div>
 <div class="cell-after"><p>model_limit c2입니다. c2 요청은 받았지만 실행 뒤 답을 받을 기회가 없으므로 둘째 도구 실행 전에 멈췄습니다. c2의 결과가 이미 있다고 해석하면 안 됩니다.</p>
 </div>
 </details>
@@ -175,7 +175,7 @@ print(limited[<span class="tok-string">"status"</span>], limited[<span class="to
 <span class="tok-comment"># first가 이미 실행된 요청인지 확인하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-7">seen = {<span class="tok-string">"c1"</span>}
 print(first[<span class="tok-string">"call_id"</span>] <span class="tok-keyword">in</span> seen)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True이므로 같은 ID를 다시 실행하지 않습니다. 종료 상태를 남기면 요청 자체가 없던 경우와 구분해 원인을 찾을 수 있습니다.</p>
 </div>
 </details>
@@ -201,23 +201,28 @@ def run_once_per_id(items):
         results[call_id] = execute(request)
     return list(results)
 
-print(run_once_per_id(replayed))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['c1']</pre></div><div class="cell-after"><p>두 번째 c1은 이미 저장한 결과와 연결됩니다. break 뒤의 c2에도 결과가 없습니다. 이 예제의 기록은 함수 호출이 끝나면 사라집니다.</p></div></details></article>
+print(run_once_per_id(replayed))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">['c1']</pre></div><div class="cell-after"><p>두 번째 c1은 이미 저장한 결과와 연결됩니다. break 뒤의 c2에도 결과가 없습니다. 이 예제의 기록은 함수 호출이 끝나면 사라집니다.</p></div></details></article>
 </section>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>한 번의 모델 응답에 도구 요청이 두 개라면?</h2></div></header>
 <p>기존 예제에서는 모델 응답 한 개마다 도구 요청이 하나씩 왔습니다. 이제 첫 응답에 주말 시간과 대출 기간 요청이 같이 들어옵니다. 모델이 답한 횟수와 프로그램이 도구를 실행한 횟수를 따로 세어 보세요.</p>
-<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 두 도구를 요청하는 첫 응답 읽기</h3><div class="cell-before"><p>수업용 결정 함수는 아직 도구 결과가 없으면 요청 두 건을 한꺼번에 돌려줍니다. 결과가 오면 두 요청 ID를 찾아 조회값으로 최종 문장을 만듭니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">def decide_turn(history):
-    results = {m[&quot;call_id&quot;]: json.loads(m[&quot;output&quot;])
-               for m in history if m.get(&quot;type&quot;) == &quot;function_call_output&quot;}
-    if not results:
-        return [first, second]
-    hours = results[&quot;c1&quot;][&quot;hours&quot;]
-    days = results[&quot;c2&quot;][&quot;loan_days&quot;]
-    return [{&quot;type&quot;: &quot;message&quot;, &quot;text&quot;: f&quot;주말 {hours}, 대출 {days}일&quot;}]
+<article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 두 도구를 요청하는 첫 응답 읽기</h3><div class="cell-before"><p>수업용 결정 함수는 아직 도구 결과가 없으면 요청 두 건을 한꺼번에 돌려줍니다. 결과가 오면 두 요청 ID를 찾아 조회값으로 최종 문장을 만듭니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">import os
+from openai import OpenAI
 
-opening = decide_turn([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}])
-print([item[&quot;call_id&quot;] for item in opening])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;c1&#x27;, &#x27;c2&#x27;]</pre></div><div class="cell-after"><p>첫 응답 한 번에 c1과 c2가 들어 있습니다. 두 도구는 아직 실행되지 않았습니다. decide_turn은 재현을 위해 응답을 정한 함수이며 실제 모델을 호출하지 않습니다.</p></div>
+client = OpenAI(timeout=45, max_retries=1)
+model_name = os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;
+tools = [
+    {&quot;type&quot;:&quot;function&quot;,&quot;name&quot;:&quot;get_hours&quot;,&quot;description&quot;:&quot;요일별 운영 시간&quot;,&quot;parameters&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;day&quot;:{&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;weekday&quot;,&quot;weekend&quot;]}},&quot;required&quot;:[&quot;day&quot;],&quot;additionalProperties&quot;:False}},
+    {&quot;type&quot;:&quot;function&quot;,&quot;name&quot;:&quot;get_loan_rule&quot;,&quot;description&quot;:&quot;대출 기간 조회&quot;,&quot;parameters&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{},&quot;additionalProperties&quot;:False}},
+]
+def decide_turn(history):
+    response = client.responses.create(model=model_name, tools=tools, input=history,
+        instructions=&quot;운영 시간과 대출 기간은 해당 도구로 각각 조회하세요.&quot;)
+    calls = [item.model_dump(exclude_none=True) for item in response.output if item.type==&quot;function_call&quot;]
+    return calls or [{&quot;type&quot;:&quot;message&quot;,&quot;text&quot;:response.output_text}]
+opening = decide_turn([{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;주말 시간과 대출 기간은?&quot;}])
+print([item[&quot;name&quot;] for item in opening if item[&quot;type&quot;]==&quot;function_call&quot;])</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;get_hours&#x27;, &#x27;get_loan_rule&#x27;]</pre></div><div class="cell-after"><p>첫 응답 한 번에 c1과 c2가 들어 있습니다. 두 도구는 아직 실행되지 않았습니다. decide_turn은 재현을 위해 응답을 정한 함수이며 실제 모델을 호출하지 않습니다.</p></div>
 </article>
 <figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>도구 두 건을 처리한 뒤 다음 모델 응답 읽기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
     first_turn["첫 모델 응답 · 요청 두 건"] --> more{"아직 읽을 요청이 있는가?"}
@@ -227,15 +232,18 @@ print([item[&quot;call_id&quot;] for item in opening])</code></pre></figure>
     more -->|없음| final_turn["두 번째 모델 응답 · 최종 답변"]</script><figcaption>for문이 요청 하나와 그 결과 하나를 이력에 붙인 뒤 다음 요청으로 넘어갑니다. 두 건을 처리하고 반복문을 빠져나와야 decide_turn을 다시 부릅니다.</figcaption></figure>
 <article class="notebook-cell" data-cell="9" data-task="1"><h3 id="workshop-step-2">과제 09 · 두 도구 결과를 넣은 뒤 다시 판단하기</h3><div class="cell-before"><p>첫 응답의 요청을 각각 execute로 실행해 요청과 결과를 기록하세요. 그 기록으로 decide_turn을 한 번 더 호출하고, 모델 응답 수·도구 결과 수·최종 문장을 출력하세요. 첫 응답과 최종 응답은 각각 한 번으로 셉니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">history_batch = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}]
 # opening의 요청과 결과를 기록하고 두 번째 모델 응답을 받으세요.</code></pre></figure>
-<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">history_batch = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;주말 시간과 대출 기간은?&quot;}]
-turns = [opening]
-for item in opening:
-    history_batch.extend([item, execute(item)])
-closing = decide_turn(history_batch)
-turns.append(closing)
-tool_count = sum(m.get(&quot;type&quot;) == &quot;function_call_output&quot; for m in history_batch)
-print(len(turns), tool_count)
-print(closing[0][&quot;text&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 2
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">history_batch = [{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;주말 시간과 대출 기간은?&quot;}]
+turn = opening
+for step in range(4):
+    if not turn or turn[0][&quot;type&quot;] != &quot;function_call&quot;:
+        print(turn[0][&quot;text&quot;] if turn else &quot;응답 없음&quot;)
+        break
+    for item in turn:
+        history_batch.extend([item, execute(item)])
+    turn = decide_turn(history_batch)
+else:
+    print(&quot;실행 한도 도달&quot;, turn)
+print(&quot;실행한 도구&quot;, sum(item.get(&quot;type&quot;) == &quot;function_call_output&quot; for item in history_batch))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 실제 호출 결과를 확인하세요</p><pre tabindex="0">2 2
 주말 10:00~16:00, 대출 14일</pre></div><p>첫 응답이 도구 둘을 요청했고 두 번째 응답이 답을 썼습니다. 그래서 모델 응답 수와 도구 결과 수가 모두 2입니다. 첫 응답의 요청이 하나만 늘어도 도구 수가 먼저 달라집니다. 이 예에서는 두 결과가 모두 모인 뒤에만 최종 문장을 만들 수 있습니다.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>호출 상한을 둘 때는 모델 응답 횟수와 도구 실행 횟수 중 무엇을 제한할지 먼저 정하세요.</mark> 이 예에서 모델 응답을 두 번 허용하면 답까지 받습니다. 도구를 하나만 실행하도록 제한하면 나머지 요청의 결과가 비므로 같은 답을 만들 수 없습니다.</p></aside><p>새 도구를 추가할 때는 요청별 ID 대조와 반복 종료 조건을 각각 시험하세요.</p>

@@ -211,7 +211,16 @@ print(inspected[&quot;call_id&quot;], checker.is_valid(inspected[&quot;arguments
 </ul>
 <span class="lesson-anchor" id="reading-sources"></span>
 </section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<section class="lesson-section" id="live-tool"><h2>사용자 질문으로 실제 도구 호출 받기</h2><p>요일이 weekend로 전달됐는지 인자를 읽으세요. 질문을 평일로 바꾸고 요청 이름은 유지되면서 요일만 달라지는지 확인하세요.</p><pre><code>import os
+from openai import OpenAI
+client = OpenAI(timeout=45, max_retries=1)
+model_name = os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;
+reply = client.responses.create(model=model_name, tools=[TOOL],
+    instructions=&quot;도서관 운영 시간은 등록된 도구를 조회하세요.&quot;,
+    input=&quot;주말에 몇 시에 문을 여나요?&quot;)
+calls = [item for item in reply.output if item.type == &quot;function_call&quot;]
+for item in calls:
+    print(item.name, item.arguments, item.call_id)</code></pre></section><footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>
