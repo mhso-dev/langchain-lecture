@@ -177,3 +177,9 @@ const changes = revised.map(({n,title,anchor,target}) => {
   return `<li><a href="${href}">${n}장 · ${escape(title)}</a></li>`;
 });
 insertAfterMain(update,`<section class="edition-group" id="pre-mid-336"><h2>11월 26일 · 중간 프로젝트 전 336시간 교재 개정</h2><p>1~42장의 본문, 실습 문제, 참고 답안과 자료를 여섯 부의 수업 순서에 맞췄습니다. 다음 목록은 각 장에서 새로 공부할 절로 연결됩니다.</p><ol>${changes.join('')}</ol><a download href="../daily/pre-mid.zip">1~42장 수업 묶음 받기</a></section>`);
+
+insertAfterMain(update, `<section class="edition-group" id="model-settings"><h2>11월 26일 · 모델 설정과 캐시 실습</h2><ul>
+<li><a href="../pre-mid/prompt-workshop/index.html#section-token-receipt-1">8장 · 첫 호출에서 입력·출력·합계 구분하기</a></li>
+<li><a href="../chapter14/index.html#section-generation-settings-1">14장 · temperature와 출력 상한 비교하기</a> · <a href="../chapter14/index.html#section-answer-cache-1">LangChain 응답 캐시 실습</a></li>
+<li><a href="../chapter24/index.html#section-cache-boundaries-1">24장 · 세 종류의 캐시와 캐시 읽기 토큰</a></li>
+</ul></section>`);
