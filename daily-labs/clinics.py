@@ -36,6 +36,33 @@ def markdown(key, text):
     return dict(cell_type="markdown", id=key, metadata={}, source=text.splitlines(True))
 
 
+def worked_example(day, companion):
+    stem = f"chapter{companion:02}"
+    original = source.parent / "site" / stem / (stem + ".ipynb")
+    sequence = json.loads(original.read_text())["cells"]
+    choices = []
+    for index, cell in enumerate(sequence[:-1]):
+        if cell["cell_type"] != "code" or sequence[index+1]["cell_type"] != "markdown":
+            continue
+        code = "".join(cell["source"]).strip()
+        result = "".join("".join(o.get("text", [])) for o in cell["outputs"]).strip()
+        note = "".join(sequence[index+1]["source"]).strip().split("\n\n")[0]
+        if not result or len(code) > 1400 or len(result) > 700 or not note or note.startswith(("#","<","```")):
+            continue
+        if len(note) > 550 or any(word in (note+result) for word in ("설치된 수업 커널","대본 모델","테스트 모델","classroom-mock","MockTransport","FakeList","FakeMessages","API 키가 없")):
+            continue
+        choices.append((code, result, note))
+    if not choices:
+        return "", ""
+    code, result, note = choices[day % min(3, len(choices))]
+    url = f"../{stem}/{stem}.ipynb"
+    title = f"관련 예제를 실행해 보기 · 자료 {companion}"
+    web = (f"<h3>{title}</h3><pre><code>{escape(code)}</code></pre><p>예제 출력</p><pre>{escape(result)}</pre>"
+           f'<p>{escape(note)}</p><p><a href="{url}">입력 준비부터 전체 노트북 실행하기</a></p>')
+    excerpt = f"### {title}\n\n```python\n{code}\n```\n\n예제 출력\n\n```text\n{result}\n```\n\n{note}\n\n[입력 준비부터 전체 노트북 실행하기](https://langchain-lecture.vercel.app/{stem}/{stem}.ipynb)"
+    return web, excerpt
+
+
 def encode(book):
     return json.dumps(book, ensure_ascii=False, indent=1) + "\n"
 
@@ -74,6 +101,10 @@ for number, scheduled_title, goal in schedule:
         sample_html = "<h3>"+escape(heading)+"</h3><pre><code>"+escape(seed)+"</code></pre><p>"+escape(probe)+"</p>"+answer
     if day in companions:
         other = companions[day]
+        example, excerpt = worked_example(day, other)
+        if example:
+            sample_html += example
+            cells.append(markdown("connected-reading", excerpt))
         related_page = (out / f"chapter{other:02}/index.html").read_text()
         matches = re.findall(r'<section\b[^>]*?\bid="([^"]+)"[^>]*>(?:(?!</section>).)*?<h2[^>]*>(.*?)</h2>', related_page, re.S)
         links = [(key,re.sub('<[^>]+>', '', title)) for key,title in matches if key not in {"start","plan","sources","recap","daily-lab","applied-clinic"}][:2]
