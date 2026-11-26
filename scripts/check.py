@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1] / "dist"
 class Page(HTMLParser):
     def __init__(self):
         super().__init__()
+        self.is_redirect = False
         self.ids = set()
         self.duplicate_ids = set()
         self.copy_targets = set()
@@ -25,6 +26,8 @@ class Page(HTMLParser):
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
+        if tag == "meta" and attrs.get("http-equiv") == "refresh":
+            self.is_redirect = True
         if tag == "details" and not {"notebook-answer", "checkpoint"}.intersection(attrs.get("class", "").split()):
             self.closed_lesson_blocks.append(attrs.get("id", attrs.get("class", "details")))
         if "id" in attrs:
@@ -72,7 +75,7 @@ def main():
                 target /= "index.html"
             if not target.is_relative_to(ROOT) or not target.is_file():
                 errors.append(f"{path.relative_to(ROOT)} -> {link}")
-            elif url.fragment and target in pages and unquote(url.fragment) not in pages[target].ids:
+            elif url.fragment and target in pages and unquote(url.fragment) not in pages[target].ids and not pages[target].is_redirect:
                 errors.append(f"{path.relative_to(ROOT)} -> {link} (앵커 누락)")
     home = set(pages[ROOT / "index.html"].links)
     for day in range(1, 117):
@@ -81,6 +84,11 @@ def main():
         if route not in home:
             errors.append(f"목차에서 {route} 누락")
         page = pages[ROOT / route]
+        if day <= 7:
+            assert page.is_redirect and len(page.links) == 1, route
+            destination = (ROOT / name / urlsplit(page.links[0]).path).resolve()
+            assert (ROOT / name / (name + ".ipynb")).read_bytes() == (destination.parent / "lesson.ipynb").read_bytes(), route
+            continue
         if page.closed_lesson_blocks or 'href="#readings"' in (ROOT / route).read_text():
             errors.append(f"{name} 본문에 접힌 설명 또는 이전 심화 읽기 목차가 남았습니다")
         if f"{name}.ipynb" not in page.notebooks:

@@ -1,0 +1,42 @@
+.bookbar, .materials, .contents, .book-footer {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .65rem 1.4rem;
+}
+.bookbar { padding: .75rem max(1rem, calc((100vw - 58rem) / 2)); background: #143d34; color: #fff; }
+.bookbar a, .hero .materials a { color: #fff; }
+.bookbar span { font-weight: 750; color: #dbedb9; }
+.pre-mid { max-width: 62rem; margin: auto; padding: clamp(1rem, 3vw, 2rem); }
+.pre-mid .hero { padding: clamp(1.25rem, 4vw, 2.5rem); }
+.materials a { padding: .26rem .7rem; border: 1px solid #afc7c4; border-radius: .4rem; text-decoration: none; }
+.materials a:hover { text-decoration: underline; }
+.contents, .book-footer { margin: 1rem 0; padding: 1rem; background: var(--mint); border-radius: .6rem; }
+.pre-mid article {
+  margin: 1rem 0; padding: clamp(1rem, 4vw, 2.5rem); border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--surface);
+}
+.pre-mid article :is(h2, h3, h4) { margin: 1.5em 0 .55em; }
+.pre-mid article h2 { border-top: 1px solid var(--line); padding-top: 1em; }
+.reading { margin: .65em 0; }
+.reading:empty { display: none; }
+.reading :not(pre) > code { background: #edf2f4; border-radius: .2em; padding: .05em .18em; overflow-wrap: anywhere; }
+.pre-mid pre {
+  max-width: 100%; overflow-x: auto; margin: .55rem 0; padding: .85rem 1rem;
+  border-radius: .55rem; color: #fff; background: var(--code); font-size: .94rem; line-height: 1.7;
+}
+.pre-mid .example { margin: .85em 0; }
+.observed { padding: .6rem 1rem; border-left: 3px solid var(--teal); background: var(--mint); }
+.observed span { font-size: .85rem; font-weight: 700; }
+.pre-mid .observed pre { color: var(--ink); background: transparent; margin: 0; padding: 0; }
+.pre-mid details { margin: 1rem 0; border: 1px solid #b5c9c3; padding: .75rem 1rem; border-radius: .55rem; }
+.pre-mid summary { color: #184b41; font-weight: 700; cursor: pointer; }
+.pre-mid mark { background: #fff2a9; color: #342d10; }
+.pre-mid table { display: block; overflow-x: auto; border-collapse: collapse; }
+.pre-mid :is(th, td) { border: 1px solid var(--line); padding: .5em; vertical-align: top; }
+.pre-mid blockquote { margin: 1em 0; padding-left: 1em; border-left: 3px solid var(--teal); }
+@media print {
+  .bookbar, .materials, .contents, .book-footer { display: none; }
+  .pre-mid, .pre-mid article { padding: 0; border: 0; }
+  .pre-mid pre { white-space: pre-wrap; color: #111; background: #fff; }
+}
