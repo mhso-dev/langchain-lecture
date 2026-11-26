@@ -46,9 +46,9 @@ jobs:
           python -m pip install --quiet pypdf pyyaml jsonschema fastapi httpx
           case "${{ matrix.group }}" in
             lessons)
-              python -m pip install --quiet 'langchain>=1,<2' 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
+              python -m pip install --quiet 'openai>=2,<4' 'langchain>=1,<2' 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
               psql -v ON_ERROR_STOP=1 -c "CREATE TABLE course_users(id text PRIMARY KEY,display_name text); CREATE TABLE course_turns(id int PRIMARY KEY, owner text); INSERT INTO course_users VALUES ('alice','학습자 A'),('bob','학습자 B'); INSERT INTO course_turns VALUES (1,'alice'),(2,'alice'),(3,'bob');"
-              echo 'DAYS=14 15 16 20 22 23 24 25 30 31 32 35 36 37 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77' >> "$GITHUB_ENV"
+              echo 'DAYS=14 15 16 20 22 23 24 25 30 31 32 35 36 37 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77 81 82 83 84 85' >> "$GITHUB_ENV"
               ;;
             containers)
               docker pull python:3.12-slim
