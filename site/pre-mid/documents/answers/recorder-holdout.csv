@@ -1,0 +1,5 @@
+id,expected_action,source,page,reference_answer
+H01,answer,recorder-b-1.0.pdf,1,녹음 중에는 바꿀 수 없다. 녹음을 끝내고 표시등을 숨김으로 설정한 뒤 새 녹음을 시작한다.
+H02,answer,recorder-a-1.1.pdf,1,화면 밝기를 낮춰도 녹음 중인 빨간 표시등은 켜져 있다.
+H03,answer,recorder-b-1.0.pdf,2,공간이 가득 차면 녹음이 멈추지만 이미 저장한 파일은 남는다.
+H04,abstain,,,A형 설명서에는 자동 소음 감소 기능 설명이 없어 지원 여부를 확인할 수 없다.
