@@ -79,7 +79,7 @@ function renderLesson(slug, label) {
   const following = {
     'team-git': ['../prompt-workshop/index.html', '다음 · 첫 모델 호출'],
     'prompt-workshop': ['../chat-workshop/index.html', '다음 · 대화 이어 가기'],
-    'chat-workshop': ['../../chapter14/index.html', '다음 · 14일 교재'],
+    'chat-workshop': ['../../chapter14/index.html', '다음 · 분류 함수와 조건부 라우팅'],
     'python-basics': ['../team-git/index.html', '다음 · 팀 Git과 GitHub'],
     'python-patterns': ['../team-git/index.html', '다음 · 팀 Git과 GitHub'],
   };
@@ -144,7 +144,7 @@ const days = [
   ['python-basics', 'section-counter-01-1', '독립적인 객체와 요구사항 변경', 'section-b42-1'],
   ['team-git', 'section-git-02-1', 'Git 브랜치와 워크트리'],
   ['team-git', 'section-git-20-1', 'GitHub PR과 동료 리뷰'],
-  ['prompt-workshop', 'section-day08-1', 'OpenAI SDK로 첫 요약 요청하기'],
+  ['prompt-workshop', 'section-day08-1', 'LLM과 트랜스포머 이해하고 첫 요청 보내기'],
   ['prompt-workshop', 'section-day09-1', '독자와 목적에 맞게 프롬프트 고치기'],
   ['prompt-workshop', 'section-day10-1', '출력 예시와 빠진 정보 처리하기'],
   ['chat-workshop', 'section-day11-1', '대화 이력과 정정 요청'],
@@ -164,7 +164,7 @@ for (const [offset, [slug, anchor, title, patternAnchor]] of days.entries()) {
   const match = new RegExp('<article class="card"[^>]*><a href="' + chapter + '/index\\.html">[\\s\\S]*?</article>');
   if (!match.test(catalog)) throw new Error(chapter + ' 기존 목차를 찾을 수 없습니다.');
   const extra = patternAnchor ? `<a href="pre-mid/python-patterns/index.html#${patternAnchor}">B · 디자인 패턴 실습</a>` : '';
-  catalog = catalog.replace(match, `<article class="card" data-search="${day}일차 ${title} ${day <= 7 ? "Python Git" : "OpenAI SDK 프롬프트 챗봇"}" data-available="true"><a href="${chapter}/index.html"><span class="day">DAY ${String(day).padStart(3,'0')} · 8H</span><h3>${title}</h3><span class="open">${patternAnchor ? 'A · 문법 실습' : '교재 읽기'} →</span></a>${extra}</article>`);
+  catalog = catalog.replace(match, `<article class="card" data-search="${day}일차 ${title} ${day <= 7 ? "Python Git" : "OpenAI SDK 프롬프트 챗봇"}" data-available="true"><a href="${chapter}/index.html"><h3>${title}</h3><span class="open">${patternAnchor ? 'A · 문법 실습' : '교재 읽기'} →</span></a>${extra}</article>`);
 }
 catalog = catalog.replace('<h2>Python·개발 환경</h2>', '<h2>Python과 팀 Git</h2>')
   .replace('<h2>서비스·SDK·도구 루프</h2>', '<h2>OpenAI SDK와 프롬프트·챗봇</h2>')

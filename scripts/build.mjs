@@ -36,7 +36,9 @@ for (const [index, chapter] of chapters.entries()) {
   for (const file of readdirSync(folder).filter(name => name === 'index.html')) {
     const template = readFileSync(join(folder, file), 'utf8');
     if (!template.includes('<!-- COURSE_NAV -->')) throw new Error(chapter + ' 탐색 메뉴 위치 누락');
-    const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1));
+    const page = template.replace('<!-- COURSE_NAV -->', () => courseNav(index + 1))
+      .replace(/<(p|span)(?: class="chapter-tag")?>DAY(?:\s*\/)?\s*\d+(?: \/ (?:\d+|FINAL PROJECT|ROUTING))?<\/\1>/g, '')
+      .replace(/<span>교육일 \d+ · (8H|8시간)<\/span>/g, '<span>$1</span>');
     writeFileSync(join(output, chapter, file), page);
   }
 }
