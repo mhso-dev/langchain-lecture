@@ -4,6 +4,10 @@
 
 ## 한 장 수정하기
 
+중간 프로젝트 전 1~42장의 수업 목표와 편성은 [336시간 운영표](site/pre-mid/course-guide.md)를 따른다. 1~13장은 `site/pre-mid/`의 과정별 `lesson.ipynb`와 활동지를 수정한다. 14~42장은 `site/chapterNN/chapterNN.ipynb`가 본문과 풀이의 단일 원본이다. 빌드는 같은 노트북에서 웹 페이지, 목차와 수업 ZIP을 만든다. 학생이 사용하는 PDF·문의·질문·대조표·재사용 모듈은 `site/pre-mid/documents/`에 둔다. 학생이 웹에서 내려받는 배포본은 `dist/`에서 검수한다.
+
+아래 파일 표는 43장 이후에 적용한다.
+
 일반 수업의 최근 집필·실행 범위는 [75장 전수검수 기록](reports/classroom-review.md)에서 확인한다.
 
 교육 내용을 고칠 때는 [노트북 중심 개편 계획](reports/notebook-first-plan.md)과 [116장 작업표](reports/notebook-revision-map.md)에서 그 장의 입력 자료, 학생이 직접 작성할 코드나 문서, 확인할 결과를 먼저 찾는다.

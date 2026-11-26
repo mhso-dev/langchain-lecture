@@ -130,6 +130,8 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
         target.write_bytes(raw)
     for number,title,first,second,check in spec:
         n=int(number)
+        if n <= 42:
+            continue  # Built from the pre-project notebooks by pre_mid_daily.py.
         duration,cells=build_cells(n,title,first,second,check)
         goal,method,probe=NOTES[n]
         extras=[]
@@ -189,23 +191,8 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
     guide=encode(dict(notebook,cells=combined))
     (DAILY/"codex-harness.ipynb").write_bytes(guide)
     put(archive,"codex-harness.ipynb",guide)
-first = OUT/"chapter01"/"index.html"
-first.write_text(first.read_text().replace('<footer class="lesson-footer">','<section class="lesson-section" id="daily-lab"><h2>첫 개인 과제 준비</h2><p>오늘은 수업 예제로 커널과 파일 열기를 익힙니다. 다음 수업부터 26행의 상담 원장으로 교대 인수인계 프로그램을 만듭니다.</p><p><a href="../chapter02/index.html#daily-lab">2일차 교대 원장 열기</a></p></section><footer class="lesson-footer">',1))
 for project_day in list(range(43,53))+list(range(86,117)):
     project_reference(OUT/f"chapter{project_day:02}",encode)
-# Keep the downloadable PDF lab notebook identical to the separately served chapter 20 notebook.
-pdf_kit = OUT / "chapter20" / "chapter20-lab.zip"
-if pdf_kit.exists():
-    with ZipFile(pdf_kit) as previous:
-        contents = {name:previous.read(name) for name in previous.namelist()}
-    contents["chapter20.ipynb"] = (pdf_kit.parent/"chapter20.ipynb").read_bytes()
-    contents["day020.ipynb"]=(DAILY/"day020.ipynb").read_bytes()
-    with ZipFile(resources) as data:
-        for name in data.namelist():
-            contents[name]=data.read(name)
-    with ZipFile(pdf_kit,"w") as updated:
-        for name,raw in contents.items():
-            put(updated,name,raw)
 docs=' · '.join(f'<a href="{p.relative_to(DAILY).as_posix()}">{p.name}</a>' for p in sorted((DAILY/"daily_resources").rglob("*")) if p.suffix in (".txt",".pdf"))
 header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
 page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>80~85장 Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
@@ -219,6 +206,8 @@ index=OUT/"updates/index.html"
 changed=[*range(20,26),35,*range(43,53),55,56,64,66,67,*range(80,117)]
 entries=[]
 for day in changed:
+    if day <= 42:
+        continue
     ch=OUT/f"chapter{day:02}"; nb=json.loads((ch/(ch.name+".ipynb")).read_bytes())
     title="".join(nb["cells"][0]["source"]).splitlines()[0].strip("# ")
     target="daily-lab" if day in READINGS else "recap"
@@ -234,6 +223,8 @@ for day in (*range(43,53),*range(86,117)):
     history=re.sub(re.escape(route)+r'#([\w-]+)',current_section,history)
 all_changed=[]
 for day in [1]+[int(item[0]) for item in spec]:
+    if day<=42:
+        continue
     if day<=116:
         folder=OUT/f'chapter{day:02}'
         title=''.join(json.loads((folder/(folder.name+'.ipynb')).read_bytes())['cells'][0]['source']).splitlines()[0].strip('# ')

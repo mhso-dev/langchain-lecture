@@ -60,7 +60,7 @@ print(db.execute(<span class="tok-string">"SELECT question FROM course_turns WHE
 </div>
 <p id="example-analysis">SQLite 조회 결과의 각 행은 열 한 개짜리 튜플입니다. 화면에서 질문만 표시하려면 행 전체와 그 행의 첫 열을 구분해야 합니다. 또 ‘가장 최근 질문’을 고르는 조건에는 삽입 순서를 추측하는 대신 정렬할 열과 방향을 명시합니다.</p>
 </article>
-<aside id="guided-reading" class="lesson-note"><h3>조회한 한 행의 마지막 쉼표</h3><p><mark>열 하나를 읽어도 결과의 각 행은 튜플일 수 있습니다.</mark> 질문 문자열을 꺼낼 때는 행과 열을 구분하세요. 최신 질문을 고르는 순서는 SQL의 ORDER BY에서 먼저 정하고, 파이썬에서는 그 결과의 열을 읽습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter02/index.html">2장 Python의 리스트·딕셔너리와 조건 반복</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>조회한 한 행의 마지막 쉼표</h3><p><mark>열 하나를 읽어도 결과의 각 행은 튜플일 수 있습니다.</mark> 질문 문자열을 꺼낼 때는 행과 열을 구분하세요. 최신 질문을 고르는 순서는 SQL의 ORDER BY에서 먼저 정하고, 파이썬에서는 그 결과의 열을 읽습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter02/index.html">2장 원본과 복사본으로 컬렉션 다루기</a></p></aside>
 
 <span class="lesson-anchor" id="relation"></span><div class="lesson-explanation" id="reading-relation"><h3>질문 행의 owner와 사용자 행의 id</h3><p>course_turns의 한 행은 질문 한 번이고 course_users의 한 행은 사용자 한 명입니다. 질문 1번과 2번의 owner는 모두 alice입니다. 이후 두 테이블을 연결하면 질문 행을 복사해 이름을 저장하지 않고도 화면에 학습자 A라고 표시할 수 있습니다.</p></div>
 <span class="lesson-anchor" id="select"></span><div class="lesson-explanation" id="reading-select"><h3>SELECT로 question 열만 읽기</h3><p>SELECT question은 반환할 열을 고릅니다. FROM course_turns는 읽을 테이블을 정합니다. WHERE와 ORDER BY가 어느 행을 어떤 순서로 고를지 정해도 최종 출력에 담기는 것은 question 열입니다.</p></div>

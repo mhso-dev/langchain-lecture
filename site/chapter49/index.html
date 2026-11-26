@@ -71,7 +71,7 @@ print(usage)</code></pre></figure>
 </div>
 <p id="example-analysis">external_model_calls의 0은 제공된 실행 기록에 적힌 외부 호출 횟수입니다. 반면 model_latency의 None에는 측정값이 없습니다. 이를 0초로 바꿔 평균에 포함하면 실제 모델을 호출한 실행과 비교할 때 지연을 과소평가하게 됩니다.</p>
 </article>
-<aside id="guided-reading" class="lesson-note"><h3>호출 수 0과 비용 미측정</h3><p><mark>외부 호출 횟수와 과금액은 서로 다른 관찰값입니다.</mark> 로컬 기준선에서 세지 않은 비용을 0원으로 채우면 유료 실행과의 차이를 계산할 근거가 사라집니다. 팀 기록에는 횟수와 금액의 측정 여부를 따로 적으세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter39/index.html">39장 RAG 개선안의 품질과 비용 비교</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>호출 수 0과 비용 미측정</h3><p><mark>외부 호출 횟수와 과금액은 서로 다른 관찰값입니다.</mark> 로컬 기준선에서 세지 않은 비용을 0원으로 채우면 유료 실행과의 차이를 계산할 근거가 사라집니다. 팀 기록에는 횟수와 금액의 측정 여부를 따로 적으세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter41/index.html">41장 검색 품질과 비용으로 변경안 비교하기</a></p></aside>
 
 <div class="lesson-explanation" id="note-code-2"><h3>0회와 측정값 없음 구별하기</h3><p>external_model_calls의 0은 외부 모델을 부르지 않았다는 횟수입니다. model_cost와 model_latency의 None은 관측한 값이 없다는 뜻입니다. 평균을 낼 때 None을 0원이나 0초로 넣으면 실제보다 낮은 수치가 됩니다.</p></div>
 

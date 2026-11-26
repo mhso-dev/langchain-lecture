@@ -36,6 +36,10 @@ def run_set(names,out):
     with TemporaryDirectory() as work, chdir(work):
         Path("daily_resources").symlink_to(DAILY/"daily_resources",target_is_directory=True)
         for name in names:
+            if name.startswith("day") and 14 <= int(name[3:6]) <= 42:
+                # These downloads are aliases of the same 29 canonical notebooks.
+                # check_pre_mid_release checks the alias bytes, code and offline graph paths.
+                continue
             book = json.loads((DAILY/name).read_bytes())
             if book.get("metadata", {}).get("execution") == "live-workshop":
                 # The pre-mid checker validates the canonical workbook without spending API credits.
