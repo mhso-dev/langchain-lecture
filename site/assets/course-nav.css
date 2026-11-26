@@ -19,3 +19,6 @@
 @media print{.course-nav,.day-footer{display:none}}
 .unit-crumb{position:static;display:flex;gap:.5rem 1rem;flex-wrap:wrap;align-items:center;max-width:100%;margin:0 auto 1rem;padding:.55rem 1rem;background:#e6f1e9;color:#194736;border-inline-start:3px solid #639a7c;font:600 .94rem/1.5 system-ui,sans-serif}
 .unit-crumb a{color:inherit;text-underline-offset:.18em}
+
+#daily-lab, #applied-clinic { min-width: 0; overflow-wrap: anywhere; }
+#daily-lab pre, #applied-clinic pre { box-sizing: border-box; max-width: 100%; overflow-x: auto; }
