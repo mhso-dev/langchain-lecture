@@ -41,7 +41,7 @@ with ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietServer, directory=str(DI
     Thread(target=server.serve_forever, daemon=True).start()
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            browser = playwright.chromium.launch(channel="chrome")
             for width in (390, 1180):
                 page = browser.new_page(viewport={"width": width, "height": 850})
                 errors = []

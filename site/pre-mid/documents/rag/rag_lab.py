@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import warnings
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -131,5 +132,6 @@ def rerank(question, candidates):
     ranking = (prompt | chat_model().with_structured_output(Ranking)).invoke({"q": question, "docs": docs})
     by_id = {d["id"]: d for d in candidates}
     if sorted(ranking.ordered_ids) != sorted(by_id):
-        return list(candidates)  # 후보를 잃는 잘못된 응답이면 기존 순서를 보존합니다.
+        warnings.warn("재정렬 응답의 ID가 달라 기존 순서를 적용했습니다.", stacklevel=2)
+        return list(candidates)
     return [by_id[key] for key in ranking.ordered_ids]
