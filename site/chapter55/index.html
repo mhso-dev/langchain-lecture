@@ -165,7 +165,7 @@ d -->|기간 조회 요청| l["get_loan_rule · 대출 일수"]
 h --> t["ToolMessage · 호출 ID와 결과"]
 l --> t
 t --> m
-d -->|없음| e["최종 AIMessage"]</script><figcaption>이 테스트 모델이 보낸 순서는 c1, c2, 최종 답변입니다. 함수가 반환한 값은 ToolMessage로 대화에 들어가고 모델이 그 대화를 다시 읽습니다.</figcaption></figure>
+d -->|없음| e["최종 AIMessage"]</script><figcaption> 실제 응답에서 도구 이름과 호출 ID를 확인합니다. 함수가 반환한 값은 ToolMessage로 대화에 들어가고 모델이 그 대화를 다시 읽습니다.</figcaption></figure>
 
 <aside id="guided-reading" class="lesson-note"><h3>도구 두 개를 등록하면 둘 다 실행될까요?</h3><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter33/index.html">33장 LangChain 검색 도구와 ToolMessage</a></p></aside>
 

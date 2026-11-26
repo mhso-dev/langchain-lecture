@@ -72,7 +72,7 @@ summary = generate_step(&quot;summarize&quot;, &quot;문의를 한 문장으로 
 print(summary)</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">결제한 영수증을 어디에서 확인할 수 있나요?</pre></div>
 
-<p id="example-analysis">문의 내용을 ‘로그인이 안 됩니다’로 바꾸고 같은 summarize 단계를 호출하면 영수증 문장이 그대로 나옵니다. mock_call이 단계 이름으로 고정 응답을 조회하기 때문입니다. 이 예제로는 다음 호출에 건넨 문장을 확인할 수 있습니다. 새 문의까지 잘 요약하는지 평가하려면 실제 응답을 따로 받아야 합니다.</p>
+<p id="example-analysis">문의 내용을 ‘로그인이 안 됩니다’로 바꾸고 같은 summarize 단계를 호출하면 영수증 문장이 그대로 나옵니다. 실제 응답에서 입력과 반환값을 대조합니다. 이 예제로는 다음 호출에 건넨 문장을 확인할 수 있습니다. 새 문의까지 잘 요약하는지 평가하려면 실제 응답을 따로 받아야 합니다.</p>
 </article>
 <span class="lesson-anchor" id="readings"></span><span class="lesson-anchor" id="why"></span><div class="lesson-explanation" id="reading-why"><h3>순차 호출의 단계 분할</h3><div class="prose"><p>여러 작업을 한 번에 요청하면 어디에서 잘못되었는지 구분하기 어려울 수 있습니다. 요약·분류·문장 작성을 따로 실행하면 중간 결과를 볼 수 있지만 호출 수와 대기 시간도 늘어납니다. 작업을 나눈다는 사실만으로 품질이 좋아진다고 단정하지 않습니다.</p>
 <p>단계별 실제 모델 입력과 출력을 기록하세요. 분류 결과가 허용된 세 라벨에 속하는지 검사한 뒤 작성을 시작합니다.</p>
