@@ -81,20 +81,25 @@ def main():
                 errors.append(f"{file.relative_to(ROOT)} 수업용 모델 대역이 남았습니다")
     catalog = pages[ROOT / "index.html"]
     units = json.loads((ROOT.parent / "coursebook/units.json").read_text())
+    integrated_charts = {}
     for unit in units:
         slug = unit["slug"]
-        route = f"topics/{slug}/index.html"
-        topic = pages[ROOT / route]
-        assert route in catalog.links, route
+        first = f'chapter{unit["lessons"][0]:02}'
+        chapter = pages[ROOT / first / "index.html"]
+        assert "integrated-example" in chapter.ids, first
         if "sections" not in unit:
             filename = slug + ".ipynb"
-            assert filename in topic.links, filename
-            assert (ROOT / "topics" / slug / filename).read_bytes() == (ROOT.parent / "coursebook" / filename).read_bytes()
+            assert filename in chapter.links, filename
+            book = ROOT.parent / "coursebook" / filename
+            assert (ROOT / first / filename).read_bytes() == book.read_bytes()
+            assert (ROOT / "topics" / slug / filename).read_bytes() == book.read_bytes()
+            integrated_charts[first] = [chart for cell in json.loads(book.read_text())["cells"]
+                                        for chart in re.findall(r"^```mermaid\n(.+?)\n```", "".join(cell["source"]), re.M | re.S)]
         for day in unit["lessons"]:
-            chapter = f"chapter{day:02}/index.html"
-            assert f"../../{chapter}" in topic.links and f"material-{day}" in topic.ids, chapter
-            assert f"../{route}" in pages[ROOT / chapter].links, chapter
-    home = set(pages[ROOT / "schedule.html"].links)
+            assert f'chapter{day:02}/index.html' in catalog.links, day
+    for path, page in pages.items():
+        assert not any("topics/" in link and ".ipynb" not in link for link in page.links), path
+    home = set(catalog.links)
     for day in range(1, 117):
         name = f"chapter{day:02d}"
         route = f"{name}/index.html"
@@ -116,6 +121,7 @@ def main():
             for source in re.findall(r"^```mermaid\n(.+?)\n```", "".join(cell["source"]), re.M | re.S)
         ]
         page_text = (ROOT / route).read_text()
+        charts.extend(integrated_charts.get(name, []))
         web_charts = re.findall(r'<figure\b[^>]*\bdata-workflow\b[^>]*>.*?<script type="text/plain">(.*?)</script>.*?</figure>', page_text, re.S)
         if page.workflows != len(charts) or web_charts != charts:
             errors.append(f"{name} 웹·노트북 Mermaid 흐름도 원문 또는 순서 불일치")

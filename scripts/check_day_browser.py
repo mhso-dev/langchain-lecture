@@ -10,22 +10,27 @@ with sync_playwright() as browser_api:
         page.goto((root/"index.html").as_uri())
         search = page.get_by_role("searchbox")
         search.fill("add_conditional_edges")
-        result = page.locator(".topic:visible a")
+        result = page.locator(".card:visible a")
+        assert result.count() >= 1
+        result.filter(has_text="조건 분기").click()
+        assert "/chapter27/" in page.url
+        page.get_by_role("link", name="교재 홈", exact=True).first.click()
+        search.fill("26장")
         assert result.count() == 1
         result.click()
-        assert "/topics/state-graph/" in page.url
-        assert page.locator("a[download]").get_attribute("href") == "state-graph.ipynb"
-        answer = page.locator(".notebook-answer").first
+        page.locator('.integrated-jump a').click()
+        assert page.url.endswith("chapter26/index.html#integrated-example")
+        section = page.locator("#integrated-example")
+        assert section.locator("a[download]").get_attribute("href") == "state-graph.ipynb"
+        answer = section.locator(".notebook-answer").first
         answer.locator("summary").click()
         assert answer.locator("pre").first.is_visible()
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
-        page.locator('.outline a[href="#readings"]').click()
-        page.locator('#readings a[href$="#nb-decision"]').first.click()
-        assert page.url.endswith("#nb-decision")
-        page.locator(".unit-crumb a").first.click()
-        assert "/topics/state-graph/" in page.url
-        page.get_by_role("link", name="일차별 수업표").first.click()
-        assert page.url.endswith("schedule.html")
+        page.goto((root/"topics/state-graph/index.html").as_uri()+"#material-27")
+        page.wait_for_url("**/chapter27/index.html")
+        page.goto((root/"topics/state-graph/index.html").as_uri()+"#read-2")
+        page.wait_for_url("**/chapter26/index.html#integrated-read-2")
+        assert page.locator("#integrated-read-2").is_visible()
         page.goto((root/"chapter42/index.html").as_uri())
         nav = page.locator("#course-days")
         nav.locator("[rel=next]").click()
@@ -47,7 +52,7 @@ with sync_playwright() as browser_api:
         page.wait_for_url("**/chapter117/index.html#daily-lab")
         assert page.locator("#daily-lab").get_by_text("입력 자료 준비",exact=True).is_visible()
         page.goto((root/"daily/index.html").as_uri())
-        page.wait_for_url("**/schedule.html")
+        page.wait_for_url((root/"index.html").as_uri())
         page.close()
         print(f"{width}px · 42→43→85→86→120일 이동")
     browser.close()

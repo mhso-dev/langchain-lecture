@@ -32,9 +32,9 @@ def offline_files():
             continue
         content = path.read_text()
         if name == "index.html":
-            content = re.sub(r'<section class="collection"><h2>팀 프로젝트와 현장 활동</h2>.*?</section>', "", content, flags=re.S)
-        if name == "schedule.html":
-            content = re.sub(r'<section class="unit" data-project hidden>.*?</section>', "", content, flags=re.S)
+            content = re.sub(r'<section class="unit"(?: data-project)?(?: hidden)?>.*?</section>',
+                             lambda m: m[0] if any(f'href="chapter{d:02}/index.html"' in m[0] for d in days) else "",
+                             content, flags=re.S)
             content = re.sub(r'<label><input id="projects"[^>]*>[^<]*</label>', "", content)
 
         def offline_link(match):

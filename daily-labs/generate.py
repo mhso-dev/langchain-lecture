@@ -251,7 +251,7 @@ for day in [1]+[int(item[0]) for item in spec]:
     else:
         title=next(row[1] for row in spec if int(row[0])==day)
         all_changed.append(f'<li><a href="../chapter{day:02}/index.html#daily-lab">{day}일 · {escape(title)}</a></li>')
-edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../schedule.html">실습이 포함된 일차별 교재</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
+edition='<section class="edition-group"><h2>11월 24일 · 교대 인수인계와 실무 과제 개정</h2><p>첫날 별도 과제를 없애고 2~7일에 교대 원장 하나를 인수인계합니다. 이후 개인 과제마다 납품할 결과와 구체적인 시험 조건을 제공합니다.</p><p><a href="../index.html">실습이 포함된 일차별 교재</a> · <a href="../chapter64/index.html#daily-lab">재발급 승인 창구</a> · <a href="../chapter85/index.html#daily-lab">Codex 기능 변경 납품</a> · <a href="../execution/index.html">대기 장 실행 결과</a></p><details><summary>개정 장 전체 목록</summary><ul>'+"".join(all_changed)+'</ul></details></section>'
 index.write_text(history.replace("<main>","<main>"+edition+news,1))
 
 publish_results(OUT)

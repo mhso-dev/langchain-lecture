@@ -138,7 +138,7 @@ for number, scheduled_title, goal in schedule:
     box = (f'<section class="lesson-section" id="applied-clinic"><h2>{escape(title)}</h2><p>{escape(explanation)}</p>'
            f'{sample_html}<h3>{label} · {timing}</h3><p>{escape(task)}</p><p><a href="{link}" download>실습 노트북</a> · '
            f'<a href="../daily/resources.zip" download>입력 자료 받기</a> · '
-           f'<a href="../topics/{unit["slug"]}/index.html">{escape(unit["title"])} 통합 예제</a></p></section>')
+           f'<a href="../chapter{unit["lessons"][0]:02}/index.html#integrated-example">{escape(unit["title"])} 통합 예제</a></p></section>')
     box += agent_section
     h = html.read_text()
     if 'href="../daily/resources.zip"' in h:
