@@ -65,7 +65,7 @@ export function publishChapters(out) {
     }).join('\n');
     if (!firstHeading) throw new Error(file + ': 장별 소제목 누락');
     const unit = units.find(([first,last]) => first <= n && n <= last);
-    const scripts = body.includes('data-workflow') ? '<script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script>' : '';
+    const scripts = body.includes('data-workflow') ? '<link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script>' : '';
     const unitMaterials = {
       14: ['rag/investigations', '설명서 검색 실습지'],
       25: ['workflow/workshop', '대여 문의 담당자 실습 기록지'],
