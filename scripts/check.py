@@ -84,7 +84,7 @@ def main():
         if route not in home:
             errors.append(f"목차에서 {route} 누락")
         page = pages[ROOT / route]
-        if day <= 7:
+        if day <= 13:
             assert page.is_redirect and len(page.links) == 1, route
             destination = (ROOT / name / urlsplit(page.links[0]).path).resolve()
             assert (ROOT / name / (name + ".ipynb")).read_bytes() == (destination.parent / "lesson.ipynb").read_bytes(), route

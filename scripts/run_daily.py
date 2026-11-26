@@ -11,7 +11,7 @@ import sys
 from zipfile import ZipFile
 
 DAILY = Path(__file__).resolve().parents[1]/"dist"/"daily"
-DAYS = [*range(2,43),*range(53,86),*range(117,121)]
+DAYS = [*range(1,43),*range(53,86),*range(117,121)]
 
 def replay(file):
     scope = {"__name__":"__main__"}
@@ -36,6 +36,11 @@ def run_set(names,out):
     with TemporaryDirectory() as work, chdir(work):
         Path("daily_resources").symlink_to(DAILY/"daily_resources",target_is_directory=True)
         for name in names:
+            book = json.loads((DAILY/name).read_bytes())
+            if book.get("metadata", {}).get("execution") == "live-workshop":
+                # The pre-mid checker validates the canonical workbook without spending API credits.
+                print(name, "라이브 수업 · 자동 실행 제외", flush=True)
+                continue
             records = replay(DAILY/name)
             (out/(Path(name).stem+".json")).write_text(json.dumps(records,ensure_ascii=False,indent=2))
             print(name,len(records),"OK",flush=True)
@@ -46,7 +51,7 @@ if __name__ == "__main__":
     if len(sys.argv)>2:
         run_set(sys.argv[2:],out)
     else:
-        assert len(list(DAILY.glob("day*.ipynb"))) == len(DAYS) == 78
+        assert len(list(DAILY.glob("day*.ipynb"))) == len(DAYS) == 79
         with ZipFile(DAILY/"all-labs.zip") as z:
             for d in DAYS:
                 name = f"day{d:03}.ipynb"
