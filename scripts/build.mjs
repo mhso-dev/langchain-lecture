@@ -27,3 +27,4 @@ for (const chapter of chapters) {
 execFileSync('python3', [fileURLToPath(new URL('../daily-labs/generate.py', import.meta.url)), output], { stdio: 'inherit' });
 execFileSync('python3', [fileURLToPath(new URL('./course_navigation.py', import.meta.url)), output], { stdio: 'inherit' });
 console.log(chapters.length + '개 장과 학생 노트북을 dist에 생성했습니다.');
+execFileSync('python3', [fileURLToPath(new URL('./topic_reader.py', import.meta.url)), output], { stdio: 'inherit' });

@@ -9,58 +9,61 @@ import re
 from check import Page, ROOT
 
 
-def offline_indexes():
-    home = (ROOT / "index.html").read_text()
-    home, projects = re.subn(r'<section class="unit" data-project hidden>.*?</section>', "", home, flags=re.S)
-    if projects != 2:
-        raise ValueError("중간·최종 프로젝트 목차를 확인하세요.")
-    home = re.sub(r'<label><input id="projects"[^>]*>[^<]*</label>', "", home)
-    history = (ROOT / "updates/index.html").read_text()
-    opening, body = history.split("<main>", 1)
-    classroom = re.search(r'<section [^>]*id="classroom-edition"[^>]*>.*?</section>', body, re.S)
-    if not classroom:
-        raise ValueError("일반 수업 개정 내역이 없습니다.")
-    opening = re.sub(r"<header>(.*?)</header>", lambda m: "<header>" + m[1].split("<p>")[0] + "</header>", opening, flags=re.S)
-    guided = re.search(r'<section [^>]*id="guided-edition"[^>]*>.*?</section>', body, re.S)
-    if not guided:
-        raise ValueError("장별 해설 목록이 없습니다.")
-    def include_lesson(match):
-        day = int(match[1])
-        return match[0] if day <= 42 or 53 <= day <= 85 else ""
-    lessons = re.sub(r'<li><a href="\.\./chapter([0-9]+)/[^"]*".*?</li>', include_lesson, guided[0], flags=re.S)
-    lessons = lessons.replace("일반 수업과 프로젝트 참고자료", "일반 수업 75장")
-    return {"index.html": home, "updates/index.html": opening + "<main>" + lessons + classroom[0] + "</main></body></html>"}
+def offline_files():
+    """Keep general units and supporting downloads, and omit links to out-of-scope lessons."""
+    days = {*range(1, 43), *range(53, 86)}
+    excluded_topics = {"rag-studio", "capstone", "field-notes"}
+    files = {}
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or path.name.startswith("."):
+            continue
+        name = path.relative_to(ROOT)
+        chapter = re.fullmatch(r"chapter(\d+)", name.parts[0])
+        if chapter and int(chapter[1]) not in days:
+            continue
+        if name.parts[0] == "topics" and name.parts[1] in excluded_topics:
+            continue
+        files[name.as_posix()] = path
 
-
-def collect_files(indexes):
-    days = [*range(1, 43), *range(53, 86)]
-    files = set()
+    indexes = {}
     pages = {}
-    linked = set()
-    for folder in [ROOT / "assets", *(ROOT / f"chapter{day:02d}" for day in days)]:
-        for file in folder.rglob("*"):
-            if file.is_file() and not file.name.startswith("."):
-                files.add(file.relative_to(ROOT).as_posix())
-    for name in sorted(files.union(indexes)):
-        if name.endswith(".html"):
-            page = Page()
-            page.feed(indexes[name] if name in indexes else (ROOT / name).read_text())
-            pages[name] = page
+    for name, path in files.items():
+        if path.suffix != ".html":
+            continue
+        content = path.read_text()
+        if name == "index.html":
+            content = re.sub(r'<section class="collection"><h2>팀 프로젝트와 현장 활동</h2>.*?</section>', "", content, flags=re.S)
+        if name == "schedule.html":
+            content = re.sub(r'<section class="unit" data-project hidden>.*?</section>', "", content, flags=re.S)
+            content = re.sub(r'<label><input id="projects"[^>]*>[^<]*</label>', "", content)
+
+        def offline_link(match):
+            url = urlsplit(match[1])
+            if url.scheme or url.netloc or not url.path:
+                return match[0]
+            target = (path.parent / unquote(url.path)).resolve()
+            if target.is_dir():
+                target /= "index.html"
+            return match[0] if target.relative_to(ROOT).as_posix() in files else ""
+
+        content = re.sub(r'<a\b[^>]*? href="([^"]*)"[^>]*>.*?</a>', offline_link, content, flags=re.S)
+        indexes[name] = content
+        pages[name] = Page()
+        pages[name].feed(content)
+
     for name, page in pages.items():
         for href in page.links:
             url = urlsplit(href)
             if url.scheme or url.netloc:
                 continue
-            target = ((ROOT / name).parent / unquote(url.path)).resolve() if url.path else ROOT / name
+            path = files[name]
+            target = (path.parent / unquote(url.path)).resolve() if url.path else path
             if target.is_dir():
                 target /= "index.html"
             key = target.relative_to(ROOT).as_posix()
-            if key not in files and key not in indexes:
+            if key not in files or (url.fragment and key in pages and unquote(url.fragment) not in pages[key].ids):
                 raise ValueError(f"{name}: {href}")
-            if url.fragment and key in pages and unquote(url.fragment) not in pages[key].ids:
-                raise ValueError(f"{name}: {href}")
-            linked.add(key)
-    return sorted(name for name in files if not name.endswith(".mp4") or name in linked)
+    return indexes, sorted(set(files) - indexes.keys())
 
 
 def main():
@@ -68,8 +71,7 @@ def main():
     parser.add_argument("output", type=Path)
     dest = parser.parse_args().output.resolve()
     dest.parent.mkdir(parents=True, exist_ok=True)
-    indexes = offline_indexes()
-    files = collect_files(indexes)
+    indexes, files = offline_files()
     with TemporaryDirectory(dir=dest.parent) as tmp:
         archive = Path(tmp) / "classroom.zip"
         with ZipFile(archive, "w", ZIP_DEFLATED) as z:

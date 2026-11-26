@@ -74,7 +74,22 @@ def main():
                 errors.append(f"{path.relative_to(ROOT)} -> {link}")
             elif url.fragment and target in pages and unquote(url.fragment) not in pages[target].ids:
                 errors.append(f"{path.relative_to(ROOT)} -> {link} (앵커 누락)")
-    home = set(pages[ROOT / "index.html"].links)
+    catalog = pages[ROOT / "index.html"]
+    units = json.loads((ROOT.parent / "coursebook/units.json").read_text())
+    for unit in units:
+        slug = unit["slug"]
+        route = f"topics/{slug}/index.html"
+        topic = pages[ROOT / route]
+        assert route in catalog.links, route
+        if "sections" not in unit:
+            filename = slug + ".ipynb"
+            assert filename in topic.links, filename
+            assert (ROOT / "topics" / slug / filename).read_bytes() == (ROOT.parent / "coursebook" / filename).read_bytes()
+        for day in unit["lessons"]:
+            chapter = f"chapter{day:02}/index.html"
+            assert f"../../{chapter}" in topic.links and f"material-{day}" in topic.ids, chapter
+            assert f"../{route}" in pages[ROOT / chapter].links, chapter
+    home = set(pages[ROOT / "schedule.html"].links)
     for day in range(1, 117):
         name = f"chapter{day:02d}"
         route = f"{name}/index.html"
