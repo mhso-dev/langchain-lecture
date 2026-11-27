@@ -1,0 +1,2555 @@
+{
+  "chapters": [
+    {
+      "chapter": 53,
+      "source": "site/chapter53/chapter53.ipynb",
+      "sha256": "5b3e2be57f30a96e231c3c695d66ab7fece6e036dc8c3e07dd384c39cc33db2f",
+      "first_practice": 3,
+      "last_practice": 47,
+      "input": "제공 규정 2행",
+      "output": "agent-53.json",
+      "goal": [
+        "두 소유자의 가상 규정에서 문서 번호가 같은 행을 WHERE로 구별한다.",
+        "alice 소유의 문서 한 행"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "['alice', 'bob']"
+          },
+          {
+            "id": "desk-example",
+            "stdout": "대출 기간은 7일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-53.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "['alice', 'bob']"
+          },
+          {
+            "id": "desk-example",
+            "stdout": "대출 기간은 7일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "대출 기간은 28일입니다."
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-53.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.9%"
+      },
+      "published": {
+        "sha256": "2db5b45985678d4c036c6479a33f1436b7eead295a4a401bce65502df6333f01",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "c1fa5ac376547f937026803d225e41b7edf4f3bf656a4528fe1f060215217d36",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 54,
+      "source": "site/chapter54/chapter54.ipynb",
+      "sha256": "e445ca40f60a548dd33aadc612a2bdafb456ab118399c7b0b17447e0daa09364",
+      "first_practice": 3,
+      "last_practice": 54,
+      "input": "agent-53.json",
+      "output": "agent-54.json",
+      "goal": [
+        "alice의 원문을 매개변수 바인딩으로 수정하고 bob 조건은 0건인지 검사한다.",
+        "커밋된 개정 문장"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 7일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "1 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-54.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 7일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "1 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "0 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-54.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.8%"
+      },
+      "published": {
+        "sha256": "1fa3b1628cbebda0815a2b4ac5e9a9db17e3b5b0633657a972b30e5f1e4434af",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "baf9bedfe68ec01863d327750bde9500bd1195569466828191600713ac8d6ca6",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 55,
+      "source": "site/chapter55/chapter55.ipynb",
+      "sha256": "ca5c17c8390df994b81ad7aca2969c56a589c2474bbb2b8b4b2146ae8465f4ad",
+      "first_practice": 3,
+      "last_practice": 52,
+      "input": "agent-54.json",
+      "output": "agent-55.json",
+      "goal": [
+        "개정 문서 번호를 @tool에 넘기고 없는 번호의 빈 결과를 비교한다.",
+        "호출 이름·인자·실제 원문"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-55.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "''"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-55.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "0.6%"
+      },
+      "published": {
+        "sha256": "701bff6447c40ab80593cb9f11aec4711bf2bd696f9b21dc3727c9a22cadf13e",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "08f3180ba187a4f23147960599d5fabff7ff564ad0a16cfedb10bc3f804970ba",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 56,
+      "source": "site/chapter56/chapter56.ipynb",
+      "sha256": "e54a28145c23de53f5f37e4a7f43aa411590e6b1418cd3a5c3a1b5d393f60579",
+      "first_practice": 3,
+      "last_practice": 46,
+      "input": "agent-55.json",
+      "output": "agent-56.json",
+      "goal": [
+        "하나의 정상 요청을 두 번 제안하고 한도 1과 0을 비교한다.",
+        "허용 도구와 호출 한도"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "1 ['lookup_loan']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-56.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "1 ['lookup_loan']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "0 2"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-56.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "0.9%"
+      },
+      "published": {
+        "sha256": "4b9a3938f1c16a92bd2d3eb2bc73cc7c12d548b44dcb11f2c14eccf60e8ddc87",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "35836c43706c30186ce0f0c065db112124e009cabe9abb3797d65ea76072ca2b",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 57,
+      "source": "site/chapter57/chapter57.ipynb",
+      "sha256": "b2c81efde113dcc660d37e0c80a6aa88a0ddb795bec8302329537d35d2bb9f74",
+      "first_practice": 3,
+      "last_practice": 46,
+      "input": "agent-56.json",
+      "output": "agent-57.json",
+      "goal": [
+        "허용 도구와 중단 조건을 SKILL.md에 쓰고 파일 앞부분을 다시 읽는다.",
+        "지침 파일과 목록 정보"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-57.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "name: loan-answer\ndescription: 대출 기간 문의"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-57.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "2.0%"
+      },
+      "published": {
+        "sha256": "58ff0e4c9f22f804c24878474a254511d158ce6b537a31c9944046dbb32ffd55",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "7e01d80948dced16f685a81853f28f58d7a6987adfce2060d720699e79c6f369",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 58,
+      "source": "site/chapter58/chapter58.ipynb",
+      "sha256": "5568e6dbfc2791d0dcb3dafa6ef144256e24536aa5d25fbbed91e1308d579fec",
+      "first_practice": 3,
+      "last_practice": 47,
+      "input": "agent-57.json",
+      "output": "agent-58.json",
+      "goal": [
+        "질문과 설명의 첫 단어가 맞을 때만 파일을 열고 운영 시간 질문과 비교한다.",
+        "질문과 선택한 지침 본문"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-8",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-8",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-58.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "None"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-58.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.8%"
+      },
+      "published": {
+        "sha256": "56d63a07a6f4ccce85d9b4ff2b199bea898d60fff975c5ad1aa61d9e0b211f11",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-8",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "code-8",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "ff0e958426fa6c5f52ef9ce8c2d38a6ca952726f6f0e7d975091103238a4f1fe",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 59,
+      "source": "site/chapter59/chapter59.ipynb",
+      "sha256": "64cf208ad8cbedf33f0e5b4d5ac28e20ce87f6e5f65c4bce5429eb0aa3c078f9",
+      "first_practice": 3,
+      "last_practice": 42,
+      "input": "agent-58.json",
+      "output": "agent-59.json",
+      "goal": [
+        "안내한 규정과 마지막 고객 요청을 슬라이싱으로 고른다.",
+        "최근 원문과 짧은 답변 요청"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "['대출 기간은 14일입니다.', '앞으로는 짧게 답해 주세요.']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-59.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "['대출 기간은 21일입니다.', '앞으로는 짧게 답해 주세요.']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "short"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-59.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.9%"
+      },
+      "published": {
+        "sha256": "ba598040b3a3750fd180137653f5c38a0b1cb107abe4e51e38d1a20b0a5e579d",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "c0ea83b2ec317842ddf10c9038f32571eb28db61126f91773f2b95d606c59d40",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 60,
+      "source": "site/chapter60/chapter60.ipynb",
+      "sha256": "52d7df0a2de38d6e5e7b3d396926f7fc6843bc2654211003f65ec644d78135f2",
+      "first_practice": 3,
+      "last_practice": 49,
+      "input": "agent-59.json",
+      "output": "agent-60.json",
+      "goal": [
+        "고객 요청을 사용자별로 UPSERT하고 새 DB 연결에서 다시 읽는다.",
+        "preferences.sqlite와 소유자의 답변 선호"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "alice short"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-60.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "alice short"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "1"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-60.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.8%"
+      },
+      "published": {
+        "sha256": "2a9507e7e71a368558305a5d52e6ebbfc95dd34ac9abfe1370bcbd6a872d3215",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "code-10",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "9cfc9f9751363f094fa971fdf960a7c7c70ca94d2384e664be50e26d3f498bd3",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 61,
+      "source": "site/chapter61/chapter61.ipynb",
+      "sha256": "8be11e94b62efdace9e0a7505676efdcf029e1c136ac4726688fdf13bb294c8b",
+      "first_practice": 3,
+      "last_practice": 42,
+      "input": "agent-60.json",
+      "output": "agent-61.json",
+      "goal": [
+        "도구 목록을 확인하고 같은 MCP 세션에서 원문·선호를 얻는다.",
+        "등록 이름·호출 인자·구조화 응답"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 대출 기간은 14일입니다. short"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-61.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "lookup_loan 대출 기간은 21일입니다. short"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "False False"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-61.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.7%"
+      },
+      "published": {
+        "sha256": "a60e5eeba2a873acf9525c1b93094c65418c7207bc5dda179f04dc1332d28dd0",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "1e3f235f18bfb3c86c7d1f358bfcd57d6c7edd52f465962e13572638fa5723c4",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 62,
+      "source": "site/chapter62/chapter62.ipynb",
+      "sha256": "8d75bd4edc8e068b085f7475f4f02b30377361b148845cd77fd9415b3e41331d",
+      "first_practice": 3,
+      "last_practice": 44,
+      "input": "agent-61.json",
+      "output": "agent-62.json",
+      "goal": [
+        "LangChain 비동기 도구가 새 MCP 세션을 열어 같은 번호로 읽는지 확인한다.",
+        "문서 ID·인용할 원문·실제 도구 이벤트"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4"
+          ],
+          "last": "code-4",
+          "outcome": "blocked",
+          "error": "ExceptionGroup",
+          "reason": "ExceptionGroup/ExceptionGroup/OpenAIConnectionError/APIConnectionError/ConnectError/ConnectError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4"
+          ],
+          "last": "code-4",
+          "outcome": "blocked",
+          "error": "ExceptionGroup",
+          "reason": "NoneType"
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "대출 기간은 14일입니다. True"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-62.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "대출 기간은 21일입니다. True"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "loan-01 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-62.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "0.8%"
+      },
+      "published": {
+        "sha256": "815c88005c8f8ad1ddb49862c7f523ce52af07b216dfbf76321e85ebb62c65a9",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4"
+          ],
+          "last_cell": "code-4",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4"
+          ],
+          "last_cell": "code-4",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "6894dfea631c75ce36e52a73f5055b0c08d8d9f12416e6eb3f2f4abca35b5a1e",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 63,
+      "source": "site/chapter63/chapter63.ipynb",
+      "sha256": "7ebf275a6d14f42497331a54158e5357bbe731d78eab0236dd2212a1da865880",
+      "first_practice": 3,
+      "last_practice": 44,
+      "input": "agent-62.json",
+      "output": "agent-63.json",
+      "goal": [
+        "조회 원문이 있는 질문과 근거 없는 주차 질문을 따로 보낸다.",
+        "상태·답변·출처 목록"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6"
+          ],
+          "last": "code-6",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "answered ['loan-01']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-63.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "answered ['loan-01']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "no_evidence []"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-63.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.2%"
+      },
+      "published": {
+        "sha256": "f7fcf6885c798e77759708ea026e4cb8b7727b1fca7a6a4f172222329e33c94a",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5"
+          ],
+          "last_cell": "code-5",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "5a2ace2078f278ce57d9e1a6d8aea3a3c738ae34e75171148cb118902ed1a416",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 64,
+      "source": "site/chapter64/chapter64.ipynb",
+      "sha256": "f75261ec604c9874ddc0fffb870fdd90c3dbc3dfac2684cfcebcdea3de21aa4b",
+      "first_practice": 3,
+      "last_practice": 52,
+      "input": "agent-63.json",
+      "output": "agent-64.json",
+      "goal": [
+        "같은 문의에 승인과 거절을 다른 thread_id로 실행한다.",
+        "승인한 원문과 조회·승인 이벤트"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "0 1 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-64.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "0 1 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "0 0"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-64.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.7%"
+      },
+      "published": {
+        "sha256": "ed8910cc698e34f0855cdae0b60959c6d684e805e9424504af7e898e0e12f15b",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIConnectionError",
+          "reason": "OpenAIConnectionError/APIConnectionError/ConnectError/ConnectError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "4dd9631993de9a6e5b6700527f7d8ee7d350b66e2dbee78906a806fdeea794c2",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 65,
+      "source": "site/chapter65/chapter65.ipynb",
+      "sha256": "ad421e224a4437a5e5dd8bfb74fa64febe87ed47fadce328499cf1454b03ae76",
+      "first_practice": 3,
+      "last_practice": 47,
+      "input": "agent-64.json",
+      "output": "agent-65.json",
+      "goal": [
+        "질문은 그대로 두고 승인된 원문만 비워 경로 변화를 본다.",
+        "조회 또는 추가 질문 결정"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "read_rule 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-65.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "read_rule 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "ask_again"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-65.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "2.0%"
+      },
+      "published": {
+        "sha256": "0293b9eba5841b8ae5dce4d80620ea838d1454f6f4cfe85fef8f4e08925a00de",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-8",
+            "code-9",
+            "desk-example",
+            "desk-practice",
+            "desk-save"
+          ],
+          "last_cell": "desk-save",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "daily": {
+        "sha256": "384ca3dd5d9381f4976d47526e6078ed4a10662c033f7fede9fb9c9a30a3dff6",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-implementation",
+            "solo-variation"
+          ],
+          "last_cell": "solo-variation",
+          "status": "passed",
+          "error": null
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 66,
+      "source": "site/chapter66/chapter66.ipynb",
+      "sha256": "6d17dfcfcd8d9f8f55a9f4a03e8999358c6cfe925b93bb58e152065f0038f57f",
+      "first_practice": 3,
+      "last_practice": 47,
+      "input": "agent-65.json",
+      "output": "agent-66.json",
+      "goal": [
+        "원문과 승인된 답이 같을 때만 작성 역할로 인용을 넘긴다.",
+        "상태·답변·출처가 담긴 관찰 결과"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7"
+          ],
+          "last": "code-7",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7"
+          ],
+          "last": "code-7",
+          "outcome": "blocked",
+          "error": "OpenAIConnectionError",
+          "reason": "APIConnectionError"
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "answered ['loan-01']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-66.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "answered ['loan-01']"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "no_evidence []"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-66.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.1%"
+      },
+      "published": {
+        "sha256": "94f230c8709e40d8b7979898b1f6bad670dc2077d4eaee862b82043d49548326",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7"
+          ],
+          "last_cell": "code-7",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "code-7"
+          ],
+          "last_cell": "code-7",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "5ddc760e2d20e469f6b08356de20eb9651e6ba762f3fd378320a2d50703e569b",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    },
+    {
+      "chapter": 67,
+      "source": "site/chapter67/chapter67.ipynb",
+      "sha256": "9dca246397a9164dc2644721ac709a83770f00cf8c2d119c32fe93079a8a0d76",
+      "first_practice": 3,
+      "last_practice": 44,
+      "input": "agent-66.json",
+      "output": "agent-api-case.json",
+      "goal": [
+        "원문에서 기준 일수를 얻어 인용·숫자를 분리 채점하고 실제 호출 순서도 검사한다.",
+        "TestClient 요청과 기대값, 문서 한 건"
+      ],
+      "full_kernel": {
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save"
+          ],
+          "last": "desk-save",
+          "outcome": "passed",
+          "error": null,
+          "reason": null
+        }
+      },
+      "transfer": {
+        "student": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 14일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "{'status': True, 'citation': True, 'duration': True}"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-trace",
+            "stdout": "['lookup_loan', 'confirm'] True"
+          },
+          {
+            "id": "desk-trace-practice",
+            "stdout": ""
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-api-case.json"
+          }
+        ],
+        "solution": [
+          {
+            "id": "desk-read",
+            "stdout": "내 파일 대출 기간은 21일입니다."
+          },
+          {
+            "id": "desk-example",
+            "stdout": "{'status': True, 'citation': True, 'duration': True}"
+          },
+          {
+            "id": "desk-practice",
+            "stdout": "{'status': True, 'citation': True, 'duration': False}"
+          },
+          {
+            "id": "desk-trace",
+            "stdout": "['lookup_loan', 'confirm'] True"
+          },
+          {
+            "id": "desk-trace-practice",
+            "stdout": "['confirm', 'lookup_loan'] False"
+          },
+          {
+            "id": "desk-save",
+            "stdout": "agent-api-case.json"
+          }
+        ]
+      },
+      "education_review": "independent_agent /root/reviewer · accept after recheck",
+      "language": {
+        "review": "corrected",
+        "gate": "판정: WARN  (장르=report)",
+        "change_rate": "1.0%"
+      },
+      "published": {
+        "sha256": "419241b1af90b69fa2464529ccc67466ca5a7866646ffcd31a3a89f706624df9",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIConnectionError",
+          "reason": "OpenAIConnectionError/APIConnectionError/ConnectError/ConnectError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "code-1",
+            "code-2",
+            "code-3",
+            "code-4",
+            "code-5",
+            "code-6",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "daily": {
+        "sha256": "51efd5d30a0847a31fa418620e5501232bd524fc18e92f13f05f8c9b433009c0",
+        "student": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        },
+        "solution": {
+          "executed_ids": [
+            "desk-read",
+            "desk-example",
+            "desk-practice",
+            "desk-trace",
+            "desk-trace-practice",
+            "desk-save",
+            "solo-input",
+            "solo-walkthrough-code"
+          ],
+          "last_cell": "solo-walkthrough-code",
+          "status": "blocked_live_api",
+          "error": "OpenAIError",
+          "reason": "OpenAIError"
+        }
+      },
+      "zip_identity": "개별 일일 배포 노트북과 all-labs.zip 항목 바이트 일치"
+    }
+  ],
+  "environment": {
+    "langchain": "1.4.6",
+    "langchain-core": "1.6.12",
+    "langgraph": "1.2.16",
+    "langsmith": "0.14.11",
+    "mcp": "1.30.0",
+    "ipykernel": "7.4.0"
+  },
+  "transfer_examples": {
+    "student": {
+      "request": {
+        "question": "대출 기간은 며칠인가요?",
+        "k": 2
+      },
+      "expected": {
+        "status": "answered",
+        "source_id": "loan-01",
+        "answer_contains": "14일"
+      },
+      "service_record": {
+        "id": "loan-01",
+        "text": "대출 기간은 14일입니다."
+      }
+    },
+    "solution": {
+      "request": {
+        "question": "대출 기간은 며칠인가요?",
+        "k": 2
+      },
+      "expected": {
+        "status": "answered",
+        "source_id": "loan-01",
+        "answer_contains": "21일"
+      },
+      "service_record": {
+        "id": "loan-01",
+        "text": "대출 기간은 21일입니다."
+      }
+    }
+  },
+  "final_publish": {
+    "cumulative_kernel_runs": 30,
+    "regular_end": "14일",
+    "variant_end": "21일",
+    "student_and_solution_passed_published": 8,
+    "student_and_solution_passed_daily": 11,
+    "packaging": "전체 15장 누적 셀 및 일일 ZIP 대조 일치. 실서비스 지원 파일 2개 ZIP 대조 일치",
+    "model_scope": "소수 연결 확인 후 전수 재검사에선 API 키를 제거하고 필요한 셀까지 실행했다. 64·67장 게시본은 키를 로드한 별도 시도에서도 OpenAIConnectionError."
+  }
+}

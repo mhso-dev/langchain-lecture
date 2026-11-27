@@ -21,6 +21,21 @@
 <p class="hero-description">중간 프로젝트를 인계받을 동료가 첫 질문을 재현할 수 있도록 실행 조건과 기대 근거를 기록합니다. 같은 환경의 재실행과 새 환경 설치 검증을 구분합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>회귀 결과를 재현용 입력과 묶기</h3><p>50장에서 사용한 질문, 정답 문단, 수정 후 인용을 재현 명세에 적습니다. UTF-8로 직렬화한 뒤 다시 읽어 기존 행과 비교합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/midterm/chapter50.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter51-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/midterm/chapter50.json&quot;
+sample_file = here / &quot;chapter51-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;runs&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter51-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;과제는 어디에 내나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p2&#x27;], &#x27;hits&#x27;: [&#x27;p2&#x27;], &#x27;passed&#x27;: True, &#x27;candidate&#x27;: [&#x27;p2&#x27;], &#x27;graph_calls&#x27;: 1, &#x27;graph_ids&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;experiment_ids&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;visible&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;experiment_visible&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;fixed_ids&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;regression_ok&#x27;: True}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;question&#x27;: &#x27;내 점수는 몇 점인가요?&#x27;, &#x27;action&#x27;: &#x27;보류&#x27;, &#x27;expected&#x27;: [], &#x27;hits&#x27;: [], &#x27;passed&#x27;: True, &#x27;candidate&#x27;: [], &#x27;graph_calls&#x27;: 0, &#x27;graph_ids&#x27;: [], &#x27;experiment_ids&#x27;: [], &#x27;visible&#x27;: [], &#x27;experiment_visible&#x27;: [], &#x27;fixed_ids&#x27;: [], &#x27;regression_ok&#x27;: True}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;question&#x27;: &#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p3&#x27;], &#x27;hits&#x27;: [], &#x27;passed&#x27;: False, &#x27;candidate&#x27;: [&#x27;p3&#x27;], &#x27;graph_calls&#x27;: 1, &#x27;graph_ids&#x27;: [], &#x27;experiment_ids&#x27;: [&#x27;course-guide-v1:p3&#x27;], &#x27;visible&#x27;: [], &#x27;experiment_visible&#x27;: [], &#x27;fixed_ids&#x27;: [&#x27;course-guide-v1:p3&#x27;], &#x27;regression_ok&#x27;: True}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>runs</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -91,6 +106,24 @@ with TemporaryDirectory() as first, TemporaryDirectory() as second:
 <section class="project-example"><h3>인계받은 동료의 실제 실행란</h3><div class="workshop-table" tabindex="0" role="region" aria-label="인계받은 동료의 실제 실행란"><table><caption>인계받은 동료의 실제 실행란</caption><thead><tr><th scope="col">시험</th><th scope="col">이 예시에서 남길 기록</th><th scope="col">동료가 추가할 것</th></tr></thead><tbody><tr><td>저장한 응답 읽기</td><td>Q03, p3, 인용 일치</td><td>받은 파일 이름·문서 버전</td></tr><tr><td>빈 환경에서 재생성</td><td>아직 수행하지 않음</td><td>커널·의존성·당시 질문·찾은 문단 ID</td></tr><tr><td>팀 화면 시연</td><td>아직 수행하지 않음</td><td>사용자가 실제로 p3 문장을 열어 본 결과</td></tr></tbody></table></div><p>새 컴퓨터에서 달라진 결과를 그대로 기록하세요. 수업 노트북을 받은 동료가 모델 연결을 생략했는지, 실제 호출까지 했는지에 따라 같은 ‘재실행’도 확인 범위가 달라집니다.</p></section>
 <aside class="lesson-note"><p><mark>저장된 결과가 다시 읽힌 것과 서비스가 같은 결과를 새로 만든 것은 다른 확인입니다.</mark> 설치·검색 단계가 빠진 재생 기록에 ‘새 환경 성공’이라고 쓰면 동료가 실패 원인을 좁힐 수 없습니다.</p></aside><p>52장 시연에서는 저장 기록을 보여 주는 구간과 화면에서 실제로 다시 실행하는 구간을 밝혀 주세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 회귀 결과를 재현용 입력과 묶기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>import hashlib
+manifest = [{&quot;id&quot;: row[&quot;id&quot;], &quot;question&quot;: row[&quot;question&quot;], &quot;expected&quot;: row[&quot;expected&quot;],
+             &quot;citations&quot;: row[&quot;fixed_ids&quot;], &quot;passed&quot;: row[&quot;regression_ok&quot;]} for row in incoming[&quot;runs&quot;]]
+payload = json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode(&quot;utf-8&quot;)
+new = {&quot;manifest&quot;: json.loads(payload), &quot;sha256&quot;: hashlib.sha256(payload).hexdigest(),
+       &quot;fixes&quot;: incoming[&quot;fixes&quot;], &quot;peer_run&quot;: &quot;미확인&quot;,
+       &quot;evaluated_path&quot;: incoming[&quot;evaluated_path&quot;], &quot;baseline_decision&quot;: incoming[&quot;decision&quot;]}
+print(new[&quot;manifest&quot;] == manifest, len(manifest), new[&quot;peer_run&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True 3 미확인</pre></div><p>다시 읽은 JSON의 일치는 전달 중 값이 보존됐다는 뜻입니다. 다른 사람이 새 환경에서 서비스까지 실행했는지는 peer_run에 따로 기록합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter51.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter51.json</pre></div><p>52장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

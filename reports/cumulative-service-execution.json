@@ -1,0 +1,2056 @@
+{
+  "date": "2026-11-27",
+  "environment": "macOS arm64, CPython 3.12.15, 새 IPython in-process 커널. 셀 실행 전 정답 커널과 학생 커널의 파일 폴더를 분리했다.",
+  "chapters": {
+    "68": {
+      "input_file": "my-course/agent-api-case.json",
+      "output_file": "service-lab/api.json",
+      "kernels": [
+        {
+          "day": 68,
+          "mode": "student",
+          "sha256": "fe8aab71d1152ff7c7bb1fd50b5b04a6652fcc056d4f8cd89406a447d67c18d9",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "복귀 예시 agent-api-case.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "200 loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "api.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "200 course-guide-v1:p2",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "422",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "['guide:p1']",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 68,
+          "mode": "solution",
+          "sha256": "fe8aab71d1152ff7c7bb1fd50b5b04a6652fcc056d4f8cd89406a447d67c18d9",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "복귀 예시 agent-api-case.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "200 loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "422 k",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "api.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "200 course-guide-v1:p2",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "422",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "200 no_evidence",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "422 k",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "['guide:p1']",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "200 ['guide:p1', 'guide:p2']",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "69": {
+      "input_file": "service-lab/api.json",
+      "output_file": "service-lab/stream.json",
+      "kernels": [
+        {
+          "day": 69,
+          "mode": "student",
+          "sha256": "d14780c9c019d741e29ce64db40ff09a870788326e80ae9fcce59059b31510c1",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 api.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "['start', 'delta', 'done']",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "stream.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "['start', 'delta', 'done']\n1",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-8",
+              "stdout": "delta 과제",
+              "error": null
+            },
+            {
+              "cell": "code-9",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "mode": "solution",
+          "sha256": "d14780c9c019d741e29ce64db40ff09a870788326e80ae9fcce59059b31510c1",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 api.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "['start', 'delta', 'done']",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False True",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "stream.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "['start', 'delta', 'done']\n1",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "404 0",
+              "error": null
+            },
+            {
+              "cell": "code-8",
+              "stdout": "delta 과제",
+              "error": null
+            },
+            {
+              "cell": "code-9",
+              "stdout": "('과제함', False)\n('과제함', True)",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "70": {
+      "input_file": "service-lab/stream.json",
+      "output_file": "service-lab/stored.json",
+      "kernels": [
+        {
+          "day": 70,
+          "mode": "student",
+          "sha256": "4afeb3938dc14c7d1807128d4958f7c50c3eed2be438a44d2474e32df56a9cf9",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "received",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 stream.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "loan-demo loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "stored.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "변경한 행: 1\n('ready', '과제는 학습 관리 페이지의 과제함에 제출합니다.')",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "과제는 학습 관리 페이지의 과제함에 제출합니다.",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "200 {'id': 'doc-2', 'characters': 5}",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "mode": "solution",
+          "sha256": "4afeb3938dc14c7d1807128d4958f7c50c3eed2be438a44d2474e32df56a9cf9",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "received",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 stream.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "loan-demo loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "1",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "stored.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "변경한 행: 1\n('ready', '과제는 학습 관리 페이지의 과제함에 제출합니다.')",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "과제는 학습 관리 페이지의 과제함에 제출합니다.",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "doc-1:p1\nNone",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "200 {'id': 'doc-2', 'characters': 5}",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "422 제출 장소",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "71": {
+      "input_file": "service-lab/stored.json",
+      "output_file": "service-lab/container.json",
+      "kernels": [
+        {
+          "day": 71,
+          "mode": "student",
+          "sha256": "5fa7bd23de8314ece0750861046b27b4c6fdfe56dc073ee996d7df4a50524624",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "['python', '-m', 'uvicorn', 'main:app'] 8000",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 stored.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "loan-demo loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "container.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "수업용 로컬 이미지 ID가 없어 컨테이너 실습을 건너뜁니다.",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "main False",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "Dockerfile과 로컬 엔진이 준비되면 run_image를 켜세요.",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "mode": "solution",
+          "sha256": "5fa7bd23de8314ece0750861046b27b4c6fdfe56dc073ee996d7df4a50524624",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "['python', '-m', 'uvicorn', 'main:app'] 8000",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 stored.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "loan-demo loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "main:app 8000",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "container.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "COPY requirements.txt ./\nRUN python -m pip install -r requirements.txt\nCMD [\"python\", \"-m\", \"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "수업용 로컬 이미지 ID가 없어 컨테이너 실습을 건너뜁니다.",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "main False",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "api:app 200 course-api",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "Dockerfile과 로컬 엔진이 준비되면 run_image를 켜세요.",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "72": {
+      "input_file": "service-lab/container.json",
+      "output_file": "service-lab/compose.json",
+      "kernels": [
+        {
+          "day": 72,
+          "mode": "student",
+          "sha256": "978a80c6dc20c2ea7763234ddcaf999a40f05d71408b9e586b1b0947edb47a20",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "db 5432",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 container.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "127.0.0.1:8080:8000 course-pg:/var/lib/postgresql/data",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "compose.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "/var/lib/postgresql/data",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "과제함에 제출합니다. True",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres -d postgres']",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-8",
+              "stdout": "로컬 이미지와 Compose가 준비되면 run_stack을 켜세요.",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 72,
+          "mode": "solution",
+          "sha256": "978a80c6dc20c2ea7763234ddcaf999a40f05d71408b9e586b1b0947edb47a20",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "db 5432",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 container.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "127.0.0.1:8080:8000 course-pg:/var/lib/postgresql/data",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "course-pg True",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "compose.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "127.0.0.1:55432\ndb:5432",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "/var/lib/postgresql/data",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "과제함에 제출합니다. True",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres -d postgres']",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "db service_healthy",
+              "error": null
+            },
+            {
+              "cell": "code-8",
+              "stdout": "로컬 이미지와 Compose가 준비되면 run_stack을 켜세요.",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "73": {
+      "input_file": "service-lab/compose.json",
+      "output_file": "service-lab/nearest.json",
+      "kernels": [
+        {
+          "day": 73,
+          "mode": "student",
+          "sha256": "d7f712599b367611e4681524a87a7b9b91c7c39fa82867f12ae463669459e398",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "[('p1', 0.0), ('p2', 1.414)]",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 compose.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "[('loan-01', 0.0), ('return-note', 1.41)]",
+              "error": null
+            },
+            {
+              "cell": "service-pg",
+              "stdout": "DB 연결 전 · 위 셀의 로컬 거리만 계산했습니다.",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "nearest.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "PostgreSQL 연결을 선택하지 않았습니다.",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "A:p1 []",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "pgvector 비교는 수업 DB 연결 후 실행하세요.",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 73,
+          "mode": "solution",
+          "sha256": "d7f712599b367611e4681524a87a7b9b91c7c39fa82867f12ae463669459e398",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "[('p1', 0.0), ('p2', 1.414)]",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 compose.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "[('loan-01', 0.0), ('return-note', 1.41)]",
+              "error": null
+            },
+            {
+              "cell": "service-pg",
+              "stdout": "DB 연결 전 · 위 셀의 로컬 거리만 계산했습니다.",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "return-note",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "nearest.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "p1 0.0\np2 0.0",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "PostgreSQL 연결을 선택하지 않았습니다.",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "A:p1 []",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "[(1.0, 'B:p3')]",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "pgvector 비교는 수업 DB 연결 후 실행하세요.",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "74": {
+      "input_file": "service-lab/nearest.json",
+      "output_file": "service-lab/probe.json",
+      "kernels": [
+        {
+          "day": 74,
+          "mode": "student",
+          "sha256": "669af7fba23dafbd26de0687244b385bb49e8e76b3aeb31d3b1130db298f0364",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "{'proxy': ['443:443']}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 nearest.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "http://127.0.0.1:8080/turn True",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "probe.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "배정된 배포 주소가 없어 HTTPS 확인을 건너뜁니다.",
+              "error": null
+            },
+            {
+              "cell": "practice-74-code",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "i-0123456789abcdef0 running",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "배정된 EC2 context와 이미지가 있으면 원격 후보를 검사하세요.",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 74,
+          "mode": "solution",
+          "sha256": "669af7fba23dafbd26de0687244b385bb49e8e76b3aeb31d3b1130db298f0364",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "{'proxy': ['443:443']}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 nearest.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "http://127.0.0.1:8080/turn True",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "probe.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "http api 8000",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "배정된 배포 주소가 없어 HTTPS 확인을 건너뜁니다.",
+              "error": null
+            },
+            {
+              "cell": "practice-74-code",
+              "stdout": "404 200 course-api",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "i-0123456789abcdef0 running",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "aws ec2 describe-instances --region ap-northeast-2 --instance-ids i-0123456789abcdef0 --output json\nclassroom running",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "배정된 EC2 context와 이미지가 있으면 원격 후보를 검사하세요.",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "75": {
+      "input_file": "service-lab/probe.json",
+      "output_file": "service-lab/restore.json",
+      "kernels": [
+        {
+          "day": 75,
+          "mode": "student",
+          "sha256": "7d36a8c80461856981c3974a1c305178da168aab4d42c029d9cefd3a7c9a184c",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "1",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 probe.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "restore.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "('과제함에 제출합니다.',) True",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "[('alice', 'doc-1'), ('bob', 'doc-1')]",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-example",
+              "stdout": "(1,)",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-practice",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 75,
+          "mode": "solution",
+          "sha256": "7d36a8c80461856981c3974a1c305178da168aab4d42c029d9cefd3a7c9a184c",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "1",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 probe.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True loan-01",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "restore.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "('과제함에 제출합니다.',) True",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "과제함에 제출합니다. / 제출 기한 미확인\nFalse",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "[('alice', 'doc-1'), ('bob', 'doc-1')]",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "누락 [('bob', 'doc-1')]\n내용 변경 [('alice', 'doc-1')]",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-example",
+              "stdout": "(1,)",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-practice",
+              "stdout": "True\nFalse",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "76": {
+      "input_file": "service-lab/restore.json",
+      "output_file": "service-lab/ci.json",
+      "kernels": [
+        {
+          "day": 76,
+          "mode": "student",
+          "sha256": "a44db90ecd9716ed4ccd4564eb6aec8bb83ed15f06463c24f6e1bca433352d28",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "check",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 restore.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "test_restore.RestoreTest.test_restored_row 0",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "ci.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "1\nTrue",
+              "error": null
+            },
+            {
+              "cell": "practice-76-code",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "(5, 0)",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-example",
+              "stdout": "[]",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-practice",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "mode": "solution",
+          "sha256": "a44db90ecd9716ed4ccd4564eb6aec8bb83ed15f06463c24f6e1bca433352d28",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "check",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 restore.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "test_restore.RestoreTest.test_restored_row 0",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "True True",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "ci.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "False\nTrue",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "1\nTrue",
+              "error": null
+            },
+            {
+              "cell": "practice-76-code",
+              "stdout": "1 0",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "(5, 0)",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "(0, 1)\n(1, 1)",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-example",
+              "stdout": "[]",
+              "error": null
+            },
+            {
+              "cell": "solo-codex-practice",
+              "stdout": "[2]",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "77": {
+      "input_file": "service-lab/ci.json",
+      "output_file": "service-lab/candidate.json",
+      "kernels": [
+        {
+          "day": 77,
+          "mode": "student",
+          "sha256": "b6b5974c375991758072cf0dd08a5ffa50029cd9e8ecc82ca931985997104744",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 ci.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True 64",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "candidate.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "A course-guide-v1:p2",
+              "error": null
+            },
+            {
+              "cell": "practice-77-code",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "200 []",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "mode": "solution",
+          "sha256": "b6b5974c375991758072cf0dd08a5ffa50029cd9e8ecc82ca931985997104744",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 ci.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True 64",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "candidate.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "False\nFalse\nTrue",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "A course-guide-v1:p2",
+              "error": null
+            },
+            {
+              "cell": "practice-77-code",
+              "stdout": "B False\nA True",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "200 []",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "B False\nA True",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "78": {
+      "input_file": "service-lab/candidate.json",
+      "output_file": "service-lab/form.json",
+      "kernels": [
+        {
+          "day": 78,
+          "mode": "student",
+          "sha256": "92e0ea1500354fd0ffff6d1a5625842f3002324deebb72e7bfcea72073a3c153",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 candidate.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "['1', '2']",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "form.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "할 일을 한 줄로 적으세요.",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "mode": "solution",
+          "sha256": "92e0ea1500354fd0ffff6d1a5625842f3002324deebb72e7bfcea72073a3c153",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 candidate.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "['1', '2']",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "2 revision-b",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "form.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "<label for=\"task-b\">새 제목</label><input id=\"task-b\">",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "할 일을 한 줄로 적으세요.",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "true\n할 일을 한 줄로 적으세요.\n제목을 입력하세요.",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "79": {
+      "input_file": "service-lab/form.json",
+      "output_file": "service-lab/selection.json",
+      "kernels": [
+        {
+          "day": 79,
+          "mode": "student",
+          "sha256": "22ee02683689ed96a0789f7a385590b6f5ce4df18caa20493c7ccc89b3f7cb08",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 form.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "{'id': 2, 'done': True} revision-b",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "selection.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "{\"question\":\"과제는 어디에 내나요?\",\"k\":2}",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "과제함에 제출하세요. [course-guide-v1:p2]",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "2",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 79,
+          "mode": "solution",
+          "sha256": "22ee02683689ed96a0789f7a385590b6f5ce4df18caa20493c7ccc89b3f7cb08",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 form.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "{'id': 2, 'done': True} revision-b",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "True True",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "selection.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "{\"question\":\"과제는 어디에 내나요?\",\"k\":2}",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "과제함에 제출하세요. [course-guide-v1:p2]",
+              "error": null
+            },
+            {
+              "cell": "code-4",
+              "stdout": "대화를 찾을 수 없습니다",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "2",
+              "error": null
+            },
+            {
+              "cell": "code-7",
+              "stdout": "1 false 입력을 확인하세요",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "80": {
+      "input_file": "service-lab/selection.json",
+      "output_file": "service-lab/approval.json",
+      "kernels": [
+        {
+          "day": 80,
+          "mode": "student",
+          "sha256": "c4ae5ddbfd7bd801ec238cc78283ecacfe8a518741c37056622b6b17651a77bd",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "{\"id\":1,\"title\":\"복습\",\"completed\":false}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 selection.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "200 409 1",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "approval.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "INVALID_TITLE 0",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "선택 2 남은 ID 2",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 80,
+          "mode": "solution",
+          "sha256": "c4ae5ddbfd7bd801ec238cc78283ecacfe8a518741c37056622b6b17651a77bd",
+          "cells": [
+            {
+              "cell": "code-1",
+              "stdout": "{\"id\":1,\"title\":\"복습\",\"completed\":false}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 selection.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "200 409 1",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False 0",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "approval.json",
+              "error": null
+            },
+            {
+              "cell": "code-2",
+              "stdout": "INVALID_TITLE 0",
+              "error": null
+            },
+            {
+              "cell": "code-3",
+              "stdout": "[[1,false],[2,true]]",
+              "error": null
+            },
+            {
+              "cell": "code-5",
+              "stdout": "선택 2 남은 ID 2",
+              "error": null
+            },
+            {
+              "cell": "code-6",
+              "stdout": "true false\n1",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "81": {
+      "input_file": "service-lab/approval.json",
+      "output_file": "service-lab/evaluation/baseline.json",
+      "kernels": [
+        {
+          "day": 81,
+          "mode": "student",
+          "sha256": "52d78c95aadb0408c6f6bedecf029dce773d72c769735c2370db5d2aa11c23f4",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "('A1', '2026-06-01', 30)\n{'citation': 'A1', 'days': 30}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 approval.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "A1 30 [200, 409]",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "baseline.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 81,
+          "mode": "solution",
+          "sha256": "52d78c95aadb0408c6f6bedecf029dce773d72c769735c2370db5d2aa11c23f4",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "('A1', '2026-06-01', 30)\n{'citation': 'A1', 'days': 30}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 approval.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "A1 30 [200, 409]",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "A1",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "baseline.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "2026-06-30 {'citation': 'A1', 'days': 30}\n2026-07-01 {'citation': 'A2', 'days': 90}\n2026-05-31 {'citation': None}",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "82": {
+      "input_file": "service-lab/evaluation/baseline.json",
+      "output_file": "service-lab/evaluation/ranking.json",
+      "kernels": [
+        {
+          "day": 82,
+          "mode": "student",
+          "sha256": "7d0369827e1690f0630d842a7a38571da6596db36b02a20b7963e3389891a866",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "(0.5, 0.5)\n(1.0, 1.0)",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 baseline.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "{'recall': 1.0, 'mrr': 0.5} {'recall': 1.0, 'mrr': 1.0}",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "ranking.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 82,
+          "mode": "solution",
+          "sha256": "7d0369827e1690f0630d842a7a38571da6596db36b02a20b7963e3389891a866",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "(0.5, 0.5)\n(1.0, 1.0)",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 baseline.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "{'recall': 1.0, 'mrr': 0.5} {'recall': 1.0, 'mrr': 1.0}",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "True False",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "ranking.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "(0.25, 0.25)\n(0.5, 0.5)\nTrue False",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "83": {
+      "input_file": "service-lab/evaluation/ranking.json",
+      "output_file": "service-lab/evaluation/trajectory.json",
+      "kernels": [
+        {
+          "day": 83,
+          "mode": "student",
+          "sha256": "35bb82358857d39fb8b276f7cc985e93f2b24d8f17cc45d2c23f2be33a8989bb",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 ranking.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True 1",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "trajectory.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "mode": "solution",
+          "sha256": "35bb82358857d39fb8b276f7cc985e93f2b24d8f17cc45d2c23f2be33a8989bb",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 ranking.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "True 1",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "False",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "trajectory.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "True\nFalse\nFalse",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "84": {
+      "input_file": "service-lab/evaluation/trajectory.json",
+      "output_file": "service-lab/evaluation/gate.json",
+      "kernels": [
+        {
+          "day": 84,
+          "mode": "student",
+          "sha256": "cdd65d49a2554884e9f7c2da136e70e89c03cf96644e667d27133c8a23503654",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "Q2 False → True\nQ3 True → False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 trajectory.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "july-deadline 시험 배포",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "gate.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "mode": "solution",
+          "sha256": "cdd65d49a2554884e9f7c2da136e70e89c03cf96644e667d27133c8a23503654",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "Q2 False → True\nQ3 True → False",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 trajectory.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "july-deadline 시험 배포",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "보류",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "gate.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "기준선 250.0 ms 550 tokens $0.000700\n320.0 ms 660 tokens\n$0.000840 보류",
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    "85": {
+      "input_file": "service-lab/evaluation/gate.json",
+      "output_file": "service-lab/evaluation/release.json",
+      "kernels": [
+        {
+          "day": 85,
+          "mode": "student",
+          "sha256": "22d3729c9c02a00e681d0735376044cb8d12fbf096f8916624660de2e1c60e84",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "{'as_of': '2026-07-01', 'expected': 90, 'source_run': 'r1'}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 gate.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "인계 90 [30, 90]",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "release.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "mode": "solution",
+          "sha256": "22d3729c9c02a00e681d0735376044cb8d12fbf096f8916624660de2e1c60e84",
+          "cells": [
+            {
+              "cell": "run-example",
+              "stdout": "{'as_of': '2026-07-01', 'expected': 90, 'source_run': 'r1'}",
+              "error": null
+            },
+            {
+              "cell": "service-input",
+              "stdout": "내 실습 파일 gate.json",
+              "error": null
+            },
+            {
+              "cell": "service-run",
+              "stdout": "인계 90 [30, 90]",
+              "error": null
+            },
+            {
+              "cell": "service-work",
+              "stdout": "True",
+              "error": null
+            },
+            {
+              "cell": "service-save",
+              "stdout": "release.json",
+              "error": null
+            },
+            {
+              "cell": "code-practice",
+              "stdout": "original False\nfixed True\n[True, True]",
+              "error": null
+            },
+            {
+              "cell": "service-code",
+              "stdout": "",
+              "error": null
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

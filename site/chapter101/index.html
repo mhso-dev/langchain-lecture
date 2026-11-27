@@ -21,6 +21,21 @@
 <p class="hero-description">로컬 규정 조회만으로 처리한 질문과 실제 일정 데이터가 필요한 요청을 구분합니다. 예약 API 연동을 보류한 이유와 재검토에 필요한 자료·권한을 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>기존 조회로 답할 수 있는지 먼저 판정하기</h3><p>100장에서 복구한 질문과 조회 결과를 읽습니다. 이미 확인한 문서로 답하는 경우와 일정 시스템을 새로 연결해야 하는 경우를 분리해 결정 사유를 남깁니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter100.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter101-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter100.json&quot;
+sample_file = here / &quot;chapter101-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;outcome&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter101-start.json
+RULE-A</pre></div><p>두 번째 줄은 읽은 파일의 <code>outcome</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -56,19 +71,10 @@ print(record[<span class="tok-string">"question_id"</span>], record[<span class=
 </div>
 </header>
 <p>연결을 다시 검토할 조건 예시　사용자가 “오늘 점검 가능한 시간”을 묻고 팀이 공개 가능한 일정 읽기 권한과 기준 시각을 확보했을 때. 그때는 규정 ID와 날짜를 보내고, 일정 목록 및 조회 시각을 받는 읽기 전용 연결을 고려할 수 있습니다. 연결 실패 시에는 캐시의 오래된 시간을 확정 일정으로 보여 주지 않고 담당자 확인을 안내합니다. 아래는 아직 채택하지 않은 문서 시안입니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 외부 연동 수용 조건</h3>
-<div class="cell-before"><p>우리 팀이 다음에 외부 자료를 검토할 조건과 연결 실패 시 보여 줄 문장을 한 건의 결정 메모로 작성하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 사용자 질문, 도입 조건, 대체 안내가 담긴 메모를 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">decision_note = {<span class="tok-string">"질문"</span>: <span class="tok-string">"이번 달 점검 일정은?"</span>, <span class="tok-string">"도입 조건"</span>: <span class="tok-string">"날짜별 공개 일정과 읽기 권한 확보"</span>,
-                 <span class="tok-string">"대체 안내"</span>: <span class="tok-string">"현재 일정은 담당자에게 확인해 주세요."</span>}
-print(decision_note[<span class="tok-string">"도입 조건"</span>], decision_note[<span class="tok-string">"대체 안내"</span>], sep=<span class="tok-string">"\n"</span>)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">날짜별 공개 일정과 읽기 권한 확보
-현재 일정은 담당자에게 확인해 주세요.</pre></div>
-<div class="cell-after"><p>이 메모로는 연동 채택 여부를 판단할 수 있습니다. 실제로 연결이 되었다고 쓰려면 호출한 환경, 입력, 받은 응답을 따로 남겨야 합니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 외부 연동 수용 조건</h3><figure class="code-block"><pre tabindex="0"><code>decision_note = {&quot;질문&quot;: &quot;이번 달 점검 일정은?&quot;, &quot;도입 조건&quot;: &quot;날짜별 공개 일정과 읽기 권한 확보&quot;,
+                 &quot;대체 안내&quot;: &quot;현재 일정은 담당자에게 확인해 주세요.&quot;}
+print(decision_note[&quot;도입 조건&quot;], decision_note[&quot;대체 안내&quot;], sep=&quot;\n&quot;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">날짜별 공개 일정과 읽기 권한 확보
+현재 일정은 담당자에게 확인해 주세요.</pre></div><div class="cell-after"><p>이 메모로는 연동 채택 여부를 판단할 수 있습니다. 실제로 연결이 되었다고 쓰려면 호출한 환경, 입력, 받은 응답을 따로 남겨야 합니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>외부 도구를 추가할지 결정하기</h3><p><mark>현재 문서에 없는 일정은 도구를 등록하는 것만으로 확인할 수 없습니다.</mark> 공개 일정의 출처와 읽기 권한을 확보했을 때만 조회 경로를 설계하세요. 팀 제안서에는 지금 답할 수 있는 질문과 자료가 생긴 뒤 답할 질문의 예시를 각각 적습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter57/index.html">57장 SKILL.md의 설명·입력·작업 지침</a></p></aside>
 
 </section>
@@ -79,6 +85,20 @@ print(decision_note[<span class="tok-string">"도입 조건"</span>], decision_n
 <section class="project-example"><h3>결정에 반대하는 동료의 질문 남기기</h3><p>“규정 조회만으로는 해결하지 못한 과업이 무엇인가요?”에 실제 사례를 답해 보세요. 사례가 없으면 현재 경로에 드는 시간을 기록하고, 새 도구를 붙였을 때 검증할 사용자 행동을 먼저 합의합니다.</p></section>
 <aside class="lesson-note"><p><mark>외부 도구의 필요성은 도구 이름보다 기존 경로에서 끝낼 수 없는 사용자 과업으로 설명합니다.</mark> 현재 Q01은 공개 문서 한 건이면 끝납니다. 예약 가능 시간을 읽어야 하는 새 질문은 자료·입력·실패 안내가 다릅니다.</p></aside><p>102장에는 실제로 선택한 조회 경로와 보류한 기능을 구분해 API 요청 예를 넘깁니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 기존 조회로 답할 수 있는지 먼저 판정하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>known = {doc[&quot;id&quot;] for doc in incoming[&quot;prepared&quot;]}
+choice = &quot;공개 문서 조회&quot; if incoming[&quot;outcome&quot;] in known else &quot;needs_review&quot;
+new = {**incoming, &quot;adapter&quot;: choice, &quot;external_call&quot;: False}
+print(incoming[&quot;question&quot;], choice)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은? 공개 문서 조회</pre></div><p>공개 판본에서 결과를 찾은 요청에는 별도 외부 연동을 더하지 않습니다. 결과가 없으면 needs_review가 되어, 어떤 정보를 더 읽어야 하는지 팀이 정할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter101.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter101.json</pre></div><p>102장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

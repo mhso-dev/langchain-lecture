@@ -13,14 +13,14 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 67 / AGENTIC SERVICE</p>
 <span class="sidebar-title">서비스 평가의 인용 정확성과 분모</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-fact"><span>02</span>출처 ID와 답변 내용 교차 검증</a><a href="#nb-sample"><span>03</span>실행 시나리오로 평가 분모 산정</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>같은 사례로 인용 오류 수정 전후 재검증하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">응답의 인용과 숫자를 각각 채점해 API 시험 요청 만들기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-fact"><span>02</span>출처 ID와 답변 내용 교차 검증</a><a href="#nb-sample"><span>03</span>실행 시나리오로 평가 분모 산정</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>같은 사례로 인용 오류 수정 전후 재검증하기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 67 / AGENTIC SERVICE</span><span class="template-badge">학생용 교재</span></div>
 <h1>서비스 평가의 인용 정확성과 분모</h1>
 <p class="hero-description">정상 종료된 응답이 올바른 출처 ID를 붙이고도 제출 위치를 잘못 안내한 사례를 평가합니다. 실행 결과, 인용 일치, 원문과 답변의 의미를 각각 판정합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 067 · 8H</span><span>39일 조건 고정·채택 기록, 66일 역할 비교·선택 근거</span></div>
+<div class="hero-meta"><span>입문</span><span>교육일 067 · 8H</span><span>42장 회귀 검사와 66장 역할별 인계</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -29,6 +29,26 @@
 <a class="download" href="chapter67.ipynb" download="chapter67.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>67장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">같은 사례로 인용 오류 수정 전후 재검증하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>66장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-66.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-66.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;question&#x27;: &#x27;대출 기간은 며칠인가요?&#x27;,
+     &#x27;observed&#x27;: {&#x27;status&#x27;: &#x27;answered&#x27;,
+                  &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
+                  &#x27;sources&#x27;: [&#x27;loan-01&#x27;]},
+     &#x27;events&#x27;: [{&#x27;name&#x27;: &#x27;lookup_loan&#x27;, &#x27;args&#x27;: {&#x27;doc_id&#x27;: &#x27;loan-01&#x27;}},
+                {&#x27;name&#x27;: &#x27;confirm&#x27;, &#x27;args&#x27;: {&#x27;decision&#x27;: &#x27;approve&#x27;}}]}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-fact" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>출처 ID와 답변 내용 교차 검증</h2>
 </div>
@@ -158,6 +178,28 @@ retrieval</pre></div><p>실제 레코드에서 만든 답은 passed이고, 빈 �
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langgraph/graph-api" target="_blank" rel="noopener noreferrer">공식 Graph API ↗</a><span></span></li>
 <li><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer">공식 Interrupts ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>응답의 인용과 숫자를 각각 채점해 API 시험 요청 만들기</h3><p>같은 문서 번호를 인용해도 대출 일수는 틀릴 수 있습니다. 66장의 실제 응답을 서비스 원문에서 얻은 기준과 대조하고 다음 장 FastAPI에서 재사용할 요청을 남기세요.</p><pre tabindex="0"><code>import re
+record = previous[&quot;record&quot;]
+expected_days = re.search(r&quot;[0-9]+일&quot;, record[&quot;text&quot;]).group()
+expected = {&quot;status&quot;: &quot;answered&quot;, &quot;source_id&quot;: record[&quot;id&quot;], &quot;answer_contains&quot;: expected_days}
+def score(reply, expected):
+    return {&quot;status&quot;: reply[&quot;status&quot;] == expected[&quot;status&quot;],
+            &quot;citation&quot;: expected[&quot;source_id&quot;] in reply[&quot;sources&quot;],
+            &quot;duration&quot;: expected[&quot;answer_contains&quot;] in re.findall(r&quot;[0-9]+일&quot;, reply[&quot;answer&quot;])}
+checks = score(previous[&quot;observed&quot;], expected)
+print(checks)</code></pre><p>실행 결과</p><pre>{&#x27;status&#x27;: True, &#x27;citation&#x27;: True, &#x27;duration&#x27;: True}</pre><p>citation은 출처 목록을 읽습니다. duration은 답에서 일수를 전부 추출한 뒤 값 전체가 같은지 확인하므로 14일과 114일을 구분합니다. 기준 일수는 답변에서 복사하지 않고 54장의 원문에서 다시 읽습니다.</p><h3>직접 확인하기</h3><p>인용은 유지하고 일수만 한 자리 늘리세요. 어느 항목이 틀렸는지 세 값을 따로 출력합니다.</p><pre tabindex="0"><code># 관찰한 응답의 사본에서 일수 앞에 1을 붙인 다음 같은 함수로 채점하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>wrong = dict(previous[&quot;observed&quot;])
+wrong[&quot;answer&quot;] = &quot;대출 기간은 1&quot; + expected_days + &quot;입니다.&quot;
+print(score(wrong, expected))</code></pre><p>기본 자료로 실행한 결과</p><pre><code>{&#x27;status&#x27;: True, &#x27;citation&#x27;: True, &#x27;duration&#x27;: False}</code></pre><p>같은 문서를 인용했지만 일수가 달라졌으므로 duration만 False입니다. 다음 장에서는 이 비교를 HTTP 응답에 적용합니다.</p></details><h3>도구 이름·인자·승인 순서 대조하기</h3><p>62장의 MCP 조회가 실제로 받은 문서 번호와 64장에서 재개할 때 사용한 결정을 순서대로 대조합니다. 이 두 기록은 노트북 서비스에서 관찰한 이벤트입니다. 모델이 자율적으로 다른 도구를 선택했는지는 별도의 에이전트 실행 기록이 필요합니다.</p><pre tabindex="0"><code>expected_events = [
+    {&quot;name&quot;: &quot;lookup_loan&quot;, &quot;args&quot;: {&quot;doc_id&quot;: record[&quot;id&quot;]}},
+    {&quot;name&quot;: &quot;confirm&quot;, &quot;args&quot;: {&quot;decision&quot;: &quot;approve&quot;}},
+]
+events = previous[&quot;events&quot;]
+print([e[&quot;name&quot;] for e in events], events == expected_events)</code></pre><p>실행 결과</p><pre>[&#x27;lookup_loan&#x27;, &#x27;confirm&#x27;] True</pre><p>리스트의 딕셔너리를 순서대로 비교하기 때문에 조회 인자, 승인값, 호출 횟수, 순서 가운데 한 가지라도 다르면 False입니다.</p><h3>호출 순서를 바꿔 검사하기</h3><p>조회와 승인의 순서를 바꾼 복사본으로 동일한 검사를 실행하세요. 원래 events는 다음 비교를 위해 그대로 남깁니다.</p><pre tabindex="0"><code># 원래 목록을 거꾸로 복사해 expected_events와 비교하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>reversed_events = list(reversed(events))
+print([e[&quot;name&quot;] for e in reversed_events], reversed_events == expected_events)</code></pre><p>기본 자료로 실행한 결과</p><pre><code>[&#x27;confirm&#x27;, &#x27;lookup_loan&#x27;] False</code></pre><p>순서만 바꿔도 승인 뒤 조회한 기록이 되어 이번 서비스의 경로 검사에서 탈락합니다.</p></details><h3>68장 API의 시험 요청 저장하기</h3><p>68장의 TestClient가 request를 POST하고 expected로 받은 응답을 검사합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;request&quot;: {&quot;question&quot;: previous[&quot;question&quot;], &quot;k&quot;: 2}, &quot;expected&quot;: expected,
+           &quot;service_record&quot;: {&quot;id&quot;: record[&quot;id&quot;], &quot;text&quot;: record[&quot;text&quot;]}}
+target = work / &quot;agent-api-case.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-api-case.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

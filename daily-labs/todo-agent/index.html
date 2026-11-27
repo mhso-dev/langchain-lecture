@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Todo 관리</title>
+<style>
+body{max-width:42em;margin:2em auto;padding:1em;font:17px/1.65 system-ui;color:#173c32}
+button,input{max-width:100%;padding:.45em;font:inherit;box-sizing:border-box}li{margin:.7em 0}
+button{margin:.18em}output{display:block;margin:1em 0;white-space:pre-wrap}
+</style>
+<h1>내 할 일</h1>
+<form id="add"><label>새 할 일 <input name="title" required maxlength="200"></label> <button>추가</button></form>
+<ul id="items"></ul>
+<h2>에이전트에게 요청하기</h2>
+<form id="ask"><label>요청 <input name="question" required maxlength="1000" placeholder="2번을 미완료로 바꿔 줘"></label> <button>보내기</button></form>
+<output aria-live="polite"></output>
+<div id="actions" hidden><button value="yes">승인</button> <button value="no">거절</button></div>
+<script>
+const out = document.querySelector('output');
+const actions = document.querySelector('#actions');
+let proposal;
+async function api(path, method='GET', body) {
+  const res = await fetch(path, {method, headers: {'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  if (!res.ok) throw Error(res.status === 409 ? '다른 변경이 먼저 적용됐습니다. 다시 조회하세요.' : '요청을 처리하지 못했습니다 ('+res.status+').');
+  return res.json();
+}
+async function update(operation) {
+  try { await operation(); }
+  catch (error) { out.textContent = error.message; }
+  try { await refresh(); }
+  catch (error) { out.textContent = error.message; }
+}
+function itemView(row) {
+  const li = document.createElement('li');
+  li.append(row.id+'번 '+row.title+' · '+(row.done?'완료':'미완료')+' ');
+  const path = '/api/todos/'+row.id;
+  function button(label, callback) {
+    const el = document.createElement('button');
+    el.textContent = label;
+    el.onclick = () => update(callback);
+    li.append(el);
+  }
+  button(row.done?'완료 취소':'완료 처리', () => api(path,'PUT',{...row,done:!row.done}));
+  button('제목 수정', async () => {
+    const title = prompt('새 제목',row.title)?.trim();
+    if (title) await api(path,'PUT',{...row,title});
+  });
+  button('삭제', async () => {
+    if (confirm(row.id+'번 할 일을 삭제할까요?')) await api(path+'?version='+row.version,'DELETE');
+  });
+  return li;
+}
+async function refresh() {
+  const rows = await api('/api/todos');
+  document.querySelector('#items').replaceChildren(...rows.map(itemView));
+}
+document.querySelector('#add').onsubmit = event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  update(async () => { await api('/api/todos','POST',{title:form.elements.title.value}); form.reset(); });
+};
+document.querySelector('#ask').onsubmit = async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  actions.hidden = true;
+  form.querySelector('button').disabled = true;
+  out.textContent = '조회 중…';
+  try {
+    const r = await api('/api/agent','POST',{question:form.elements.question.value});
+    out.textContent = r.message;
+    if (r.action === 'propose') {
+      proposal = r.token;
+      out.textContent += '\n'+r.id+'번 '+r.title+' · '+(r.before?'완료':'미완료')+' → '+(r.after?'완료':'미완료');
+      actions.hidden = false;
+    }
+  } catch (error) { out.textContent = error.message; }
+  finally { form.querySelector('button').disabled = false; }
+};
+actions.onclick = event => {
+  if (event.target.tagName !== 'BUTTON') return;
+  actions.hidden = true;
+  const approve = event.target.value === 'yes';
+  update(async () => {
+    const r = await api('/api/proposals/'+proposal,'POST',{approve});
+    out.textContent = r.status === 'applied' ? '변경했습니다.' : '거절했습니다.';
+  });
+};
+refresh().catch(error => out.textContent = error.message);
+</script>
+</html>

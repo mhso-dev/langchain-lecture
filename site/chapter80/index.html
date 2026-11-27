@@ -119,7 +119,49 @@ console.log(JSON.stringify(items.map(row =&gt; [row.id, row.completed])));
 <span class="lesson-anchor" id="diff"></span><div class="lesson-explanation" id="reading-diff"><h3>완료 수정의 범위 검토하기</h3><p>두 번째 항목을 완료로 바꾼 뒤 두 행의 ID와 완료 값을 함께 출력해 보세요. 목표는 ID 2의 완료 값 하나를 바꾸는 것입니다. 제목이 같은 ID 1까지 바뀌었다면 대상을 찾는 조건부터 살펴보세요.</p></div>
 
 </section>
-<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>동일한 제목의 할 일을 구분해 삭제하기</h2></div></header>
+<section id="service-practice" class="lesson-section"><h2>버전 검사로 투두 변경 한 번만 승인하기</h2><p>79장에서 고른 ID만 완료 처리합니다. 두 탭에서 같은 버전을 보고 변경을 요청했을 때 첫 승인 뒤에 도착한 요청이 기존 결과를 덮는지 확인합니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/selection.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
+import json
+here = Path.cwd()
+# 각 장 폴더에서 열거나 노트북을 한 폴더에 모아 두어도 같은 실습 폴더를 씁니다.
+course = here.parent if here.name in (&quot;daily&quot;,) or (here.name.startswith(&quot;chapter&quot;) and here.name[7:].isdigit()) else here
+lab = course / &quot;service-lab&quot;
+lab.mkdir(exist_ok=True)
+incoming = course / &quot;service-lab/selection.json&quot;
+if incoming.exists():
+    previous = json.loads(incoming.read_text(encoding=&quot;utf-8&quot;))
+    print(&quot;내 실습 파일&quot;, incoming.name)
+else:
+    previous = {&#x27;items&#x27;: [{&#x27;id&#x27;: 1,
+                &#x27;title&#x27;: &#x27;변경 검토&#x27;,
+                &#x27;candidate&#x27;: &#x27;42ec606abc92ce832234dded6ceb188e2a0f771365698f2b6d2215d7be9aebb2&#x27;},
+               {&#x27;id&#x27;: 2, &#x27;title&#x27;: &#x27;변경 검토&#x27;, &#x27;candidate&#x27;: &#x27;revision-b&#x27;}],
+     &#x27;proposal&#x27;: {&#x27;id&#x27;: 2, &#x27;candidate&#x27;: &#x27;revision-b&#x27;, &#x27;done&#x27;: True}}
+    print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 selection.json
+</pre><h2>버전 검사로 투두 변경 한 번만 승인하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>items = {row[&quot;id&quot;]: {**row, &quot;done&quot;: False, &quot;version&quot;: 0} for row in previous[&quot;items&quot;]}
+proposal = previous[&quot;proposal&quot;]
+approval_events = [(&quot;read&quot;, proposal[&quot;id&quot;])]
+applied_ids = []
+def confirm(item_id, expected_version, done):
+    row = items[item_id]
+    if row[&quot;version&quot;] != expected_version:
+        return 409
+    approval_events.append((&quot;approve&quot;, item_id))
+    row.update(done=done, version=expected_version + 1)
+    applied_ids.append(item_id)
+    approval_events.append((&quot;write&quot;, item_id))
+    return 200
+
+first = confirm(proposal[&quot;id&quot;], 0, proposal[&quot;done&quot;])
+again = confirm(proposal[&quot;id&quot;], 0, proposal[&quot;done&quot;])
+result = {&quot;item_id&quot;: proposal[&quot;id&quot;], &quot;statuses&quot;: [first, again], &quot;version&quot;: items[proposal[&quot;id&quot;]][&quot;version&quot;],
+          &quot;done&quot;: items[proposal[&quot;id&quot;]][&quot;done&quot;], &quot;mode&quot;: &quot;local-version-test&quot;, &quot;events&quot;: approval_events, &quot;writes&quot;: applied_ids}
+print(first, again, result[&quot;version&quot;])</code></pre><p>예시 실행 결과</p><pre>200 409 1
+</pre><p>첫 호출은 버전을 1로 올립니다. 두 번째 호출이 들고 온 버전은 여전히 0이므로 409에서 멈춥니다. 아래 실제 Todo 프로젝트에서는 같은 요청을 API로 보내 DB에 저장된 버전까지 비교하세요.</p><p><strong>직접 해 보기</strong></p><p>선택하지 않은 항목의 완료 상태와 버전을 출력하세요. 둘 다 초기값이어야 합니다.</p><pre><code># proposal의 ID를 제외한 항목을 읽으세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과</summary><pre><code>other = next(row for key, row in items.items() if key != proposal[&quot;id&quot;])
+print(other[&quot;done&quot;], other[&quot;version&quot;])</code></pre><pre>False 0</pre><p>버전 갱신은 선택한 항목에서만 일어납니다.</p></details><p><strong>81장에서 다시 열 파일</strong></p><p>방금 계산한 값을 service-lab/approval.json에 저장합니다. 같은 장에서 조건을 바꾸고 다시 저장하면 다음 장도 그 값을 읽습니다.</p><pre><code>destination = lab / &quot;approval.json&quot;
+destination.parent.mkdir(parents=True, exist_ok=True)
+destination.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(destination.name)</code></pre><p>예시 실행 결과</p><pre>approval.json
+</pre></section><section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>동일한 제목의 할 일을 구분해 삭제하기</h2></div></header>
 <p>Codex에 “삭제 버튼을 만들어 줘”라고만 하면 제목으로 첫 항목을 찾아 지우는 코드도 요구를 만족한 것처럼 보입니다. 같은 제목 두 건을 넣어 사용자가 선택한 항목만 지워지는지 직접 검사합니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 항목 두 개가 같은 제목을 가진 경우 재현하기</h3><div class="cell-before"><p>셀 01을 실행하면 run_js와 초기 저장 코드 store_source가 준비됩니다. 두 번째 복습을 선택했는데 제목으로 첫 일치 항목을 삭제하는 구현을 실행해 보세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">run_js(store_source + &quot;&quot;&quot;
 const first = add(&quot;복습&quot;);
@@ -166,7 +208,7 @@ console.log(items.map(item =&gt; item.id).join(&quot;,&quot;));
 <li><a href="https://developers.openai.com/codex/workflows/" target="_blank" rel="noopener noreferrer">Codex 작업 흐름 공식 문서 ↗</a><span></span></li>
 <li><a href="https://developers.openai.com/codex/guides/agents-md/" target="_blank" rel="noopener noreferrer">프로젝트 지침 공식 문서 ↗</a><span></span></li>
 </ul></section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<footer class="lesson-footer"><a href="#service-practice">이어지는 서비스 실습</a> <span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>

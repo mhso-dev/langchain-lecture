@@ -21,6 +21,21 @@
 <p class="hero-description">중간 프로젝트의 예시는 가상 과정 운영 안내 서비스입니다. 52장까지 course-guide-v1을 사용해 과제 제출 질문과 문서로 답할 수 없는 개인 점수 질문의 수용 기준을 정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>수용 기준에 회귀 질문 붙이기</h3><p>팀이 안내할 일은 과제 제출 방법입니다. 이전 녹음기 평가에서 남긴 질문은 서비스 주제가 달라져도 어떤 근거로 통과를 판단했는지 보여 줍니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>my-recorder-evaluation/project-handoff.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter43-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;my-recorder-evaluation/project-handoff.json&quot;
+sample_file = here / &quot;chapter43-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;question&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter43-start.json
+A형 녹음기는 한 번에 몇 시간 녹음할 수 있나요?</pre></div><p>두 번째 줄은 읽은 파일의 <code>question</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -80,6 +95,22 @@ print(criterion[<span class="tok-string">'input'</span>], criterion[<span class=
 <section class="project-example"><h3>팀이 일정 안내를 선택했다면</h3><p>첫 질문을 “평일에는 몇 시에 시작하나요?”로 교체하세요. 그 답이 참인 범위를 확인할 두 번째 질문으로 “이번 주 토요일에도 같은가요?”를 넣고, 평일 문장을 주말에 적용했을 때 의뢰서를 통과하지 못하도록 기대 문장을 적으세요.</p></section>
 <aside class="lesson-note"><p><mark>통과 조건에는 원문과 사용자가 확인할 행동이 함께 들어갑니다.</mark> “정확하게 대답함”만 적으면 제출 위치를 맞히고 등록 시간 안내를 빠뜨린 응답을 걸러내기 어렵습니다.</p></aside><p>44장에서 질문 ID와 문단 ID를 붙일 때에도 이 두 질문의 기대 동작을 유지하세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 수용 기준에 회귀 질문 붙이기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>review = {&quot;question&quot;: incoming[&quot;question&quot;], &quot;decision&quot;: incoming[&quot;decision&quot;],
+          &quot;reference&quot;: incoming[&quot;reference&quot;], &quot;evidence_mode&quot;: incoming[&quot;evidence_mode&quot;]}
+cases = [{&quot;id&quot;: &quot;Q01&quot;, &quot;question&quot;: &quot;과제는 어디에 내나요?&quot;, &quot;action&quot;: &quot;답변&quot;, &quot;expected&quot;: [&quot;p2&quot;]},
+         {&quot;id&quot;: &quot;Q02&quot;, &quot;question&quot;: criterion[&quot;input&quot;], &quot;action&quot;: &quot;보류&quot;, &quot;expected&quot;: []}]
+new = {&quot;review&quot;: review, &quot;cases&quot;: cases}
+print([(row[&quot;id&quot;], row[&quot;action&quot;]) for row in cases])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, &#x27;답변&#x27;), (&#x27;Q02&#x27;, &#x27;보류&#x27;)]</pre></div><p>Q01은 안내할 질문이고 Q02는 자료 밖 질문입니다. 앞 과정에서 채택을 보류한 이유는 review에 따로 보관하므로 새 서비스의 합격 근거로 섞이지 않습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter43.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter43.json</pre></div><p>44장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

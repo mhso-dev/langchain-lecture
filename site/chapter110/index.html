@@ -23,6 +23,21 @@
 <p class="hero-description">한 요청의 구간별 지연과 외부 호출 비용을 기록합니다. 합성 시각의 차이, 실제 측정값, 미측정 항목을 분리해 서로 다른 실행을 비교할 수 있게 합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>권한을 포함한 캐시 키로 원문 조회 비교하기</h3><p>109장의 공개 오류에는 내부 자료가 없습니다. 정상 응답의 원문 조회만 캐시 대상으로 골라 같은 문서·판본·공개 범위에서 두 호출의 답을 비교합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter109.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter110-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter109.json&quot;
+sample_file = here / &quot;chapter110-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;visible_keys&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter110-start.json
+[&#x27;code&#x27;, &#x27;message&#x27;]</pre></div><p>두 번째 줄은 읽은 파일의 <code>visible_keys</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -64,17 +79,8 @@ print(elapsed_ms, <span class="tok-string">"ms (합성 시각)"</span>)</code></
 </div>
 </header>
 <p>비교표 한 행의 예시　대상 Q01 / 가설 “같은 공개 문서의 읽기 준비를 줄일 수 있다” / 고정 기준 본문 전원 표시등, RULE-A·2.1절·판본·허용 범위 / 바꾸려는 부분 문서 준비 횟수 / 결정 실측 전 보류. 현재 예제는 외부 모델 호출 0회입니다. 측정하지 않은 운영비와 청구 토큰을 비용 0원으로 적을 근거는 없습니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 호출 비용의 측정 조건</h3>
-<div class="cell-before"><p>모델 호출은 없었지만 서비스의 청구 자료는 아직 받지 못했습니다. 현재 측정 범위를 한 줄로 정리하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 호출 수와 실제 운영 비용의 미확인 상태를 한 기록에 남기세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">record = {<span class="tok-string">"model_calls"</span>: <span class="tok-number">0</span>, <span class="tok-string">"actual_operating_cost"</span>: <span class="tok-keyword">None</span>, <span class="tok-string">"source"</span>: <span class="tok-string">"로컬 규칙 실행"</span>}
-print(record[<span class="tok-string">"source"</span>], record[<span class="tok-string">"model_calls"</span>], record[<span class="tok-string">"actual_operating_cost"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">로컬 규칙 실행 0 None</pre></div>
-<div class="cell-after"><p>0은 관찰한 모델 호출 수입니다. None은 운영비를 측정하지 않았다는 뜻입니다. 팀에 청구서가 생기면 기간·통화·포함 항목부터 확인하세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 호출 비용의 측정 조건</h3><figure class="code-block"><pre tabindex="0"><code>record = {&quot;model_calls&quot;: 0, &quot;actual_operating_cost&quot;: None, &quot;source&quot;: &quot;로컬 규칙 실행&quot;}
+print(record[&quot;source&quot;], record[&quot;model_calls&quot;], record[&quot;actual_operating_cost&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">로컬 규칙 실행 0 None</pre></div><div class="cell-after"><p>0은 관찰한 모델 호출 수입니다. None은 운영비를 측정하지 않았다는 뜻입니다. 팀에 청구서가 생기면 기간·통화·포함 항목부터 확인하세요.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>같은 답을 유지하면서 문서를 준비한 횟수 비교하기</h2></div></header>
 <p>Q01을 연달아 물을 때마다 같은 규정을 다시 읽습니다. 준비한 문서를 잠시 재사용하면 읽기 횟수가 줄어드는지 측정하고, 답과 근거가 동일한지도 함께 확인합니다.</p>
@@ -101,6 +107,27 @@ print(&quot;문장과 절 일치&quot;, candidate_answers == baseline)</code></p
 <section class="project-example"><h3>팀 측정표에 넣을 단위 고르기</h3><p>실제 지연을 비교하려면 첫 호출과 캐시가 찬 다음 호출을 나누고 같은 질문을 반복 측정하세요. 여기서 측정한 것은 읽기 횟수입니다. “원문 읽기 2회에서 1회”는 관찰한 값이고 “사용자 응답이 두 배 빨라졌다”는 별도 측정이 필요합니다.</p></section>
 <aside class="lesson-note"><p><mark>준비 횟수가 줄었다면 같은 자료와 권한 범위에서 결과도 보존됐는지 확인합니다.</mark> 그룹을 키에서 빼면 접근 범위가 다른 사용자가 같은 결과를 재사용할 수 있습니다. 판본을 구분해도 권한 정책 변경 시 별도 무효화가 필요합니다.</p></aside><p>111장에서는 수정한 기준, 기존에 맞던 입력, 보존해야 할 반례를 한 회귀 묶음으로 실행합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 권한을 포함한 캐시 키로 원문 조회 비교하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>from functools import lru_cache
+source_map = {(d[&quot;id&quot;], d[&quot;version&quot;], &quot;public&quot;): d[&quot;text&quot;] for d in incoming[&quot;reply&quot;][&quot;sources&quot;]}
+@lru_cache(maxsize=4)
+def cached_text(doc_id, version, group):
+    return source_map.get((doc_id, version, group))
+answers = []
+for key in source_map:
+    answers.append(cached_text(*key) == cached_text(*key) == source_map[key])
+new = {**incoming, &quot;cache_check&quot;: {&quot;same&quot;: bool(answers) and all(answers),
+       &quot;hits&quot;: cached_text.cache_info().hits, &quot;misses&quot;: cached_text.cache_info().misses}}
+print(new[&quot;cache_check&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;same&#x27;: True, &#x27;hits&#x27;: 1, &#x27;misses&#x27;: 1}</pre></div><p>같은 키를 두 번 읽어도 원문 준비는 한 번입니다. 그룹이나 판본이 달라진 요청은 별도 키로 취급하고 매칭되는 원문이 없으면 반환하지 않습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter110.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter110.json</pre></div><p>111장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

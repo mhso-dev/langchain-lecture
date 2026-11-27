@@ -21,6 +21,21 @@
 <p class="hero-description">고정 질문을 검색·답변·출처 표시까지 연결해 중간 프로젝트의 기준선을 만듭니다. 예제는 로컬 규칙으로 흐름을 재현하며 Chroma 검색 품질과 모델의 답변 품질은 별도로 측정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>팀 질문을 기준선 검색기에 넣기</h3><p>평가표와 함께 받은 팀 원문을 검색 대상으로 삼습니다. 문장이 정확히 일치할 때만 정답 후보를 반환하는 기준선에 같은 질문을 모두 넣어 보세요.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/midterm/chapter44.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter45-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/midterm/chapter44.json&quot;
+sample_file = here / &quot;chapter45-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;cases&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter45-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;과제는 어디에 내나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p2&#x27;]}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;question&#x27;: &#x27;내 점수는 몇 점인가요?&#x27;, &#x27;action&#x27;: &#x27;보류&#x27;, &#x27;expected&#x27;: []}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;question&#x27;: &#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p3&#x27;]}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>cases</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -119,6 +134,27 @@ print(baseline_reply(paraphrase))</code></pre></figure>
 <section class="project-example"><h3>팀의 Chroma 기준선으로 바꾸기</h3><p>18장에서 만든 컬렉션이 있다면 retrieve의 내부에서 같은 질문을 조회해 문서 ID·본문·쪽수를 기존 반환 형태로 변환하세요. 첫 질문과 말투를 바꾼 질문을 다시 실행하고 p2가 각 검색 결과에 있는지 적으세요. 이 셀의 정확 일치 검색 결과와 팀의 벡터 검색 결과는 별도의 실행 기록으로 남깁니다.</p></section>
 <aside class="lesson-note"><p><mark>답이 있는 질문에도 빈 검색 결과가 나올 수 있습니다.</mark> 같은 입력에 대해 후보 ID부터 남겨야 답변 문구를 고칠지 검색기를 고칠지 판단할 수 있습니다.</p></aside><p>46장에는 기준 질문, 바꾼 질문, 기대 문단 p2, 처음 비어 버린 단계까지 전달하세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 팀 질문을 기준선 검색기에 넣기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>def team_lookup(text, documents):
+    if text.strip() == &quot;과제는 어디에 내나요?&quot; and &quot;p2&quot; in documents:
+        return [&quot;p2&quot;]
+    return []
+
+runs = []
+for row in incoming[&quot;cases&quot;]:
+    ids = team_lookup(row[&quot;question&quot;], incoming[&quot;documents&quot;])
+    runs.append({**row, &quot;hits&quot;: ids, &quot;passed&quot;: ids == row[&quot;expected&quot;]})
+new = {&quot;runs&quot;: runs, &quot;documents&quot;: incoming[&quot;documents&quot;]}
+print([(row[&quot;id&quot;], row[&quot;hits&quot;], row[&quot;passed&quot;]) for row in runs])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, [&#x27;p2&#x27;], True), (&#x27;Q02&#x27;, [], True), (&#x27;Q03&#x27;, [], False)]</pre></div><p>Q02와 Q03의 검색 결과가 모두 비더라도 정답 문단이 필요한 쪽은 Q03입니다. 기준선에 실패가 남아야 46장에서 같은 질문으로 개선 효과를 비교할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter45.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter45.json</pre></div><p>46장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

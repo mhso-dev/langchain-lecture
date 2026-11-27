@@ -173,7 +173,40 @@ nwrite["INSERT"]
 <span class="lesson-anchor" id="failure-restore"></span><span class="lesson-anchor" id="reading-failure-restore"></span>
 
 </section>
-<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>DB 준비를 기다리는 Compose 의존성 작성하기</h2></div></header>
+<section id="service-practice" class="lesson-section"><h2>Compose에서 포트와 DB 볼륨 확인하기</h2><p>71장의 빌드 폴더를 Compose에 연결하고 PostgreSQL 데이터가 남을 볼륨을 지정합니다. 조회 API는 아직 이미지 안의 JSON을 읽습니다. DB 검색은 다음 장에서 붙입니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/container.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
+import json
+here = Path.cwd()
+# 각 장 폴더에서 열거나 노트북을 한 폴더에 모아 두어도 같은 실습 폴더를 씁니다.
+course = here.parent if here.name in (&quot;daily&quot;,) or (here.name.startswith(&quot;chapter&quot;) and here.name[7:].isdigit()) else here
+lab = course / &quot;service-lab&quot;
+lab.mkdir(exist_ok=True)
+incoming = course / &quot;service-lab/container.json&quot;
+if incoming.exists():
+    previous = json.loads(incoming.read_text(encoding=&quot;utf-8&quot;))
+    print(&quot;내 실습 파일&quot;, incoming.name)
+else:
+    previous = {&#x27;context&#x27;: &#x27;image&#x27;,
+     &#x27;port&#x27;: 8000,
+     &#x27;route&#x27;: &#x27;/turn&#x27;,
+     &#x27;turn&#x27;: {&#x27;id&#x27;: &#x27;loan-demo&#x27;,
+              &#x27;question&#x27;: &#x27;대출 기간은 며칠인가요?&#x27;,
+              &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
+              &#x27;source&#x27;: &#x27;loan-01&#x27;}}
+    print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 container.json
+</pre><h2>Compose에서 포트와 DB 볼륨 확인하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import yaml
+services = {&quot;api&quot;: {&quot;build&quot;: &quot;./&quot; + previous[&quot;context&quot;], &quot;ports&quot;: [f&quot;127.0.0.1:8080:{previous[&#x27;port&#x27;]}&quot;]},
+            &quot;db&quot;: {&quot;image&quot;: &quot;pgvector/pgvector:pg16&quot;, &quot;environment&quot;: {&quot;POSTGRES_PASSWORD&quot;: &quot;${POSTGRES_PASSWORD:?수업용 비밀번호를 지정하세요}&quot;},
+                   &quot;ports&quot;: [&quot;127.0.0.1:55432:5432&quot;], &quot;volumes&quot;: [&quot;course-pg:/var/lib/postgresql/data&quot;]}}
+compose = {&quot;services&quot;: services, &quot;volumes&quot;: {&quot;course-pg&quot;: {}}}
+(lab / &quot;compose.yaml&quot;).write_text(yaml.safe_dump(compose, allow_unicode=True), encoding=&quot;utf-8&quot;)
+result = {&quot;route&quot;: previous[&quot;route&quot;], &quot;turn&quot;: previous[&quot;turn&quot;], &quot;api_port&quot;: 8080, &quot;db_service&quot;: &quot;db&quot;, &quot;db_port&quot;: 55432}
+print(services[&quot;api&quot;][&quot;ports&quot;][0], services[&quot;db&quot;][&quot;volumes&quot;][0])</code></pre><p>예시 실행 결과</p><pre>127.0.0.1:8080:8000 course-pg:/var/lib/postgresql/data
+</pre><p>8080은 내 컴퓨터에서 API에 접근하는 포트입니다. 뒤의 8000은 컨테이너가 요청을 받는 포트입니다. Docker가 있는 컴퓨터에서 71장의 image 폴더를 준비하고 POSTGRES_PASSWORD를 환경 변수로 지정한 뒤 service-lab에서 docker compose up --build -d를 실행하세요.</p><p><strong>직접 해 보기</strong></p><p>DB 컨테이너를 다시 만들 때 같은 데이터를 읽으려면 어떤 이름이 같아야 할까요? 설정에서 볼륨 이름을 꺼내 최상위 volumes에 등록됐는지 검사하세요.</p><pre><code># services[&quot;db&quot;][&quot;volumes&quot;]의 첫 문자열에서 콜론 앞을 읽으세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과</summary><pre><code>name = services[&quot;db&quot;][&quot;volumes&quot;][0].split(&quot;:&quot;, 1)[0]
+print(name, name in compose[&quot;volumes&quot;])</code></pre><pre>course-pg True</pre><p>콜론 왼쪽의 이름을 최상위 volumes 키에서 찾으면 같은 이름의 볼륨을 다시 연결할 수 있습니다.</p></details><p><strong>73장에서 다시 열 파일</strong></p><p>방금 계산한 값을 service-lab/compose.json에 저장합니다. 같은 장에서 조건을 바꾸고 다시 저장하면 다음 장도 그 값을 읽습니다.</p><pre><code>destination = lab / &quot;compose.json&quot;
+destination.parent.mkdir(parents=True, exist_ok=True)
+destination.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(destination.name)</code></pre><p>예시 실행 결과</p><pre>compose.json
+</pre></section><section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>DB 준비를 기다리는 Compose 의존성 작성하기</h2></div></header>
 <p>앞에서는 서비스 이름과 볼륨 경로를 읽었습니다. 이번에는 DB 컨테이너가 시작된 직후 API가 먼저 접속하는 상황을 다룹니다. 실행 순서와 DB의 준비 상태를 Compose 파일에 어떻게 적는지 확인합니다.</p>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · DB의 준비 상태를 확인할 명령 추가하기</h3><div class="cell-before"><p>셀 01에서 compose_text를 읽어 config를 만들어 두세요. 앞에서 읽은 Compose 구성을 복사한 뒤 db 서비스에 준비 상태 검사 명령을 붙입니다. 결과는 메모리 안에 만든 Compose 설정입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from copy import deepcopy
 
@@ -258,7 +291,7 @@ else:
 <li><a href="https://docs.docker.com/reference/cli/docker/compose/restart/" target="_blank" rel="noopener noreferrer">restart가 반영하지 않는 설정 ↗</a><span></span></li>
 <li><a href="https://docs.docker.com/engine/storage/volumes/" target="_blank" rel="noopener noreferrer">볼륨 수명과 복구 ↗</a><span></span></li>
 </ul></section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<footer class="lesson-footer"><a href="#service-practice">이어지는 서비스 실습</a> <span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>

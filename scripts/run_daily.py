@@ -4,6 +4,7 @@ import asyncio
 from contextlib import chdir, redirect_stdout
 import io
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import subprocess
@@ -19,6 +20,11 @@ def replay(file):
     async def execute():
         for cell in cells:
             if cell["cell_type"] != "code":
+                continue
+            if (os.environ.get("HK_COURSE_OFFLINE") == "1"
+                    and file.name in {"day055.ipynb", "day064.ipynb", "day066.ipynb", "day067.ipynb"}
+                    and cell["id"] == "solo-walkthrough-code"):
+                yield {"id": cell["id"], "status": "skipped", "reason": "외부 모델을 호출하는 개인 실습"}
                 continue
             src = "".join(cell["source"])
             label = f"{file.name}:{cell['id']}"
@@ -47,7 +53,8 @@ def run_set(names,out):
                 continue
             records = replay(DAILY/name)
             (out/(Path(name).stem+".json")).write_text(json.dumps(records,ensure_ascii=False,indent=2))
-            print(name,len(records),"OK",flush=True)
+            skipped = sum(row.get("status") == "skipped" for row in records)
+            print(name, len(records) - skipped, "실행,", skipped, "미실행", flush=True)
 
 if __name__ == "__main__":
     out = Path(sys.argv[1]).resolve()
@@ -60,8 +67,8 @@ if __name__ == "__main__":
             for d in DAYS:
                 name = f"day{d:03}.ipynb"
                 assert z.read(name) == (DAILY/name).read_bytes(), name
-        sets = [[f"day{d:03}.ipynb"] for d in DAYS if not 80<=d<=85]
-        sets.append([f"day{d:03}.ipynb" for d in range(80,86)])
+        sets = [[f"day{d:03}.ipynb"] for d in DAYS if not 68<=d<=85]
+        sets.append([f"day{d:03}.ipynb" for d in range(68,86)])
         sets.append(["codex-harness.ipynb"])
         bad=[]
         for group in sets:

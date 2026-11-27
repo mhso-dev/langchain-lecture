@@ -21,6 +21,21 @@
 <p class="hero-description">Q01의 검색 결과로 화면에 표시할 답변과 원문 위치를 조립합니다. 장비명이 없는 질문은 규정을 임의로 고르는 대신 추가 확인 경로로 보냅니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>검색 결과로 원문 카드를 조립하기</h3><p>95장에서 실제로 찾은 문단으로 카드의 본문과 위치를 채웁니다. 검색어를 바꿔 후보가 사라지면 빈 화면이 어떻게 표시되는지도 확인할 수 있습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter95.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter96-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter95.json&quot;
+sample_file = here / &quot;chapter96-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;hits&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter96-start.json
+[{&#x27;id&#x27;: &#x27;RULE-A&#x27;, &#x27;text&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;, &#x27;source&#x27;: &#x27;가상 장비실 규정 A&#x27;, &#x27;page&#x27;: 1, &#x27;section&#x27;: &#x27;2.1&#x27;, &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;, &#x27;version&#x27;: &#x27;rules-v1&#x27;, &#x27;equipment&#x27;: &#x27;장비 A&#x27;, &#x27;search_text&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;, &#x27;sha256&#x27;: &#x27;8336aeeaa41f3a89559a2364950ef88f7d6128639fb3dad46974a7be38ac2f42&#x27;}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>hits</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -99,41 +114,20 @@ nreply["응답 받기"]
 </div>
 </header>
 <p>Q02의 완료 예시　상태 need_clarification / 문구 “장비 A 또는 장비 B 중 하나를 지정하세요.” / 출처 없음. 출처가 항상 한 건이라고 가정하고 목록의 첫 항목을 읽으면 이 화면에서는 오류가 납니다. 답변 영역은 먼저 상태를 읽고, 출처가 있을 때만 원문 위치를 그립니다.</p>
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 02 · 선택 연습 · 출처 카드 변형</h3>
-<div class="cell-before"><p>팀이 장비 B를 맡았다고 보고 같은 화면 함수로 두 번째 규정의 위치를 표시하세요.</p>
-<p>같은 표시 함수를 장비를 지정하지 않은 Q02에도 사용해 보세요. sources가 비면 첫 출처를 꺼내지 않고 되묻는 문장만 출력합니다.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">reply_b = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
- <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
- <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
- <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
-<span class="tok-comment"># reply_b의 답과 근거 줄을 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 13줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">reply_b = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
- <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
- <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
- <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
-print(reply_b[<span class="tok-string">"answer"</span>])
-print(citation_line(reply_b[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>]))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
-RULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1</pre></div>
-<div class="cell-after"><p>고정 장치, RULE-B, 2쪽 2.2절로 바뀝니다. A의 페이지나 절이 그대로면 화면에 적힌 고정 문구부터 찾으세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-3">팀 참고 예시 · 출처 카드 변형</h3><figure class="code-block"><pre tabindex="0"><code>reply_b = {&#x27;status&#x27;: &#x27;answered&#x27;,
+ &#x27;answer&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+ &#x27;sources&#x27;: [{&#x27;id&#x27;: &#x27;RULE-B&#x27;,
+              &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+              &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;,
+              &#x27;page&#x27;: 2,
+              &#x27;section&#x27;: &#x27;2.2&#x27;,
+              &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+              &#x27;version&#x27;: &#x27;rules-v1&#x27;}],
+ &#x27;mode&#x27;: &#x27;local_rule_fixture&#x27;,
+ &#x27;model_calls&#x27;: 0}
+print(reply_b[&quot;answer&quot;])
+print(citation_line(reply_b[&quot;sources&quot;][0]))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
+RULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules-v1</pre></div><div class="cell-after"><p>고정 장치, RULE-B, 2쪽 2.2절로 바뀝니다. A의 페이지나 절이 그대로면 화면에 적힌 고정 문구부터 찾으세요.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>근거 카드의 표시와 원문 데이터를 서로 검산하기</h2></div></header>
 <p>RULE-A 카드는 눈으로 보기에 완성됐습니다. RULE-B를 받았을 때도 쪽·절이 A에 고정되어 있지 않은지 같은 표시 함수를 통해 확인합니다.</p>
@@ -150,6 +144,20 @@ RULE-B | 가상 장비실 규정 B | p.2 | 2.2절 | 개정일 2026-11-01 | rules
 <section class="project-example"><h3>동료가 카드에서 확인할 두 지점</h3><div class="workshop-table" tabindex="0" role="region" aria-label="동료가 카드에서 확인할 두 지점"><table><caption>동료가 카드에서 확인할 두 지점</caption><thead><tr><th scope="col">입력</th><th scope="col">답변에서 짚을 단어</th><th scope="col">원문에서 펼칠 위치</th></tr></thead><tbody><tr><td>장비 A의 점검 전 확인 사항은?</td><td>전원 표시등</td><td>가상 규정 A 1쪽 2.1절</td></tr><tr><td>장비 B의 점검 전 확인 사항은?</td><td>고정 장치</td><td>가상 규정 B 2쪽 2.2절</td></tr></tbody></table></div><p>한 사람은 질문을 고르고 다른 사람은 답변 카드만 보고 원문을 찾아갑니다. 팀의 자료에서도 이름이 비슷하되 위치와 핵심 문장이 다른 두 문서를 골라 보세요.</p></section>
 <aside class="lesson-note"><p><mark>정상 카드의 정답에는 답의 핵심 단어와 실제로 열리는 위치가 모두 들어갑니다.</mark> B 카드에 RULE-B가 보여도 답이 전원 표시등이면 서로 다른 문서가 섞인 것입니다.</p></aside><p>97장에는 A 정상 답 뒤에 자료 없는 질문과 B 정상 답을 잇는 세 턴을 전달합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 검색 결과로 원문 카드를 조립하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>cards = [{&quot;id&quot;: doc[&quot;id&quot;], &quot;answer&quot;: doc[&quot;text&quot;], &quot;citation&quot;: citation_line(doc)}
+         for doc in incoming[&quot;hits&quot;]]
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;cards&quot;: cards, &quot;prepared&quot;: incoming[&quot;prepared&quot;]}
+print([card[&quot;citation&quot;] for card in cards])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;RULE-A | 가상 장비실 규정 A | p.1 | 2.1절 | 개정일 2026-11-01 | rules-v1&#x27;]</pre></div><p>citation_line에 넣은 레코드와 답에 사용한 레코드가 같아서, 문장과 출처가 같은 판본을 가리킵니다. 화면에 다른 장비의 자료가 나타나면 두 값이 어디서 갈라졌는지 보세요.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter96.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter96.json</pre></div><p>97장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

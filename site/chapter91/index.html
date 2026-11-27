@@ -21,6 +21,21 @@
 <p class="hero-description">Q01이 입력에서 규정 한 줄과 출처를 반환하기까지 최소 경로를 구현합니다. 같은 장비명으로 교체 일정을 물었을 때도 점검 규정을 내놓는 반례로 범위를 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>평가표의 질문만 기준선 API에 보내기</h3><p>90장의 개발 문항에서 질문만 골라 로컬 테스트 클라이언트로 POST합니다. 정답은 응답을 받은 뒤에만 꺼내 대조합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter90.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter91-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter90.json&quot;
+sample_file = here / &quot;chapter91-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;dataset&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter91-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;, &#x27;expected_status&#x27;: &#x27;answered&#x27;, &#x27;expected_doc&#x27;: &#x27;RULE-A&#x27;, &#x27;expected_page&#x27;: 1}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;question&#x27;: &#x27;점검 전 확인 사항은?&#x27;, &#x27;expected_status&#x27;: &#x27;need_clarification&#x27;, &#x27;expected_doc&#x27;: None, &#x27;expected_page&#x27;: None}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;question&#x27;: &#x27;장비 A를 다음 달에 교체하나요?&#x27;, &#x27;expected_status&#x27;: &#x27;no_evidence&#x27;, &#x27;expected_doc&#x27;: None, &#x27;expected_page&#x27;: None}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>dataset</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -119,16 +134,7 @@ print(thin_lookup(question)[<span class="tok-string">"answer"</span>])</code></p
 </article>
 <aside id="guided-reading" class="lesson-note"><h3>규칙에 맞는 문장을 찾고도 오답이 되는 경우</h3><p><mark>장비명이 맞는 것과 질문의 의도가 맞는 것은 별개의 조건입니다.</mark> 같은 장비에 대해 점검 방법과 교체 일정을 각각 물어 보세요. 두 질문에 같은 규정 문장을 반환했다면 검색 성공으로 셀 질문은 어느 쪽인지 정합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter45/index.html">45장 질문 전체 일치 검색의 기준선과 빈 결과</a></p></aside>
 
-<article class="notebook-cell" data-cell="3" data-task="1"><h3>과제 03 · 선택 연습 · 장비명 누락 처리</h3>
-<div class="cell-before"><p>어느 장비인지 묻는 경로로 들어가려면 어떤 입력을 주면 될까요? 상태값까지 확인하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3"><span class="tok-comment"># thin_lookup에 장비명 없는 점검 질문을 넣어 보세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">print(thin_lookup(<span class="tok-string">"점검 전 확인 사항은?"</span>)[<span class="tok-string">"status"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">need_clarification</pre></div>
-<div class="cell-after"><p>장비가 하나로 정해지지 않아 need_clarification이 나옵니다. 이때 답변을 추측하지 않고 장비 이름을 요청할 수 있습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-3">팀 참고 예시 · 장비명 누락 처리</h3><figure class="code-block"><pre tabindex="0"><code>print(thin_lookup(&quot;점검 전 확인 사항은?&quot;)[&quot;status&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">need_clarification</pre></div><div class="cell-after"><p>장비가 하나로 정해지지 않아 need_clarification이 나옵니다. 이때 답변을 추측하지 않고 장비 이름을 요청할 수 있습니다.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>검색 함수를 요청 한 건을 받는 API에 붙이기</h2></div></header>
 <p>thin_lookup에서 Q01이 동작했습니다. 이번에는 같은 함수가 반환한 답이 HTTP 응답의 어느 칸에 오는지 확인합니다. 서버를 외부에 띄우지 않고 노트북 안에서 FastAPI의 테스트 클라이언트를 사용합니다.</p>
@@ -153,6 +159,27 @@ print(http_reply.status_code, body[&quot;answer&quot;], body[&quot;sources&quot;
 <section class="project-example"><h3>팀별 경계 정하기</h3><p>팀의 기존 조회 함수를 다른 함수로 감싸고 테스트 요청을 보내세요. 질문 필드를 통째로 뺀 요청과 빈 문자열을 넣은 요청을 비교합니다. 처음 것은 모델 검증에서, 두 번째 것은 thin_lookup 안에서 처리됩니다.</p></section>
 <aside class="lesson-note"><p><mark>HTTP 요청 성공과 업무 기준 통과를 다른 칸에 기록합니다.</mark> 같은 경로로 Q03을 보내도 이 기준선은 200을 반환하면서 잘못된 점검 안내를 줄 수 있습니다.</p></aside><p>92장은 HTTP 코드와 별도로 평가표에서 어떤 문항의 상태·출처가 맞았는지 셉니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 평가표의 질문만 기준선 API에 보내기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>documents = [{**doc, &quot;groups&quot;: [&quot;public&quot;]} for doc in incoming[&quot;documents&quot;].values()]
+runs = []
+with TestClient(demo_api) as client:
+    for row in incoming[&quot;dataset&quot;]:
+        response = client.post(&quot;/inspection&quot;, json={&quot;question&quot;: row[&quot;question&quot;]})
+        result = response.json()
+        cited = result[&quot;sources&quot;][0] if result[&quot;sources&quot;] else {}
+        runs.append({**row, &quot;actual_status&quot;: result[&quot;status&quot;], &quot;actual_doc&quot;: cited.get(&quot;id&quot;),
+                     &quot;actual_page&quot;: cited.get(&quot;page&quot;), &quot;http_status&quot;: response.status_code})
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;runs&quot;: runs, &quot;documents&quot;: incoming[&quot;documents&quot;]}
+print([(row[&quot;id&quot;], row[&quot;actual_status&quot;], row[&quot;actual_page&quot;]) for row in runs])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, &#x27;answered&#x27;, None), (&#x27;Q02&#x27;, &#x27;need_clarification&#x27;, None), (&#x27;Q03&#x27;, &#x27;answered&#x27;, None)]</pre></div><p>정상 질문에서 문서 ID가 맞아도 쪽수는 빠져 있습니다. 교체 일정 질문에서는 확인되지 않은 규정이 반환됩니다. 이 두 실패를 92장에서 따로 셉니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter91.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter91.json</pre></div><p>92장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

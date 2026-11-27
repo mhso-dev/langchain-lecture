@@ -21,6 +21,21 @@
 <p class="hero-description">두 사용자가 같은 세션 이름을 사용해도 각자 허용된 이력만 읽도록 저장 키를 설계합니다. 한 사용자의 기록을 삭제한 뒤 다른 사용자의 데이터가 남는지 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>복구한 요청을 소유자별 이력에 남기기</h3><p>99장에서 두 번 시도한 요청도 하나의 사용자 요청입니다. 한 ID만 이력에 넣고, 다른 소유자와 같은 세션 이름을 쓰는 경우를 대조합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter99.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter100-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter99.json&quot;
+sample_file = here / &quot;chapter100-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;request_id&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter100-start.json
+team-99</pre></div><p>두 번째 줄은 읽은 파일의 <code>request_id</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -68,20 +83,9 @@ nborn["생성"]
 <!-- /lesson-visual detail-expiry -->
 
 <span class="lesson-anchor" id="workflow-fixed-expiration"></span><span class="lesson-anchor" id="workflow-fixed-expiration-caption"></span>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 소유자별 이력 삭제</h3>
-<div class="cell-before"><p>가상 alice가 main 삭제를 요청했습니다. 사본에서 그 키만 덜어내고 bob의 마지막 근거를 다시 읽어 보세요.</p>
-<p>최근 5턴을 남기는 세션에서 여섯 번째 턴을 저장하면 첫 번째 턴이 빠지고 2~6번째 턴이 남습니다. 생성 후 300초가 되면 세션 자체가 만료됩니다. 아래 과제에서 실제로 관찰하는 것은 소유자를 골라 삭제한 결과입니다.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">remaining = dict(sessions)
-<span class="tok-comment"># alice/main을 지우고 bob/main을 확인하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">remaining = dict(sessions)
-remaining.pop((<span class="tok-string">"alice"</span>, <span class="tok-string">"main"</span>), <span class="tok-keyword">None</span>)
-print(remaining.get((<span class="tok-string">"alice"</span>, <span class="tok-string">"main"</span>)), remaining[(<span class="tok-string">"bob"</span>, <span class="tok-string">"main"</span>)])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None ['RULE-B']</pre></div>
-<div class="cell-after"><p>None과 RULE-B가 보입니다. 한 사람의 삭제 요청을 대화 이름만으로 처리했다면 다른 사람의 기록까지 사라질 수 있습니다. 이번 과제의 완료 조건은 alice의 대화만 지운 뒤 bob의 대화가 남는지 확인하는 것입니다. 최대 5턴과 300초 만료는 설계 예시로 읽습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 소유자별 이력 삭제</h3><figure class="code-block"><pre tabindex="0"><code>remaining = dict(sessions)
+remaining.pop((&quot;alice&quot;, &quot;main&quot;), None)
+print(remaining.get((&quot;alice&quot;, &quot;main&quot;)), remaining[(&quot;bob&quot;, &quot;main&quot;)])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None [&#x27;RULE-B&#x27;]</pre></div><div class="cell-after"><p>None과 RULE-B가 보입니다. 한 사람의 삭제 요청을 대화 이름만으로 처리했다면 다른 사람의 기록까지 사라질 수 있습니다. 이번 과제의 완료 조건은 alice의 대화만 지운 뒤 bob의 대화가 남는지 확인하는 것입니다. 최대 5턴과 300초 만료는 설계 예시로 읽습니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>한 사용자의 세션만 지울 때</h3><p><mark>세션 이름만 같아도 소유자가 다르면 다른 기록입니다.</mark> 두 사용자에게 같은 이름의 세션을 만들고 한쪽을 지운 뒤 양쪽을 조회하세요. 남아 있어야 하는 사용자의 RULE-B가 보존됐는지 마지막에 읽습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter60/index.html">60장 사용자별 장기 기억과 SQL 저장</a></p></aside>
 
 </section>
@@ -105,6 +109,20 @@ print(read_turns(&quot;alice&quot;, &quot;main&quot;, 1300), read_turns(&quot;bo
 <section class="project-example"><h3>팀에서 한도를 고를 때</h3><p>대화 한 턴을 사용자 질문과 답변 한 쌍으로 셀지 먼저 정하세요. 최근 세 턴이 필요한 팀이라면 deque의 한도를 3으로 바꾸고, 마지막 턴을 쓰기 전후에 다른 사용자의 기록과 만료 시각을 각각 다시 확인합니다.</p></section>
 <aside class="lesson-note"><p><mark>새 턴 저장이 보존 기간을 연장할지는 팀이 선택한 정책입니다.</mark> 이 예시에서는 여섯 번째 턴이 들어와도 alice의 만료 시각은 1300초입니다. 최근 다섯 턴만 읽는 규칙은 만료 검사와 독립적으로 작동합니다.</p></aside><p>101장 새 연동 후보에는 꼭 필요한 세션 값만 넘기고, 기록의 소유자나 보존 조건을 임의로 바꾸지 않습니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 복구한 요청을 소유자별 이력에 남기기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>team_history = {(&quot;팀A&quot;, &quot;main&quot;): deque(maxlen=5), (&quot;팀B&quot;, &quot;main&quot;): deque(maxlen=5)}
+team_history[(&quot;팀A&quot;, &quot;main&quot;)].append(incoming[&quot;request_id&quot;])
+new = {**incoming, &quot;history&quot;: {owner: list(entries) for (owner, session), entries in team_history.items()}}
+print(new[&quot;history&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;팀A&#x27;: [&#x27;team-99&#x27;], &#x27;팀B&#x27;: []}</pre></div><p>동일한 main 세션 이름에서도 소유자가 다르면 이력이 섞이지 않습니다. 사용자당 최대 이력 길이를 바꾸면 오래된 요청이 언제 빠지는지 팀 자료로 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter100.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter100.json</pre></div><p>101장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

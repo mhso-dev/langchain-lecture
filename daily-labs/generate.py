@@ -1,10 +1,12 @@
 """Build the private-study assignment section, notebooks and offline download."""
 import csv
 from html import escape
+from codex_studio import CASES as CODEX_CASES
 from studios import NOTES, starter, variation
 from lessons import READINGS, CHARTS, LINKS
 from project_reference import project_reference
 from execution import publish_results
+from todo_agent_workshop import publish_bundle, lesson as todo_lesson, STAGES
 import json
 from pathlib import Path
 import re
@@ -68,9 +70,27 @@ def cell(kind, key, text):
         out.update(execution_count=None,outputs=[])
     return out
 
+def codex_checkpoint(day):
+    title, example, assignment, answer, result = CODEX_CASES[day]
+    heading = f"Codex 투두 앱 · {title}"
+    # The example and answer run in the same kernel as the service lesson.
+    # Keep the learner's copy of the earlier database and test fixtures intact.
+    fold = f'<details class="notebook-answer"><summary>정답 코드와 결과</summary><pre><code>{escape(answer)}</code></pre><p>{escape(result)}</p></details>'
+    kit = '<a href="../daily/resources.zip" download>투두 앱 시작 파일 받기</a>'
+    cells = [cell("markdown", "codex-heading", f"## {heading}"),
+             cell("code", "codex-example", example),
+             cell("markdown", "codex-assignment", assignment),
+             cell("code", "codex-practice", "# 앞 셀의 입력으로 직접 구현하세요."),
+             cell("markdown", "codex-answer", fold)]
+    section = (f'<section class="lesson-section" id="codex-practice"><h2>{heading}</h2>'
+               f'<pre><code>{escape(example)}</code></pre><p>{escape(assignment)}</p>{fold}<p>{kit}</p></section>')
+    return section, cells
+
+
 def material(n):
     if n in (20,21,22,23,24,25,35): return 'handbook/operations.pdf(36쪽), pages.csv, evaluation.csv와 extension의 개정 공지. 날짜·지점·종류를 보존한다.'
-    if 80<=n<=85: return '로컬 Codex CLI, Git, Jupyter, daily_resources/codex-kit. 80~85일은 같은 my-codex-desk를 사용한다.'
+    if 81 <= n <= 85: return '앞 장에서 저장한 service-lab/evaluation 파일과 이 장의 복귀 예시.'
+    if n == 80: return '로컬 Codex CLI, Git, Jupyter와 77~79장의 투두 앱 저장소.'
     if n<=7: return 'cases/shift.csv의 교대 원장 26행. 전체 실습 묶음의 cases/shift_reference.py로 이전 단계의 처리 결과를 복원할 수 있습니다.'
     if n in (53,54): return 'tickets.csv 원본 6행, 수업 SQL 예제와 쓰기가 가능한 실습 데이터베이스'
     if n<=10: return 'tickets.csv, R02.pdf, R03.pdf, R04.txt와 해당 장 수업 예제'
@@ -78,7 +98,6 @@ def material(n):
     if n<=54: return 'documents/ 원문, manifest.csv, questions.csv, chunks.json 및 전날 만든 색인·서비스. 처음 시작하면 공통 자료와 해당 장 수업 예제로 기준선을 만든다.'
     if n<=67 or n in (95,99,100,101): return 'starter/, skills/, reference/stdio_steps.md, policy.py와 해당 장 수업 예제. 실습 후 reference/ 구현으로 결과를 대조한다.'
     if n<=79: return '해당 장 FastAPI·DB·웹 예제, tickets.csv와 가상 정책 질문. 원격 실습은 배정된 수업용 환경을 사용한다.'
-    if n<=85: return '자기 투두 저장소와 해당 장 수업 노트북. 중간에 시작하면 81장 참조 앱으로 초기 상태를 만든다.'
     return '자기 프로젝트 최신판·실행 기록. 독립 연습이 필요하면 공통 정책 문서와 reference/policy.py를 작은 서비스의 시작점으로 쓴다.'
 
 def build_cells(n, title, first, second, check):
@@ -116,12 +135,15 @@ if set(NOTES) != {int(row[0]) for row in spec}:
 resources=DAILY/"resources.zip"
 with ZipFile(HERE/"resources.zip") as original, ZipFile(resources,"w") as packed:
     for name in original.namelist():
-        put(packed,name,original.read(name))
+        replacement = HERE / "live-resources" / name.removeprefix("daily_resources/")
+        put(packed, name, replacement.read_bytes() if replacement.is_file() else original.read(name))
     for path in sorted((HERE/"cases").glob("*")):
         if path.is_file():
             put(packed,"daily_resources/cases/"+path.name,path.read_bytes())
+publish_bundle(DAILY / "todo-agent.zip")
 links=[]
 with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
+    put(archive, "todo-agent.zip", (DAILY / "todo-agent.zip").read_bytes())
     for entry in data.namelist():
         raw=data.read(entry)
         put(archive,entry,raw)
@@ -136,7 +158,7 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
         goal,method,probe=NOTES[n]
         extras=[]
         article=''
-        if n in READINGS:
+        if n in READINGS and not 80 <= n <= 85:
             heading,reading,program,observation=READINGS[n]
             source_link=LINKS.get(n)
             extras=[cell("markdown","walkthrough",f"### {heading}\n\n{reading}"),
@@ -151,15 +173,42 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
                 extras.append(cell("markdown","chart","### 실행 경로\n\n```mermaid\n"+chart+"\n```"))
                 article+='<figure class="workflow-reading" data-workflow><h3>실행 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">'+chart+'</script></figure>'
             cells[2:2]=extras
+        if 53 <= n <= 67:
+            source_book = OUT / f"chapter{n:02}" / f"chapter{n:02}.ipynb"
+            source_cells = json.loads(source_book.read_bytes())["cells"]
+            desk_cells = [item for item in source_cells if item["id"].startswith("desk-")
+                          and not item["id"].startswith("desk-path-")]
+            cells[1:1] = desk_cells
         name=f"day{n:03}.ipynb"
         notebook=dict(nbformat=4,nbformat_minor=5,metadata={"kernelspec":{"name":"python3","language":"python","display_name":"Python 3"}},cells=cells)
+        if 68 <= n <= 85:
+            chapter_file = OUT / f"chapter{n:02}" / f"chapter{n:02}.ipynb"
+            notebook = json.loads(chapter_file.read_bytes())
+            if n in (75, 76):
+                codex_html, codex_cells = codex_checkpoint(n)
+                notebook["cells"].extend(codex_cells)
+            if n in STAGES:
+                todo_html, todo_cells = todo_lesson(n)
+                notebook["cells"].extend(todo_cells)
         raw=encode(notebook)
         (DAILY/name).write_bytes(raw)
         put(archive,name,raw)
         link=f'<a href="{name}" download>개인 과제 노트북</a>'
         section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
-        if 80<=n<=85:
-            section=section.replace("</section>",'<p><a href="../daily/codex-harness.ipynb" download>6일 연속 Codex 하네스 노트북</a></p></section>')
+        if 53 <= n <= 67:
+            section = section.replace("<h3>작업 의뢰</h3>",
+                '<p><a href="#desk-lab">앞 장 파일로 이어서 실습하기</a></p><h3>작업 의뢰</h3>', 1)
+        if 68 <= n <= 85:
+            section = (f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2>'
+                       f'<p>{escape(first)} {escape(second)}</p><p>{escape(check)}</p>'
+                       f'<p><a href="#service-practice">내 파일로 이어서 실습하기</a> · '
+                       f'<a href="../daily/{name}" download>실습 노트북</a></p></section>')
+            if n in (75, 76):
+                section += codex_html
+            if n in STAGES:
+                section += todo_html
+        if n == 80:
+            section=section.replace("</section>",'<p><a href="../daily/codex-harness.ipynb" download>선택 자료 · 이전 판 Codex 하네스 노트북</a></p></section>')
         if n in (20,21,22,23,24,25,35):
             section=section.replace("</section>",'<p><a href="../daily/daily_resources/handbook/operations.pdf">36쪽 운영 편람 원문</a> · <a href="../daily/daily_resources/handbook/pages.csv">쪽별 대장</a></p></section>')
         if n<=116:
@@ -175,27 +224,23 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
             page.write_text(source)
             file=chapter/(chapter.name+".ipynb")
             original=json.loads(file.read_bytes())
-            original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
-            original["cells"].extend(extras)
+            if 68 <= n <= 85:
+                original = notebook
+            else:
+                original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
+                original["cells"].extend(extras)
             file.write_bytes(encode(original))
         lesson=f'<a href="../chapter{n:02}/index.html#daily-lab">수업 교재</a> · ' if n<=116 else ''
+        if 68 <= n <= 85:
+            goal, method, probe = first, second, check
         links.append(f'<li id="day{n:03}"><h2>{n}장 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
 
-    combined=[cell("markdown","setup","## 내 Codex 하네스 만들기\n\n80~85일의 학생 작업을 같은 로컬 Git 저장소에서 이어 간다. WSL과 macOS에서 전체 묶음을 풀고 daily_resources 옆에서 노트북을 연다. 설치한 Codex CLI로 로그인하고 git, Python, mcp 패키지를 준비한다. 각 단계는 노트북을 실행한 다음 로컬 Codex에서 직접 시험해야 끝난다.")]
-    for number in range(80,86):
-        day=json.loads((DAILY/f"day{number:03}.ipynb").read_text())
-        for part in day["cells"]:
-            if part["id"] in ("solo-input","solo-bench","solo-bench-title"):continue
-            part["id"]=f"d{number}-"+part["id"]
-            combined.append(part)
-    guide=encode(dict(notebook,cells=combined))
-    (DAILY/"codex-harness.ipynb").write_bytes(guide)
-    put(archive,"codex-harness.ipynb",guide)
+    put(archive, "codex-harness.ipynb", (DAILY / "codex-harness.ipynb").read_bytes())
 for project_day in list(range(43,53))+list(range(86,117)):
     project_reference(OUT/f"chapter{project_day:02}",encode)
 docs=' · '.join(f'<a href="{p.relative_to(DAILY).as_posix()}">{p.name}</a>' for p in sorted((DAILY/"daily_resources").rglob("*")) if p.suffix in (".txt",".pdf"))
 header='<header><a href="../index.html" style="color:white">전체 교재</a><h1>매일 혼자 풀어 보는 실무 과제</h1><p>2일부터 일반 수업 74일과 특강 4일에 하루 60~120분. 중간·최종 프로젝트 41일은 팀 작업에 사용합니다. 전체 묶음을 풀면 노트북과 공통 자료가 함께 열립니다.</p></header>'
-page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>80~85장 Codex 하네스 연속 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
+page='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>일반 수업·특강 개인 실습</title><link rel="stylesheet" href="../assets/catalog.css"></head><body>'+header+'<main><p><a href="daily_resources/handbook/operations.pdf">하람페이 운영 편람 PDF · 36쪽</a> · <a href="daily_resources/handbook/pages.csv">쪽별 메타데이터</a> · <a href="daily_resources/handbook/evaluation.csv">평가 질문 10개</a> · <a href="codex-harness.ipynb" download>이전 판 선택 실습 · Codex 하네스 노트북</a></p><p><a href="all-labs.zip" download>개인 실습 78개와 자료 전체 받기</a> · <a href="resources.zip" download>PDF·텍스트·도구·스킬·MCP 실습 자료만 받기</a></p><p>'+docs+'</p><p>'+ ' · '.join(f'<a href="#day{n:03}">{n}일</a>' for n in [2,20,35,53,64,68,80,85,117])+'</p><ol style="list-style:none;padding:0">'+"".join(links)+'</ol></main></body></html>'
 (DAILY/"index.html").write_text(page)
 for index in [OUT/"index.html", OUT/"updates/index.html"]:
     s=index.read_text()

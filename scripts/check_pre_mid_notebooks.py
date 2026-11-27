@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 import re
 import subprocess
+from tempfile import TemporaryDirectory
+from shutil import copytree
 import sys
 
 ROOT = Path(__file__).resolve().parents[1] / "site" / "pre-mid"
@@ -102,7 +104,7 @@ def replay(path, mode):
         if output.getvalue().rstrip() != expected.rstrip():
             raise AssertionError(f"{path}:{cell['id']} {mode}: {output.getvalue()!r} != {expected!r}")
         count += 1
-    print(f"{path.relative_to(ROOT)} · {mode} · {count}셀 일치")
+    print(f"{path.parent.name}/{path.name} · {mode} · {count}셀 일치")
 
 
 if __name__ == "__main__":
@@ -120,4 +122,9 @@ if __name__ == "__main__":
                 compile_workshop(path, book)
                 continue
             for mode in ("starter", "solution"):
-                subprocess.run([sys.executable, __file__, "--path", str(path), "--mode", mode], check=True, cwd=path.parent)
+                with TemporaryDirectory() as work:
+                    copied = Path(work) / "pre-mid"
+                    copytree(ROOT, copied)
+                    current = copied / path.relative_to(ROOT)
+                    subprocess.run([sys.executable, __file__, "--path", str(path), "--mode", mode],
+                                   check=True, cwd=current.parent)

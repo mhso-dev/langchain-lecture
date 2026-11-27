@@ -1,0 +1,23 @@
+{
+  "scenarios": [
+    {
+      "id": "Q01",
+      "q": "장비 A의 점검 전 확인 사항은?",
+      "status": "answered",
+      "source_id": "RULE-A"
+    },
+    {
+      "id": "Q02",
+      "q": "점검 전 확인 사항은?",
+      "status": "need_clarification",
+      "source_id": null
+    },
+    {
+      "id": "Q03",
+      "q": "장비 A를 다음 달에 교체하나요?",
+      "status": "no_evidence",
+      "source_id": null
+    }
+  ],
+  "acceptance": "사용자가 답을 읽고 원문 쪽과 절을 찾는다."
+}

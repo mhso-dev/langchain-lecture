@@ -1,0 +1,49 @@
+{
+  "case": {
+    "inputs": {
+      "id": "MY01",
+      "question": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?",
+      "model": "A",
+      "edition": "1.1"
+    },
+    "outputs": {
+      "action": "answer",
+      "source": "recorder-a-1.1.pdf",
+      "page": 2,
+      "reference_answer": "45분마다 파일이 나뉘고 녹음은 계속된다."
+    },
+    "observed": {
+      "question": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?",
+      "model": "A",
+      "edition": "1.1",
+      "index_version": "recorder-f4faf283fc4e5b7e",
+      "expected_page": "recorder-a-1.1.pdf#p2",
+      "answer": "2027년 4월 15일 기준으로 A형 파일은 45분마다 나뉘고, 녹음은 멈추지 않습니다.",
+      "citations": [
+        {
+          "id": "recorder-a-1.1.pdf#p2"
+        }
+      ],
+      "path": [
+        "retrieve",
+        "judge",
+        "compose"
+      ],
+      "searches": [
+        {
+          "query": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?",
+          "ids": [
+            "recorder-a-1.1.pdf#p2",
+            "recorder-a-1.0.pdf#p2"
+          ]
+        }
+      ],
+      "status": "answer",
+      "reason": "배포된 D04 기록에서 읽음",
+      "evidence_mode": "제공된 실행 기록"
+    }
+  },
+  "candidate_k": 2,
+  "scores": {},
+  "evidence_mode": "제공된 실행 기록"
+}

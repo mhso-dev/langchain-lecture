@@ -29,6 +29,7 @@ jobs:
           - 5432:5432
         options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
+      HK_COURSE_OFFLINE: '1'
       PGHOST: localhost
       PGUSER: postgres
       PGPASSWORD: course
@@ -45,12 +46,12 @@ jobs:
       - run: node scripts/build.mjs
       - name: 공통 커널과 단원별 환경
         run: |
-          python -m pip install --quiet pypdf pyyaml jsonschema fastapi httpx
+          python -m pip install --quiet pypdf pyyaml jsonschema fastapi httpx ipykernel
           case "${{ matrix.group }}" in
             lessons)
               python -m pip install --quiet 'langchain>=1,<2' langchain-openai python-dotenv 'langgraph>=1,<2' 'mcp>=1.14,<2' 'chromadb>=1,<2' faiss-cpu streamlit scikit-learn 'psycopg[binary]' pydantic-settings
               psql -v ON_ERROR_STOP=1 -c "CREATE TABLE course_users(id text PRIMARY KEY,display_name text); CREATE TABLE course_turns(id int PRIMARY KEY, owner text); INSERT INTO course_users VALUES ('alice','학습자 A'),('bob','학습자 B'); INSERT INTO course_turns VALUES (1,'alice'),(2,'alice'),(3,'bob');"
-              echo 'DAYS=15 16 33 34 35 36 37 38 39 40 41 42 45 46 47 48 53 54 60 61 62 76 77' >> "$GITHUB_ENV"
+              echo 'DAYS=15 16 33 34 35 36 37 38 39 40 41 42 45 46 47 48 53 54 60 61 76 77' >> "$GITHUB_ENV"
               ;;
             containers)
               docker pull python:3.12-slim
@@ -62,6 +63,9 @@ jobs:
         if: matrix.group == 'lessons'
         run: python scripts/check_pre_mid_release.py --handoff
       - run: python scripts/run_chapters.py --full --out execution $DAYS
+      - name: SQL에서 에이전트 API까지 누적 인계 검사
+        if: matrix.group == 'lessons'
+        run: python scripts/check_agent_handoffs.py
       - name: 개인 과제 셀과 Codex 연속 노트북 실행
         if: matrix.group == 'lessons'
         run: python scripts/run_daily.py execution/daily

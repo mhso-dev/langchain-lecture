@@ -23,6 +23,21 @@
 <p class="hero-description">장비실 규정 사본을 정리하면서 원문 문자열을 UTF-8로 인코딩한 지문과 쪽·절 정보를 보존합니다. 줄바꿈을 변경했을 때 원본 지문과 처리된 문장이 각각 어떻게 달라지는지 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>조회할 원문의 판본과 텍스트 해시 남기기</h3><p>93장의 조회 경로가 읽을 공개 원문을 가져옵니다. 줄바꿈을 정돈하기 전에 원문으로 해시를 만들면 같은 ID의 본문 교체를 확인할 수 있습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter93.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter94-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter93.json&quot;
+sample_file = here / &quot;chapter94-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;documents&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter94-start.json
+{&#x27;RULE-A&#x27;: {&#x27;id&#x27;: &#x27;RULE-A&#x27;, &#x27;text&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;, &#x27;source&#x27;: &#x27;가상 장비실 규정 A&#x27;, &#x27;page&#x27;: 1, &#x27;section&#x27;: &#x27;2.1&#x27;, &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;, &#x27;version&#x27;: &#x27;rules-v1&#x27;, &#x27;equipment&#x27;: &#x27;장비 A&#x27;}, &#x27;RULE-B&#x27;: {&#x27;id&#x27;: &#x27;RULE-B&#x27;, &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;, &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;, &#x27;page&#x27;: 2, &#x27;section&#x27;: &#x27;2.2&#x27;, &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;, &#x27;version&#x27;: &#x27;rules-v1&#x27;, &#x27;equipment&#x27;: &#x27;장비 B&#x27;}}</pre></div><p>두 번째 줄은 읽은 파일의 <code>documents</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -73,20 +88,10 @@ RULE-A 2.1 rules-v1</pre></div>
 <!-- END MOTION -->
 
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 줄바꿈과 원문 지문</h3>
-<div class="cell-before"><p>예시 원문에 줄바꿈을 넣어 지문이 달라지는지, 정리한 문장이 같은지 각각 확인하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">edited = raw[<span class="tok-string">"text"</span>].replace(<span class="tok-string">"전 "</span>, <span class="tok-string">"전\n"</span>)
-<span class="tok-comment"># 원본 지문, 정리한 본문과 대조하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">edited = raw[<span class="tok-string">"text"</span>].replace(<span class="tok-string">"전 "</span>, <span class="tok-string">"전\n"</span>)
-print(sha256(edited.encode(<span class="tok-string">"utf-8"</span>)).hexdigest() == prepared[<span class="tok-string">"source_sha256"</span>])
-print(<span class="tok-string">" "</span>.join(edited.split()) == prepared[<span class="tok-string">"text"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False
-True</pre></div>
-<div class="cell-after"><p>False 다음에 True가 나옵니다. 검색 결과가 같아 보여도 자료 담당자가 원본 변경을 확인할 수 있습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 줄바꿈과 원문 지문</h3><figure class="code-block"><pre tabindex="0"><code>edited = raw[&quot;text&quot;].replace(&quot;전 &quot;, &quot;전\n&quot;)
+print(sha256(edited.encode(&quot;utf-8&quot;)).hexdigest() == prepared[&quot;source_sha256&quot;])
+print(&quot; &quot;.join(edited.split()) == prepared[&quot;text&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False
+True</pre></div><div class="cell-after"><p>False 다음에 True가 나옵니다. 검색 결과가 같아 보여도 자료 담당자가 원본 변경을 확인할 수 있습니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>줄바꿈 하나가 바뀐 두 문서</h3><p><mark>해시는 입력 바이트를 비교하므로 검색용으로 정리한 본문이 같아도 원문 해시는 달라질 수 있습니다.</mark> 두 개의 불리언이 무엇을 비교했는지 먼저 읽으세요. 팀 자료에서는 원문 판본 확인용 지문과 검색용 문자열을 서로 다른 필드에 보관합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter16/index.html">16장 예외 조항과 청크 경계</a></p></aside>
 
 </section>
@@ -109,6 +114,23 @@ with closing(sqlite3.connect(&quot;:memory:&quot;)) as db:
 <section class="project-example"><h3>같은 ID 안에서 바뀐 내용 처리하기</h3><p>자료 담당자는 개정 내용을 받았는데 판본 표기가 그대로인 경우를 등록 보류로 두고 두 지문을 기록합니다. 판본을 새로 부여했다면 두 행을 보관하고 현재 검색 대상 판본을 명시하세요. 검색 단계에서는 그룹 필터도 다시 적용합니다.</p></section>
 <aside class="lesson-note"><p><mark>중복 적재를 막는 키가 원문 변경까지 알려 주지는 않습니다.</mark> 문서와 절이 같아도 판본이 다르면 과거 답변이 가리키는 원문을 찾기 위해 두 버전이 필요합니다.</p></aside><p>95장 검색 결과는 레코드에 남긴 문서 ID·쪽·절·판본으로 원문을 다시 찾을 수 있어야 합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 조회할 원문의 판본과 텍스트 해시 남기기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>import hashlib
+prepared_docs = []
+for doc in incoming[&quot;documents&quot;].values():
+    stamp = hashlib.sha256(doc[&quot;text&quot;].encode(&quot;utf-8&quot;)).hexdigest()
+    prepared_docs.append({**doc, &quot;search_text&quot;: &quot; &quot;.join(doc[&quot;text&quot;].split()), &quot;sha256&quot;: stamp})
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;prepared&quot;: prepared_docs, &quot;paths&quot;: incoming[&quot;paths&quot;]}
+print([(doc[&quot;id&quot;], doc[&quot;page&quot;], doc[&quot;sha256&quot;][:8]) for doc in prepared_docs])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;RULE-A&#x27;, 1, &#x27;8336aeea&#x27;), (&#x27;RULE-B&#x27;, 2, &#x27;ef43ae01&#x27;)]</pre></div><p>ID와 쪽수가 같아도 본문 한 글자를 고치면 해시가 달라집니다. 정규화한 텍스트와 원래 쪽 번호를 한 레코드에 두므로 다음 장에서 찾아온 문장이 어느 판본인지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter94.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter94.json</pre></div><p>95장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

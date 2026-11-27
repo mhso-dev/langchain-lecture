@@ -21,6 +21,21 @@
 <p class="hero-description">검색 시간 초과 뒤 재시도하는 요청과 근거 부족으로 정상 종료한 요청을 비교합니다. 상태·시도 번호·종료 사유를 기록해 복구 경로를 추적합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>정규화한 입력으로 실패한 조회만 재시도하기</h3><p>98장에서 복구한 첫 질문으로 조회를 요청합니다. 첫 호출을 시험용으로 지연시킨 뒤 횟수 한도 안에서 같은 질문으로 다시 읽습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter98.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter99-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter98.json&quot;
+sample_file = here / &quot;chapter99-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;checks&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter99-start.json
+[{&#x27;input&#x27;: &#x27;장비A의 점검 전 확인 사항은?&#x27;, &#x27;expected&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;, &#x27;actual&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;}, {&#x27;input&#x27;: &#x27;장비AB의 점검&#x27;, &#x27;expected&#x27;: &#x27;장비AB의 점검&#x27;, &#x27;actual&#x27;: &#x27;장비AB의 점검&#x27;}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>checks</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -76,18 +91,8 @@ r -->|아니오| e["attempt_limit"]</script><figcaption>기록의 attempt 번호
 <!-- lesson-visual visual-limit -->
 <span class="lesson-anchor" id="visual-limit"></span>
 <!-- /lesson-visual visual-limit -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 종료 사유 기록</h3>
-<div class="cell-before"><p>F99-limit의 마지막 사건을 읽어 화면 담당자에게 횟수와 원인을 전하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">final_event = {<span class="tok-string">'event'</span>: <span class="tok-string">'attempt_limit'</span>, <span class="tok-string">'attempt'</span>: <span class="tok-number">2</span>, <span class="tok-string">'error_type'</span>: <span class="tok-string">'TimeoutError'</span>}
-<span class="tok-comment"># 마지막 사건·횟수·오류명을 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">final_event = {<span class="tok-string">'event'</span>: <span class="tok-string">'attempt_limit'</span>, <span class="tok-string">'attempt'</span>: <span class="tok-number">2</span>, <span class="tok-string">'error_type'</span>: <span class="tok-string">'TimeoutError'</span>}
-print(final_event[<span class="tok-string">"event"</span>], final_event[<span class="tok-string">"attempt"</span>], final_event[<span class="tok-string">"error_type"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">attempt_limit 2 TimeoutError</pre></div>
-<div class="cell-after"><p>attempt_limit, 2, TimeoutError입니다. 추가 호출을 열어 두지 않고 마지막 실패를 다시 볼 수 있습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 종료 사유 기록</h3><figure class="code-block"><pre tabindex="0"><code>final_event = {&#x27;event&#x27;: &#x27;attempt_limit&#x27;, &#x27;attempt&#x27;: 2, &#x27;error_type&#x27;: &#x27;TimeoutError&#x27;}
+print(final_event[&quot;event&quot;], final_event[&quot;attempt&quot;], final_event[&quot;error_type&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">attempt_limit 2 TimeoutError</pre></div><div class="cell-after"><p>attempt_limit, 2, TimeoutError입니다. 추가 호출을 열어 두지 않고 마지막 실패를 다시 볼 수 있습니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>재시도 상한을 읽는 방법</h3><p><mark>첫 시도도 시도 횟수에 포함됩니다.</mark> 이벤트에서 attempt 번호와 retry 기록을 따로 세어 보세요. 두 번째에도 시간 초과가 났다면 마지막 오류와 중단 사유를 남겨, 세 번째 실행을 기다리지 않게 합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter38/index.html">38장 근거가 부족할 때 재검색하고 멈추기</a></p></aside>
 
 </section>
@@ -114,6 +119,25 @@ F99-stop 1 attempt_limit</pre></div><div class="cell-after"><p>첫 요청은 두
 <section class="project-example"><h3>팀 도구에 맞춰 재시도를 허용할지 정하기</h3><p>조회가 아니라 상태를 바꾸는 도구라면 응답이 늦어도 첫 작업이 이미 끝났을 수 있습니다. 같은 요청을 다시 받았을 때 이전 결과를 조회할 수 있는지 먼저 확인하고, 그런 보장이 없으면 재실행 전에 담당자가 확인하도록 설계합니다.</p></section>
 <aside class="lesson-note"><p><mark>시간 초과는 자료가 없다는 결론을 내릴 근거가 아닙니다.</mark> 첫 호출에 응답이 없었어도 둘째 호출은 같은 자료에서 RULE-A를 읽었습니다.</p></aside><p>100장 저장 설계에는 한 요청의 재시도와 서로 다른 사용자의 동명 세션을 구분할 키가 필요합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 정규화한 입력으로 실패한 조회만 재시도하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>query = incoming[&quot;checks&quot;][0][&quot;actual&quot;]
+def delayed_search(attempt):
+    if attempt == 1:
+        raise TimeoutError(&quot;시험용 첫 호출 지연&quot;)
+    return next((doc[&quot;id&quot;] for doc in incoming[&quot;prepared&quot;] if doc.get(&quot;equipment&quot;) and doc[&quot;equipment&quot;] in query), &quot;no_evidence&quot;)
+request_id, count, outcome = run_lookup(&quot;team-99&quot;, delayed_search)
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;request_id&quot;: request_id, &quot;question&quot;: query, &quot;attempts&quot;: count, &quot;outcome&quot;: outcome,
+       &quot;prepared&quot;: incoming[&quot;prepared&quot;], &quot;checks&quot;: incoming[&quot;checks&quot;]}
+print(request_id, count, outcome)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-99 2 RULE-A</pre></div><p>한도를 2로 두면 첫 지연 뒤 조회 결과가 돌아옵니다. 재시도 횟수가 충분해도 자료를 못 찾는 경우는 시간 초과와 별도 상태로 기록합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter99.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter99.json</pre></div><p>100장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

@@ -1,0 +1,1427 @@
+{
+  "environment": {
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.12.15",
+    "ipykernel": "7.4.0",
+    "nbformat": "5.11.1",
+    "langchain-core": "1.8.5",
+    "langchain-openai": "1.8.5",
+    "pypdf": "7.1.1",
+    "chromadb": "1.5.9",
+    "faiss-cpu": "1.16.0",
+    "streamlit": "1.67.0",
+    "langsmith": "0.16.2"
+  },
+  "live_probe": {
+    "api": "OpenAI embeddings.create (text-embedding-3-small)",
+    "requests": 1,
+    "result": "APIConnectionError caused by ConnectError; API response not observed"
+  },
+  "mode": "starter·solution each executed in a fresh IPython kernel and separate OS process. Cell results are recorded separately after external or downstream failures. External httpx access disabled after one real connection failure. NameError after blocked call is not a success. No credential or raw external exceptions in this report.",
+  "controlled_integration": {
+    "14": {
+      "rag-14-04": "사과를 영어로 번역해 줘.",
+      "carry-14-1": "질문: 몇 층인가요?\n자료: 강의실은 홍실 9층입니다.",
+      "carry-14-3": "my-course/rag/prompt.json",
+      "carry-try-14": "True True"
+    },
+    "15": {
+      "rag-15-02": "",
+      "carry-15-1": "recorder-a-1.1.pdf#p2 True",
+      "carry-try-15": "recorder-a-1.0.pdf#p2 True"
+    },
+    "16": {
+      "rag-16-02": "",
+      "carry-16-1": "6 6 recorder-a-1.0.pdf 1",
+      "carry-try-16": "True True"
+    },
+    "17": {
+      "rag-17-02": "",
+      "carry-17-1": "6 개 조각 중 첫 후보: recorder-a-1.1.pdf#p2",
+      "carry-try-17": "2 True"
+    },
+    "18": {
+      "rag-18-02": "",
+      "carry-18-1": "같은 색인 True 같은 순서 True",
+      "carry-try-18": "True"
+    },
+    "19": {
+      "rag-19-02": "",
+      "carry-19-1": "시험 응답: 45분마다 나뉘고 녹음은 계속됩니다. [recorder-a-1.1.pdf#p2]",
+      "carry-try-19": "[('recorder-a-1.1.pdf', 2)]"
+    },
+    "20": {
+      "rag-20-02": "",
+      "carry-20-1": "['recorder-a-1.1.pdf#p2', 'recorder-a-1.1.pdf#p1']",
+      "carry-try-20": "[]"
+    },
+    "21": {
+      "rag-21-02": "",
+      "carry-21-1": "시험 응답: 45분마다 나뉘고 녹음은 계속됩니다. [recorder-a-1.1.pdf#p2]",
+      "carry-try-21": "확인 보류 · 이 날짜와 기종에 맞는 후보가 없습니다."
+    },
+    "22": {
+      "rag-22-02": "",
+      "rag-22-04": "Recall@3 1.0 MRR@3 0.417",
+      "carry-22-1": "상위 2개 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2'] Recall 1.0 역순위 1.0",
+      "carry-try-22": "(0.5, 1.0)"
+    },
+    "23": {
+      "rag-23-02": "",
+      "carry-23-1": "기본 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2']\n재정렬 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.1.pdf#p1']",
+      "carry-try-23": "1 1",
+      "carry-screen23-write": "화면 원본: my-course/chat\n공지 모드에서 순서대로 보낼 두 입력: 강의실은 홍실 9층입니다. 몇 층인가요?"
+    },
+    "24": {
+      "rag-24-02": "",
+      "carry-24-1": "강의실은 홍실 9층입니다.\n몇 층인가요?",
+      "carry-24-4": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n시험 응답: 45분마다 나뉘고 녹음은 계속됩니다. [recorder-a-1.1.pdf#p2]\n['recorder-a-1.1.pdf#p2', 'recorder-a-1.1.pdf#p1']",
+      "carry-try-24": "True True"
+    },
+    "ui": {
+      "title": "학생 작품 · 연습 공지",
+      "reopen_saved_history": 2,
+      "calls_on_history_load": 0,
+      "after_question": 2,
+      "after_check": 2,
+      "after_reset": 0,
+      "extra_calls_on_checkbox": 0
+    },
+    "scope": "로컬 계약 검사. 질문 임베딩은 이전 실측 문단 벡터로 대체. 모델 답과 재정렬은 검사용 응답. 새 커널에서 PDF·기존 Chroma 벡터·파일·LCEL·Streamlit AppTest 실제 사용."
+  },
+  "language": {
+    "reviewed": "개정 절·실습 활동지·인계 문장",
+    "result": "corrected",
+    "gates": {
+      "verdict": "WARN",
+      "exit_code": 1,
+      "genre": "essay",
+      "genre_input": "essay",
+      "axes": {
+        "P0_문자율": {
+          "status": "WARN",
+          "note": "문자 변경률 1.7% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+          "value": 0.0173,
+          "마크업제외": 0.0176
+        },
+        "P1_목표달성": {
+          "status": "PASS",
+          "notes": [
+            "윤문 전에 걸린 보정 완료 S1 지표가 없다"
+          ]
+        },
+        "P2_전멸": {
+          "status": "PASS",
+          "note": "대구 0 → 0"
+        },
+        "P3_불변식": {
+          "status": "WARN",
+          "note": "불변식 경고: numbers",
+          "detail": {
+            "results": [
+              {
+                "name": "numbers",
+                "status": "WARN",
+                "lost": [
+                  "13",
+                  "13",
+                  "23"
+                ],
+                "reason": "수치 3건이 윤문본에서 발견되지 않았다: ['13', '13', '23']. 문장 병합으로 중복 수치가 줄어든 것일 수 있으니 하나씩 확인할 것."
+              },
+              {
+                "name": "quotations",
+                "status": "PASS",
+                "lost": [],
+                "changed_emphasis": [],
+                "reason": "직접 인용 전부 보존"
+              },
+              {
+                "name": "emoji_residue",
+                "status": "PASS",
+                "count": 0,
+                "reason": "이모지 없음"
+              },
+              {
+                "name": "register_mix",
+                "status": "REPORT",
+                "hapsyo": 152,
+                "haera": 0,
+                "reason": "격식 일관 (합쇼체 152 / 해라체 0)"
+              }
+            ],
+            "failed": [],
+            "warned": [
+              "numbers"
+            ],
+            "reported": [
+              "register_mix"
+            ],
+            "caveat": "표층 불변식만 본다. 이 검사가 전부 통과해도 '의미가 보존됐다'는 뜻은 아니다 — 의미 보존은 원문 대조로 따로 판정해야 한다."
+          }
+        },
+        "P4_터치율": {
+          "status": "REPORT",
+          "note": "원문 문장 11/319개가 그대로 남지 않았다 (3.4%)"
+        },
+        "P5_리듬": {
+          "status": "REPORT",
+          "note": "평균 40.6자 · 단문 16.2% · 최장 2연속 — 참고 기준선 안",
+          "detail": {
+            "평균문장길이": 40.6,
+            "단문비율": 0.163,
+            "스타카토구간": 0,
+            "최장단문연속": 2,
+            "문장수": [
+              319,
+              320
+            ],
+            "기준선": {
+              "사람_모집카피_단락": [
+                45.5,
+                0.137
+              ],
+              "사람_학술산문": [
+                62.7,
+                null
+              ]
+            },
+            "단문화_의심": false
+          }
+        }
+      },
+      "caveat": "P1은 stdev가 추정치인 z에 기대므로 지시적 수치다. P0·P2는 정확한 셈이다. 이 게이트는 구조를 볼 뿐 의미를 보지 않는다 — 의미 보존 판정은 따로 해야 한다."
+    },
+    "reason": "중복된 13·23장 참조 정리. 18장 재사용 조건과 22장 검색 출처, 23장 전송 수의 뜻을 원문 코드와 대조. 저변경률 경고 및 제거된 반복 장 번호 13·13·23을 원문 대조. 외부 맞춤법 미전송."
+  },
+  "chapters": {
+    "14": {
+      "source": "site/chapter14/chapter14.ipynb",
+      "sha256": "b175069431342f7a261f22dfa6252d5a2bb4c5db493eb09c2994383123469545",
+      "from": "13장 chat-case.json",
+      "make": "prompt.json",
+      "changed_cell_numbers": {
+        "carry-14-0": 5,
+        "carry-14-1": 6,
+        "carry-14-2": 7,
+        "carry-14-3": 8,
+        "carry-task-14": 9,
+        "carry-try-14": 10,
+        "carry-key-14": 11
+      },
+      "instruction": "두 문자열을 질문·문서 빈칸에 넣는다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "rag-14-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-14-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "13장 완성 예시 사용: chat-case.json\n질문: 어디에서 모이나요?\n자료: 5월 21일 오후 4시에 가온관 305호에서 모입니다."
+          },
+          "carry-14-3": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "my-course/rag/prompt.json"
+          },
+          "carry-try-14": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "walk-6-3": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-10": {
+            "status": "passed",
+            "solution": false
+          },
+          "parser-local-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-06": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "parser-live": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-14-usage-values": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-14-08": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-low": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-high": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-limit": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "answer-cache-run": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          }
+        },
+        "solution": {
+          "rag-14-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-14-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "13장 완성 예시 사용: chat-case.json\n질문: 어디에서 모이나요?\n자료: 5월 21일 오후 4시에 가온관 305호에서 모입니다."
+          },
+          "carry-14-3": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "my-course/rag/prompt.json"
+          },
+          "carry-try-14": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "True True"
+          },
+          "walk-6-3": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-10": {
+            "status": "passed",
+            "solution": true
+          },
+          "parser-local-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-14-06": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "parser-live": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-14-usage-values": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-14-08": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-low": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-high": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "settings-limit": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "answer-cache-run": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "15": {
+      "source": "site/chapter15/chapter15.ipynb",
+      "sha256": "e01e779728c79fd7d6e929e5f636447225069fd5b17bf4f9ea60a18681b2672d",
+      "from": "prompt.json와 설명서 PDF",
+      "make": "pages.json",
+      "changed_cell_numbers": {
+        "carry-15-0": 7,
+        "carry-15-1": 8,
+        "carry-15-2": 9,
+        "carry-task-15": 10,
+        "carry-try-15": 11,
+        "carry-key-15": 12
+      },
+      "instruction": "PdfReader로 여섯 쪽의 원문과 파일명·쪽수를 함께 읽는다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "rag-15-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "one-pdf-page": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-15-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "recorder-a-1.1.pdf#p2 True"
+          },
+          "carry-try-15": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-15-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-15-06": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-15-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "page-id-check-task": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-15-09": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "rag-15-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "one-pdf-page": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-15-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "recorder-a-1.1.pdf#p2 True"
+          },
+          "carry-try-15": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "recorder-a-1.0.pdf#p2 True"
+          },
+          "rag-15-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-15-06": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-15-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "page-id-check-task": {
+            "status": "passed",
+            "solution": true
+          },
+          "rag-15-09": {
+            "status": "passed",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "passed",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "16": {
+      "source": "site/chapter16/chapter16.ipynb",
+      "sha256": "d3beed368cbb1526b5709abc46677efd230316ff5a49491b56eff134cb6c5ba8",
+      "from": "pages.json",
+      "make": "chunks.json",
+      "changed_cell_numbers": {
+        "carry-16-0": 8,
+        "carry-16-1": 9,
+        "carry-16-2": 10,
+        "carry-task-16": 11,
+        "carry-try-16": 12,
+        "carry-key-16": 13
+      },
+      "instruction": "쪽마다 분할한 뒤 크기를 95자로 바꿔 출처 집합이 같은지 확인한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-16-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "6 6 recorder-a-1.0.pdf 1"
+          },
+          "carry-try-16": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-16-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-06": {
+            "status": "passed",
+            "solution": false
+          },
+          "walk-8-3": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-08": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "chunk-source-task": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-10": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-16-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "6 6 recorder-a-1.0.pdf 1"
+          },
+          "carry-try-16": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "True True"
+          },
+          "rag-16-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-06": {
+            "status": "passed",
+            "solution": false
+          },
+          "walk-8-3": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-08": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-16-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "chunk-source-task": {
+            "status": "passed",
+            "solution": true
+          },
+          "rag-16-10": {
+            "status": "passed",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "passed",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "17": {
+      "source": "site/chapter17/chapter17.ipynb",
+      "sha256": "d8fdf6919c556c58a7563da709e05aede7af59248dbbfd04433c7cb4e6b195ed",
+      "from": "chunks.json",
+      "make": "chroma/와 search.json",
+      "changed_cell_numbers": {
+        "carry-17-0": 8,
+        "carry-17-1": 9,
+        "carry-17-2": 10,
+        "carry-task-17": 11,
+        "carry-try-17": 12,
+        "carry-key-17": 13
+      },
+      "instruction": "내 조각으로 Chroma를 만들고 고정 질문 D04의 4개 후보를 저장한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-call": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-17-1": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "carry-try-17": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-17-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-06": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-08": {
+            "status": "NameError",
+            "solution": false
+          },
+          "query-shape-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-17-case-run": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-10": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-call": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-17-1": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "carry-try-17": {
+            "status": "NameError",
+            "solution": true
+          },
+          "rag-17-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-06": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-08": {
+            "status": "NameError",
+            "solution": false
+          },
+          "query-shape-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-17-case-run": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-17-10": {
+            "status": "ConnectionError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "18": {
+      "source": "site/chapter18/chapter18.ipynb",
+      "sha256": "89ef8ea27329d9a505d672c62fce5026884960b1e593ac886ea833a7469540bd",
+      "from": "search.json, chunks.json, chroma/",
+      "make": "reopened.json",
+      "changed_cell_numbers": {
+        "carry-18-0": 8,
+        "carry-18-1": 9,
+        "carry-18-2": 10,
+        "carry-task-18": 11,
+        "carry-try-18": 12,
+        "carry-key-18": 13
+      },
+      "instruction": "새 커널에서 색인의 자료 버전과 검색 순서를 각각 대조한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-call": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-18-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-18-1": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "carry-try-18": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-18-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-18-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-18-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-18-10": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-call": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-18-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-18-1": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "carry-try-18": {
+            "status": "NameError",
+            "solution": true
+          },
+          "rag-18-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-18-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-18-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-18-10": {
+            "status": "ConnectionError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "19": {
+      "source": "site/chapter19/chapter19.ipynb",
+      "sha256": "934036f6b423b7b268e6b15994feeefcfd9c3cebdc6394e37adee5515d90d869",
+      "from": "reopened.json와 prompt.json",
+      "make": "baseline-answer.json",
+      "changed_cell_numbers": {
+        "carry-19-0": 8,
+        "carry-19-1": 9,
+        "carry-19-2": 10,
+        "carry-task-19": 11,
+        "carry-try-19": 12,
+        "carry-key-19": 13
+      },
+      "instruction": "앞서 찾은 D04 원문을 LCEL 파이프에 넣어 인용을 검사한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-19-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-19-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-19": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-19-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "join-context-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-19-05": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-09": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-11": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-19-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-19-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-19": {
+            "status": "NameError",
+            "solution": true
+          },
+          "rag-19-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "join-context-code": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-19-05": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-09": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-19-11": {
+            "status": "NameError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "20": {
+      "source": "site/chapter20/chapter20.ipynb",
+      "sha256": "a751b2866766e75f0e3c8799c3b797a966054ee187f06bd2e0a4a7406742edb0",
+      "from": "baseline-answer.json",
+      "make": "dated.json",
+      "changed_cell_numbers": {
+        "carry-20-0": 8,
+        "carry-20-1": 9,
+        "carry-20-2": 10,
+        "carry-task-20": 11,
+        "carry-try-20": 12,
+        "carry-key-20": 13
+      },
+      "instruction": "D04의 날짜로 판본을 고르고, 발행 전날 입력에서 빈 목록을 확인한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-20-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "이전 장 완성 예시 사용: baseline-answer.json\n['recorder-a-1.1.pdf#p2', 'recorder-a-1.1.pdf#p1']"
+          },
+          "carry-try-20": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-20-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-06": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "date-edge-task": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-09": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-20-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "이전 장 완성 예시 사용: baseline-answer.json\n['recorder-a-1.1.pdf#p2', 'recorder-a-1.1.pdf#p1']"
+          },
+          "carry-try-20": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "[]"
+          },
+          "rag-20-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-06": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "date-edge-task": {
+            "status": "passed",
+            "solution": true
+          },
+          "rag-20-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-20-09": {
+            "status": "OpenAIConnectionError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "21": {
+      "source": "site/chapter21/chapter21.ipynb",
+      "sha256": "4abd5f5ba9a09e49e3ced1705e90bfdd2b4e1128e84c5f76877f51f5dbc422da",
+      "from": "dated.json",
+      "make": "grounded.json",
+      "changed_cell_numbers": {
+        "carry-21-0": 8,
+        "carry-21-1": 9,
+        "carry-21-2": 10,
+        "carry-task-21": 11,
+        "carry-try-21": 12,
+        "carry-key-21": 13
+      },
+      "instruction": "유효한 원문만 모델에 건네며, 후보가 비면 모델 호출 전 보류한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-21-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-21-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-21": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-21-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-21-06": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-21-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-21-09": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-21-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-21-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-21": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "확인 보류 · 이 날짜와 기종에 맞는 후보가 없습니다."
+          },
+          "rag-21-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-21-06": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-21-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-21-09": {
+            "status": "NameError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "22": {
+      "source": "site/chapter22/chapter22.ipynb",
+      "sha256": "aa7708ba4a84bb0f8c9d894bd8b1117b342e2596279109df8165bdcc98c4c886",
+      "from": "grounded.json",
+      "make": "scored.json",
+      "changed_cell_numbers": {
+        "carry-22-0": 11,
+        "carry-22-1": 12,
+        "carry-22-2": 13,
+        "carry-task-22": 14,
+        "carry-try-22": 15,
+        "carry-key-22": 16
+      },
+      "instruction": "조각 번호를 출처 쪽으로 환산해 상위 두 후보의 Recall과 첫 정답 역순위를 구한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-22-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "이전 장 완성 예시 사용: grounded.json\n상위 2개 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2'] Recall 1.0 역순위 1.0"
+          },
+          "carry-try-22": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "walk-5-2": {
+            "status": "passed",
+            "solution": false
+          },
+          "rank-cut-task": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-06": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-22-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-22-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-10": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-04": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-22-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "이전 장 완성 예시 사용: grounded.json\n상위 2개 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2'] Recall 1.0 역순위 1.0"
+          },
+          "carry-try-22": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "(0.5, 1.0)"
+          },
+          "walk-5-2": {
+            "status": "passed",
+            "solution": false
+          },
+          "rank-cut-task": {
+            "status": "passed",
+            "solution": true
+          },
+          "rag-22-06": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-22-07": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-22-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-22-10": {
+            "status": "NameError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "23": {
+      "source": "site/chapter23/chapter23.ipynb",
+      "sha256": "e9f7b6584d905299e1bb3d862374f79517b4ce2865f69c253349880a9ac273f9",
+      "from": "scored.json와 13장 앱",
+      "make": "ranked.json와 chat/notice_search_app.py",
+      "changed_cell_numbers": {
+        "carry-23-0": 8,
+        "carry-23-1": 9,
+        "carry-23-2": 10,
+        "carry-task-23": 11,
+        "carry-try-23": 12,
+        "carry-key-23": 13,
+        "carry-screen23": 14,
+        "carry-screen23-write": 15,
+        "carry-screen23-test": 16
+      },
+      "instruction": "같은 후보만 재정렬하고 본인 공지 앱에서 기본·재정렬 답과 원문 ID를 비교한다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-23-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-23-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-23": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "carry-screen23-write": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "화면 원본: pre-mid/documents/rag/resume\n13장 완성 예시 사용: chat-case.json\n공지 모드에서 순서대로 보낼 두 입력: 5월 21일 오후 4시에 가온관 305호에서 모입니다. 어디에서 모이나요?"
+          },
+          "rag-23-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-23-06": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-23-08": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-23-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-23-10": {
+            "status": "passed",
+            "solution": false
+          }
+        },
+        "solution": {
+          "first-example": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-23-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-23-1": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-23": {
+            "status": "NameError",
+            "solution": true
+          },
+          "carry-screen23-write": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "화면 원본: pre-mid/documents/rag/resume\n13장 완성 예시 사용: chat-case.json\n공지 모드에서 순서대로 보낼 두 입력: 5월 21일 오후 4시에 가온관 305호에서 모입니다. 어디에서 모이나요?"
+          },
+          "rag-23-04": {
+            "status": "ConnectionError",
+            "solution": false
+          },
+          "rag-23-06": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-23-08": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-23-case-run": {
+            "status": "NameError",
+            "solution": false
+          },
+          "rag-23-10": {
+            "status": "NameError",
+            "solution": true
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    },
+    "24": {
+      "source": "site/chapter24/chapter24.ipynb",
+      "sha256": "227589624d6211ad5790df19e53be00b3a2e22e1b939a7c6d12aed5e7747a83a",
+      "from": "ranked.json, chunks.json와 23장 앱",
+      "make": "rag-handoff.json와 chat/notice_rag_app.py",
+      "changed_cell_numbers": {
+        "carry-24-0": 8,
+        "carry-24-1": 9,
+        "carry-24-2": 10,
+        "carry-24-3": 11,
+        "carry-24-4": 12,
+        "carry-24-5": 13,
+        "carry-task-24": 14,
+        "carry-try-24": 15,
+        "carry-key-24": 16
+      },
+      "instruction": "23장 학생 앱의 색인을 캐시하고 한 요청을 추적한다. D04 답과 실제 보낸 근거 두 개를 다음 부에 넘긴다.",
+      "new_chapter_kernels": {
+        "starter": {
+          "small-app-file": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-24-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "13장 완성 예시 사용: chat-case.json\n5월 21일 오후 4시에 가온관 305호에서 모입니다.\n어디에서 모이나요?"
+          },
+          "carry-24-4": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-24": {
+            "status": "passed",
+            "solution": false,
+            "stdout": ""
+          },
+          "rag-24-05": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-07": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-11": {
+            "status": "passed",
+            "solution": false
+          },
+          "cache-prefix-setup": {
+            "status": "passed",
+            "solution": false
+          },
+          "cache-prefix-run": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          }
+        },
+        "solution": {
+          "small-app-file": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-02": {
+            "status": "passed",
+            "solution": false
+          },
+          "carry-24-1": {
+            "status": "passed",
+            "solution": false,
+            "stdout": "13장 완성 예시 사용: chat-case.json\n5월 21일 오후 4시에 가온관 305호에서 모입니다.\n어디에서 모이나요?"
+          },
+          "carry-24-4": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          },
+          "carry-try-24": {
+            "status": "passed",
+            "solution": true,
+            "stdout": "이전 장 완성 예시 사용: rag-handoff.json\nTrue True"
+          },
+          "rag-24-05": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-07": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-case-run": {
+            "status": "passed",
+            "solution": false
+          },
+          "rag-24-11": {
+            "status": "passed",
+            "solution": true
+          },
+          "cache-prefix-setup": {
+            "status": "passed",
+            "solution": false
+          },
+          "cache-prefix-run": {
+            "status": "OpenAIConnectionError",
+            "solution": false
+          }
+        }
+      },
+      "education_review": "independent_agent: /root/reviewer. New input, path, local evidence and scope accepted. External calls separately held.",
+      "code_status": "blocked_live",
+      "language_review": "corrected",
+      "student_windows_wsl": "not_run"
+    }
+  }
+}

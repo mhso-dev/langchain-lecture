@@ -21,6 +21,21 @@
 <p class="hero-description">장비명 정규화 수정 후 원래 정상 질문, 실패 재현 입력, 장비AB 반례를 다시 검사합니다. 릴리스 후보에 채택 범위와 회귀 결과를 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>캐시와 표기 수정의 회귀 결과를 묶기</h3><p>110장에서 변경 전후 원문이 같았는지 읽고, 98장에서 남긴 입력을 후보 정규화 함수에 다시 넣습니다. 둘 중 하나라도 실패하면 후보를 보류합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter110.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter111-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter110.json&quot;
+sample_file = here / &quot;chapter111-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;cache_check&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter111-start.json
+{&#x27;same&#x27;: True, &#x27;hits&#x27;: 1, &#x27;misses&#x27;: 1}</pre></div><p>두 번째 줄은 읽은 파일의 <code>cache_check</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -65,16 +80,7 @@ print(normalize(original) == original)</code></pre></figure>
 <!-- lesson-visual detail-freeze -->
 <span class="lesson-anchor" id="detail-freeze"></span>
 <!-- /lesson-visual detail-freeze -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 최소 실패 입력 재검증</h3>
-<div class="cell-before"><p>처음 실패한 Q98-N01에서 어떤 문자열이 실제 검색 단계에 들어갈지 표시하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 장비A를 붙여 쓴 질문에 후보 규칙을 적용하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(normalize(<span class="tok-string">"장비A의 점검 전 확인 사항은?"</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?</pre></div>
-<div class="cell-after"><p>장비 A가 분리되어 나옵니다. 이 문자열을 넘긴 뒤 올바른 RULE-A가 돌아오는지까지 봐야 해당 사용자 경로를 닫을 수 있습니다. 평가 파일의 replay → records에서 question_id가 Q98-N01인 행을 찾으세요. candidate의 outcome → result → sources에서 첫 id가 RULE-A인지 확인하고 answer와 원문을 대조하세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 최소 실패 입력 재검증</h3><figure class="code-block"><pre tabindex="0"><code>print(normalize(&quot;장비A의 점검 전 확인 사항은?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?</pre></div><div class="cell-after"><p>장비 A가 분리되어 나옵니다. 이 문자열을 넘긴 뒤 올바른 RULE-A가 돌아오는지까지 봐야 해당 사용자 경로를 닫을 수 있습니다. 평가 파일의 replay → records에서 question_id가 Q98-N01인 행을 찾으세요. candidate의 outcome → result → sources에서 첫 id가 RULE-A인지 확인하고 answer와 원문을 대조하세요.</p></div></article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 nq["기존 Q01"]
   nmatch["패턴 대조"]
@@ -107,6 +113,20 @@ print(f&quot;표기 회귀 {len(regression)}건 통과&quot;)</code></pre></figu
 <section class="project-example"><h3>수정이 없던 기준선에서도 실행하기</h3><p>별도 사본에서 normalize 자리에 입력을 그대로 돌려주는 함수를 넣으세요. 붙여 쓴 Q98-N01이 실패하고, 오류 메시지에 원문·기대값·실제값이 모두 남는지 확인합니다. 이후 원래 함수를 복원하고 같은 묶음을 다시 실행하세요.</p></section>
 <aside class="lesson-note"><p><mark>후보판을 통과시킨 근거에는 무엇을 시험했는지까지 들어가야 합니다.</mark> 문자열 회귀를 통과해도 저장 실패 복구나 HTTP 권한 경계를 시험한 것은 아닙니다. 검사 대상이 다르면 결과표를 분리합니다.</p></aside><p>112장 배포 인계에는 이 후보의 식별자와 테스트 범위, 아직 비어 있는 배포 증거를 함께 적습니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 캐시와 표기 수정의 회귀 결과를 묶기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>replay = [normalize(row[&quot;input&quot;]) == row[&quot;expected&quot;] for row in incoming[&quot;checks&quot;]]
+ok = all(replay) and incoming[&quot;cache_check&quot;][&quot;same&quot;]
+new = {**incoming, &quot;regression&quot;: {&quot;spelling&quot;: replay, &quot;local_candidate_ok&quot;: ok}}
+print(replay, ok)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[True, True] True</pre></div><p>공백을 없앤 장비 A만 고치고 장비AB를 보존해야 두 표기 검사가 함께 통과합니다. cache_check도 같은 팀의 결과이므로 캐시를 바꾸면 다시 실행하세요.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter111.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter111.json</pre></div><p>112장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

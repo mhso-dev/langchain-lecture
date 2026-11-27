@@ -12,14 +12,14 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 56 / AGENT FOUNDATION</p>
 <span class="sidebar-title">에이전트 입력 검증과 도구 호출 제한</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-input"><span>02</span>검색 인자의 타입과 범위 검사</a><a href="#nb-citation"><span>03</span>인용 ID와 검색 결과 대조</a><a href="#nb-limit"><span>04</span>미들웨어로 도구 호출 수 제한</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>모델이 요청한 검색과 실행한 검색 대조하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">호출 한도로 중복 조회 한 번만 허용하기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-input"><span>02</span>검색 인자의 타입과 범위 검사</a><a href="#nb-citation"><span>03</span>인용 ID와 검색 결과 대조</a><a href="#nb-limit"><span>04</span>미들웨어로 도구 호출 수 제한</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>모델이 요청한 검색과 실행한 검색 대조하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 56 / AGENT FOUNDATION</span><span class="template-badge">학생용 교재</span></div>
 <h1>에이전트 입력 검증과 도구 호출 제한</h1>
 <p class="hero-description">검색 요청의 k가 정수인지, 허용 범위 안인지 검사합니다. 도구에 전달할 요청과 사용자에게 반환할 응답을 나누어 각 경계에서 처리할 오류를 정합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 056 · 8H</span><span>12일 구조화 출력 · 39일 채택 근거 · 55일 프레임워크 비교</span></div>
+<div class="hero-meta"><span>입문</span><span>교육일 056 · 8H</span><span>55장 도구 호출과 결과 메시지</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -28,6 +28,23 @@
 <a class="download" href="chapter56.ipynb" download="chapter56.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>56장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">모델이 요청한 검색과 실행한 검색 대조하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>55장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-55.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-55.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;call&#x27;: {&#x27;name&#x27;: &#x27;lookup_loan&#x27;,
+              &#x27;args&#x27;: {&#x27;doc_id&#x27;: &#x27;loan-01&#x27;},
+              &#x27;result&#x27;: &#x27;대출 기간은 14일입니다.&#x27;}}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-input" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>검색 인자의 타입과 범위 검사</h2>
 </div>
@@ -49,7 +66,7 @@
     check_k(<span class="tok-string">"2"</span>)
 <span class="tok-keyword">except</span> ValueError <span class="tok-keyword">as</span> error:
     print(error)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">k에 양의 정수를 넣으세요.</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">k에 양의 정수를 넣으세요.</pre></div>
 <div class="cell-after"><p>화면에서 숫자처럼 보여도 문자열에는 따옴표가 붙습니다. 요청을 거절한 시점에는 검색 호출이 발생하지 않았습니다. True도 정수로 잘못 받지 않도록 타입을 확인했습니다.</p>
 </div>
 <p id="example-analysis">check_k("2")는 예외를 발생시키고 check_k(2)는 정수 2를 반환합니다. 이 함수는 0을 거절하지만 정수 1000000은 통과시킵니다. 조회할 문서 수를 제한하려면 최댓값 검사도 추가해야 합니다.</p>
@@ -63,7 +80,7 @@
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># check_k에 값을 전달하고 결과를 출력하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(check_k(<span class="tok-number">2</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">2</pre></div>
 <div class="cell-after"><p>정수 2가 그대로 돌아옵니다. 두 장을 요청할 수 있다는 뜻이며 결과가 반드시 두 장이라는 보장은 없습니다.</p>
 </div>
 </details>
@@ -80,7 +97,7 @@
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">returned_ids = {<span class="tok-string">"library-1"</span>}
 draft_ids = {<span class="tok-string">"library-9"</span>}
 print(sorted(draft_ids - returned_ids))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['library-9']</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">['library-9']</pre></div>
 <div class="cell-after"><p>library-9는 현재 검색에서 받은 적이 없습니다. 이 경우에는 자료가 없었다고 기록하면 안 됩니다. 검색은 성공했고 초안의 인용 검사에서 막혔습니다.</p>
 </div>
 </article>
@@ -94,7 +111,7 @@ print(sorted(draft_ids - returned_ids))</code></pre></figure>
 <span class="tok-comment"># 모든 ID가 returned_ids 안에 있는지 확인하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">cited = {<span class="tok-string">'library-1'</span>}
 print(cited &lt;= returned_ids)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">True</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">True</pre></div>
 <div class="cell-after"><p>True는 인용 ID가 검색 결과에 포함됐다는 뜻입니다. 원문의 ‘14일’을 답변에서 ‘30일’로 바꿔도 ID 검사는 통과하므로 일수는 원문과 따로 대조합니다.</p>
 </div>
 </details>
@@ -110,20 +127,16 @@ print(cited &lt;= returned_ids)</code></pre></figure>
 <!-- lesson-visual visual-limit -->
 <span class="lesson-anchor" id="visual-limit"></span>
 <!-- /lesson-visual visual-limit -->
-<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="example-cell-5">셀 05 · 반복 호출 테스트 모델</h3>
-<div class="cell-before"><p>모델 대신 같은 요청을 두 번 내보낼 대본을 준비합니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3 id="example-cell-5">실제 모델의 입력과 결과 확인</h3>
+<div class="cell-before"><p>서로 다른 조항 두 개를 조회하도록 요청하세요. 모델이 낸 요청 수와 executed에 남은 실제 실행 수를 구분하세요. 실행 상한은 모델이 반드시 채워야 하는 횟수가 아닙니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7"><span class="tok-keyword">from</span> langchain.agents <span class="tok-keyword">import</span> create_agent
-<span class="tok-keyword">from</span> langchain_core.language_models.fake_chat_models <span class="tok-keyword">import</span> FakeMessagesListChatModel
-<span class="tok-keyword">from</span> langchain_core.messages <span class="tok-keyword">import</span> AIMessage
-<span class="tok-keyword">from</span> langsmith <span class="tok-keyword">import</span> tracing_context
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7">from langchain.agents import create_agent
+from langsmith import tracing_context
+import os
+from langchain_openai import ChatOpenAI
 
-<span class="tok-keyword">class</span> ClassroomModel(FakeMessagesListChatModel):
-    <span class="tok-keyword">def</span> bind_tools(self, tools, **kwargs):
-        <span class="tok-keyword">return</span> self  <span class="tok-comment"># 사용할 도구 요청은 아래 대본에 고정했습니다.</span>
-
-<span class="tok-keyword">def</span> ask_tool(name, args, call_id):
-    <span class="tok-keyword">return</span> AIMessage(content=<span class="tok-string">""</span>, tool_calls=[{<span class="tok-string">"name"</span>: name, <span class="tok-string">"args"</span>: args, <span class="tok-string">"id"</span>: call_id}])</code></pre></figure>
+# 수업 커널에 %pip install langchain-openai 를 실행하고 OPENAI_API_KEY를 설정하세요.
+model = ChatOpenAI(model=os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;, timeout=45, max_retries=1)</code></pre></figure>
 <div class="cell-after"><p>응답할 메시지만 준비했습니다. 아직 검색 함수는 한 번도 실행하지 않았습니다.</p>
 </div>
 </article>
@@ -135,36 +148,31 @@ print(cited &lt;= returned_ids)</code></pre></figure>
 <article class="notebook-cell" data-cell="6" data-task="0"><h3 id="example-cell-6">셀 06 · 미들웨어의 호출 상한</h3>
 <div class="cell-before"><p>마지막 호출 흔적에 무엇이 몇 번 남을지 예상하세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8"><span class="tok-keyword">from</span> langchain.agents.middleware <span class="tok-keyword">import</span> ToolCallLimitMiddleware
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8">from langchain.agents.middleware import ToolCallLimitMiddleware
 
 executed = []
-<span class="tok-keyword">def</span> search_documents(question: str) -&gt; str:
-    <span class="tok-string">"""가상 대출 규정을 한 건 조회한다."""</span>
+def search_documents(question: str) -&gt; str:
+    &quot;&quot;&quot;가상 대출 규정을 한 건 조회한다.&quot;&quot;&quot;
     executed.append(question)
-    <span class="tok-keyword">return</span> <span class="tok-string">"도서 대출 기간은 14일입니다."</span>
+    return previous[&quot;call&quot;][&quot;result&quot;]
 
-model = ClassroomModel(responses=[
-    ask_tool(<span class="tok-string">"search_documents"</span>, {<span class="tok-string">"question"</span>: <span class="tok-string">"대출"</span>}, <span class="tok-string">"s1"</span>),
-    ask_tool(<span class="tok-string">"search_documents"</span>, {<span class="tok-string">"question"</span>: <span class="tok-string">"다시 검색"</span>}, <span class="tok-string">"s2"</span>),
-    AIMessage(content=<span class="tok-string">"답변을 마칩니다."</span>),
-])
-limit = ToolCallLimitMiddleware(run_limit=<span class="tok-number">1</span>, exit_behavior=<span class="tok-string">"continue"</span>)
+limit = ToolCallLimitMiddleware(run_limit=1, exit_behavior=&quot;continue&quot;)
 agent = create_agent(model, tools=[search_documents], middleware=[limit])
-<span class="tok-keyword">with</span> tracing_context(enabled=<span class="tok-keyword">False</span>):
-    state = agent.invoke({<span class="tok-string">"messages"</span>: [(<span class="tok-string">"user"</span>, <span class="tok-string">"대출 규정을 확인해 주세요."</span>)]})
+with tracing_context(enabled=False):
+    state = agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;대출 기간과 연체 규정을 각각 한 번씩 따로 조회하고 자료에 없는 내용은 모른다고 답하세요.&quot;)]})
 print(executed)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['대출']</pre></div>
-<div class="cell-after"><p>['대출'] 한 건만 남습니다. 두 번째 요청도 대본에 있었지만 미들웨어가 실행 상한을 먼저 검사했습니다. 검색 함수 안에 append를 둔 덕분에 모델이 요청한 횟수와 실제 실행한 횟수를 구분할 수 있습니다.</p>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;대출 기간 규정&#x27;]</pre></div>
+<div class="cell-after"><p>서로 다른 조항 두 개를 조회하도록 요청하세요. 모델이 낸 요청 수와 executed에 남은 실제 실행 수를 구분하세요. 실행 상한은 모델이 반드시 채워야 하는 횟수가 아닙니다.</p>
 </div>
 </article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>호출 제한이 함수 실행을 막는 위치</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 m["모델 응답"] --> q{"도구 호출 요청?"}
 q -->|없음| e["최종 답변"]
 q -->|있음| g{"실행 한도 남음?"}
-g -->|s1 · 허용| t["검색 실행 · executed에 기록"] --> m
-g -->|s2 · 초과| x["검색 생략 · 제어를 모델로"] --> m</script><figcaption>s2는 대본에 있지만 search_documents 본문에 들어가지 않습니다. continue 설정은 모델이 다음 응답을 작성할 기회를 남깁니다.</figcaption></figure>
+g -->|한도 이내| t["검색 실행 · executed에 기록"] --> m
+g -->|한도 초과| x["검색 생략 · 제어를 모델로"] --> m</script><figcaption>s2는 대본에 있지만 search_documents 본문에 들어가지 않습니다. continue 설정은 모델이 다음 응답을 작성할 기회를 남깁니다.</figcaption></figure>
 
-<aside id="guided-reading" class="lesson-note"><h3>요청 두 번과 실행 한 번</h3><p><mark>run_limit=1은 이 실행에서 도구 함수에 들어갈 수 있는 횟수를 제한합니다.</mark> 테스트 모델은 s1과 s2를 차례로 요청하지만 executed에는 첫 질문 ‘대출’만 남습니다. exit_behavior가 continue이므로 두 번째 호출을 막은 뒤 모델은 최종 답을 낼 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter55/index.html">55장 create_agent의 도구 등록과 메시지 왕복</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>요청 두 번과 실행 한 번</h3><p>서로 다른 조항 두 개를 조회하도록 요청하세요. 모델이 낸 요청 수와 executed에 남은 실제 실행 수를 구분하세요. 실행 상한은 모델이 반드시 채워야 하는 횟수가 아닙니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter55/index.html">55장 create_agent의 도구 등록과 메시지 왕복</a></p></aside>
 
 <span class="lesson-anchor" id="policy"></span><span id="reading-policy"></span>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
@@ -186,7 +194,7 @@ try:
     bounded_k(6)
 except ValueError as error:
     print(error)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">최대 5건까지 조회할 수 있습니다.</pre></div><div class="cell-after"><p>k의 상한은 한 번의 검색이 반환할 수 있는 문서 수를 제한합니다. run_limit=1은 같은 실행에서 도구를 부를 수 있는 횟수를 제한합니다. 호출을 한 번으로 제한해도 그 한 번에 요청할 문서 수는 따로 정해야 합니다.</p></div></details></article>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">최대 5건까지 조회할 수 있습니다.</pre></div><div class="cell-after"><p>k의 상한은 한 번의 검색이 반환할 수 있는 문서 수를 제한합니다. run_limit=1은 같은 실행에서 도구를 부를 수 있는 횟수를 제한합니다. 호출을 한 번으로 제한해도 그 한 번에 요청할 문서 수는 따로 정해야 합니다.</p></div></details></article>
 </section>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>모델이 요청한 검색과 실행한 검색 대조하기</h2></div></header>
@@ -195,27 +203,17 @@ except ValueError as error:
 for m in tool_messages:
     print(m.tool_call_id, m.status)
 print(&quot;함수 실행&quot;, executed)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">s1 success
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">s1 success
 s2 error
 함수 실행 [&#x27;대출&#x27;]</pre></div><div class="cell-after"><p>s1과 s2 모두 결과 메시지가 있지만 s2는 제한에 걸렸습니다. executed에는 첫 질문 대출만 남습니다. 차단을 설명하는 도구 메시지도 있으므로 메시지 수만 보고 검색 횟수를 세면 실제 함수가 일한 횟수와 어긋날 수 있습니다.</p></div>
 </article>
-<article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 등록은 그대로 두고 실행 상한 바꾸기</h3><div class="cell-before"><p>같은 검색 두 건에 대해 이번 실행의 한도를 2로 설정하세요. 이전 로그의 영향을 막으려고 실행 기록을 비운 뒤, 새 테스트 모델과 새 에이전트로 다시 실행하세요. 검색 함수가 받은 두 질문을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">two_requests = [
-    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;대출&quot;}, &quot;s1&quot;),
-    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;다시 검색&quot;}, &quot;s2&quot;),
-    AIMessage(content=&quot;확인을 마칩니다.&quot;),
-]
-# run_limit=2인 미들웨어를 새 에이전트에 연결하세요.</code></pre></figure>
-<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">two_requests = [
-    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;대출&quot;}, &quot;s1&quot;),
-    ask_tool(&quot;search_documents&quot;, {&quot;question&quot;: &quot;다시 검색&quot;}, &quot;s2&quot;),
-    AIMessage(content=&quot;확인을 마칩니다.&quot;),
-]
-executed.clear()
-relaxed = create_agent(ClassroomModel(responses=two_requests), tools=[search_documents],
+<article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 등록은 그대로 두고 실행 상한 바꾸기</h3><div class="cell-before"><p>서로 다른 조항 두 개를 조회하도록 요청하세요. 모델이 낸 요청 수와 executed에 남은 실제 실행 수를 구분하세요. 실행 상한은 모델이 반드시 채워야 하는 횟수가 아닙니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10"># run_limit=2인 미들웨어를 새 에이전트에 연결하세요.</code></pre></figure>
+<details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">executed.clear()
+relaxed = create_agent(model, tools=[search_documents],
                        middleware=[ToolCallLimitMiddleware(run_limit=2, exit_behavior=&quot;continue&quot;)])
 with tracing_context(enabled=False):
-    relaxed.invoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;대출 규정을 확인해 주세요.&quot;)]})
-print(executed)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;대출&#x27;, &#x27;다시 검색&#x27;]</pre></div><p>대출과 다시 검색이 차례로 남습니다. 두 그래프에 등록한 함수와 요청은 같고 이번에 바꾼 값은 run_limit입니다. 로그를 비우지 않으면 이전 실행의 대출이 한 건 더 섞입니다.</p></details>
+    relaxed.invoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;대출 기간과 연체 규정을 각각 한 번씩 따로 조회하고 자료에 없는 내용은 모른다고 답하세요.&quot;)]})
+print(executed)</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">[&#x27;대출&#x27;, &#x27;다시 검색&#x27;]</pre></div><p>대출과 다시 검색이 차례로 남습니다. 두 그래프에 등록한 함수와 요청은 같고 이번에 바꾼 값은 run_limit입니다. 로그를 비우지 않으면 이전 실행의 대출이 한 건 더 섞입니다.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>실행 제한을 확인하려면 요청 ID와 함수 안에서 남긴 기록을 함께 보세요.</mark> s2라는 ID는 요청에 붙은 표식입니다. 도구 본문에서만 기록하는 executed까지 읽으면 s2가 실제 검색에 도달했는지 구분할 수 있습니다.</p></aside><p>서비스를 평가할 때 모델 요청 횟수와 실제 검색 비용을 따로 집계할 근거가 됩니다.</p>
 </section>
@@ -226,6 +224,21 @@ print(executed)</code></pre></figure><div class="output"><p class="eyebrow">실�
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/custom" target="_blank" rel="noopener noreferrer">공식 Custom middleware ↗</a><span></span></li>
 <li><a href="https://docs.langchain.com/oss/python/langchain/structured-output" target="_blank" rel="noopener noreferrer">공식 Structured output ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>호출 한도로 중복 조회 한 번만 허용하기</h3><p>55장의 정상 호출을 그대로 두 번 제안한 경우를 시험합니다. 허용된 호출과 막힌 호출을 따로 남기면 다음 장에서 Skill이 쓸 도구 이름을 고를 수 있습니다.</p><pre tabindex="0"><code>call = previous[&quot;call&quot;]
+def budget(calls, limit):
+    allowed, blocked = [], []
+    for item in calls:
+        if len(allowed) &lt; limit:
+            allowed.append(item)
+        else:
+            blocked.append(item[&quot;name&quot;])
+    return allowed, blocked
+allowed, blocked = budget([call, call], 1)
+print(len(allowed), blocked)</code></pre><p>실행 결과</p><pre>1 [&#x27;lookup_loan&#x27;]</pre><p>두 번째 항목에서는 len(allowed)가 이미 1입니다. blocked에는 이름만 남습니다. 이 셀은 55장의 호출 기록으로 한도를 계산하며 모델과 도구를 다시 실행하지 않습니다.</p><h3>직접 확인하기</h3><p>한도가 0이면 같은 두 요청이 어디에 남는지 확인하세요. 허용 횟수와 거절 횟수를 따로 출력합니다.</p><pre tabindex="0"><code># 같은 두 호출에 limit=0을 적용하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>ok, denied = budget([call, call], 0)
+print(len(ok), len(denied))</code></pre><p>기본 자료로 실행한 결과</p><pre><code>0 2</code></pre><p>허용 목록이 비어 있으므로 어느 요청도 실행 대상으로 넘길 수 없습니다.</p></details><h3>57장에 넘길 결과 저장하기</h3><p>57장은 허용된 도구와 한도를 Skill의 작업 지침에 넣습니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: previous[&quot;record&quot;], &quot;allowed_tool&quot;: allowed[0][&quot;name&quot;], &quot;limit&quot;: len(allowed)}
+target = work / &quot;agent-56.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-56.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

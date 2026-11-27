@@ -21,6 +21,21 @@
 <p class="hero-description">Q03의 no_evidence, invalid_citation, answered 기록을 이용해 중간 프로젝트를 시연합니다. 단계별로 어떤 코드를 수정했고 같은 질문의 결과가 어떻게 바뀌었는지 제시합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>재현 명세에서 시연할 장면 고르기</h3><p>51장의 재현 명세에서 수정한 질문과 보류해야 하는 질문을 골라 시연 순서를 구성합니다. 발표자가 같은 질문과 출처를 다시 열 수 있어야 합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/midterm/chapter51.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter52-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/midterm/chapter51.json&quot;
+sample_file = here / &quot;chapter52-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;manifest&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter52-start.json
+[{&#x27;citations&#x27;: [&#x27;course-guide-v1:p2&#x27;], &#x27;expected&#x27;: [&#x27;p2&#x27;], &#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;passed&#x27;: True, &#x27;question&#x27;: &#x27;과제는 어디에 내나요?&#x27;}, {&#x27;citations&#x27;: [], &#x27;expected&#x27;: [], &#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;passed&#x27;: True, &#x27;question&#x27;: &#x27;내 점수는 몇 점인가요?&#x27;}, {&#x27;citations&#x27;: [&#x27;course-guide-v1:p3&#x27;], &#x27;expected&#x27;: [&#x27;p3&#x27;], &#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;passed&#x27;: True, &#x27;question&#x27;: &#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>manifest</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -73,6 +88,21 @@ print(<span class="tok-string">' → '</span>.join(states))</code></pre></figure
 <section class="project-example"><h3>팀별 시연을 바꿀 때</h3><p>팀의 첫 실패가 화면에 남은 이전 출처였다면 두 번째 질문을 입력하는 순간을 전환점으로 삼으세요. 해당 화면을 고친 사람은 바뀐 코드를, 다른 팀원은 고치기 전후 같은 질문의 출처를 가리키면 개인 기여도 확인할 수 있습니다.</p></section>
 <aside class="lesson-note"><p><mark>시연 결과는 실제로 실행한 질문과 문서 판본의 범위 안에서 설명하세요.</mark> 한 질문의 수정을 원문·후보·답으로 보여 주면, 무엇을 개선했고 새 질문에서 무엇을 더 확인해야 하는지 동료가 판단할 수 있습니다.</p></aside><p>회고에는 팀이 다음에 검증할 질문 한 건과 그 결과를 확인할 담당자를 남기세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 재현 명세에서 시연할 장면 고르기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>scenes = [row for row in incoming[&quot;manifest&quot;] if row[&quot;id&quot;] in incoming[&quot;fixes&quot;] or not row[&quot;expected&quot;]]
+new = {&quot;demo&quot;: scenes, &quot;manifest_sha256&quot;: incoming[&quot;sha256&quot;], &quot;peer_run&quot;: incoming[&quot;peer_run&quot;],
+       &quot;evaluated_path&quot;: incoming[&quot;evaluated_path&quot;], &quot;baseline_decision&quot;: incoming[&quot;baseline_decision&quot;],
+       &quot;follow_up&quot;: &quot;팀원이 새 환경에서 같은 질문으로 서비스 실행&quot;}
+print([(row[&quot;id&quot;], row[&quot;question&quot;], row[&quot;citations&quot;]) for row in scenes])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q02&#x27;, &#x27;내 점수는 몇 점인가요?&#x27;, []), (&#x27;Q03&#x27;, &#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;, [&#x27;course-guide-v1:p3&#x27;])]</pre></div><p>수정한 Q03과 원래 보류 대상인 Q02가 서로 다른 장면으로 남습니다. 운영 성능이나 실제 이용자 반응은 이 로컬 시연으로 확인할 수 없습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter52.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter52.json</pre></div><p>팀 최종 인계 자료로 보관합니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>
