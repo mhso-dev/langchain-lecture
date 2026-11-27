@@ -5,6 +5,7 @@ from codex_studio import CASES as CODEX_CASES
 from studios import NOTES, starter, variation
 from lessons import READINGS, CHARTS, LINKS
 from project_reference import project_reference
+from assignment_inputs import assignment_inputs
 from execution import publish_results
 from todo_agent_workshop import publish_bundle, lesson as todo_lesson, STAGES
 import json
@@ -173,6 +174,13 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
                 extras.append(cell("markdown","chart","### 실행 경로\n\n```mermaid\n"+chart+"\n```"))
                 article+='<figure class="workflow-reading" data-workflow><h3>실행 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">'+chart+'</script></figure>'
             cells[2:2]=extras
+        input_md, input_html = assignment_inputs(DAILY / "daily_resources", n)
+        if input_md:
+            brief = next(c for c in cells if c["id"] == "solo-brief")
+            brief["source"] = ("".join(brief["source"]) + "\n\n" + input_md).splitlines(keepends=True)
+        if n == 120:
+            cells[0]["source"] = ("## 120장 · " + title + "\n\n프로젝트 소개에서 성과 주장 두 개를 고르고, 각 주장에 사용한 커밋·입력·측정 기록을 준비하세요.").splitlines(keepends=True)
+            cells = [c for c in cells if c["id"] != "solo-input"]
         if 53 <= n <= 67:
             source_book = OUT / f"chapter{n:02}" / f"chapter{n:02}.ipynb"
             source_cells = json.loads(source_book.read_bytes())["cells"]
@@ -194,7 +202,7 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
         (DAILY/name).write_bytes(raw)
         put(archive,name,raw)
         link=f'<a href="{name}" download>개인 과제 노트북</a>'
-        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
+        section=f'<section class="lesson-section" id="daily-lab"><h2>개인 실습 · {escape(title)}</h2><p>예상 {duration}분 · {escape(material(n))}</p><h3>작업 의뢰</h3><p>{escape(goal)}</p>{input_html}{article}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><mark>구현 단서</mark> {escape(method)}</p><p><strong>결과가 다르면</strong> {escape(probe)}</p><p><mark>완료 기준</mark> {escape(check)}</p><p><a href="../daily/{name}" download>오늘의 개인 과제</a> · <a href="../daily/resources.zip" download>공통 실습 자료</a> · <a href="../daily/index.html">전체 과제</a></p></section>'
         if 53 <= n <= 67:
             section = section.replace("<h3>작업 의뢰</h3>",
                 '<p><a href="#desk-lab">앞 장 파일로 이어서 실습하기</a></p><h3>작업 의뢰</h3>', 1)
@@ -227,13 +235,13 @@ with ZipFile(resources) as data, ZipFile(DAILY/"all-labs.zip","w") as archive:
             if 68 <= n <= 85:
                 original = notebook
             else:
-                original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)"))
+                original["cells"].append(cell("markdown","daily-assignment",f"## 개인 실습 · {title} ({duration}분)\n\n{goal}\n\n1. {first}\n2. {second}\n\n**구현 단서** {method}\n\n**스스로 확인하기** {check}\n\n{probe}\n\n[오늘의 개인 실습 노트북]({HOST}/daily/{name}) · [실습 자료 묶음]({HOST}/daily/resources.zip)" + ("\n\n" + input_md if input_md else "")))
                 original["cells"].extend(extras)
             file.write_bytes(encode(original))
         lesson=f'<a href="../chapter{n:02}/index.html#daily-lab">수업 교재</a> · ' if n<=116 else ''
         if 68 <= n <= 85:
             goal, method, probe = first, second, check
-        links.append(f'<li id="day{n:03}"><h2>{n}장 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p><ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
+        links.append(f'<li id="day{n:03}"><h2>{n}장 · {escape(title)}</h2><p>{duration}분 · {lesson}{link}</p><p>{escape(goal)}</p>{input_html}<ol><li>{escape(first)}</li><li>{escape(second)}</li></ol><p><strong>구현 단서</strong> {escape(method)}</p><p><strong>자기점검</strong> {escape(check)} {escape(probe)}</p></li>')
 
     put(archive, "codex-harness.ipynb", (DAILY / "codex-harness.ipynb").read_bytes())
 for project_day in list(range(43,53))+list(range(86,117)):

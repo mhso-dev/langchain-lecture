@@ -145,7 +145,7 @@ else:
               &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
               &#x27;source&#x27;: &#x27;loan-01&#x27;}}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 probe.json
-</pre><h2>SQLite 백업 사본에서 원문까지 대조하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import sqlite3
+</pre><h3>복원한 대화의 본문과 출처 비교하기</h3><pre><code>import sqlite3
 from contextlib import closing
 row = previous[&quot;turn&quot;]
 db_file = lab / &quot;turns.sqlite&quot;

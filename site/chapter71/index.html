@@ -147,7 +147,7 @@ else:
      &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
      &#x27;source&#x27;: &#x27;loan-01&#x27;}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 stored.json
-</pre><h2>Dockerfile에 API 시작 모듈과 포트 지정하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from fastapi.testclient import TestClient
+</pre><h3>이미지에 넣을 turn.json 확인하기</h3><pre><code>from fastapi.testclient import TestClient
 import runpy
 image_dir = lab / &quot;image&quot;
 image_dir.mkdir(exist_ok=True)

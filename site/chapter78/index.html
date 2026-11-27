@@ -134,7 +134,7 @@ else:
      &#x27;candidate&#x27;: &#x27;42ec606abc92ce832234dded6ceb188e2a0f771365698f2b6d2215d7be9aebb2&#x27;,
      &#x27;approved&#x27;: True}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 candidate.json
-</pre><h2>HTML 폼에서 검사할 후보 식별하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from html import escape
+</pre><h3>폼에서 선택한 후보 ID 읽기</h3><pre><code>from html import escape
 import xml.etree.ElementTree as ET
 items = [{&quot;id&quot;: 1, &quot;title&quot;: &quot;변경 검토&quot;, &quot;candidate&quot;: previous[&quot;candidate&quot;]},
          {&quot;id&quot;: 2, &quot;title&quot;: &quot;변경 검토&quot;, &quot;candidate&quot;: &quot;revision-b&quot;}]

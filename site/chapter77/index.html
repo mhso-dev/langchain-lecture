@@ -173,7 +173,7 @@ else:
      &#x27;exit_code&#x27;: 0,
      &#x27;source_id&#x27;: &#x27;loan-01&#x27;}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 ci.json
-</pre><h2>SHA-256으로 승인한 후보와 실행할 후보 대조하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from hashlib import sha256
+</pre><h3>승인한 후보의 해시 비교하기</h3><pre><code>from hashlib import sha256
 payload = json.dumps(previous, sort_keys=True, ensure_ascii=False).encode()
 approved = sha256(payload).hexdigest()
 def can_release(body, expected_hash, exit_code):

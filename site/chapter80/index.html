@@ -137,7 +137,7 @@ else:
                {&#x27;id&#x27;: 2, &#x27;title&#x27;: &#x27;변경 검토&#x27;, &#x27;candidate&#x27;: &#x27;revision-b&#x27;}],
      &#x27;proposal&#x27;: {&#x27;id&#x27;: 2, &#x27;candidate&#x27;: &#x27;revision-b&#x27;, &#x27;done&#x27;: True}}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 selection.json
-</pre><h2>버전 검사로 투두 변경 한 번만 승인하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>items = {row[&quot;id&quot;]: {**row, &quot;done&quot;: False, &quot;version&quot;: 0} for row in previous[&quot;items&quot;]}
+</pre><h3>같은 요청이 투두를 두 번 바꾸는지 확인하기</h3><pre><code>items = {row[&quot;id&quot;]: {**row, &quot;done&quot;: False, &quot;version&quot;: 0} for row in previous[&quot;items&quot;]}
 proposal = previous[&quot;proposal&quot;]
 approval_events = [(&quot;read&quot;, proposal[&quot;id&quot;])]
 applied_ids = []

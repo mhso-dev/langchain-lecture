@@ -38,6 +38,15 @@ def check_reader(page, base, width):
         assert page.locator('main a[href$=".ipynb"], header a[href$=".ipynb"]').count(), route
         dims = page.evaluate("() => [document.documentElement.scrollWidth, innerWidth]")
         assert dims[0] <= dims[1] + 1, (route, dims)
+    workshop = f"{base}/pre-mid/prompt-workshop"
+    page.goto(f"{workshop}/index.html#section-day09-1")
+    example = page.locator("#cell-brief-to-request")
+    assert example.locator("blockquote").is_visible()
+    assert "오전 9시 30분" in example.inner_text()
+    assert example.locator("a").count() == 0
+    page.goto(f"{workshop}/practice.html")
+    assert page.locator("article blockquote").first.is_visible()
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
     print(f"{width}px · 116개 장과 선택 경로의 본문·노트북 링크·답안 펼치기·그림·페이지 너비 확인")
 
 

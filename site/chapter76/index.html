@@ -189,7 +189,7 @@ else:
      &#x27;expected&#x27;: [&#x27;대출 기간은 14일입니다.&#x27;, &#x27;loan-01&#x27;],
      &#x27;restored&#x27;: [&#x27;대출 기간은 14일입니다.&#x27;, &#x27;loan-01&#x27;]}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 restore.json
-</pre><h2>unittest로 복원 확인을 CI 검사로 옮기기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import subprocess, sys
+</pre><h3>복원 검사를 자동 테스트로 실행하기</h3><pre><code>import subprocess, sys
 ci_dir = lab / &quot;ci&quot;
 ci_dir.mkdir(exist_ok=True)
 (ci_dir / &quot;restore.json&quot;).write_text(json.dumps(previous, ensure_ascii=False), encoding=&quot;utf-8&quot;)

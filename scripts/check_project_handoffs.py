@@ -50,7 +50,8 @@ def check(root, mode):
             folder = work / f"isolated-{n}" if mode == "isolated" else work
             folder.mkdir(exist_ok=True)
             src = root / name
-            shutil.copyfile(src / f"{name}-start.json", folder / f"{name}-start.json")
+            if mode == "linked" or root.name == "site":
+                shutil.copyfile(src / f"{name}-start.json", folder / f"{name}-start.json")
             origin = "교재 예시" if mode == "isolated" or n in (43, 86) else "팀 기록"
             subprocess.run([sys.executable, __file__, "--one", str(src / f"{name}.ipynb"),
                             "--origin", origin], cwd=folder, check=True)
