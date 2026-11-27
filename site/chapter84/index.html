@@ -17,7 +17,7 @@ print(sum(latency_ms) / len(latency_ms), &quot;ms&quot;, sum(input_tokens + outp
 print(f&quot;${cost:.6f}&quot;, &quot;배포&quot; if after[&quot;Q3&quot;] else &quot;보류&quot;)</code></pre><pre style="white-space:pre-wrap;overflow:auto"><code>기준선 250.0 ms 550 tokens $0.000700
 320.0 ms 660 tokens
 $0.000840 보류
-</code></pre></details></section><section class="lesson-section" id="service"><h2>수업 서비스에 적용하기</h2><p>LangSmith에서 동일 데이터셋 버전의 두 실험을 열고 한 요소만 바뀌었는지 확인하세요. 각 질문의 점수와 지연, 모델 사용량을 대조하고 실제 모델 단가로 비용을 다시 계산합니다. 76장 GitHub Actions 검사에 83장 승인·중복 저장 규칙을 단위 테스트로 추가하세요. 승인 순서를 깨뜨린 변경이 CI에서 실패하고 복구한 커밋이 통과하는지 두 실행 링크로 확인합니다.</p><p><a href="https://docs.langchain.com/langsmith/compare-experiment-results">공식 문서</a></p></section><section id="recap"><h2>제출 전 확인</h2><p>같은 데이터 버전에서 한 요소만 바꿔 품질·지연·토큰·추정 비용을 비교한다. GitHub Actions에 도구 규칙 검사를 연결하고, 개선된 사례와 악화된 사례를 근거로 배포 또는 보류를 결정한다.</p></section><section id="service-practice" class="lesson-section"><h2>같은 시험 사례로 배포 후보의 회귀 판정하기</h2><p>어떤 후보를 시험 배포할지 결정합니다. 82장의 순위 개선과 83장의 승인 규칙을 모두 만족해야 후보가 통과합니다. 한 번의 요청이라도 중복 저장됐다면 전체 평균이 올라도 보류합니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/evaluation/trajectory.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
+</code></pre></details></section><section class="lesson-section" id="service"><h2>수업 서비스에 적용하기</h2><p>LangSmith에서 동일 데이터셋 버전의 두 실험을 열고 한 요소만 바뀌었는지 확인하세요. 각 질문의 점수와 지연, 모델 사용량을 대조하고 실제 모델 단가로 비용을 다시 계산합니다. 76장 GitHub Actions 검사에 83장 승인·중복 저장 규칙을 단위 테스트로 추가하세요. 승인 순서를 깨뜨린 변경이 CI에서 실패하고 복구한 커밋이 통과하는지 두 실행 링크로 확인합니다.</p><p><a href="https://docs.langchain.com/langsmith/compare-experiment-results">공식 문서</a></p></section><section id="recap"><h2>제출 전 확인</h2><p>기준판에서 통과했던 사례가 후보판에서도 통과하는지 확인하고 배포 판단을 적으세요.</p></section><section id="service-practice" class="lesson-section"><h2>같은 시험 사례로 배포 후보의 회귀 판정하기</h2><p>어떤 후보를 시험 배포할지 결정합니다. 82장의 순위 개선과 83장의 승인 규칙을 모두 만족해야 후보가 통과합니다. 한 번의 요청이라도 중복 저장됐다면 전체 평균이 올라도 보류합니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/evaluation/trajectory.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
 import json
 here = Path.cwd()
 # 각 장 폴더에서 열거나 노트북을 한 폴더에 모아 두어도 같은 실습 폴더를 씁니다.
@@ -54,7 +54,7 @@ else:
      &#x27;write_count&#x27;: 1,
      &#x27;events&#x27;: [(&#x27;read&#x27;, 2), (&#x27;approve&#x27;, 2), (&#x27;write&#x27;, 2)]}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 trajectory.json
-</pre><h2>같은 시험 사례로 배포 후보의 회귀 판정하기 실습</h2><p>이번에는 앞 장에서 남긴 실행 기록에 같은 검사를 적용합니다.</p><pre><code>def gate(record):
+</pre><h3>같은 사례로 두 후보의 배포 조건 검사하기</h3><pre><code>def gate(record):
     quality = record[&quot;candidate&quot;][&quot;days&quot;] == record[&quot;expected&quot;] and record[&quot;candidate&quot;][&quot;citation&quot;] == record[&quot;gold&quot;]
     rank_ok = record[&quot;after&quot;][&quot;mrr&quot;] &gt;= record[&quot;before&quot;][&quot;mrr&quot;]
     return &quot;시험 배포&quot; if quality and rank_ok and record[&quot;path_ok&quot;] and record[&quot;write_count&quot;] == 1 else &quot;보류&quot;

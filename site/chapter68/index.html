@@ -170,7 +170,7 @@ else:
                   &#x27;answer_contains&#x27;: &#x27;14일&#x27;},
      &#x27;service_record&#x27;: {&#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;}}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>복귀 예시 agent-api-case.json
-</pre><h2>TestClient로 대출 문의 한 건 보내기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from fastapi import FastAPI
+</pre><h3>POST 요청에서 k의 범위 검사하기</h3><pre><code>from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 

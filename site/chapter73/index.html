@@ -136,7 +136,7 @@ else:
      &#x27;db_service&#x27;: &#x27;db&#x27;,
      &#x27;db_port&#x27;: 55432}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 compose.json
-</pre><h2>문서 ID와 거리로 pgvector 검색 결과 검산하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from math import dist
+</pre><h3>두 좌표로 계산한 거리와 검색 순서 비교하기</h3><pre><code>from math import dist
 terms = [&quot;대출&quot;, &quot;반납&quot;]
 def vector(text):
     return [int(term in text) for term in terms]

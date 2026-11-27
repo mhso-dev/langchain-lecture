@@ -174,7 +174,7 @@ else:
      &#x27;route&#x27;: &#x27;/turn&#x27;,
      &#x27;api_port&#x27;: 8080}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 nearest.json
-</pre><h2>배포 점검에서 HTTP 상태와 본문 따로 검사하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from urllib.parse import urljoin
+</pre><h3>HTTP 200 응답에서 출처 확인하기</h3><pre><code>from urllib.parse import urljoin
 endpoint = urljoin(f&quot;http://127.0.0.1:{previous[&#x27;api_port&#x27;]}/&quot;, previous[&quot;route&quot;].lstrip(&quot;/&quot;))
 def healthy(status, body, source):
     return status == 200 and body.get(&quot;source&quot;) == source

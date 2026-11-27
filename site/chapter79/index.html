@@ -167,7 +167,7 @@ else:
                {&#x27;id&#x27;: 2, &#x27;title&#x27;: &#x27;변경 검토&#x27;, &#x27;candidate&#x27;: &#x27;revision-b&#x27;}],
      &#x27;values&#x27;: [&#x27;1&#x27;, &#x27;2&#x27;]}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 form.json
-</pre><h2>fetch 요청 본문에 선택한 ID 담기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import json, subprocess
+</pre><h3>fetch로 선택한 ID 전송하기</h3><pre><code>import json, subprocess
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 selection = previous[&quot;values&quot;][-1]

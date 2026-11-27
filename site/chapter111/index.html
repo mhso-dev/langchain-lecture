@@ -80,7 +80,7 @@ print(normalize(original) == original)</code></pre></figure>
 <!-- lesson-visual detail-freeze -->
 <span class="lesson-anchor" id="detail-freeze"></span>
 <!-- /lesson-visual detail-freeze -->
-<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 최소 실패 입력 재검증</h3><figure class="code-block"><pre tabindex="0"><code>print(normalize(&quot;장비A의 점검 전 확인 사항은?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?</pre></div><div class="cell-after"><p>장비 A가 분리되어 나옵니다. 이 문자열을 넘긴 뒤 올바른 RULE-A가 돌아오는지까지 봐야 해당 사용자 경로를 닫을 수 있습니다. 평가 파일의 replay → records에서 question_id가 Q98-N01인 행을 찾으세요. candidate의 outcome → result → sources에서 첫 id가 RULE-A인지 확인하고 answer와 원문을 대조하세요.</p></div></article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 최소 실패 입력 재검증</h3><figure class="code-block"><pre tabindex="0"><code>print(normalize(&quot;장비A의 점검 전 확인 사항은?&quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은?</pre></div><div class="cell-after"><p>장비 A가 분리되어 나옵니다. 이 문자열을 넘긴 뒤 올바른 RULE-A가 돌아오는지까지 봐야 해당 사용자 경로를 닫을 수 있습니다. 평가 기록 Q98-N01의 후보 답은 “점검 전 전원 표시등을 확인합니다.”이고 첫 출처는 RULE-A, 1쪽 2.1절입니다. 아래 전체 평가 파일에서 같은 행의 answer와 sources를 대조할 수 있습니다.</p></div></article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>붙여 쓴 장비명을 고친 뒤 기존 Q01을 다시 통과시키기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 nq["기존 Q01"]
   nmatch["패턴 대조"]

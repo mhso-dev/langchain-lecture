@@ -193,7 +193,7 @@ else:
               &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
               &#x27;source&#x27;: &#x27;loan-01&#x27;}}
     print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 container.json
-</pre><h2>Compose에서 포트와 DB 볼륨 확인하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import yaml
+</pre><h3>호스트 포트와 컨테이너 포트 구분하기</h3><pre><code>import yaml
 services = {&quot;api&quot;: {&quot;build&quot;: &quot;./&quot; + previous[&quot;context&quot;], &quot;ports&quot;: [f&quot;127.0.0.1:8080:{previous[&#x27;port&#x27;]}&quot;]},
             &quot;db&quot;: {&quot;image&quot;: &quot;pgvector/pgvector:pg16&quot;, &quot;environment&quot;: {&quot;POSTGRES_PASSWORD&quot;: &quot;${POSTGRES_PASSWORD:?수업용 비밀번호를 지정하세요}&quot;},
                    &quot;ports&quot;: [&quot;127.0.0.1:55432:5432&quot;], &quot;volumes&quot;: [&quot;course-pg:/var/lib/postgresql/data&quot;]}}
