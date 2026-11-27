@@ -4,11 +4,11 @@ import {marked} from './vendor/marked/marked.mjs';
 
 export const units = [
   [1, 7, 'Python과 팀 Git', 56],
-  [8, 13, 'OpenAI SDK로 글을 쓰고 챗봇 만들기', 48],
-  [14, 24, 'LCEL로 근거를 찾는 문서 챗봇 만들기', 88],
-  [25, 32, 'OpenAI SDK로 문의 검토 워크플로 만들기', 64],
-  [33, 39, 'LangGraph로 답변·재검색·보류 연결하기', 56],
-  [40, 42, 'LangSmith로 설명서 챗봇 평가하기', 24],
+  [8, 13, 'OpenAI Responses API와 Streamlit', 48],
+  [14, 24, 'LCEL과 검색 증강 생성(RAG)', 88],
+  [25, 32, 'OpenAI SDK 워크플로 · 체이닝, 라우팅, 병렬 호출', 64],
+  [33, 39, 'LangGraph 상태와 RAG 워크플로', 56],
+  [40, 42, 'LangSmith 실행 추적과 비교 평가', 24],
 ];
 const escape = text => text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const joinText = value => Array.isArray(value) ? value.join('') : value || '';
@@ -48,7 +48,7 @@ export function publishChapters(out) {
       }
       const blocks = text.split(/(^```mermaid\n[\s\S]*?\n```\s*$)/gm);
       let headingNo = 0;
-      return blocks.map(block => {
+      return '<div id="cell-'+escape(cell.id)+'">'+blocks.map(block => {
         if (block.startsWith('```mermaid\n')) {
           const diagram = block.trimEnd().slice('```mermaid\n'.length,-4);
           if (/<\/script/i.test(diagram)) throw new Error(file + ': 흐름도 레이블을 확인하세요');
@@ -61,13 +61,13 @@ export function publishChapters(out) {
           return '<h2 id="'+id+'">'+label+'</h2>';
         });
         return '<div class="reading">'+html+'</div>';
-      }).join('');
+      }).join('')+'</div>';
     }).join('\n');
     if (!firstHeading) throw new Error(file + ': 장별 소제목 누락');
     const unit = units.find(([first,last]) => first <= n && n <= last);
     const scripts = body.includes('data-workflow') ? '<link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script>' : '';
     const unitMaterials = {
-      14: ['rag/investigations', '설명서 검색 실습지'],
+      14: ['rag/investigations', '프롬프트와 문서 검색 활동지'],
       25: ['workflow/workshop', '대여 문의 담당자 실습 기록지'],
       33: ['graph/workshop', '그래프 실습 수첩'],
       40: ['evaluation/fieldbook', '챗봇 품질 검토 활동지'],

@@ -62,7 +62,7 @@ function renderLesson(slug, label) {
       headings.push(`<a href="#${escape(id)}">${heading}</a>`);
       return `<h2 id="${escape(id)}">${heading}</h2>`;
     });
-    return `<div class="reading">${html}</div>`;
+    return `<div class="reading" id="cell-${escape(cell.id ?? String(index))}">${html}</div>`;
   }).join('\n');
   if (!title) throw new Error(slug + ' 노트북 첫 제목이 없습니다.');
 
@@ -111,7 +111,14 @@ function renderDocuments(directory) {
     const source = readFileSync(path, 'utf8');
     const title = source.split('\n', 1)[0].replace(/^#\s+/, '');
     const prefix = relative(dirname(path), output).split('\\').join('/');
-    const html = marked.parse(source).replace(/href="([^":#?]+)\.md"/g, 'href="$1.html"');
+    let html = marked.parse(source).replace(/href="([^":#?]+)\.md"/g, 'href="$1.html"');
+    if (path === join(output, 'pre-mid', 'reading-guide.md')) {
+      // Keep notebook links usable in the offline guide and open the same cells in the web reader.
+      html = html.replace(/href="([^"]+)\/lesson\.ipynb/g, 'href="$1/index.html')
+        .replace(/href="\.\.\/(chapter\d+)\.ipynb/g, 'href="../$1/index.html')
+        .replaceAll('#cell-id=', '#cell-');
+      html += '<p><a download href="../daily/pre-mid.zip">전반부 실습 노트북과 자료 받기</a></p>';
+    }
     writeFileSync(path.replace(/\.md$/, '.html'), `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)}</title>
 <link rel="stylesheet" href="${prefix}/assets/reader.css"><link rel="stylesheet" href="${prefix}/assets/pre-mid.css"></head><body><a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <nav class="bookbar" aria-label="교재 이동"><a href="${prefix}/index.html#pre-mid-python">교재 홈</a><a download href="${encodeURIComponent(basename(path))}">원본 문서 받기</a></nav>
@@ -165,7 +172,7 @@ const sections = units.map(([first, last, label, hours], index) => {
 const catalog = readFileSync(homePath,'utf8');
 const marker = '<!-- PRE_MID_CATALOG -->';
 if (!catalog.includes(marker)) throw new Error('개편 목차 위치를 확인하세요.');
-writeFileSync(homePath,catalog.replace(marker, () => '<p class="notice"><a href="pre-mid/course-guide.html">336시간 수업 운영표</a> · <a download href="daily/pre-mid.zip">1~42장 노트북과 실습 자료 받기</a></p>'+sections.join('\n')).replace('updates/index.html#classroom-edition','updates/index.html#pre-mid-336'));
+writeFileSync(homePath,catalog.replace(marker, () => '<p class="notice"><a href="pre-mid/reading-guide.html">전반부 1~42장 개정 교재</a> · <a href="pre-mid/course-guide.html">336시간 수업 운영표</a> · <a download href="daily/pre-mid.zip">1~42장 노트북과 실습 자료 받기</a></p>'+sections.join('\n')).replace('updates/index.html#classroom-edition','updates/index.html#whole-reading'));
 const update = join(output, 'updates/index.html');
 // Keep previous revision notes pointed at the source snapshot that they describe.
 const archive = 'https://github.com/mhso-dev/langchain-lecture/blob/2ea3ce8dc28cf6d3e96c55a0d14cd8fbf27d034b/site/';
@@ -183,3 +190,53 @@ insertAfterMain(update, `<section class="edition-group" id="model-settings"><h2>
 <li><a href="../chapter14/index.html#section-generation-settings-1">14장 · temperature와 출력 상한 비교하기</a> · <a href="../chapter14/index.html#section-answer-cache-1">LangChain 응답 캐시 실습</a></li>
 <li><a href="../chapter24/index.html#section-cache-boundaries-1">24장 · 세 종류의 캐시와 캐시 읽기 토큰</a></li>
 </ul></section>`);
+
+
+insertAfterMain(update, `<section class="edition-group" id="function-reading"><h2>11월 27일 · 함수와 명령어로 읽는 전반부 교재</h2><p>함수의 역할을 읽고 짧은 호출 예제에서 입력과 결과를 확인한 뒤 응용 실습으로 넘어갑니다. 14장에서는 번역할 단어 하나로 프롬프트를 만들고 모델에 보낼 문장을 직접 출력합니다. 1~5장의 디자인 패턴 선택 과정은 <a href="../pre-mid/python-patterns/index.html">Python 디자인 패턴</a>에서 엽니다.</p><ol>${changes.join('')}</ol></section>`);
+
+insertAfterMain(update, `<section class="edition-group" id="whole-reading"><h2>11월 27일 · 전반부 1~42장 본문과 실습 개정</h2><p>각 링크는 바뀐 설명이나 실습으로 연결됩니다. 1~5장은 문법 과정입니다. 디자인 패턴 과정에서는 <a href="../pre-mid/python-patterns/index.html#cell-rule-tie-goal">정렬 기준 실습</a>부터 읽을 수 있습니다.</p><ol>
+<li><a href="../pre-mid/python-basics/index.html#cell-a1-shift-01">1장 · //와 %로 몫과 나머지 구하기</a></li>
+<li><a href="../pre-mid/python-basics/index.html#cell-a2-shift-01">2장 · 리스트 위치와 딕셔너리 키로 값 하나 읽기</a></li>
+<li><a href="../pre-mid/python-basics/index.html#cell-a3-shift-01">3장 · len과 sum으로 개수와 합 구하기</a></li>
+<li><a href="../pre-mid/python-basics/index.html#cell-a4-shift-01">4장 · raise ValueError로 인자의 범위 검사하기</a></li>
+<li><a href="../pre-mid/python-basics/index.html#cell-a5-shift-01">5장 · 클래스 속성과 인스턴스 속성 구분하기</a></li>
+<li><a href="../pre-mid/team-git/index.html#cell-git-08">6장 · git worktree add로 두 번째 작업 폴더 열기</a></li>
+<li><a href="../pre-mid/team-git/index.html#cell-git-sync-01">7장 · git fetch로 origin/main 갱신하고 로컬 main과 비교하기</a></li>
+<li><a href="../pre-mid/prompt-workshop/index.html#cell-prompt-5">8장 · responses.create의 instructions와 input 나누기</a></li>
+<li><a href="../pre-mid/prompt-workshop/index.html#cell-prompt-14">9장 · ask에서 입력을 고정하고 지시문만 바꾸기</a></li>
+<li><a href="../pre-mid/prompt-workshop/index.html#cell-typed-output-heading">10장 · 문자열과 None을 받는 필드 선언하기</a></li>
+<li><a href="../pre-mid/chat-workshop/index.html#cell-inspect-what-sent">11장 · 목록 슬라이스로 직전 요청에 포함된 메시지 읽기</a></li>
+<li><a href="../pre-mid/chat-workshop/index.html#cell-echo-first">12장 · st.chat_input과 session_state로 입력한 문장 다시 그리기</a></li>
+<li><a href="../pre-mid/chat-workshop/index.html#cell-exercise13">13장 · 새 대화 버튼 완성하기</a></li>
+<li><a href="../chapter14/index.html#cell-parser-local-heading">14장 · StrOutputParser에 짧은 응답 메시지 넣기</a></li>
+<li><a href="../chapter15/index.html#cell-page-id-check-goal">15장 · PDF 둘째 쪽을 다시 찾을 값 출력하기</a></li>
+<li><a href="../chapter16/index.html#cell-chunk-source-goal">16장 · 길이를 바꿔도 출처가 남을까요?</a></li>
+<li><a href="../chapter17/index.html#cell-rag-17-case-why">17장 · Chroma의 upsert와 query로 문단 저장하고 검색하기</a></li>
+<li><a href="../chapter18/index.html#cell-rag-18-03">18장 · open_index의 반환값으로 저장된 컬렉션 다시 읽기</a></li>
+<li><a href="../chapter19/index.html#cell-join-context-heading">19장 · join으로 ID와 본문을 함께 전달하기</a></li>
+<li><a href="../chapter20/index.html#cell-date-edge-goal">20장 · 마지막 날도 유효한지 확인하기</a></li>
+<li><a href="../chapter21/index.html#cell-rag-21-07">21장 · answer_from_documents의 답을 제공한 근거와 대조하기</a></li>
+<li><a href="../chapter22/index.html#cell-rank-cut-goal">22장 · k만 바꾸어 누락된 정답 찾기</a></li>
+<li><a href="../chapter23/index.html#cell-rag-23-case-why">23장 · 답만 읽을 때 가려지는 검색 실패</a></li>
+<li><a href="../chapter24/index.html#cell-rag-24-06">24장 · cache_data와 cache_resource를 적용한 PDF 앱 만들기</a></li>
+<li><a href="../chapter25/index.html#cell-w25-15">25장 · 중간 변수만 바꿔 답이 어긋난 단계 찾기</a></li>
+<li><a href="../chapter26/index.html#cell-label-bound-goal">26장 · 낯선 라벨을 처리 함수 앞에서 걸러내기</a></li>
+<li><a href="../chapter27/index.html#cell-w27-10">27장 · 두 번째 ask에도 원래 draft 전달하기</a></li>
+<li><a href="../chapter28/index.html#cell-resume-failed-heading">28장 · 재시도 결과로 실패한 항목만 교체하기</a></li>
+<li><a href="../chapter29/index.html#cell-json-two-errors-heading">29장 · JSON으로 읽어도 작업 목록인지 따로 검사하기</a></li>
+<li><a href="../chapter30/index.html#cell-w30-14">30장 · revision_input에 초안과 feedback을 함께 넣기</a></li>
+<li><a href="../chapter31/index.html#cell-zero-rewrite-goal">31장 · 수정 한도가 0이면 평가는 몇 번 일어날까요?</a></li>
+<li><a href="../chapter32/index.html#cell-w32-06">32장 · run_step에서 한 번의 호출을 기록하고 process로 묶기</a></li>
+<li><a href="../chapter33/index.html#cell-graph-33-10">33장 · stream_mode=&quot;updates&quot;로 노드의 반환값 하나씩 읽기</a></li>
+<li><a href="../chapter34/index.html#cell-graph-34-05">34장 · add_conditional_edges의 출발 노드와 분기 함수 연결하기</a></li>
+<li><a href="../chapter35/index.html#cell-graph-35-04">35장 · InMemorySaver와 thread_id로 대화 이어 가기</a></li>
+<li><a href="../chapter36/index.html#cell-graph-36-07">36장 · 고정한 문단 하나로 connect의 노드 연결 확인하기</a></li>
+<li><a href="../chapter37/index.html#cell-quote-id-goal">37장 · 인용문이 같아도 ID가 틀리면 어떻게 될까요?</a></li>
+<li><a href="../chapter38/index.html#cell-route-state-goal">38장 · 두 번째 검색에서 근거를 찾으면 어디로 갈까요?</a></li>
+<li><a href="../chapter39/index.html#cell-graph-39-05">39장 · st.session_state에 실행 결과를 저장하고 다시 표시하기</a></li>
+<li><a href="../chapter40/index.html#cell-ls40-12">40장 · examples로 평가 입력과 참고 답을 따로 읽기</a></li>
+<li><a href="../chapter41/index.html#cell-eligible-score-goal">41장 · 보류가 정답이면 무엇을 채점할까요?</a></li>
+<li><a href="../chapter42/index.html#cell-ls42-07">42장 · compare로 같은 최종 질문을 두 구현에 보내기</a></li>
+</ol></section>`);
+
+insertAfterMain(update, `<section class="edition-group" id="practice-inputs"><h2>11월 27일 · 전반부 실습 입력과 결과 개정</h2><p><a href="../pre-mid/reading-guide.html">1~42장 전체 개정 본문과 실습 열기</a>. 1~5장은 문법과 디자인 패턴 두 경로에서 고른 뒤, 각 장의 코드와 결과를 확인할 수 있습니다.</p></section>`);
