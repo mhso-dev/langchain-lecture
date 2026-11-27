@@ -240,3 +240,5 @@ insertAfterMain(update, `<section class="edition-group" id="whole-reading"><h2>1
 </ol></section>`);
 
 insertAfterMain(update, `<section class="edition-group" id="practice-inputs"><h2>11월 27일 · 전반부 실습 입력과 결과 개정</h2><p><a href="../pre-mid/reading-guide.html">1~42장 전체 개정 본문과 실습 열기</a>. 1~5장은 문법과 디자인 패턴 두 경로에서 고른 뒤, 각 장의 코드와 결과를 확인할 수 있습니다.</p></section>`);
+
+insertAfterMain(update, `<section class="edition-group" id="langgraph-intro"><h2>11월 27일 · 33장 LangGraph 입문</h2><p><a href="../chapter33/index.html#cell-graph-33-00">LangGraph의 역할과 상태·노드·간선</a>을 먼저 읽고, <a href="../chapter33/index.html#cell-graph-33-07">두 노드가 연결된 그림과 실행 코드</a>를 대조합니다.</p></section>`);
