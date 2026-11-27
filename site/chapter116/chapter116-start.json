@@ -1,0 +1,41 @@
+{
+  "readme": {
+    "question": "장비 A의 점검 전 확인 사항은?",
+    "answer": "점검 전 전원 표시등을 확인합니다.",
+    "source": [
+      "RULE-A / 1쪽 / 2.1절"
+    ],
+    "missing_requests": [
+      "team-99"
+    ],
+    "peer_run": "미확인"
+  },
+  "regression": {
+    "spelling": [
+      true,
+      true
+    ],
+    "local_candidate_ok": true
+  },
+  "deployment": {
+    "local_candidate_ok": true,
+    "port": "127.0.0.1:8104:8104",
+    "mount": "p1-json:/app/input106/project-ui/backend/runtime-data",
+    "digest": null,
+    "status": "미배포 예시"
+  },
+  "scenes": [
+    {
+      "question": "장비 A의 점검 전 확인 사항은?",
+      "expected": "점검 전 전원 표시등을 확인합니다.",
+      "locations": [
+        "RULE-A / 1쪽 / 2.1절"
+      ]
+    },
+    {
+      "question": "장비 A의 교체 일정은?",
+      "expected": "일정 근거를 확인할 수 없음",
+      "locations": []
+    }
+  ]
+}

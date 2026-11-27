@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 54 / SQL</p>
 <span class="sidebar-title">SQL 매개변수 바인딩과 트랜잭션</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-bound-values"><span>02</span>WHERE에 문서 ID와 소유자 조건 결합</a><a href="#nb-tx"><span>03</span>UPDATE와 rollback()</a><a href="#nb-psycopg"><span>04</span>선택 실습 · PostgreSQL 값 바인딩</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>수정 내용을 저장할지 되돌릴지 정하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">UPDATE와 commit으로 수정한 규정 넘기기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-bound-values"><span>02</span>WHERE에 문서 ID와 소유자 조건 결합</a><a href="#nb-tx"><span>03</span>UPDATE와 rollback()</a><a href="#nb-psycopg"><span>04</span>선택 실습 · PostgreSQL 값 바인딩</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>수정 내용을 저장할지 되돌릴지 정하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -30,6 +30,20 @@
 <a class="download" href="chapter54.ipynb" download="chapter54.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>54장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">수정 내용을 저장할지 되돌릴지 정하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>53장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-53.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-53.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 7일입니다.&#x27;}}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 7일입니다.</pre></section>
+
 <section id="nb-bound-values" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>WHERE에 문서 ID와 소유자 조건 결합</h2>
 </div>
@@ -232,6 +246,26 @@ print(changed.rowcount, get_title(&quot;alice&quot;, edit_id))</code></pre></fig
 <li><a href="https://www.psycopg.org/psycopg3/docs/basic/params.html" target="_blank" rel="noopener noreferrer">Psycopg 값 바인딩 ↗</a><span></span></li>
 <li><a href="https://www.psycopg.org/psycopg3/docs/basic/transactions.html" target="_blank" rel="noopener noreferrer">Psycopg 연결·트랜잭션 ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>UPDATE와 commit으로 수정한 규정 넘기기</h3><p>53장에서 조회한 한 행을 작은 테이블에 다시 넣습니다. 어떤 소유자의 문서가 바뀌었는지 확인하고 새 문장을 저장하세요.</p><pre tabindex="0"><code>import sqlite3
+record = previous[&quot;record&quot;].copy()
+desk_db = sqlite3.connect(&quot;:memory:&quot;)
+desk_db.execute(&quot;CREATE TABLE rules (owner TEXT, id TEXT, text TEXT, PRIMARY KEY(owner,id))&quot;)
+desk_db.execute(&quot;INSERT INTO rules VALUES (:owner, :id, :text)&quot;, record)
+revised_days = 14
+update_sql = &quot;UPDATE rules SET text=? WHERE owner=? AND id=?&quot;
+new_text = f&quot;대출 기간은 {revised_days}일입니다.&quot;
+with desk_db:
+    count = desk_db.execute(update_sql, (new_text, record[&quot;owner&quot;], record[&quot;id&quot;])).rowcount
+record[&quot;text&quot;] = desk_db.execute(&quot;SELECT text FROM rules WHERE owner=? AND id=?&quot;,
+                                 (record[&quot;owner&quot;], record[&quot;id&quot;])).fetchone()[0]
+print(count, record[&quot;text&quot;])</code></pre><p>실행 결과</p><pre>1 대출 기간은 14일입니다.</pre><p>기본 자료에서는 1건이 바뀌고 14일이 나옵니다. with 블록이 정상적으로 끝나야 수정이 커밋됩니다. revised_days를 21로 바꾸고 이 셀부터 다시 실행하면 다음 수업도 21일로 시작합니다.</p><h3>직접 확인하기</h3><p>같은 UPDATE에 소유자만 bob으로 바꿔 넣으세요. 갱신한 행 수가 0일 때 기존 문장이 남는지 확인합니다.</p><pre tabindex="0"><code># bob의 수정 요청을 실행하고 rowcount와 record의 문장을 출력하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>with desk_db:
+    changed = desk_db.execute(update_sql, (&quot;미확인&quot;, &quot;bob&quot;, record[&quot;id&quot;])).rowcount
+stored = desk_db.execute(&quot;SELECT text FROM rules WHERE owner=? AND id=?&quot;,
+                         (record[&quot;owner&quot;], record[&quot;id&quot;])).fetchone()[0]
+print(changed, stored)</code></pre><p>기본 자료로 실행한 결과</p><pre><code>0 대출 기간은 14일입니다.</code></pre><p>bob의 행이 없어 UPDATE가 0건을 돌려줍니다. record의 소유자와 번호로 다시 읽으면 실제로 유지된 문장을 확인할 수 있습니다.</p></details><h3>55장에 넘길 결과 저장하기</h3><p>55장에서 이 행을 도구의 실제 반환값으로 씁니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record}
+target = work / &quot;agent-54.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-54.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

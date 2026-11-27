@@ -1,0 +1,54 @@
+{
+  "quality_reference": {
+    "case": "Q01",
+    "question": "장비 A의 점검 전 확인 사항은?",
+    "id": "RULE-A",
+    "fact": "점검 전 전원 표시등을 확인합니다."
+  },
+  "dataset": [
+    {
+      "id": "Q01",
+      "question": "장비 A의 점검 전 확인 사항은?",
+      "expected_status": "answered",
+      "expected_doc": "RULE-A",
+      "expected_page": 1
+    },
+    {
+      "id": "Q02",
+      "question": "점검 전 확인 사항은?",
+      "expected_status": "need_clarification",
+      "expected_doc": null,
+      "expected_page": null
+    },
+    {
+      "id": "Q03",
+      "question": "장비 A를 다음 달에 교체하나요?",
+      "expected_status": "no_evidence",
+      "expected_doc": null,
+      "expected_page": null
+    }
+  ],
+  "documents": {
+    "RULE-A": {
+      "id": "RULE-A",
+      "text": "점검 전 전원 표시등을 확인합니다.",
+      "source": "가상 장비실 규정 A",
+      "page": 1,
+      "section": "2.1",
+      "revised_on": "2026-11-01",
+      "version": "rules-v1",
+      "equipment": "장비 A"
+    },
+    "RULE-B": {
+      "id": "RULE-B",
+      "text": "점검 전 고정 장치를 확인합니다.",
+      "source": "가상 장비실 규정 B",
+      "page": 2,
+      "section": "2.2",
+      "revised_on": "2026-11-01",
+      "version": "rules-v1",
+      "equipment": "장비 B"
+    }
+  },
+  "split": "개발용"
+}

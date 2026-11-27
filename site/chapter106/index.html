@@ -21,6 +21,21 @@
 <p class="hero-description">같은 요청의 UI·처리 함수·저장 기록을 요청 ID로 연결합니다. 마지막으로 성공한 단계와 재조회 결과에서 결함을 인계할 위치를 찾습니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>같은 요청 ID로 처리 내역 재조회하기</h3><p>105장의 저장 미확인 안내에서 사용한 요청 ID를 같은 소유자와 세션으로 찾습니다. 여기서는 임시 SQLite에 한 행만 넣어 조회가 성공하는 경우와 값이 없는 경우를 구분합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter105.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter106-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter105.json&quot;
+sample_file = here / &quot;chapter106-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;storage&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter106-start.json
+미확인</pre></div><p>두 번째 줄은 읽은 파일의 <code>storage</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -72,26 +87,12 @@ committed True</pre></div>
 <!-- lesson-visual visual-missing -->
 <span class="lesson-anchor" id="visual-missing"></span>
 <!-- /lesson-visual visual-missing -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 실패 단계 인계</h3>
-<div class="cell-before"><p>로컬 실패 기록에서 운영 담당자에게 전달할 필드를 골라 보세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">incident = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'save_failure'</span>,
- <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
- <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
-           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
-           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
-<span class="tok-comment"># 어떤 요청의 어느 단계에서 실패했는지 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 6줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">incident = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'save_failure'</span>,
- <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
- <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
-           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
-           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
-print(incident[<span class="tok-string">"request_id"</span>], incident[<span class="tok-string">"error"</span>][<span class="tok-string">"stage"</span>], incident[<span class="tok-string">"error"</span>][<span class="tok-string">"code"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">save_failure session_commit storage_failure</pre></div>
-<div class="cell-after"><p>save_failure, session_commit, storage_failure로 이어집니다. 원문 질문이나 민감한 본문 전체를 복사하지 않아도 해당 저장 시도를 좁혀 갈 수 있습니다. 두 True는 제공된 trace를 만든 실행에서 기록한 값입니다. 팀 DB에서도 확인했다면 새 연결에서 같은 ID로 읽은 값과 조회 시각을 별도로 남기세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 실패 단계 인계</h3><figure class="code-block"><pre tabindex="0"><code>incident = {&#x27;request_id&#x27;: &#x27;save_failure&#x27;,
+ &#x27;storage_status&#x27;: &#x27;failed&#x27;,
+ &#x27;error&#x27;: {&#x27;code&#x27;: &#x27;storage_failure&#x27;,
+           &#x27;stage&#x27;: &#x27;session_commit&#x27;,
+           &#x27;error_type&#x27;: &#x27;OSError&#x27;}}
+print(incident[&quot;request_id&quot;], incident[&quot;error&quot;][&quot;stage&quot;], incident[&quot;error&quot;][&quot;code&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">save_failure session_commit storage_failure</pre></div><div class="cell-after"><p>save_failure, session_commit, storage_failure로 이어집니다. 원문 질문이나 민감한 본문 전체를 복사하지 않아도 해당 저장 시도를 좁혀 갈 수 있습니다. 두 True는 제공된 trace를 만든 실행에서 기록한 값입니다. 팀 DB에서도 확인했다면 새 연결에서 같은 ID로 읽은 값과 조회 시각을 별도로 남기세요.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>사용자 화면과 저장 로그를 함께 읽기</h3><p><mark>같은 요청 ID의 이벤트를 이어야 한 요청에서 어디까지 성공했는지 알 수 있습니다.</mark> 화면에 답이 표시됐더라도 session_commit 단계가 실패할 수 있습니다. 마지막 성공과 첫 실패를 기록해 답변 생성과 저장 중 어느 담당자가 확인할지 정합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter102/index.html">102장 POST 요청·응답 계약과 저장 상태</a></p></aside>
 
 </section>
@@ -119,6 +120,26 @@ None</pre></div><div class="cell-after"><p>새 연결로도 Q01의 행을 찾고
 <section class="project-example"><h3>같은 세션에서 두 요청 구분하기</h3><p>팀 서비스에서는 세션 ID 하나에 질문이 여러 개 들어옵니다. 두 번째 요청의 ID를 별도로 만들어 같은 세션에 쓰고, 첫 요청을 다시 읽었을 때 처음 근거가 남는지 확인합니다. 내 화면에서 직전 답 한 개만 재사용해도 되는 상황과 구분하세요.</p></section>
 <aside class="lesson-note"><p><mark>재현하려는 요청에는 소유자, 세션, 요청 식별자가 모두 필요합니다.</mark> 예시 Q01에서 session_id와 request_id가 같은 문자열이어도 실제 서비스에서 둘을 같은 키로 써야 한다는 뜻은 아닙니다.</p></aside><p>107장 관찰표에는 어느 입력에서 나온 어떤 카드였는지 요청 ID와 함께 남깁니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 같은 요청 ID로 처리 내역 재조회하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;CREATE TABLE events(owner, session, request_id)&quot;)
+    key = (&quot;팀A&quot;, &quot;main&quot;, incoming[&quot;reply&quot;][&quot;request_id&quot;])
+    db.execute(&quot;INSERT INTO events VALUES(?, ?, ?)&quot;, key)
+    sql = &quot;SELECT count(*) FROM events WHERE owner=? AND session=? AND request_id=?&quot;
+    saved = db.execute(sql, key).fetchone()[0]
+    other = db.execute(sql, (&quot;팀B&quot;, *key[1:])).fetchone()[0]
+new = {**incoming, &quot;lookup&quot;: {&quot;request&quot;: key[2], &quot;own_rows&quot;: saved, &quot;other_rows&quot;: other,
+                             &quot;storage&quot;: &quot;수업 임시 SQLite&quot;}}
+print(saved, other)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1 0</pre></div><p>실습 DB에서 찾은 한 행으로 수업 서버의 저장 여부까지 알 수는 없습니다. 운영 담당에게 넘길 때는 추적할 ID와 확인한 저장소를 함께 남깁니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter106.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter106.json</pre></div><p>107장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

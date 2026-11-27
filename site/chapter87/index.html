@@ -21,6 +21,21 @@
 <p class="hero-description">장비명이 있는 질문, 장비명이 빠진 질문, 공개 규정으로 답할 수 없는 질문을 나눕니다. 세 시나리오의 기대 응답을 구현 전에 기록합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>첫 질문에 되묻기와 범위 밖 질문 더하기</h3><p>86장의 첫 시연 질문을 정상 대화로 삼습니다. 장비를 명시하지 않은 질문과 규정에 없는 교체 일정도 함께 놓고, 서로 다른 세 종료 상태를 정합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter86.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter87-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter86.json&quot;
+sample_file = here / &quot;chapter87-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;scenario&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter87-start.json
+{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;, &#x27;source_id&#x27;: &#x27;RULE-A&#x27;, &#x27;expected&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;}</pre></div><p>두 번째 줄은 읽은 파일의 <code>scenario</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -79,49 +94,24 @@ nq["Q02"]
 </div>
 </header>
 <p>시나리오 카드 예시　상황 SC-03 / 담당자가 다음 달 교체 여부를 물음 / 사용할 수 있는 자료는 점검 규정 / 화면은 일정을 확인할 수 없다고 안내 / 사용자는 실제 담당자에게 확인. 아직 사용자를 만나지 않았다면 ‘가상 과업’으로 표시하고, 실제 관찰을 받았을 때 어느 부분이 바뀌었는지 적습니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 공개 범위의 시나리오</h3>
-<div class="cell-before"><p>Q05·Q07은 같은 문장을 묻습니다. 공개 그룹에서 볼 수 있는 쪽의 기대 상태만 읽어 보세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 17줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">group_cases = [{<span class="tok-string">'question_id'</span>: <span class="tok-string">'Q05'</span>,
-  <span class="tok-string">'scenario_id'</span>: <span class="tok-string">'SC-04'</span>,
-  <span class="tok-string">'question'</span>: <span class="tok-string">'관리자 전용 절차를 알려 주세요.'</span>,
-  <span class="tok-string">'trusted_fixture_group'</span>: <span class="tok-string">'public'</span>,
-  <span class="tok-string">'expected_status'</span>: <span class="tok-string">'no_evidence'</span>,
-  <span class="tok-string">'expected_source_ids'</span>: [],
-  <span class="tok-string">'criterion_ids'</span>: [<span class="tok-string">'CR-05'</span>],
-  <span class="tok-string">'expected_answer_facts'</span>: [<span class="tok-string">'확인할 수 없'</span>]},
- {<span class="tok-string">'question_id'</span>: <span class="tok-string">'Q07'</span>,
-  <span class="tok-string">'scenario_id'</span>: <span class="tok-string">'SC-04'</span>,
-  <span class="tok-string">'question'</span>: <span class="tok-string">'관리자 전용 절차를 알려 주세요.'</span>,
-  <span class="tok-string">'trusted_fixture_group'</span>: <span class="tok-string">'admin'</span>,
-  <span class="tok-string">'expected_status'</span>: <span class="tok-string">'answered'</span>,
-  <span class="tok-string">'expected_source_ids'</span>: [<span class="tok-string">'RULE-ADMIN'</span>],
-  <span class="tok-string">'criterion_ids'</span>: [<span class="tok-string">'CR-05'</span>, <span class="tok-string">'CR-02'</span>],
-  <span class="tok-string">'expected_answer_facts'</span>: [<span class="tok-string">'선임 검토 기록'</span>]}]
-<span class="tok-comment"># public인 행에서 expected_status를 꺼내세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 18줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">group_cases = [{<span class="tok-string">'question_id'</span>: <span class="tok-string">'Q05'</span>,
-  <span class="tok-string">'scenario_id'</span>: <span class="tok-string">'SC-04'</span>,
-  <span class="tok-string">'question'</span>: <span class="tok-string">'관리자 전용 절차를 알려 주세요.'</span>,
-  <span class="tok-string">'trusted_fixture_group'</span>: <span class="tok-string">'public'</span>,
-  <span class="tok-string">'expected_status'</span>: <span class="tok-string">'no_evidence'</span>,
-  <span class="tok-string">'expected_source_ids'</span>: [],
-  <span class="tok-string">'criterion_ids'</span>: [<span class="tok-string">'CR-05'</span>],
-  <span class="tok-string">'expected_answer_facts'</span>: [<span class="tok-string">'확인할 수 없'</span>]},
- {<span class="tok-string">'question_id'</span>: <span class="tok-string">'Q07'</span>,
-  <span class="tok-string">'scenario_id'</span>: <span class="tok-string">'SC-04'</span>,
-  <span class="tok-string">'question'</span>: <span class="tok-string">'관리자 전용 절차를 알려 주세요.'</span>,
-  <span class="tok-string">'trusted_fixture_group'</span>: <span class="tok-string">'admin'</span>,
-  <span class="tok-string">'expected_status'</span>: <span class="tok-string">'answered'</span>,
-  <span class="tok-string">'expected_source_ids'</span>: [<span class="tok-string">'RULE-ADMIN'</span>],
-  <span class="tok-string">'criterion_ids'</span>: [<span class="tok-string">'CR-05'</span>, <span class="tok-string">'CR-02'</span>],
-  <span class="tok-string">'expected_answer_facts'</span>: [<span class="tok-string">'선임 검토 기록'</span>]}]
-public_case = next(row <span class="tok-keyword">for</span> row <span class="tok-keyword">in</span> group_cases <span class="tok-keyword">if</span> row[<span class="tok-string">"trusted_fixture_group"</span>] == <span class="tok-string">"public"</span>)
-print(public_case[<span class="tok-string">"expected_status"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence</pre></div>
-<div class="cell-after"><p>no_evidence가 나옵니다. 질문 문구가 같아도 읽을 수 있는 문서가 다르므로 시나리오 카드에 그룹 조건도 기재합니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 공개 범위의 시나리오</h3><figure class="code-block"><pre tabindex="0"><code>group_cases = [{&#x27;question_id&#x27;: &#x27;Q05&#x27;,
+  &#x27;scenario_id&#x27;: &#x27;SC-04&#x27;,
+  &#x27;question&#x27;: &#x27;관리자 전용 절차를 알려 주세요.&#x27;,
+  &#x27;trusted_fixture_group&#x27;: &#x27;public&#x27;,
+  &#x27;expected_status&#x27;: &#x27;no_evidence&#x27;,
+  &#x27;expected_source_ids&#x27;: [],
+  &#x27;criterion_ids&#x27;: [&#x27;CR-05&#x27;],
+  &#x27;expected_answer_facts&#x27;: [&#x27;확인할 수 없&#x27;]},
+ {&#x27;question_id&#x27;: &#x27;Q07&#x27;,
+  &#x27;scenario_id&#x27;: &#x27;SC-04&#x27;,
+  &#x27;question&#x27;: &#x27;관리자 전용 절차를 알려 주세요.&#x27;,
+  &#x27;trusted_fixture_group&#x27;: &#x27;admin&#x27;,
+  &#x27;expected_status&#x27;: &#x27;answered&#x27;,
+  &#x27;expected_source_ids&#x27;: [&#x27;RULE-ADMIN&#x27;],
+  &#x27;criterion_ids&#x27;: [&#x27;CR-05&#x27;, &#x27;CR-02&#x27;],
+  &#x27;expected_answer_facts&#x27;: [&#x27;선임 검토 기록&#x27;]}]
+public_case = next(row for row in group_cases if row[&quot;trusted_fixture_group&quot;] == &quot;public&quot;)
+print(public_case[&quot;expected_status&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">no_evidence</pre></div><div class="cell-after"><p>no_evidence가 나옵니다. 질문 문구가 같아도 읽을 수 있는 문서가 다르므로 시나리오 카드에 그룹 조건도 기재합니다.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>한 문장이 빠진 대화로 되묻기와 종료를 구분하기</h2></div></header>
 <p>86장의 시연 의뢰에 동료가 “어떤 장비를 말하는지 안 적고 물어보면요?”라고 되묻습니다. 이때 추가 질문 한 번으로 복구할 수 있는 상황과 새 자료를 구해야 하는 상황을 대화로 나눕니다.</p>
@@ -130,6 +120,23 @@ print(public_case[<span class="tok-string">"expected_status"</span>])</code></pr
 <section class="project-example"><h3>팀 자료에 붙여 보기</h3><p>문의 양식에서 자주 비는 필드 하나를 고르세요. 그 필드를 보충한 뒤 같은 자료로 답을 낼 수 있는 질문과, 필드를 다 줘도 답할 수 없는 질문을 각각 만들어 동료에게 읽어 줍니다.</p></section>
 <aside class="lesson-note"><p><mark>되물음이 해결할 수 있는 빈칸이 무엇인지 먼저 정합니다.</mark> Q02의 빈칸은 장비명입니다. Q03에는 장비 A가 이미 있고, 없는 것은 교체 일정을 확인할 문서입니다.</p></aside><p>88장에는 정상·되물음·자료 없음 각각의 기대 문구와 정상일 때 열려야 할 절을 넘깁니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 첫 질문에 되묻기와 범위 밖 질문 더하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>first_case = incoming[&quot;scenario&quot;]
+scenarios = [{&quot;id&quot;: first_case[&quot;id&quot;], &quot;q&quot;: first_case[&quot;question&quot;], &quot;status&quot;: &quot;answered&quot;,
+              &quot;source_id&quot;: first_case[&quot;source_id&quot;]},
+             {&quot;id&quot;: &quot;Q02&quot;, &quot;q&quot;: case[&quot;question&quot;], &quot;status&quot;: case[&quot;expected_status&quot;], &quot;source_id&quot;: None},
+             {&quot;id&quot;: &quot;Q03&quot;, &quot;q&quot;: &quot;장비 A를 다음 달에 교체하나요?&quot;, &quot;status&quot;: &quot;no_evidence&quot;, &quot;source_id&quot;: None}]
+new = {&quot;scenarios&quot;: scenarios, &quot;acceptance&quot;: incoming[&quot;acceptance&quot;]}
+print([(row[&quot;id&quot;], row[&quot;status&quot;]) for row in scenarios])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, &#x27;answered&#x27;), (&#x27;Q02&#x27;, &#x27;need_clarification&#x27;), (&#x27;Q03&#x27;, &#x27;no_evidence&#x27;)]</pre></div><p>장비가 빠진 행은 추가 질문, 일정 자료가 없는 행은 근거 없음으로 끝납니다. 팀 기획에서 장비명이 달라졌다면 첫 질문의 source_id와 원문도 함께 바꿉니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter87.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter87.json</pre></div><p>88장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

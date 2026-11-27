@@ -1,0 +1,14 @@
+{
+  "question": "A형 녹음기는 한 번에 몇 시간 녹음할 수 있나요?",
+  "model": "A형",
+  "edition": "수업 예시",
+  "reference": {
+    "source": "예시 설명서",
+    "page": 2,
+    "reference_answer": "예시 원문 확인",
+    "action": "출처 확인"
+  },
+  "candidate_k": 3,
+  "decision": "검토 대기",
+  "evidence_mode": "기록 읽기"
+}

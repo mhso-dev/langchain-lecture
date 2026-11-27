@@ -1,0 +1,50 @@
+{
+  "quality_reference": {
+    "case": "Q01",
+    "question": "장비 A의 점검 전 확인 사항은?",
+    "id": "RULE-A",
+    "fact": "점검 전 전원 표시등을 확인합니다."
+  },
+  "request_id": "team-99",
+  "question": "장비 A의 점검 전 확인 사항은?",
+  "attempts": 2,
+  "outcome": "RULE-A",
+  "prepared": [
+    {
+      "id": "RULE-A",
+      "text": "점검 전 전원 표시등을 확인합니다.",
+      "source": "가상 장비실 규정 A",
+      "page": 1,
+      "section": "2.1",
+      "revised_on": "2026-11-01",
+      "version": "rules-v1",
+      "equipment": "장비 A",
+      "search_text": "점검 전 전원 표시등을 확인합니다.",
+      "sha256": "8336aeeaa41f3a89559a2364950ef88f7d6128639fb3dad46974a7be38ac2f42"
+    },
+    {
+      "id": "RULE-B",
+      "text": "점검 전 고정 장치를 확인합니다.",
+      "source": "가상 장비실 규정 B",
+      "page": 2,
+      "section": "2.2",
+      "revised_on": "2026-11-01",
+      "version": "rules-v1",
+      "equipment": "장비 B",
+      "search_text": "점검 전 고정 장치를 확인합니다.",
+      "sha256": "ef43ae01bf97e39f0a5258f3b40551dbc103e24d26976a7cba3581ddcdb5fdcc"
+    }
+  ],
+  "checks": [
+    {
+      "input": "장비A의 점검 전 확인 사항은?",
+      "expected": "장비 A의 점검 전 확인 사항은?",
+      "actual": "장비 A의 점검 전 확인 사항은?"
+    },
+    {
+      "input": "장비AB의 점검",
+      "expected": "장비AB의 점검",
+      "actual": "장비AB의 점검"
+    }
+  ]
+}

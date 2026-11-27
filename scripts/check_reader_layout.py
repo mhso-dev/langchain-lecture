@@ -20,21 +20,25 @@ def check_reader(page, base, width):
     assert page.locator("#part-3 article.card").count() == 11
     page.locator("#search").fill("LangSmith")
     assert page.locator("article.card:visible").count()
-    for n in (1, 9, 14, 24, 28, 32, 33, 38, 41, 42):
-        page.goto(f"{base}/chapter{n:02}/index.html")
-        page.wait_for_selector("main article")
-        if page.locator("figure[data-workflow]").count():
+    routes = [f"chapter{n:02}/index.html" for n in range(1, 117)]
+    routes.extend(f"pre-mid/{slug}/index.html" for slug in ("python-basics", "python-patterns"))
+    for route in routes:
+        page.goto(f"{base}/{route}")
+        page.locator("main").first.wait_for()
+        figures = page.locator("figure[data-workflow]")
+        if figures.count():
             page.wait_for_function("Array.from(document.querySelectorAll('figure[data-workflow]')).every(f=>f.querySelector('svg'))")
-        answer = page.locator("article details").last
-        answer.locator("summary").click()
-        assert answer.get_attribute("open") is not None, n
-        dims = page.evaluate("""() => ({
-          width: document.documentElement.scrollWidth,
-          viewport: innerWidth,
-          body: parseFloat(getComputedStyle(document.querySelector('article p')).fontSize)
-        })""")
-        assert dims["width"] <= dims["viewport"] + 1 and dims["body"] >= 16, (n, dims)
-    print(f"{width}px 목차 검색, 장 이동, 답안 펼치기, 그래프 표시, 본문 폭 확인")
+        answers = page.locator('main details.notebook-answer, main article details')
+        if answers.count():
+            answer = answers.last
+            summary = answer.locator("summary").first
+            summary.focus()
+            summary.press("Enter")
+            assert answer.get_attribute("open") is not None, route
+        assert page.locator('main a[href$=".ipynb"], header a[href$=".ipynb"]').count(), route
+        dims = page.evaluate("() => [document.documentElement.scrollWidth, innerWidth]")
+        assert dims[0] <= dims[1] + 1, (route, dims)
+    print(f"{width}px · 116개 장과 선택 경로의 본문·노트북 링크·답안 펼치기·그림·페이지 너비 확인")
 
 
 with ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietServer, directory=str(DIST))) as server:

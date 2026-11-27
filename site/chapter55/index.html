@@ -13,14 +13,14 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 55 / AGENT FOUNDATION</p>
 <span class="sidebar-title">create_agent의 도구 등록과 메시지 왕복</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>create_agent가 검색 도구를 다시 부르는 순간</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">@tool과 invoke로 SQL 원문을 도구 결과로 돌려주기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-tool-request"><span>02</span>도구 요청과 결과 메시지 연결</a><a href="#nb-trace"><span>03</span>대화 기록에서 도구 호출 수 집계</a><a href="#nb-invoke"><span>04</span>create_agent에 두 도구 등록</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>create_agent가 검색 도구를 다시 부르는 순간</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 55 / AGENT FOUNDATION</span><span class="template-badge">학생용 교재</span></div>
 <h1>create_agent의 도구 등록과 메시지 왕복</h1>
-<p class="hero-description">도구는 모델이 요청할 수 있도록 이름과 입력 항목을 알려 준 함수입니다. 모델이 요청을 만들면 실행기가 함수를 호출하고 결과를 모델에게 돌려줍니다. 이 장에서 create_agent로 이 과정을 처음 연결합니다. 호출을 지정한 테스트 모델로 주말 운영 시간과 대출 기간을 요청하고, 도구 메시지와 반환값을 대조합니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 055 · 8H</span><span>17일 도구 루프 · 34일 검색 Tool/Graph · 52일 회고(없으면 제공 사례로 보충)</span></div>
+<p class="hero-description">운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
+<div class="hero-meta"><span>입문</span><span>교육일 055 · 8H</span><span>54장 사용자별 SQL 조회와 52장 팀 서비스</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -29,6 +29,20 @@
 <a class="download" href="chapter55.ipynb" download="chapter55.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>55장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">create_agent가 검색 도구를 다시 부르는 순간</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>54장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-54.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-54.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;}}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-tool-request" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>도구 요청과 결과 메시지 연결</h2>
 </div>
@@ -47,7 +61,7 @@ request = {<span class="tok-string">"name"</span>: <span class="tok-string">"get
 
 result = get_hours(**request[<span class="tok-string">"args"</span>])
 print(result[<span class="tok-string">"hours"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">10:00~16:00</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">10:00~16:00</pre></div>
 <div class="cell-after"><p>10:00~16:00은 함수가 시간표에서 꺼낸 값입니다. 요청의 c1은 시간이 들어갈 칸이 아니라 도구 결과를 원래 요청과 짝지을 식별자입니다.</p>
 </div>
 </article>
@@ -60,7 +74,7 @@ print(result[<span class="tok-string">"hours"</span>])</code></pre></figure>
 <span class="tok-comment"># c2의 대출 기간을 출력하세요.</span></code></pre></figure>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">replies = {<span class="tok-string">'c1'</span>: {<span class="tok-string">'hours'</span>: <span class="tok-string">'10:00~16:00'</span>}, <span class="tok-string">'c2'</span>: {<span class="tok-string">'loan_days'</span>: <span class="tok-number">14</span>}}
 print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'loan_days'</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">14</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">14</pre></div>
 <div class="cell-after"><p>14는 대출 규정 도구가 반환한 일수입니다. 반환 순서가 달라져도 c2로 찾아낼 수 있습니다.</p>
 </div>
 </details>
@@ -81,11 +95,11 @@ print(replies[<span class="tok-string">'c2'</span>][<span class="tok-string">'lo
 <span class="lesson-anchor" id="detail-trace"></span>
 <!-- /lesson-visual detail-trace -->
 <article class="notebook-cell" data-cell="3" data-task="0"><h3 id="example-cell-3">셀 03 · 도구 메시지 수 집계</h3>
-<div class="cell-before"><p>대본에서 나온 메시지 종류입니다. tool이 등장한 수와 ai가 등장한 수를 따로 확인하세요.</p>
+<div class="cell-before"><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
 </div>
 <figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-4">roles = [<span class="tok-string">"human"</span>, <span class="tok-string">"ai"</span>, <span class="tok-string">"tool"</span>, <span class="tok-string">"ai"</span>, <span class="tok-string">"tool"</span>, <span class="tok-string">"ai"</span>]
 print(roles.count(<span class="tok-string">"tool"</span>), roles.count(<span class="tok-string">"ai"</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">2 3</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">2 3</pre></div>
 <div class="cell-after"><p>첫 값 2는 도구 결과 메시지 수이고 둘째 값 3은 AI 메시지 수입니다. 이 목록에서는 각 AI 요청이 도구 하나만 부릅니다. 한 AI 메시지가 여러 도구를 요청할 수도 있으므로 메시지 수를 항상 호출 수로 간주할 수는 없습니다.</p>
 </div>
 </article>
@@ -100,7 +114,7 @@ returned = {<span class="tok-string">'c1'</span>}
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-6" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-6">requested = [<span class="tok-string">'c1'</span>, <span class="tok-string">'c2'</span>]
 returned = {<span class="tok-string">'c1'</span>}
 print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-keyword">in</span> requested <span class="tok-keyword">if</span> call_id <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> returned])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">['c2']</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">['c2']</pre></div>
 <div class="cell-after"><p>['c2']가 남습니다. 이 상태에서 대출 기간을 확정하면 도구가 주지 않은 답을 쓰게 됩니다.</p>
 </div>
 </details>
@@ -113,27 +127,23 @@ print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-key
 <h2>create_agent에 두 도구 등록</h2>
 </div>
 </header>
-<p>이 절은 LangChain 1.x 수업 커널에서 실행합니다. 대본 모델은 질문의 의미를 판단하는 대신 정해 둔 순서대로 요청을 냅니다. 도구를 찾아 실행하고 그 결과를 메시지에 붙이는 부분은 실제 LangChain이 맡습니다.</p>
-<article class="notebook-cell" data-cell="5" data-task="0"><h3>셀 05 · 도구 요청을 내는 테스트 모델</h3>
+<p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
+<article class="notebook-cell" data-cell="5" data-task="0"><h3>실제 모델의 입력과 결과 확인</h3>
 <div class="cell-before"><p>도구 요청을 담은 메시지를 만들 도우미입니다. 다음 셀에서 쓰므로 출력은 없습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7"><span class="tok-keyword">from</span> langchain.agents <span class="tok-keyword">import</span> create_agent
-<span class="tok-keyword">from</span> langchain_core.language_models.fake_chat_models <span class="tok-keyword">import</span> FakeMessagesListChatModel
-<span class="tok-keyword">from</span> langchain_core.messages <span class="tok-keyword">import</span> AIMessage
-<span class="tok-keyword">from</span> langsmith <span class="tok-keyword">import</span> tracing_context
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-7" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-7">from langchain.agents import create_agent
+from langsmith import tracing_context
+import os
+from langchain_openai import ChatOpenAI
 
-<span class="tok-keyword">class</span> ClassroomModel(FakeMessagesListChatModel):
-    <span class="tok-keyword">def</span> bind_tools(self, tools, **kwargs):
-        <span class="tok-keyword">return</span> self  <span class="tok-comment"># 사용할 도구 요청은 아래 대본에 고정했습니다.</span>
-
-<span class="tok-keyword">def</span> ask_tool(name, args, call_id):
-    <span class="tok-keyword">return</span> AIMessage(content=<span class="tok-string">""</span>, tool_calls=[{<span class="tok-string">"name"</span>: name, <span class="tok-string">"args"</span>: args, <span class="tok-string">"id"</span>: call_id}])</code></pre></figure>
-<div class="cell-after"><p>bind_tools가 대본 모델을 그대로 돌려줍니다. 네트워크나 결제 계정 없이 같은 요청 순서를 반복해서 볼 수 있습니다.</p>
+# 수업 커널에 %pip install langchain-openai 를 실행하고 OPENAI_API_KEY를 설정하세요.
+model = ChatOpenAI(model=os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;, timeout=45, max_retries=1)</code></pre></figure>
+<div class="cell-after"><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
 </div>
 </article>
-<span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>모델과 도구 사이에서 누가 함수를 실행할까?</h3><p>36장에서는 검색 노드를 항상 실행했습니다. 여기서는 모델 메시지에 호출 요청이 있을 때 create_agent가 해당 도구를 실행합니다. 이번에는 마지막 AIMessage의 tool_calls가 비는 시점까지 따라가세요.</p></div>
+<span class="lesson-anchor" id="readings"></span><div class="lesson-explanation" id="reading-start"><h3>모델과 도구 사이에서 누가 함수를 실행할까?</h3><p>create_agent는 모델의 도구 요청을 등록된 함수로 보내고 반환값을 다음 모델 호출에 넘깁니다. 이번에는 마지막 AIMessage의 tool_calls가 비는 시점까지 따라가세요.</p></div>
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
-<span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>같은 도구 요청을 다시 관찰하기</h3><p>ClassroomModel이 내놓을 세 응답은 코드에 미리 적혀 있습니다. 그래서 노트북을 다시 실행해도 첫 도구는 get_hours, 두 번째 도구는 get_loan_rule입니다. 여기서 비교할 수 있는 것은 실행 순서입니다.</p></div>
+<span class="lesson-anchor" id="model"></span><div class="lesson-explanation" id="reading-model"><h3>같은 도구 요청을 다시 관찰하기</h3><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p></div>
 
 
 <p id="workflow-tool-id-roundtrip">두 도구는 차례로 실행됩니다. 결과를 모델에게 돌려줄 때까지 c1과 c2가 각각 어느 요청의 ID인지 따라가세요.</p>
@@ -141,42 +151,37 @@ print([call_id <span class="tok-keyword">for</span> call_id <span class="tok-key
 <div class="cell-before"><p>각 도구가 실제로 불렸을 때의 반환값을 호출 ID와 함께 읽습니다.</p>
 <p>셀 01의 같은 이름 함수는 사전을 반환해서 hours 키를 읽었습니다. 여기에서 새로 정의하는 도구는 문자열을 돌려줍니다. 메시지에서 호출 ID를 먼저 찾은 뒤 그 ID와 짝을 이룬 ToolMessage의 content를 읽으세요.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 19줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8"><span class="tok-keyword">def</span> get_hours(day: str) -&gt; str:
-    <span class="tok-string">"""가상 도서관의 운영 시간을 찾는다."""</span>
-    <span class="tok-keyword">return</span> hours[day]
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 19줄</span><button class="copy-button js-only" data-copy="code-8" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-8">def get_hours(day: str) -&gt; str:
+    &quot;&quot;&quot;운영 시간을 찾는다. day는 weekday 또는 weekend다.&quot;&quot;&quot;
+    return hours[day]
 
-<span class="tok-keyword">def</span> get_loan_rule() -&gt; str:
-    <span class="tok-string">"""가상 도서관 대출 일수를 찾는다."""</span>
-    <span class="tok-keyword">return</span> <span class="tok-string">"14"</span>
+def get_loan_rule() -&gt; str:
+    &quot;&quot;&quot;가상 도서관 대출 일수를 찾는다.&quot;&quot;&quot;
+    return previous[&quot;record&quot;][&quot;text&quot;].split(&quot;기간은 &quot;, 1)[1].split(&quot;일&quot;, 1)[0]
 
-model = ClassroomModel(responses=[
-    ask_tool(<span class="tok-string">"get_hours"</span>, {<span class="tok-string">"day"</span>: <span class="tok-string">"weekend"</span>}, <span class="tok-string">"c1"</span>),
-    ask_tool(<span class="tok-string">"get_loan_rule"</span>, {}, <span class="tok-string">"c2"</span>),
-    AIMessage(content=<span class="tok-string">"주말은 10:00~16:00이며 대출은 14일입니다."</span>),
-])
 agent = create_agent(model, tools=[get_hours, get_loan_rule])
-<span class="tok-keyword">with</span> tracing_context(enabled=<span class="tok-keyword">False</span>):
-    state = agent.invoke({<span class="tok-string">"messages"</span>: [(<span class="tok-string">"user"</span>, <span class="tok-string">"주말 시간과 대출 기간은?"</span>)]})
-<span class="tok-keyword">for</span> message <span class="tok-keyword">in</span> state[<span class="tok-string">"messages"</span>]:
-    <span class="tok-keyword">if</span> message.type == <span class="tok-string">"tool"</span>:
+with tracing_context(enabled=False):
+    state = agent.invoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;주말 시간과 대출 기간은?&quot;)]})
+for message in state[&quot;messages&quot;]:
+    if message.type == &quot;tool&quot;:
         print(message.tool_call_id, message.content)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">c1 10:00~16:00
-c2 14</pre></div>
-<div class="cell-after"><p>첫 도구 메시지에는 c1과 주말 시간, 두 번째 메시지에는 c2와 대출 기간 14가 들어 있습니다.</p>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">call_VUKgnnwUI03xAwCk1gAWEyy1 10:00~16:00
+call_bUVIHW5iC1D3tZ36EgWCj8Tp 14</pre></div>
+<div class="cell-after"><p>54장에서 보관한 원문의 일수를 도구 반환값으로 확인하세요. 기본 자료이면 14이고 21일로 고친 원문이면 21입니다. 운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
 </div>
-<p id="example-analysis">이 예제의 테스트 모델에는 도구 호출이 미리 지정돼 있습니다. 반환된 메시지에서 검증할 수 있는 것은 요청이 실제 함수 실행으로 이어졌는지, 그 결과가 같은 호출 ID로 돌아왔는지입니다. 새 질문에 어떤 도구를 고를지는 이 기록만으로 평가할 수 없습니다.</p>
+
 </article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>create_agent의 두 번의 도구 왕복</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 s["사용자 질문"] --> m["모델 호출"]
 m --> d{"이번 AIMessage의 tool_calls?"}
-d -->|c1| h["get_hours · 주말 시간"]
-d -->|c2| l["get_loan_rule · 대출 일수"]
+d -->|시간 조회 요청| h["get_hours · 주말 시간"]
+d -->|기간 조회 요청| l["get_loan_rule · 대출 일수"]
 h --> t["ToolMessage · 호출 ID와 결과"]
 l --> t
 t --> m
-d -->|없음| e["최종 AIMessage"]</script><figcaption>이 테스트 모델이 보낸 순서는 c1, c2, 최종 답변입니다. 함수가 반환한 값은 ToolMessage로 대화에 들어가고 모델이 그 대화를 다시 읽습니다.</figcaption></figure>
+d -->|없음| e["최종 AIMessage"]</script><figcaption> 실제 응답에서 도구 이름과 호출 ID를 확인합니다. 함수가 반환한 값은 ToolMessage로 대화에 들어가고 모델이 그 대화를 다시 읽습니다.</figcaption></figure>
 
-<aside id="guided-reading" class="lesson-note"><h3>도구 두 개를 등록하면 둘 다 실행될까요?</h3><p><mark>등록은 호출할 수 있는 함수 목록을 정하고 실제 순서는 모델 메시지의 tool_calls가 정합니다.</mark> 이 실습의 테스트 모델은 c1으로 주말 시간, c2로 대출 일수를 차례로 요청합니다. 마지막 AI 메시지에는 새 요청이 없어 반복이 끝납니다. 결과 메시지 두 개와 마지막 답변에 쓰인 값을 짝지어 보세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter36/index.html">36장 검색기를 그래프 노드에 연결하기</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>도구 두 개를 등록하면 둘 다 실행될까요?</h3><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter54/index.html">54장 SQL 조회와 소유자 조건</a></p></aside>
 
 <span class="lesson-anchor" id="roundtrip"></span><span id="reading-roundtrip"></span>
 <span class="lesson-anchor" id="exit"></span><span class="lesson-anchor" id="reading-exit"></span>
@@ -195,15 +200,15 @@ d -->|없음| e["최종 AIMessage"]</script><figcaption>이 테스트 모델이 
 </div>
 </header>
 <article class="notebook-cell" id="applied-practice" data-cell="7" data-task="1"><h3>과제 07 · 도구 결과에서 최종 답변에 쓰인 값 찾기</h3><div class="cell-before"><p>셀 06이 반환한 state에서 호출 ID가 c2인 도구 메시지를 찾아 도구 이름과 반환값을 출력하세요. 메시지의 위치는 실행 경로에 따라 달라질 수 있습니다.</p></div>
-<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># state["messages"]에서 tool_call_id가 "c2"인 도구 결과를 찾으세요.</code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">for message in state["messages"]:
-    if message.type == "tool" and message.tool_call_id == "c2":
+<figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter"># state[&quot;messages&quot;]에서 이름이 get_loan_rule인 도구 결과를 찾으세요.</code></pre></figure>
+<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-solution" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-solution">for message in state[&quot;messages&quot;]:
+    if message.type == &quot;tool&quot; and message.name == &quot;get_loan_rule&quot;:
         print(message.name, message.content)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">get_loan_rule 14</pre></div><div class="cell-after"><p>c2가 가리키는 도구는 대출 규정을 조회했습니다. 마지막 AI 메시지의 문장을 바꾸더라도 이 ToolMessage에는 실행한 함수의 반환값이 남습니다.</p></div></details></article>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">get_loan_rule 14</pre></div><div class="cell-after"><p>c2가 가리키는 도구는 대출 규정을 조회했습니다. 마지막 AI 메시지의 문장을 바꾸더라도 이 ToolMessage에는 실행한 함수의 반환값이 남습니다.</p></div></details></article>
 </section>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>create_agent가 검색 도구를 다시 부르는 순간</h2></div></header>
-<p>38장에서는 코드가 검색 여부를 정했습니다. 여기서는 모델이 반환한 도구 요청을 읽습니다. 여기서는 create_agent로 만든 실제 그래프에 한 번 질문한 뒤, 모델과 도구 중 어느 쪽이 다음 메시지를 붙였는지 노드 업데이트에서 찾습니다. ClassroomModel은 질문마다 선택 순서를 재현하는 수업용 대역입니다.</p>
+<p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p>
 <article class="notebook-cell" data-cell="9" data-task="0"><h3 id="workshop-step-1">셀 09 · 도구 호출 전후의 노드 업데이트 읽기</h3><div class="cell-before"><p>주말 시간과 대출 기간을 물었던 agent를 같은 입력으로 실행합니다. 최종 상태 한 덩어리를 읽었던 invoke와 달리 stream의 updates에서는 방금 일한 노드 이름이 보입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-9">복사</button></figcaption><pre tabindex="0"><code id="code-9">question_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;주말 시간과 대출 기간은?&quot;)]}
 with tracing_context(enabled=False):
     for update in agent.stream(question_input, stream_mode=&quot;updates&quot;):
@@ -215,39 +220,34 @@ with tracing_context(enabled=False):
                 print(node_name, message.tool_calls[0][&quot;name&quot;])
             else:
                 print(node_name, message.content)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">model get_hours
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">model get_hours
 tools c1 10:00~16:00
 model get_loan_rule
 tools c2 14
 model 주말은 10:00~16:00이며 대출은 14일입니다.</pre></div><div class="cell-after"><p>처음에는 model이 get_hours를 요청하고 tools가 c1의 운영 시간을 돌려줍니다. 이어 model이 get_loan_rule을 요청하고 tools가 c2에 14를 붙입니다. 마지막 model의 메시지에는 새 호출 요청이 없어 실행이 끝납니다. 도구 이름은 실행 전 요청에도 보이므로 실제 실행 여부는 tools의 결과로 확인하세요.</p></div>
 </article>
 <article class="notebook-cell" data-cell="10" data-task="1"><h3 id="workshop-step-2">과제 10 · 같은 도구를 등록하고도 검색 없이 끝내기</h3><div class="cell-before"><p>인사 한 건에는 도구 요청이 없는 AIMessage 한 건만 준비하세요. 기존 도구 두 개를 똑같이 등록한 새 에이전트를 만들고, 인사를 보낸 뒤 전체 메시지 타입과 마지막 문장을 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-10">복사</button></figcaption><pre tabindex="0"><code id="code-10">greeting_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;안녕하세요!&quot;)]}
-# 응답 한 건만 준비한 ClassroomModel과 기존 도구로 새 에이전트를 만드세요.</code></pre></figure>
+# 실제 모델과 기존 도구로 인사를 처리하고 도구 사용 여부를 확인하세요.</code></pre></figure>
 <details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">greeting_input = {&quot;messages&quot;: [(&quot;user&quot;, &quot;안녕하세요!&quot;)]}
-greeting_model = ClassroomModel(responses=[AIMessage(content=&quot;도서관 안내입니다.&quot;)])
-greeting_agent = create_agent(greeting_model, tools=[get_hours, get_loan_rule])
+greeting_greeting_agent = create_agent(model, tools=[get_hours, get_loan_rule])
 with tracing_context(enabled=False):
     history = greeting_agent.invoke(greeting_input)[&quot;messages&quot;]
 print([message.type for message in history])
-print(history[-1].content)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;human&#x27;, &#x27;ai&#x27;]
-도서관 안내입니다.</pre></div><p>human, ai 두 메시지가 남고 도서관 안내입니다가 출력됩니다. 같은 도구 두 개를 등록해도 모델 응답이 호출을 요청하지 않으면 tools 노드를 지나지 않습니다. 이 대역은 대본대로 답하므로 인사 의도를 얼마나 잘 분류하는지 평가하는 데는 쓸 수 없습니다.</p></details>
+print(history[-1].content)</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">[&#x27;human&#x27;, &#x27;ai&#x27;]
+도서관 안내입니다.</pre></div><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p></details>
 </article>
-<article class="notebook-cell" data-cell="11" data-task="0"><h3 id="workshop-step-3">셀 11 · 실제 모델의 선택을 확인하는 선택 셀</h3><div class="cell-before"><p>도구 호출을 지원하는 수업용 채팅 모델을 준비했다면 class_chat에 넣으세요. OpenAI 계정으로 실습할 때는 커널에 langchain-openai와 OPENAI_API_KEY를 설정하고 주석의 모델 이름을 수업에서 쓰는 값으로 바꾸세요. 기본 설정에서는 외부 요청을 보내지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-11">복사</button></figcaption><pre tabindex="0"><code id="code-11">class_chat = None
-# from langchain_openai import ChatOpenAI
-# class_chat = ChatOpenAI(model=&quot;수업에서 지정한 모델명&quot;)
-if class_chat is None:
-    print(&quot;채팅 모델을 연결하면 도구 선택을 확인할 수 있습니다.&quot;)
-else:
-    live_agent = create_agent(class_chat, tools=[get_hours, get_loan_rule])
-    with tracing_context(enabled=False):
-        run = live_agent.invoke(question_input)
-    for message in run[&quot;messages&quot;]:
-        if message.type == &quot;tool&quot;:
-            print(message.name, message.content)
-    print(run[&quot;messages&quot;][-1].content)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">채팅 모델을 연결하면 도구 선택을 확인할 수 있습니다.</pre></div><div class="cell-after"><p>실제 모델을 연결했다면 최종 문장에 운영 시간이 있는지와 get_hours의 결과가 기록에 있는지를 각각 확인하세요. 답에 시간이 있어도 도구를 거쳤다는 증거는 그 앞의 ToolMessage에서 찾아야 합니다.</p></div>
+<article class="notebook-cell" data-cell="11" data-task="0"><h3 id="workshop-step-3">셀 11 · 실제 모델의 선택을 확인하는 선택 셀</h3><div class="cell-before"><p>도구 호출을 지원하는 수업용 채팅 모델을 준비했다면 class_chat에 넣으세요. OpenAI 계정으로 실습할 때는 커널에 langchain-openai와 OPENAI_API_KEY를 설정하고 주석의 모델 이름을 수업에서 쓰는 값으로 바꾸세요. 기본 설정에서는 외부 요청을 보내지 않습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-11">복사</button></figcaption><pre tabindex="0"><code id="code-11">live_agent = create_agent(model, tools=[get_hours, get_loan_rule])
+with tracing_context(enabled=False):
+    run = live_agent.invoke(question_input)
+for message in run[&quot;messages&quot;]:
+    if message.type == &quot;tool&quot;:
+        print(message.name, message.content)
+print(run[&quot;messages&quot;][-1].content)</code></pre></figure>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">get_hours 10:00~16:00
+get_loan_rule 14
+주말 운영 시간은 10:00부터 16:00까지이며, 대출 기간은 14일입니다.</pre></div><div class="cell-after"><p>실제 모델을 연결했다면 최종 문장에 운영 시간이 있는지와 get_hours의 결과가 기록에 있는지를 각각 확인하세요. 답에 시간이 있어도 도구를 거쳤다는 증거는 그 앞의 ToolMessage에서 찾아야 합니다.</p></div>
 </article>
-<aside class="lesson-note"><p><mark>도구를 등록한 횟수와 도구를 실행한 횟수는 다른 값입니다.</mark> 대본을 바꿔도 등록 목록은 같습니다. 두 실습에서 달라진 것은 모델이 반환한 AIMessage의 tool_calls와 그 결과로 지나간 노드입니다.</p></aside><p>56장에서는 모델이 요청한 호출 중 정책이 실제 함수 실행을 허용한 건수를 따로 확인합니다.</p>
+<aside class="lesson-note"><p>운영 시간과 대출 기간을 함께 물은 뒤 AIMessage의 tool_calls와 ToolMessage를 ID로 짝지으세요. 호출 순서와 ID는 실행마다 달라질 수 있습니다.</p></aside><p>56장에서는 모델이 요청한 호출 중 정책이 실제 함수 실행을 허용한 건수를 따로 확인합니다.</p>
 </section>
 <section id="sources" class="lesson-section"><header class="section-heading"><span class="section-number">07</span><div><p class="eyebrow"></p>
 <h2>참고 자료와 실행 환경</h2>
@@ -256,6 +256,18 @@ else:
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank" rel="noopener noreferrer">LangChain 공식 Agents ↗</a><span></span></li>
 <li><a href="https://docs.langchain.com/oss/python/langchain/middleware/overview" target="_blank" rel="noopener noreferrer">공식 Middleware ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>@tool과 invoke로 SQL 원문을 도구 결과로 돌려주기</h3><p>54장에서 고친 규정을 서비스의 조회 도구로 등록합니다. 먼저 도구를 직접 한 번 호출해 비교값을 만드세요. 본문의 create_agent 예에서는 모델이 제안한 인자와 도구 메시지를 따로 확인합니다.</p><pre tabindex="0"><code>from langchain_core.tools import tool
+record = previous[&quot;record&quot;]
+@tool
+def lookup_loan(doc_id: str) -&gt; str:
+    &quot;&quot;&quot;문서 번호로 대출 규정 원문을 찾는다.&quot;&quot;&quot;
+    return record[&quot;text&quot;] if doc_id == record[&quot;id&quot;] else &quot;&quot;
+args = {&quot;doc_id&quot;: record[&quot;id&quot;]}
+result = lookup_loan.invoke(args)
+print(lookup_loan.name, result)</code></pre><p>실행 결과</p><pre>lookup_loan 대출 기간은 14일입니다.</pre><p>invoke가 doc_id를 함수에 전달합니다. 54장에서 21일을 남겼다면 이 결과에도 21일이 보입니다. 이 한 줄은 직접 호출한 결과입니다.</p><h3>직접 확인하기</h3><p>등록되지 않은 문서 번호를 넣은 요청 기록을 만들어 보세요. 원문이 없을 때 빈 문자열과 정상 응답을 구분할 수 있어야 합니다.</p><pre tabindex="0"><code># 다른 번호로 invoke를 호출하고 repr로 빈 문자열을 표시하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>print(repr(lookup_loan.invoke({&quot;doc_id&quot;: &quot;missing&quot;})))</code></pre><p>기본 자료로 실행한 결과</p><pre><code>&#x27;&#x27;</code></pre><p>도구 이름은 같아도 요청 인자가 다르면 반환값이 달라집니다. 다음 장에서는 정상 요청의 인자와 결과를 사용합니다.</p></details><h3>56장에 넘길 결과 저장하기</h3><p>56장은 같은 조회를 두 번 요청하는 상황에서 실행 한도를 적용합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record, &quot;call&quot;: {&quot;name&quot;: lookup_loan.name, &quot;args&quot;: args, &quot;result&quot;: result}}
+target = work / &quot;agent-55.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-55.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

@@ -164,7 +164,50 @@ print(denied.status_code, len(history["chat-a"]) - before)</code></pre></figure>
 <span class="lesson-anchor" id="workflow-stream-owner-denied"></span><span class="lesson-anchor" id="workflow-stream-owner-denied-caption"></span>
 
 </section>
-<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>잘려 도착한 NDJSON 응답에서 답변 복원하기</h2></div></header>
+<section id="service-practice" class="lesson-section"><h2>StreamingResponse의 완료 사건에서 답변 확정하기</h2><p>같은 대출 답을 한 줄씩 읽는 화면을 만듭니다. 마지막 줄이 오기 전에 연결이 끊어지면 화면에 보인 문장을 완료 기록에 넣지 않습니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/api.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
+import json
+here = Path.cwd()
+# 각 장 폴더에서 열거나 노트북을 한 폴더에 모아 두어도 같은 실습 폴더를 씁니다.
+course = here.parent if here.name in (&quot;daily&quot;,) or (here.name.startswith(&quot;chapter&quot;) and here.name[7:].isdigit()) else here
+lab = course / &quot;service-lab&quot;
+lab.mkdir(exist_ok=True)
+incoming = course / &quot;service-lab/api.json&quot;
+if incoming.exists():
+    previous = json.loads(incoming.read_text(encoding=&quot;utf-8&quot;))
+    print(&quot;내 실습 파일&quot;, incoming.name)
+else:
+    previous = {&#x27;request&#x27;: {&#x27;question&#x27;: &#x27;대출 기간은 며칠인가요?&#x27;, &#x27;k&#x27;: 2},
+     &#x27;response&#x27;: {&#x27;status&#x27;: &#x27;answered&#x27;,
+                  &#x27;answer&#x27;: &#x27;대출 기간은 14일입니다.&#x27;,
+                  &#x27;source_id&#x27;: &#x27;loan-01&#x27;}}
+    print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 api.json
+</pre><h2>StreamingResponse의 완료 사건에서 답변 확정하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>import json
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from fastapi.testclient import TestClient
+
+api_stream = FastAPI()
+@api_stream.get(&quot;/events&quot;)
+def send_events():
+    def lines():
+        yield json.dumps({&quot;type&quot;: &quot;start&quot;}) + &quot;\n&quot;
+        yield json.dumps({&quot;type&quot;: &quot;delta&quot;, &quot;text&quot;: previous[&quot;response&quot;][&quot;answer&quot;]}, ensure_ascii=False) + &quot;\n&quot;
+        yield json.dumps({&quot;type&quot;: &quot;done&quot;, &quot;source_id&quot;: previous[&quot;response&quot;][&quot;source_id&quot;]}) + &quot;\n&quot;
+    return StreamingResponse(lines(), media_type=&quot;application/x-ndjson&quot;)
+
+with TestClient(api_stream).stream(&quot;GET&quot;, &quot;/events&quot;) as response:
+    rows = [json.loads(line) for line in response.iter_lines()]
+result = {&quot;question&quot;: previous[&quot;request&quot;][&quot;question&quot;], &quot;events&quot;: rows}
+print([row[&quot;type&quot;] for row in rows])</code></pre><p>예시 실행 결과</p><pre>[&#x27;start&#x27;, &#x27;delta&#x27;, &#x27;done&#x27;]
+</pre><p>iter_lines가 한 줄을 돌려줄 때마다 json.loads가 그 줄의 JSON을 읽습니다. delta에는 앞 장의 답이, done에는 출처가 들어 있습니다. 여기서 나누어 보낸 단위는 앱이 정한 사건입니다.</p><p><strong>직접 해 보기</strong></p><p>마지막 줄을 뺀 사본과 원본에 같은 완료 조건을 적용하세요. 사본은 False, 원본은 True여야 합니다.</p><pre><code>def finished(events):
+    # 마지막 사건의 type을 검사하세요.
+    pass</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과</summary><pre><code>def finished(events):
+    return bool(events) and events[-1][&quot;type&quot;] == &quot;done&quot;
+print(finished(rows[:-1]), finished(rows))</code></pre><pre>False True</pre><p>마지막 사건이 done인 줄 묶음만 한 번의 응답으로 확정할 수 있습니다.</p></details><p><strong>70장에서 다시 열 파일</strong></p><p>방금 계산한 값을 service-lab/stream.json에 저장합니다. 같은 장에서 조건을 바꾸고 다시 저장하면 다음 장도 그 값을 읽습니다.</p><pre><code>destination = lab / &quot;stream.json&quot;
+destination.parent.mkdir(parents=True, exist_ok=True)
+destination.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(destination.name)</code></pre><p>예시 실행 결과</p><pre>stream.json
+</pre></section><section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>잘려 도착한 NDJSON 응답에서 답변 복원하기</h2></div></header>
 <p>서버가 start, delta, done을 차례로 보냈더라도 수신할 때 바이트가 잘리는 위치는 다를 수 있습니다. 이 실습은 httpx의 줄 단위 읽기를 통해 화면에 보여 줄 문자열과 저장할 시점을 정합니다.</p>
 <article class="notebook-cell" data-cell="8" data-task="0"><h3 id="workshop-step-1">셀 08 · 한 글자의 UTF-8 바이트 중간에서 자르기</h3><div class="cell-before"><p>먼저 셀 01을 실행해 줄바꿈을 붙이는 line 함수를 준비하세요. 서버 응답을 파일처럼 미리 준비합니다. 과의 첫 바이트 뒤에서 잘라 두 조각으로 보내고 iter_lines가 내주는 첫 delta를 읽습니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-8">복사</button></figcaption><pre tabindex="0"><code id="code-8">import httpx
 import json
@@ -219,7 +262,7 @@ print(render_events(chunks))</code></pre></figure><div class="output"><p class="
 <li><a href="https://www.psycopg.org/psycopg3/docs/basic/transactions.html" target="_blank" rel="noopener noreferrer">Psycopg 트랜잭션 ↗</a><span></span></li>
 <li><a href="https://www.psycopg.org/psycopg3/docs/basic/params.html" target="_blank" rel="noopener noreferrer">Psycopg 매개변수 바인딩 ↗</a><span></span></li>
 </ul></section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<footer class="lesson-footer"><a href="#service-practice">이어지는 서비스 실습</a> <span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>

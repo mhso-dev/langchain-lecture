@@ -21,6 +21,21 @@
 <p class="hero-description">팀의 ‘출처 표시’ 요구를 문서 ID·쪽·절·개정일·판본으로 구체화합니다. 다른 팀원이 같은 응답으로 구현 완료 여부를 판정할 수 있도록 수용 기준을 정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>시나리오를 검수할 출처 계약 정하기</h3><p>87장에서 답할 수 있다고 정한 행에는 표시할 원문 위치가 필요합니다. 보류하거나 되묻는 행에는 출처 카드가 비어 있어야 합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter87.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter88-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter87.json&quot;
+sample_file = here / &quot;chapter88-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;scenarios&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter88-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;q&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;, &#x27;status&#x27;: &#x27;answered&#x27;, &#x27;source_id&#x27;: &#x27;RULE-A&#x27;}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;q&#x27;: &#x27;점검 전 확인 사항은?&#x27;, &#x27;status&#x27;: &#x27;need_clarification&#x27;, &#x27;source_id&#x27;: None}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;q&#x27;: &#x27;장비 A를 다음 달에 교체하나요?&#x27;, &#x27;status&#x27;: &#x27;no_evidence&#x27;, &#x27;source_id&#x27;: None}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>scenarios</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -60,34 +75,16 @@ print([name <span class="tok-keyword">for</span> name <span class="tok-keyword">
 </div>
 </header>
 <p>일정 예시　월요일에는 기획·자료 담당자가 Q01의 문장과 원문 절을 합의합니다. 화요일에는 자료 담당자가 가상 규정 A·B에 개정일을 적고, 수요일에는 구현 담당자가 입력부터 화면까지 연결합니다. 목요일에는 서로 역할을 바꿔 답을 보고 원문을 찾습니다. 금요일에는 누락된 절 정보와 일정 질문 오답을 따로 기록해 우선순위를 정합니다. 실제 날짜와 담당자는 팀 일정에 맞게 바꾸세요.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 원문 기준 인수 검사</h3>
-<div class="cell-before"><p>규정 A에서 여섯 필드가 모두 있는지 확인하세요. 누락 목록이 비었을 때도 값 자체가 맞는지는 사람이 대조해야 합니다.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">received = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 A'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-<span class="tok-comment"># required를 이용해 빠진 필드를 찾아보세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">received = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-A'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 A'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 전원 표시등을 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 A'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">1</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.1'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-print([name <span class="tok-keyword">for</span> name <span class="tok-keyword">in</span> required <span class="tok-keyword">if</span> name <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> received])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]</pre></div>
-<div class="cell-after"><p>빈 목록이 나옵니다. 필드 이름은 모두 있지만 페이지나 절의 오타까지 찾아낸 것은 아닙니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 원문 기준 인수 검사</h3><figure class="code-block"><pre tabindex="0"><code>received = {&#x27;id&#x27;: &#x27;RULE-A&#x27;,
+ &#x27;equipment&#x27;: &#x27;장비 A&#x27;,
+ &#x27;text&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;,
+ &#x27;source&#x27;: &#x27;가상 장비실 규정 A&#x27;,
+ &#x27;page&#x27;: 1,
+ &#x27;section&#x27;: &#x27;2.1&#x27;,
+ &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+ &#x27;version&#x27;: &#x27;rules-v1&#x27;,
+ &#x27;groups&#x27;: [&#x27;public&#x27;, &#x27;admin&#x27;]}
+print([name for name in required if name not in received])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[]</pre></div><div class="cell-after"><p>빈 목록이 나옵니다. 필드 이름은 모두 있지만 페이지나 절의 오타까지 찾아낸 것은 아닙니다.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>누락된 출처와 잘못 채운 출처를 따로 검수하기</h2></div></header>
 <p>CR-02의 필드 여섯 개를 모두 채웠는데도 동료가 RULE-A의 근거를 찾지 못했습니다. 비어 있는 항목을 세는 검사와 값이 원문을 가리키는지 대조하는 검사를 따로 해 봅니다.</p>
@@ -104,6 +101,21 @@ print(&quot;카드와 원문&quot;, mismatches)</code></pre></figure>
 <section class="project-example"><h3>작업을 넘길 때 쓰는 인수 표</h3><div class="workshop-table" tabindex="0" role="region" aria-label="작업을 넘길 때 쓰는 인수 표"><table><caption>작업을 넘길 때 쓰는 인수 표</caption><thead><tr><th scope="col">맡은 일</th><th scope="col">넘길 것</th><th scope="col">상대방이 확인할 일</th></tr></thead><tbody><tr><td>자료 담당</td><td>rules-v1의 RULE-A 전체 레코드</td><td>원문에서 1쪽 2.1절을 찾는다.</td></tr><tr><td>화면 담당</td><td>Q01의 결과 카드</td><td>카드의 여섯 칸을 같은 판본의 원문 값과 대조한다.</td></tr></tbody></table></div><p>팀에 쪽수가 없는 웹 문서만 있다면 원문 링크와 절 제목처럼 실제로 찾아갈 수 있는 필드로 양쪽 계약을 함께 바꾸세요.</p></section>
 <aside class="lesson-note"><p><mark>필드가 있다는 사실과 그 값이 맞다는 사실은 서로 다른 검사를 거칩니다.</mark> card의 page는 정수이며 비어 있지도 않습니다. 원문의 페이지와 대조할 때 비로소 잘못된 위치가 드러납니다.</p></aside><p>89장의 자료 목록에 검수 기준이 된 판본과 원문 위치를 적어 두세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 시나리오를 검수할 출처 계약 정하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>fields = list(required)
+contracts = [{**row, &quot;expected_fields&quot;: fields if row[&quot;source_id&quot;] else []}
+             for row in incoming[&quot;scenarios&quot;]]
+new = {&quot;contracts&quot;: contracts, &quot;fields&quot;: fields}
+print([(row[&quot;id&quot;], len(row[&quot;expected_fields&quot;])) for row in contracts])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, 6), (&#x27;Q02&#x27;, 0), (&#x27;Q03&#x27;, 0)]</pre></div><p>expected_fields가 빈 행에는 이전 답의 카드도 남기지 않습니다. 인정할 위치가 쪽과 절인지, 주소와 문단인지 팀 원문 형식에 맞춰 fields를 고를 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter88.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter88.json</pre></div><p>89장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

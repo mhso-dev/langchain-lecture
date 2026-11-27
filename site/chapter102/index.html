@@ -21,6 +21,21 @@
 <p class="hero-description">조회 함수를 호출하는 API 요청에 세션 ID와 요청 ID를 포함합니다. 반환된 업무 상태, 저장 결과, 출처가 화면에서 사용하는 필드와 일치하는지 대조합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>팀의 조회 기록을 응답 계약에 붙이기</h3><p>101장의 선택을 응답 본문으로 옮깁니다. HTTP 전송 상태와 질문 자체의 처리 결과를 따로 적어, 전송이 성공했어도 답할 근거가 없는 경우를 표현합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter101.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter102-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter101.json&quot;
+sample_file = here / &quot;chapter102-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;adapter&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter102-start.json
+공개 문서 조회</pre></div><p>두 번째 줄은 읽은 파일의 <code>adapter</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -106,57 +121,28 @@ nhttp["전송 기록"]
 <!-- lesson-visual visual-storage -->
 <span class="lesson-anchor" id="visual-storage"></span>
 <!-- /lesson-visual visual-storage -->
-<article class="notebook-cell" data-cell="3" data-task="1"><h3 id="example-cell-3">과제 03 · 선택 연습 · 답변 생성 후 저장 실패</h3>
-<div class="cell-before"><p>기록에서 계산한 답과 저장 오류명을 꺼내어 담당자가 확인할 두 줄을 만드세요.</p>
-<p>failed는 로컬에 제공한 503 기록에서 python_response에 해당하는 부분만 꺼낸 값입니다. 여기서는 result부터 읽습니다. 앞의 기록 전체에서 시작할 때만 body와 python_response를 먼저 거치세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-3">failed = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'unsaved'</span>,
- <span class="tok-string">'session_id'</span>: <span class="tok-string">'lesson'</span>,
- <span class="tok-string">'boundary_status'</span>: <span class="tok-string">'storage_error'</span>,
- <span class="tok-string">'workflow_status'</span>: <span class="tok-string">'completed'</span>,
- <span class="tok-string">'result'</span>: {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
-            <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-            <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-                         <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-                         <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-                         <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-                         <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-                         <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-                         <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
-            <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
-            <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>},
- <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
- <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
-           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
-           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
-<span class="tok-comment"># result 안의 답과 error 안의 code를 각각 출력하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 21줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">failed = {<span class="tok-string">'request_id'</span>: <span class="tok-string">'unsaved'</span>,
- <span class="tok-string">'session_id'</span>: <span class="tok-string">'lesson'</span>,
- <span class="tok-string">'boundary_status'</span>: <span class="tok-string">'storage_error'</span>,
- <span class="tok-string">'workflow_status'</span>: <span class="tok-string">'completed'</span>,
- <span class="tok-string">'result'</span>: {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
-            <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-            <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-                         <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-                         <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-                         <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-                         <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-                         <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-                         <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
-            <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
-            <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>},
- <span class="tok-string">'storage_status'</span>: <span class="tok-string">'failed'</span>,
- <span class="tok-string">'error'</span>: {<span class="tok-string">'code'</span>: <span class="tok-string">'storage_failure'</span>,
-           <span class="tok-string">'stage'</span>: <span class="tok-string">'session_commit'</span>,
-           <span class="tok-string">'error_type'</span>: <span class="tok-string">'OSError'</span>}}
-print(failed[<span class="tok-string">"result"</span>][<span class="tok-string">"answer"</span>])
-print(failed[<span class="tok-string">"error"</span>][<span class="tok-string">"code"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
-storage_failure</pre></div>
-<div class="cell-after"><p>고정 장치 답과 storage_failure가 함께 남습니다. 503이라고 해서 계산 결과까지 사라진 것은 아닙니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-3">팀 참고 예시 · 답변 생성 후 저장 실패</h3><figure class="code-block"><pre tabindex="0"><code>failed = {&#x27;request_id&#x27;: &#x27;unsaved&#x27;,
+ &#x27;session_id&#x27;: &#x27;lesson&#x27;,
+ &#x27;boundary_status&#x27;: &#x27;storage_error&#x27;,
+ &#x27;workflow_status&#x27;: &#x27;completed&#x27;,
+ &#x27;result&#x27;: {&#x27;status&#x27;: &#x27;answered&#x27;,
+            &#x27;answer&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+            &#x27;sources&#x27;: [{&#x27;id&#x27;: &#x27;RULE-B&#x27;,
+                         &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+                         &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;,
+                         &#x27;page&#x27;: 2,
+                         &#x27;section&#x27;: &#x27;2.2&#x27;,
+                         &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+                         &#x27;version&#x27;: &#x27;rules-v1&#x27;}],
+            &#x27;mode&#x27;: &#x27;local_rule_fixture&#x27;,
+            &#x27;model_calls&#x27;: 0},
+ &#x27;storage_status&#x27;: &#x27;failed&#x27;,
+ &#x27;error&#x27;: {&#x27;code&#x27;: &#x27;storage_failure&#x27;,
+           &#x27;stage&#x27;: &#x27;session_commit&#x27;,
+           &#x27;error_type&#x27;: &#x27;OSError&#x27;}}
+print(failed[&quot;result&quot;][&quot;answer&quot;])
+print(failed[&quot;error&quot;][&quot;code&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다.
+storage_failure</pre></div><div class="cell-after"><p>고정 장치 답과 storage_failure가 함께 남습니다. 503이라고 해서 계산 결과까지 사라진 것은 아닙니다.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>API 소비자가 전송 실패와 답변 유보를 다르게 처리하는지 시험하기</h2></div></header>
 <p>준비 계약에서 Q01 응답은 HTTP 200이고 저장까지 마쳤습니다. 반면 unsaved는 계산한 답이 있어도 저장 오류로 503을 보냅니다. 화면 개발자가 이 두 응답을 실제 HTTP 클라이언트로 읽는 작은 계약 시험을 만듭니다.</p>
@@ -182,6 +168,21 @@ failed session_commit</pre></div><div class="cell-after"><p>503 본문에 RULE-B
 <section class="project-example"><h3>팀 API의 계약 시험으로 바꾸기</h3><p>정상 request로 같은 클라이언트를 호출해 200과 committed를 확인하세요. 다음에는 fixture_response 대신 팀의 로컬 서버에 같은 요청을 보내기 전에 세션과 접근 주체를 준비합니다. 위 시험은 URL에 인터넷 요청을 보내지 않습니다.</p></section>
 <aside class="lesson-note"><p><mark>서비스 응답의 실패 단계는 HTTP 번호와 업무 본문을 함께 읽어야 알 수 있습니다.</mark> 저장 실패 뒤 검색을 반복해도 저장소의 문제가 해결되지는 않습니다. 오류의 stage가 session_commit인지부터 확인합니다.</p></aside><p>103장에서는 같은 오류를 동료가 화면에서 읽은 후 어떤 다음 행동을 고르는지 관찰합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 팀의 조회 기록을 응답 계약에 붙이기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>matched = [doc for doc in incoming[&quot;prepared&quot;] if doc[&quot;id&quot;] == incoming[&quot;outcome&quot;]]
+reply = {&quot;request_id&quot;: incoming[&quot;request_id&quot;], &quot;status&quot;: &quot;answered&quot; if matched else &quot;no_evidence&quot;,
+         &quot;sources&quot;: matched, &quot;question&quot;: incoming[&quot;question&quot;]}
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;reply&quot;: reply, &quot;adapter&quot;: incoming[&quot;adapter&quot;], &quot;checks&quot;: incoming[&quot;checks&quot;]}
+print(reply[&quot;request_id&quot;], reply[&quot;status&quot;], [doc[&quot;id&quot;] for doc in matched])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-99 answered [&#x27;RULE-A&#x27;]</pre></div><p>공개 조회에 근거가 있으면 ID를 반환합니다. 같은 계약에서 자료가 없는 경우를 시험할 때에는 빈 sources와 업무 상태를 함께 읽으세요.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter102.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter102.json</pre></div><p>103장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

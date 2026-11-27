@@ -10,3 +10,10 @@
   .course-nav~.sidebar{top:calc(var(--chapter-navigation-height) + var(--top))}
   .course-nav~main :where([id]){scroll-margin-top:calc(var(--chapter-navigation-height) + var(--top) + 1rem)}
 }
+
+/* Long notebook code scrolls within its block on narrow screens. */
+main pre { max-width: 100%; overflow-x: auto; }
+main p { overflow-wrap: anywhere; }
+#service-practice pre { padding: 0.9rem 1rem; background: #f1f5f4; color: #152c26; border-radius: 0.4rem; }
+#service-practice details { margin: 1rem 0; }
+#service-practice summary { cursor: pointer; }

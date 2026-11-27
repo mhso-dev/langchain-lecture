@@ -21,6 +21,21 @@
 <p class="hero-description">사용자가 도움 없이 규정의 절을 찾는 과업을 정의하고, 시작·성공·중도 포기를 구분해 집계합니다. 노트북의 가상 관찰값은 집계 방식 검증에 사용합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>요청 찾기를 베타 과업으로 정의하기</h3><p>106장의 요청 ID를 찾는 상황을 관찰 과업으로 사용합니다. 누가 어떤 근거까지 찾아야 한 번의 성공인지 정하고 예시 자료만 집계합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter106.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter107-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter106.json&quot;
+sample_file = here / &quot;chapter107-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;lookup&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter107-start.json
+{&#x27;request&#x27;: &#x27;team-99&#x27;, &#x27;own_rows&#x27;: 1, &#x27;other_rows&#x27;: 0, &#x27;storage&#x27;: &#x27;수업 임시 SQLite&#x27;}</pre></div><p>두 번째 줄은 읽은 파일의 <code>lookup</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -68,18 +83,8 @@ print(f"가상 과업 {len(started)}회 시작, {successes}회 성공")</code></
 </div>
 </header>
 <p>완성 메모 예시　관찰 “답을 읽고 개정일과 문서의 관계를 물었다.” 해석 “날짜가 어느 원문에 속하는지 연결하기 어려웠을 수 있다.” 변경 “각 출처 카드 안에 해당 개정일을 배치한다.” 다음 관찰에서는 같은 과업을 주고 개정일과 절을 도움 없이 함께 찾는지 봅니다. 변경 후 기록을 얻기 전에는 개선 여부를 비워 둡니다.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 미관찰 값의 표시</h3>
-<div class="cell-before"><p>팀의 실제 관찰표에 아직 참가자가 없다면 성공률을 무엇으로 남길지 작성하세요. 숫자 0은 실제 실패와 혼동될 수 있습니다.</p>
-<p>나-02에서 ‘개정일은 무엇인가요?’라는 질문을 들은 것은 관찰 기록입니다. 이 질문만으로 2.1절 찾기에 성공했다고 판정할 수는 없습니다. 절을 찾았는지 따로 관찰하지 않았다면 과업 결과에 ‘미기록’이라고 적으세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># 기록 상태와 집계할 수 없는 이유를 한 줄로 적으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">actual = {<span class="tok-string">"started"</span>: <span class="tok-number">0</span>, <span class="tok-string">"success_rate"</span>: <span class="tok-keyword">None</span>, <span class="tok-string">"note"</span>: <span class="tok-string">"실제 과업 관찰 전"</span>}
-print(actual[<span class="tok-string">"success_rate"</span>], actual[<span class="tok-string">"note"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None 실제 과업 관찰 전</pre></div>
-<div class="cell-after"><p>None은 아직 집계할 관찰이 없다는 뜻입니다. 참가자가 과업을 시작한 뒤 모두 실패한 경우의 0%와 구분됩니다. 나-02의 발화로 확정할 수 있는 것은 개정일을 물었다는 사실입니다. 2.1절을 스스로 찾았는지 관찰하지 못했다면 그 칸에는 ‘미기록’이라고 적으세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 미관찰 값의 표시</h3><figure class="code-block"><pre tabindex="0"><code>actual = {&quot;started&quot;: 0, &quot;success_rate&quot;: None, &quot;note&quot;: &quot;실제 과업 관찰 전&quot;}
+print(actual[&quot;success_rate&quot;], actual[&quot;note&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">None 실제 과업 관찰 전</pre></div><div class="cell-after"><p>None은 아직 집계할 관찰이 없다는 뜻입니다. 참가자가 과업을 시작한 뒤 모두 실패한 경우의 0%와 구분됩니다. 나-02의 발화로 확정할 수 있는 것은 개정일을 물었다는 사실입니다. 2.1절을 스스로 찾았는지 관찰하지 못했다면 그 칸에는 ‘미기록’이라고 적으세요.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>도움을 받아 찾은 절을 베타 성공으로 셀지 합의하기</h2></div></header>
 <p>기존 합성 기록에서 세 번 시작해 한 번 성공했습니다. 채점자가 힌트를 받고 찾은 경우도 성공으로 세면 같은 관찰에서 수치가 달라집니다. 새 관찰을 받기 전에 분모와 성공 조건을 고정합니다.</p>
@@ -87,6 +92,22 @@ print(actual[<span class="tok-string">"success_rate"</span>], actual[<span class
 <section class="project-example"><h3>두 기록자가 한 장면을 채점하는 연습</h3><p>“진행자가 카드 아래를 가리킨 뒤 참가자가 2.2절을 읽었다”를 각자 분류해 보세요. 둘 모두 도움 후 완료로 기록했다면 다음 참가자에게 같은 절 위치를 미리 말하지 않고 진행합니다. 서로 다르게 기록했다면 통계를 내기 전에 그 한 장면의 기준을 합의하세요.</p></section>
 <aside class="lesson-note"><p><mark>과업의 성공 조건을 바꾸면 이전 회차의 성공률과 직접 비교하기 어렵습니다.</mark> 누군가는 ‘찾았다’를, 다른 사람은 ‘도움 없이 찾았다’를 세면 참가자의 행동이 그대로여도 수치가 달라집니다.</p></aside><p>108장에는 실제 사용자 행동과 별개로, 어떤 질문을 이미 개발 중 보았는지 표시한 평가 문항표를 넘깁니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 요청 찾기를 베타 과업으로 정의하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>attempted = [row for row in attempts if row[&quot;outcome&quot;] != &quot;not_started&quot;]
+beta = {&quot;task&quot;: incoming[&quot;lookup&quot;][&quot;request&quot;] + &quot; 처리 내역 찾기&quot;,
+        &quot;started&quot;: len(attempted), &quot;success&quot;: sum(r[&quot;outcome&quot;] == &quot;success&quot; for r in attempted),
+        &quot;evidence&quot;: &quot;가상 관찰&quot;}
+new = {**incoming, &quot;beta&quot;: beta}
+print(beta)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{&#x27;task&#x27;: &#x27;team-99 처리 내역 찾기&#x27;, &#x27;started&#x27;: 3, &#x27;success&#x27;: 1, &#x27;evidence&#x27;: &#x27;가상 관찰&#x27;}</pre></div><p>시작하지 않은 가상 참가자는 분모에서 빠집니다. 실제 참여자 수와 성공률을 주장하려면 별도의 관찰 기록이 필요합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter107.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter107.json</pre></div><p>108장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

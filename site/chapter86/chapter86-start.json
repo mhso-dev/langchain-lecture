@@ -1,0 +1,7 @@
+{
+  "decision": "보류",
+  "case_id": "S01",
+  "expected": "근거 없는 질문에 답변 보류",
+  "observed": "답변은 보류했으나 이전 출처가 남음",
+  "release_version": "sample-v1"
+}

@@ -2,6 +2,26 @@
 
 각 장에서 읽은 한 사례에 새로운 조건을 붙여 보세요. 먼저 자료만 읽어 기대 결과를 정한 뒤 노트북에서 실행하고, 서로 달랐던 지점과 원문 쪽을 적습니다. 답을 잘 썼는지 판단할 때 실제 응답을 그대로 옮기세요.
 
+## 내 녹음기 챗봇으로 이어서 실습하기
+
+1~42장 실습 묶음을 한 폴더에 풀고 같은 폴더에서 노트북을 여세요. 14장은 13장의 공지와 질문을 읽습니다. 15장부터는 [A형 1.0판](../sources/recorder-a-1.0.pdf), [A형 1.1판](../sources/recorder-a-1.1.pdf), [B형 1.0판](../sources/recorder-b-1.0.pdf)으로 설명서 검색을 만듭니다. 학생 파일은 묶음 맨 위의 `my-course/rag/`에 남습니다. 다음 장에서 “이전 장 완성 예시 사용”이 출력되면 제공된 복귀 자료를 읽었다는 뜻입니다.
+
+| 장 | 새 커널에서 열 파일 | 남길 파일과 확인할 값 |
+|---|---|---|
+| 14 | 13장의 `my-course/chat-case.json` | `prompt.json`의 질문과 공지 |
+| 15 | `prompt.json`과 설명서 세 권 | `pages.json`의 파일명, 1부터 세는 쪽수, 원문 |
+| 16 | `pages.json` | `chunks.json`의 조각 수와 원본 쪽수 |
+| 17 | `chunks.json` | `chroma/`의 색인과 `search.json`의 D04 후보 순위 |
+| 18 | 색인 폴더, `search.json`, `chunks.json` | `reopened.json`의 같은 질문과 다시 얻은 순위 |
+| 19 | `reopened.json`, `prompt.json` | `baseline-answer.json`의 답과 실제 전달한 근거 |
+| 20 | `baseline-answer.json` | `dated.json`에 남은 A형의 유효 판본 |
+| 21 | `dated.json` | `grounded.json`의 답과 빈 후보에서 멈추는 조건 |
+| 22 | `grounded.json` | `scored.json`의 상위 두 후보에 대한 Recall과 첫 정답 역순위 |
+| 23 | `scored.json`, 13장의 `my-course/chat/` | `ranked.json`과 `chat/notice_search_app.py`의 두 검색 모드 |
+| 24 | `ranked.json`과 23장 앱 | `chat/notice_rag_app.py`와 `rag-handoff.json`의 질문·실제 근거·색인 이름 |
+
+D04는 2027년 4월 15일 A형의 파일 분할 간격과 녹음 지속 여부를 함께 묻습니다. 22장에서는 A형 1.1판 PDF 2쪽을 열어 정답 쪽수를 확인하세요. 23장은 그 쪽수가 재정렬에 미치는 영향을 피하도록 검색과 재정렬이 끝난 뒤에만 채점합니다. 36장은 내 청크로 검색 노드를 만들고 40장은 같은 질문의 답과 근거를 비교합니다.
+
 ## 14장 · 빈 값과 빠진 키 확인하기
 
 노트북에서 만든 두 칸짜리 번역 양식에 `{"word": "빵", "language": "프랑스어"}`를 넣으세요. 완성된 메시지를 출력한 뒤 `language`의 값만 빈 문자열로 바꿔 다시 실행하세요. 마지막으로 `language` 키 자체를 빼 보세요. 어느 입력에서 메시지가 만들어지고 어느 입력에서 오류가 생기나요?

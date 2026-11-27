@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 58 / SKILLS</p>
 <span class="sidebar-title">Progressive Disclosure와 Skill 로더</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-catalog"><span>02</span>목록 메타데이터와 본문 지연 로딩</a><a href="#nb-wrong-choice"><span>03</span>Skill 선택 오류와 참조 파일 접근</a><a href="#nb-loader"><span>04</span>load_skill()의 선택 결과와 읽은 분량</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>요청 한 건에서 실제로 연 Skill 파일 기록하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">Progressive Disclosure로 선택한 지침 한 개만 읽기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-catalog"><span>02</span>목록 메타데이터와 본문 지연 로딩</a><a href="#nb-wrong-choice"><span>03</span>Skill 선택 오류와 참조 파일 접근</a><a href="#nb-loader"><span>04</span>load_skill()의 선택 결과와 읽은 분량</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>요청 한 건에서 실제로 연 Skill 파일 기록하기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -29,6 +29,23 @@
 <a class="download" href="chapter58.ipynb" download="chapter58.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>58장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">요청 한 건에서 실제로 연 Skill 파일 기록하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>57장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-57.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-57.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;skill&#x27;: {&#x27;name&#x27;: &#x27;loan-answer&#x27;,
+               &#x27;description&#x27;: &#x27;대출 기간 문의&#x27;,
+               &#x27;body&#x27;: &#x27;lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요.&#x27;}}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-catalog" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>목록 메타데이터와 본문 지연 로딩</h2>
 </div>
@@ -197,6 +214,21 @@ print(select_evidence_steps(True))</code></pre></figure><div class="output"><p c
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/multi-agent/skills" target="_blank" rel="noopener noreferrer">공식 Skills 설명 ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>Progressive Disclosure로 선택한 지침 한 개만 읽기</h3><p>질문이 들어올 때 모든 지침을 보내면 어떤 규칙이 적용됐는지 찾기 어렵습니다. 57장에서 만든 목록의 설명을 보고 대출 문의에만 SKILL.md 본문을 엽니다.</p><pre tabindex="0"><code>skill = previous[&quot;skill&quot;]
+skill_file = work / &quot;skills&quot; / skill[&quot;name&quot;] / &quot;SKILL.md&quot;
+def select_instruction(question):
+    keyword = skill[&quot;description&quot;].split()[0]
+    if keyword not in question:
+        return None
+    if skill_file.exists():
+        return skill_file.read_text(encoding=&quot;utf-8&quot;).split(&quot;---&quot;, 2)[-1].strip()
+    return skill[&quot;body&quot;]
+question = &quot;대출 기간은 며칠인가요?&quot;
+instruction = select_instruction(question)
+print(instruction)</code></pre><p>실행 결과</p><pre>lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요.</pre><p>대출 질문에서만 파일을 엽니다. 57장의 파일이 없으면 저장된 본문으로 복원합니다. 이 예는 description 첫 단어를 선택 기준으로 씁니다. 설명을 ‘연장 기간 문의’로 바꾸면 ‘연장’이 든 질문이 지침을 엽니다.</p><h3>직접 확인하기</h3><p>운영 시간 질문을 넣고 선택 결과를 출력하세요. 문서를 열지 않은 경우를 구분합니다.</p><pre tabindex="0"><code># 대출과 무관한 질문을 넣어 반환값을 확인하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>print(select_instruction(&quot;언제 문을 여나요?&quot;))</code></pre><p>기본 자료로 실행한 결과</p><pre><code>None</code></pre><p>조건을 통과하지 못한 질문은 read_text 줄에 도달하지 않습니다.</p></details><h3>59장에 넘길 결과 저장하기</h3><p>59장에서는 이 질문과 조회 원문을 첫 대화로 기록합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: previous[&quot;record&quot;], &quot;question&quot;: question, &quot;instruction&quot;: instruction}
+target = work / &quot;agent-58.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-58.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

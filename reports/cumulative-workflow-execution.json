@@ -1,0 +1,1387 @@
+{
+ "chapters": [
+  {
+   "chapter": 25,
+   "source": "site/chapter25/chapter25.ipynb",
+   "sha256": "2d72f3da53f3dbd2409ccb34e73f36b6d9d4c9138ecca10fe1099e3ac2a1d98f",
+   "student": {
+    "chapter": 25,
+    "mode": "student",
+    "ok": [
+     "cum-input",
+     "w25-04",
+     "w25-05",
+     "w25-19",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w25-08",
+     "w25-11",
+     "w25-13",
+     "w25-16",
+     "cum-result"
+    ],
+    "out": {
+     "w25-05": "# 소리채집 동아리 녹음기 대여 안내\n\n수업용 가상 규정 · 2027년 5월판\n\n## R1 · 신청\n\n동아리 회원은 대여일 전날 오후 5시까지 게시판에 기종(A형 또는 B형)과 대여일을 적어 신청합니다. 대여 담당자가 게시글에 승인 댓글을 달면 예약이 끝납니다.\n\n## R2 · 수령\n\n승인받은 회원은 대여일 오후 3시부터 5시까지 가온관 1층 안내 데스크에서 기기를 받습니다. 학생증을 보여 주세요. 친구가 대신 받을 수 없습니다.\n\n## R3 · 반납\n\n수령 다음 날 오후 5시까지 가온관 1층 안내 데스크로 반납해 주세요. 기기와 함께 빌린 케이블도 가져오세요.\n\n## R4 · 연장\n\n대여 기간은 한 번, 하루까지 연장할 수 있습니다. 원래 반납일 정오까지 신청 게시글에 연장 요청 댓글을 남겨 주세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "cum-readback": "교재 복귀 예시 · chapter25.json\n문의와 초안이 모두 있나요? True"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 25,
+    "mode": "solutions",
+    "ok": [
+     "cum-input",
+     "w25-04",
+     "w25-05",
+     "w25-19",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w25-08",
+     "w25-11",
+     "w25-13",
+     "w25-16",
+     "w25-20",
+     "cum-result"
+    ],
+    "out": {
+     "w25-05": "# 소리채집 동아리 녹음기 대여 안내\n\n수업용 가상 규정 · 2027년 5월판\n\n## R1 · 신청\n\n동아리 회원은 대여일 전날 오후 5시까지 게시판에 기종(A형 또는 B형)과 대여일을 적어 신청합니다. 대여 담당자가 게시글에 승인 댓글을 달면 예약이 끝납니다.\n\n## R2 · 수령\n\n승인받은 회원은 대여일 오후 3시부터 5시까지 가온관 1층 안내 데스크에서 기기를 받습니다. 학생증을 보여 주세요. 친구가 대신 받을 수 없습니다.\n\n## R3 · 반납\n\n수령 다음 날 오후 5시까지 가온관 1층 안내 데스크로 반납해 주세요. 기기와 함께 빌린 케이블도 가져오세요.\n\n## R4 · 연장\n\n대여 기간은 한 번, 하루까지 연장할 수 있습니다. 원래 반납일 정오까지 신청 게시글에 연장 요청 댓글을 남겨 주세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "cum-readback": "교재 복귀 예시 · chapter25.json\n문의와 초안이 모두 있나요? True"
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0092,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 26,
+   "source": "site/chapter26/chapter26.ipynb",
+   "sha256": "9d9b0a3cef725f8035bacb8d35c8a12f887e8bf607b5329dbde953b2b30afba8",
+   "student": {
+    "chapter": 26,
+    "mode": "student",
+    "ok": [
+     "cum-input",
+     "w26-04",
+     "w26-05",
+     "w26-07",
+     "walk-8-2",
+     "label-bound-task",
+     "w26-11",
+     "w26-17",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w26-08",
+     "w26-12",
+     "w26-14",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter25.json\n이 초안이 규정에 맞는지 검토해 주세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "walk-8-2": "' Review\\n'\nTrue",
+     "cum-readback": "교재 복귀 예시 · chapter26.json\nreview 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다."
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 26,
+    "mode": "solutions",
+    "ok": [
+     "cum-input",
+     "w26-04",
+     "w26-05",
+     "w26-07",
+     "walk-8-2",
+     "label-bound-task",
+     "label-bound-key",
+     "w26-11",
+     "w26-17",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w26-08",
+     "w26-12",
+     "w26-14",
+     "w26-18",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter25.json\n이 초안이 규정에 맞는지 검토해 주세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "walk-8-2": "' Review\\n'\nTrue",
+     "label-bound-key": "review True\nreview please False",
+     "cum-readback": "교재 복귀 예시 · chapter26.json\nreview 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다."
+    },
+    "solutions": [
+     "label-bound-key"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0084,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 27,
+   "source": "site/chapter27/chapter27.ipynb",
+   "sha256": "8ab7b6e2e8b2a6f13587f496353e385eea74fec871be659986eb934eea2b2ebf",
+   "student": {
+    "chapter": 27,
+    "mode": "student",
+    "ok": [
+     "cum-input",
+     "w27-04",
+     "w27-05",
+     "w27-07",
+     "w27-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w27-08",
+     "w27-11",
+     "w27-13",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter26.json\nreview 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "w27-05": "6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "cum-readback": "교재 복귀 예시 · chapter27.json\n사실 담당자 승인 뒤 연장됩니다(R4).\n표현 댓글을 남길 게시글을 지정했습니다."
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 27,
+    "mode": "solutions",
+    "ok": [
+     "cum-input",
+     "w27-04",
+     "w27-05",
+     "w27-07",
+     "w27-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w27-08",
+     "w27-11",
+     "w27-13",
+     "w27-17",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter26.json\nreview 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "w27-05": "6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "cum-readback": "교재 복귀 예시 · chapter27.json\n사실 담당자 승인 뒤 연장됩니다(R4).\n표현 댓글을 남길 게시글을 지정했습니다."
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0339,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 28,
+   "source": "site/chapter28/chapter28.ipynb",
+   "sha256": "664d012ecf666fe2d036f55a4bdd43dcd7b1b55eb6254a90b7ee0d71937f4094",
+   "student": {
+    "chapter": 28,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "walk-9-3",
+     "w28-08",
+     "resume-failed-code",
+     "w28-15",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w28-04",
+     "w28-05",
+     "w28-06",
+     "w28-09",
+     "w28-12",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "[6, 2]",
+     "cum-input": "교재 복귀 예시 · chapter27.json\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.\n['사실', '표현']",
+     "walk-9-3": "확인\nValueError",
+     "resume-failed-code": "확인함 수정 필요",
+     "cum-readback": "교재 복귀 예시 · chapter28.json\n재시도 ['표현']\n받은 검토 ['사실', '표현']"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 28,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "walk-9-3",
+     "w28-08",
+     "resume-failed-code",
+     "w28-15",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w28-04",
+     "w28-05",
+     "w28-06",
+     "w28-09",
+     "w28-12",
+     "w28-16",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "[6, 2]",
+     "cum-input": "교재 복귀 예시 · chapter27.json\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.\n['사실', '표현']",
+     "walk-9-3": "확인\nValueError",
+     "resume-failed-code": "확인함 수정 필요",
+     "cum-readback": "교재 복귀 예시 · chapter28.json\n재시도 ['표현']\n받은 검토 ['사실', '표현']"
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 29,
+   "source": "site/chapter29/chapter29.ipynb",
+   "sha256": "e873167a8097ed2f5aece29522c5ac5b1435bf3a5bd64ce01b6eca23141ccdfd",
+   "student": {
+    "chapter": 29,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w29-05",
+     "w29-07",
+     "json-two-errors-code",
+     "walk-11-3",
+     "w29-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w29-04",
+     "w29-08",
+     "w29-11",
+     "w29-13",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "제목 번역",
+     "cum-input": "교재 복귀 예시 · chapter28.json\n6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.\n담당자 승인 뒤 연장됩니다(R4).",
+     "w29-05": "6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.",
+     "json-two-errors-code": "dict False",
+     "walk-11-3": "list\n어디로 반납하나요?",
+     "cum-readback": "교재 복귀 예시 · chapter29.json\n언제까지 어디에 → 언제 어디에 남기나요?\n댓글만 쓰면 → 댓글로 완료되나요?"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 29,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w29-05",
+     "w29-07",
+     "json-two-errors-code",
+     "walk-11-3",
+     "w29-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w29-04",
+     "w29-08",
+     "w29-11",
+     "w29-13",
+     "w29-17",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "제목 번역",
+     "cum-input": "교재 복귀 예시 · chapter28.json\n6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.\n담당자 승인 뒤 연장됩니다(R4).",
+     "w29-05": "6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.",
+     "json-two-errors-code": "dict False",
+     "walk-11-3": "list\n어디로 반납하나요?",
+     "cum-readback": "교재 복귀 예시 · chapter29.json\n언제까지 어디에 → 언제 어디에 남기나요?\n댓글만 쓰면 → 댓글로 완료되나요?"
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 30,
+   "source": "site/chapter30/chapter30.ipynb",
+   "sha256": "05156df9e8b181907f27e51bb1192a6bd9c3bbaa3a3a1ae1c5307dc8b063959f",
+   "student": {
+    "chapter": 30,
+    "mode": "student",
+    "ok": [
+     "cum-input",
+     "w30-03",
+     "w30-04",
+     "w30-07",
+     "w30-11",
+     "w30-18",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w30-08",
+     "w30-12",
+     "w30-15",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter29.json\n언제까지 어디에 → 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남깁니다.\n댓글만 쓰면 → 담당자의 승인 댓글을 확인해야 합니다.",
+     "w30-04": "6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.",
+     "cum-readback": "교재 복귀 예시 · chapter30.json\n수정\n시각과 승인 조건을 보충하세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다."
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 30,
+    "mode": "solutions",
+    "ok": [
+     "cum-input",
+     "w30-03",
+     "w30-04",
+     "w30-07",
+     "w30-11",
+     "w30-18",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "first-ask-setup",
+     "first-call",
+     "w30-08",
+     "w30-12",
+     "w30-15",
+     "w30-19",
+     "cum-result"
+    ],
+    "out": {
+     "cum-input": "교재 복귀 예시 · chapter29.json\n언제까지 어디에 → 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남깁니다.\n댓글만 쓰면 → 담당자의 승인 댓글을 확인해야 합니다.",
+     "w30-04": "6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.",
+     "cum-readback": "교재 복귀 예시 · chapter30.json\n수정\n시각과 승인 조건을 보충하세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다."
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 31,
+   "source": "site/chapter31/chapter31.ipynb",
+   "sha256": "e5450b24fee516248c3d563adec241d8654d3380193666c7b3d56575a51fd875",
+   "student": {
+    "chapter": 31,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w31-04",
+     "walk-7-3",
+     "w31-07",
+     "w31-09",
+     "zero-rewrite-task",
+     "w31-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w31-03",
+     "w31-10",
+     "w31-13",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "검토 요청",
+     "cum-input": "교재 복귀 예시 · chapter30.json\n수정\n시각과 승인 조건을 보충하세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "walk-7-3": "수정\n''",
+     "cum-readback": "교재 복귀 예시 · chapter31.json\n기준 충족 · 수정 0 회"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 31,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w31-04",
+     "walk-7-3",
+     "w31-07",
+     "w31-09",
+     "zero-rewrite-task",
+     "w31-16",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w31-03",
+     "w31-10",
+     "zero-rewrite-key",
+     "w31-13",
+     "w31-17",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "검토 요청",
+     "cum-input": "교재 복귀 예시 · chapter30.json\n수정\n시각과 승인 조건을 보충하세요.\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "walk-7-3": "수정\n''",
+     "cum-readback": "교재 복귀 예시 · chapter31.json\n기준 충족 · 수정 0 회"
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "INCONCLUSIVE",
+    "change_rate": 0.0539,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 32,
+   "source": "site/chapter32/chapter32.ipynb",
+   "sha256": "5ca0d54f7068b2ed729ae68da67f0ac73e368ee7e5922b7ff62f064ab8c0db33",
+   "student": {
+    "chapter": 32,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w32-05",
+     "w32-07",
+     "w32-12",
+     "w32-15",
+     "w32-17",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w32-auth",
+     "w32-04",
+     "w32-09",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "{'step': '공백 제거', 'input': ' apple ', 'output': 'apple'}",
+     "cum-input": "교재 복귀 예시 · chapter31.json\n6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.\n기준 충족 0",
+     "w32-15": "workflow_app.py를 저장했습니다.",
+     "cum-readback": "교재 복귀 예시 · chapter32.json\nanswer → 문의 분류 / 요구 추출 / 초안 작성 / 기준 대조"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 32,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "w32-05",
+     "w32-07",
+     "w32-12",
+     "w32-15",
+     "w32-17",
+     "cum-readback"
+    ],
+    "errors": [],
+    "skipped": [
+     "w32-auth",
+     "w32-04",
+     "w32-09",
+     "w32-18",
+     "cum-result"
+    ],
+    "out": {
+     "first-example": "{'step': '공백 제거', 'input': ' apple ', 'output': 'apple'}",
+     "cum-input": "교재 복귀 예시 · chapter31.json\n6월 10일에 A형을 직접 받았어요. 반납을 하루 미루려면 언제까지 어디에 남기면 되나요? 댓글만 쓰면 연장이 끝나는지도 궁금해요.\n기준 충족 0",
+     "w32-15": "workflow_app.py를 저장했습니다.",
+     "cum-readback": "교재 복귀 예시 · chapter32.json\nanswer → 문의 분류 / 요구 추출 / 초안 작성 / 기준 대조"
+    },
+    "solutions": []
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 33,
+   "source": "site/chapter33/chapter33.ipynb",
+   "sha256": "e761ed7a7b89bfd0115e20161f17b12a2bbd12f2688b334941f44c26f6eb8b42",
+   "student": {
+    "chapter": 33,
+    "mode": "student",
+    "ok": [
+     "one-node-function",
+     "first-example",
+     "cum-input",
+     "graph-33-02",
+     "graph-33-05",
+     "graph-33-08",
+     "graph-33-11",
+     "g33-lab-13-1",
+     "graph-33-14",
+     "graph-33-17",
+     "extension-33-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "one-node-function": "{'value': 3}",
+     "first-example": "{'value': 3}",
+     "cum-input": "교재 복귀 예시 · chapter32.json\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-33-02": "{'count': 10}\n{'text': '창문을 닫아 주세요'}",
+     "graph-33-05": "{'text': '창문을 닫아 주세요', 'count': 10}\n{'label': '표시 가능'}",
+     "graph-33-08": "{'text': '창문을 닫아 주세요', 'count': 10, 'label': '표시 가능'}",
+     "graph-33-11": "{'count_chars': {'count': 15}}\n{'decide_label': {'label': '줄여 주세요'}}",
+     "g33-lab-13-1": "준비되지 않은 칸 count",
+     "cum-result": "65 줄여 주세요\nmy-course/workflow/chapter33.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 33,
+    "mode": "solutions",
+    "ok": [
+     "one-node-function",
+     "first-example",
+     "cum-input",
+     "graph-33-02",
+     "graph-33-05",
+     "graph-33-08",
+     "graph-33-11",
+     "g33-lab-13-1",
+     "graph-33-14",
+     "graph-33-15",
+     "graph-33-17",
+     "graph-33-18",
+     "extension-33-1",
+     "extension-33-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "one-node-function": "{'value': 3}",
+     "first-example": "{'value': 3}",
+     "cum-input": "교재 복귀 예시 · chapter32.json\n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-33-02": "{'count': 10}\n{'text': '창문을 닫아 주세요'}",
+     "graph-33-05": "{'text': '창문을 닫아 주세요', 'count': 10}\n{'label': '표시 가능'}",
+     "graph-33-08": "{'text': '창문을 닫아 주세요', 'count': 10, 'label': '표시 가능'}",
+     "graph-33-11": "{'count_chars': {'count': 15}}\n{'decide_label': {'label': '줄여 주세요'}}",
+     "g33-lab-13-1": "준비되지 않은 칸 count",
+     "graph-33-15": "9 표시 가능\n10 표시 가능\n11 줄여 주세요",
+     "graph-33-18": "{'text': '가가가가가가가가가가가', 'count': 11, 'label': '줄여 주세요', 'remaining': 0}",
+     "extension-33-2": "0 원고를 입력하세요\n3 원고를 입력하세요\n5 표시 가능",
+     "cum-result": "65 줄여 주세요\nmy-course/workflow/chapter33.json"
+    },
+    "solutions": [
+     "graph-33-15",
+     "graph-33-18",
+     "extension-33-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 34,
+   "source": "site/chapter34/chapter34.ipynb",
+   "sha256": "4264039854b5717085edf749379e1bc4677d28a7ad4449aae9b8c1583b122ac1",
+   "student": {
+    "chapter": 34,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-34-03",
+     "graph-34-06",
+     "graph-34-09",
+     "graph-34-10",
+     "g34-lab-12-1",
+     "graph-34-13",
+     "graph-34-16",
+     "extension-34-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "done",
+     "cum-input": "내 작업 · chapter33.json\n65 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-34-03": "publish\nrevise\nreview",
+     "graph-34-06": "{'first': {'text': '오늘 오후 점검으로 동문 출입이 어려우니 서문으로 들어와 주세요.', 'tries': 1}}\n{'revise': {'text': '동문 폐쇄, 서문 이용', 'tries': 2}}\n{'publish': {'reason': '길이 통과'}}",
+     "graph-34-10": "실제 모델 실행은 API 키를 준비한 뒤 이 셀에서 확인하세요.",
+     "g34-lab-12-1": "14~16시 동문폐쇄·서문이용 16 시간 있음: True 대체 문 있음: True\n서문으로 들어오세요 10 시간 있음: False 대체 문 있음: True",
+     "cum-result": "2 길이 통과 6월 11일 정오까지 원래 신청 \nmy-course/workflow/chapter34.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 34,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-34-03",
+     "graph-34-06",
+     "graph-34-09",
+     "graph-34-10",
+     "g34-lab-12-1",
+     "graph-34-13",
+     "graph-34-14",
+     "graph-34-16",
+     "graph-34-17",
+     "extension-34-1",
+     "extension-34-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "done",
+     "cum-input": "내 작업 · chapter33.json\n65 6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-34-03": "publish\nrevise\nreview",
+     "graph-34-06": "{'first': {'text': '오늘 오후 점검으로 동문 출입이 어려우니 서문으로 들어와 주세요.', 'tries': 1}}\n{'revise': {'text': '동문 폐쇄, 서문 이용', 'tries': 2}}\n{'publish': {'reason': '길이 통과'}}",
+     "graph-34-10": "실제 모델 실행은 API 키를 준비한 뒤 이 셀에서 확인하세요.",
+     "g34-lab-12-1": "14~16시 동문폐쇄·서문이용 16 시간 있음: True 대체 문 있음: True\n서문으로 들어오세요 10 시간 있음: False 대체 문 있음: True",
+     "graph-34-14": "{'first': {'text': '가가가가가가가가가가가가가가가가가가가', 'tries': 1}}\n{'revise': {'text': '가가가가가가가가가가가가가가가가가가가', 'tries': 2}}\n{'review': {'reason': '수정 기회 소진'}}",
+     "graph-34-17": "10시 True\n2층 False\n글자 수 16",
+     "extension-34-2": "1 길이 통과\n2 길이 통과\n2 수정 기회 소진",
+     "cum-result": "2 길이 통과 6월 11일 정오까지 원래 신청 \nmy-course/workflow/chapter34.json"
+    },
+    "solutions": [
+     "graph-34-14",
+     "graph-34-17",
+     "extension-34-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 35,
+   "source": "site/chapter35/chapter35.ipynb",
+   "sha256": "f0cba055f5fdf32e103ec3669a0a5102f4e7fff43ca435a82048b6daf80afbec",
+   "student": {
+    "chapter": 35,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-35-02",
+     "graph-35-05",
+     "graph-35-07",
+     "graph-35-10",
+     "g35-lab-12-1",
+     "graph-35-13",
+     "graph-35-16",
+     "extension-35-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "['반가워']",
+     "cum-input": "내 작업 · chapter34.json\n6월 11일 정오까지 원래 신청 \n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-35-02": "교체 ['제 이름은 무엇인가요?']\n누적 ['제 이름은 하늘입니다', '제 이름은 무엇인가요?']\n정정 ['이름은 하늘']",
+     "graph-35-05": "처음 받은 말: 제 이름은 하늘입니다",
+     "graph-35-07": "blue [('human', '제 이름은 하늘입니다'), ('ai', '처음 받은 말: 제 이름은 하늘입니다'), ('human', '제 이름은 무엇인가요?'), ('ai', '처음 받은 말: 제 이름은 하늘입니다')]\ngreen [('human', '제 이름은 바다입니다'), ('ai', '처음 받은 말: 제 이름은 바다입니다')]",
+     "graph-35-10": "chapter35_chat.py",
+     "g35-lab-12-1": "원래 그래프 4\n새 그래프 []",
+     "cum-result": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\nmy-course/workflow/chapter35.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 35,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-35-02",
+     "graph-35-05",
+     "graph-35-07",
+     "graph-35-10",
+     "g35-lab-12-1",
+     "graph-35-13",
+     "graph-35-14",
+     "graph-35-16",
+     "graph-35-17",
+     "extension-35-1",
+     "extension-35-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "['반가워']",
+     "cum-input": "내 작업 · chapter34.json\n6월 11일 정오까지 원래 신청 \n6월 11일 정오까지 원래 신청 게시글에 연장 요청 댓글을 남기세요. 담당자가 승인 댓글을 달아야 반납일이 바뀝니다.",
+     "graph-35-02": "교체 ['제 이름은 무엇인가요?']\n누적 ['제 이름은 하늘입니다', '제 이름은 무엇인가요?']\n정정 ['이름은 하늘']",
+     "graph-35-05": "처음 받은 말: 제 이름은 하늘입니다",
+     "graph-35-07": "blue [('human', '제 이름은 하늘입니다'), ('ai', '처음 받은 말: 제 이름은 하늘입니다'), ('human', '제 이름은 무엇인가요?'), ('ai', '처음 받은 말: 제 이름은 하늘입니다')]\ngreen [('human', '제 이름은 바다입니다'), ('ai', '처음 받은 말: 제 이름은 바다입니다')]",
+     "graph-35-10": "chapter35_chat.py",
+     "g35-lab-12-1": "원래 그래프 4\n새 그래프 []",
+     "graph-35-14": "처음 받은 말: 제 이름은 별입니다\n[]",
+     "graph-35-17": "모델에 보낼 메시지 수 3\n모델에 보낼 메시지 수 1",
+     "extension-35-2": "[('a', '내일 갈게요'), ('b', '내일 갈게요')]\n[('a', '모레 갈게요')]",
+     "cum-result": "2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\nmy-course/workflow/chapter35.json"
+    },
+    "solutions": [
+     "graph-35-14",
+     "graph-35-17",
+     "extension-35-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 36,
+   "source": "site/chapter36/chapter36.ipynb",
+   "sha256": "5ce3311981b9976458c310901ed5b25f62b79b69d8e1be663dfc9fb1fc9513e0",
+   "student": {
+    "chapter": 36,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-36-02",
+     "graph-36-05",
+     "graph-36-08",
+     "graph-36-11",
+     "graph-36-12",
+     "g36-lab-14-1",
+     "graph-36-15",
+     "graph-36-18",
+     "extension-36-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "{'documents': ['사과는 과일이다.']}",
+     "cum-input": "내 작업 · chapter35.json\n이전 장 완성 예시 사용: rag-handoff.json\n이전 장 완성 예시 사용: chunks.json\n챗봇 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n스레드 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n첫 문단 recorder-a-1.0.pdf#p1",
+     "graph-36-02": "recorder-a-1.0.pdf#p2 한 번에 길게 녹음하면 30분마다 새 파일이 열립니다. 파일이\nrecorder-a-1.1.pdf#p2 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이",
+     "graph-36-08": "2027년 4월 15일에 A형을 50분간 녹음하면 파일 수와 녹음 상태는?\n['recorder-a-1.1.pdf#p2']\nrecorder-a-1.1.pdf#p2",
+     "graph-36-12": "실제 색인과 모델 비교는 API 키를 준비한 뒤 실행하세요.",
+     "g36-lab-14-1": "전달할 판본 1.0\n한 번에 길게 녹음하면 30분마다 새 파일이 열립니다. 파일이\n전달할 판본 1.1\n한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이",
+     "cum-result": "저장된 후보로 경로 확인 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2', 'recorder-a-1.0.pdf#p1', 'recorder-a-1.1.pdf#p1']\nmy-course/workflow/chapter36.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 36,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-36-02",
+     "graph-36-05",
+     "graph-36-08",
+     "graph-36-11",
+     "graph-36-12",
+     "g36-lab-14-1",
+     "graph-36-15",
+     "graph-36-16",
+     "graph-36-18",
+     "graph-36-19",
+     "extension-36-1",
+     "extension-36-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "{'documents': ['사과는 과일이다.']}",
+     "cum-input": "내 작업 · chapter35.json\n이전 장 완성 예시 사용: rag-handoff.json\n이전 장 완성 예시 사용: chunks.json\n챗봇 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n스레드 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n첫 문단 recorder-a-1.0.pdf#p1",
+     "graph-36-02": "recorder-a-1.0.pdf#p2 한 번에 길게 녹음하면 30분마다 새 파일이 열립니다. 파일이\nrecorder-a-1.1.pdf#p2 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이",
+     "graph-36-08": "2027년 4월 15일에 A형을 50분간 녹음하면 파일 수와 녹음 상태는?\n['recorder-a-1.1.pdf#p2']\nrecorder-a-1.1.pdf#p2",
+     "graph-36-12": "실제 색인과 모델 비교는 API 키를 준비한 뒤 실행하세요.",
+     "g36-lab-14-1": "전달할 판본 1.0\n한 번에 길게 녹음하면 30분마다 새 파일이 열립니다. 파일이\n전달할 판본 1.1\n한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이",
+     "graph-36-16": "recorder-a-1.0.pdf 1.0 2\nrecorder-a-1.1.pdf 1.1 2",
+     "graph-36-19": "['recorder-a-1.1.pdf#p1'] False\n['recorder-a-1.1.pdf#p1', 'recorder-b-1.0.pdf#p1'] True",
+     "extension-36-2": "A형은 몇 분마다 파일이 나뉘나요? / recorder-a-1.1.pdf#p2\nA형은 파일이 바뀌면 녹음을 멈추나요? / recorder-a-1.1.pdf#p2",
+     "cum-result": "저장된 후보로 경로 확인 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2', 'recorder-a-1.0.pdf#p1', 'recorder-a-1.1.pdf#p1']\nmy-course/workflow/chapter36.json"
+    },
+    "solutions": [
+     "graph-36-16",
+     "graph-36-19",
+     "extension-36-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0356,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 37,
+   "source": "site/chapter37/chapter37.ipynb",
+   "sha256": "16b3f0227c6f136f77a7f28c3afd3dd9d715b2748a6bb546fda4565c188449b2",
+   "student": {
+    "chapter": 37,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-37-02",
+     "graph-37-05",
+     "quote-id-task",
+     "graph-37-09",
+     "g37-lab-12-1",
+     "graph-37-13",
+     "graph-37-16",
+     "extension-37-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "True",
+     "cum-input": "내 작업 · chapter36.json\nrecorder-a-1.1.pdf#p2 들소리 A형   /   휴대용 녹음기\n파일 저장과 복사\n1.1판    적용 기간   2027년 4월 1일부터\n연속 녹음\n한 번\nrecorder-a-1.0.pdf#p2 들소리 A형   /   휴대용 녹음기\n파일 저장과 복사\n1.0판    적용 기간   2027년 3월 1일 ~ 3월 31일\n연속\nrecorder-a-1.0.pdf#p1 들소리 A형   /   휴대용 녹음기\n녹음 표시등\n1.0판    적용 기간   2027년 3월 1일 ~ 3월 31일\n표시등 설\nrecorder-a-1.1.pdf#p1 들소리 A형   /   휴대용 녹음기\n녹음 표시등\n1.1판    적용 기간   2027년 4월 1일부터\n표시등 설정\n녹음 중에",
+     "graph-37-02": "['recorder-a-1.1.pdf#p1']",
+     "graph-37-05": "[('recorder-a-1.1.pdf#p1', '녹음하는 동안 표시등을 끄는 설정은 없습니다.')]",
+     "graph-37-09": "인용 표시\n보류",
+     "g37-lab-12-1": "화면 밝기를 낮춰도 표시등은 켜져 있습니다. True\n화면 밝기를 낮춰도 표시등은 꺼지지 않습니다. False",
+     "cum-result": "인용 표시 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.\nmy-course/workflow/chapter37.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 37,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-37-02",
+     "graph-37-05",
+     "quote-id-task",
+     "quote-id-key",
+     "graph-37-09",
+     "g37-lab-12-1",
+     "graph-37-13",
+     "graph-37-14",
+     "graph-37-16",
+     "graph-37-17",
+     "extension-37-1",
+     "extension-37-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "True",
+     "cum-input": "내 작업 · chapter36.json\nrecorder-a-1.1.pdf#p2 들소리 A형   /   휴대용 녹음기\n파일 저장과 복사\n1.1판    적용 기간   2027년 4월 1일부터\n연속 녹음\n한 번\nrecorder-a-1.0.pdf#p2 들소리 A형   /   휴대용 녹음기\n파일 저장과 복사\n1.0판    적용 기간   2027년 3월 1일 ~ 3월 31일\n연속\nrecorder-a-1.0.pdf#p1 들소리 A형   /   휴대용 녹음기\n녹음 표시등\n1.0판    적용 기간   2027년 3월 1일 ~ 3월 31일\n표시등 설\nrecorder-a-1.1.pdf#p1 들소리 A형   /   휴대용 녹음기\n녹음 표시등\n1.1판    적용 기간   2027년 4월 1일부터\n표시등 설정\n녹음 중에",
+     "graph-37-02": "['recorder-a-1.1.pdf#p1']",
+     "graph-37-05": "[('recorder-a-1.1.pdf#p1', '녹음하는 동안 표시등을 끄는 설정은 없습니다.')]",
+     "quote-id-key": "['p1']",
+     "graph-37-09": "인용 표시\n보류",
+     "g37-lab-12-1": "화면 밝기를 낮춰도 표시등은 켜져 있습니다. True\n화면 밝기를 낮춰도 표시등은 꺼지지 않습니다. False",
+     "graph-37-14": "보류\n인용 표시",
+     "graph-37-17": "녹음을 끝낸 뒤 케이블로 컴퓨터에 연결하세요.",
+     "extension-37-2": "recorder-a-1.1.pdf#p2 True\nrecorder-a-1.1.pdf#p1 True",
+     "cum-result": "인용 표시 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.\nmy-course/workflow/chapter37.json"
+    },
+    "solutions": [
+     "quote-id-key",
+     "graph-37-14",
+     "graph-37-17",
+     "extension-37-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "INCONCLUSIVE",
+    "change_rate": 0.1029,
+    "invariants": "PASS",
+    "re_read": "corrected"
+   }
+  },
+  {
+   "chapter": 38,
+   "source": "site/chapter38/chapter38.ipynb",
+   "sha256": "d54dfb394e3a57675c078cd986f28858b1f2f2ce081324cf6344be830a031183",
+   "student": {
+    "chapter": 38,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-38-03",
+     "route-state-task",
+     "graph-38-06",
+     "graph-38-09",
+     "g38-lab-11-1",
+     "graph-38-12",
+     "graph-38-13",
+     "graph-38-16",
+     "graph-38-19",
+     "extension-38-1",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "stop",
+     "cum-input": "내 작업 · chapter37.json\n인용 표시 recorder-a-1.1.pdf#p2 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.",
+     "graph-38-03": "1 False rewrite\n2 False hold\n2 True compose",
+     "graph-38-06": "직접 1 ['retrieve', 'judge', 'compose'] answer\n재검색 2 ['retrieve', 'judge', 'rewrite', 'retrieve', 'judge', 'compose'] answer\n보류 2 ['retrieve', 'judge', 'rewrite', 'retrieve', 'judge', 'hold'] abstain",
+     "graph-38-09": "사용자가 물은 말 5월 A형은 녹음하는 동안 앞쪽 빨간불을 끌 수 있나요?\n5월 A형은 녹음하는 동안 앞쪽 빨간불을 끌 수 있나요? ['recorder-b-1.0.pdf#p1']\nA형 1.1판 | 5월 A형은 녹음하는 동안 앞쪽 표시등을 끌 수 있나요? ['recorder-a-1.1.pdf#p1']\n{'id': 'recorder-a-1.1.pdf#p1', 'source': 'recorder-a-1.1.pdf', 'page': 1, 'quote': '녹음하는 동안 표시등을 끄는 설정은 없습니다.'}",
+     "g38-lab-11-1": "search\njudge\nrewrite\nsearch\njudge\ncompose",
+     "graph-38-13": "실제 검색 경로는 API 키를 준비한 뒤 실행하세요.",
+     "cum-result": "retrieve → judge → compose answer\nmy-course/workflow/chapter38.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 38,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "graph-38-03",
+     "route-state-task",
+     "route-state-key",
+     "graph-38-06",
+     "graph-38-09",
+     "g38-lab-11-1",
+     "graph-38-12",
+     "graph-38-13",
+     "graph-38-16",
+     "graph-38-17",
+     "graph-38-19",
+     "graph-38-20",
+     "extension-38-1",
+     "extension-38-2",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "stop",
+     "cum-input": "내 작업 · chapter37.json\n인용 표시 recorder-a-1.1.pdf#p2 한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.",
+     "graph-38-03": "1 False rewrite\n2 False hold\n2 True compose",
+     "route-state-key": "hold\ncompose",
+     "graph-38-06": "직접 1 ['retrieve', 'judge', 'compose'] answer\n재검색 2 ['retrieve', 'judge', 'rewrite', 'retrieve', 'judge', 'compose'] answer\n보류 2 ['retrieve', 'judge', 'rewrite', 'retrieve', 'judge', 'hold'] abstain",
+     "graph-38-09": "사용자가 물은 말 5월 A형은 녹음하는 동안 앞쪽 빨간불을 끌 수 있나요?\n5월 A형은 녹음하는 동안 앞쪽 빨간불을 끌 수 있나요? ['recorder-b-1.0.pdf#p1']\nA형 1.1판 | 5월 A형은 녹음하는 동안 앞쪽 표시등을 끌 수 있나요? ['recorder-a-1.1.pdf#p1']\n{'id': 'recorder-a-1.1.pdf#p1', 'source': 'recorder-a-1.1.pdf', 'page': 1, 'quote': '녹음하는 동안 표시등을 끄는 설정은 없습니다.'}",
+     "g38-lab-11-1": "search\njudge\nrewrite\nsearch\njudge\ncompose",
+     "graph-38-13": "실제 검색 경로는 API 키를 준비한 뒤 실행하세요.",
+     "graph-38-17": "선택한 설명서에서 답을 확인할 근거가 부족합니다. []\n2 선택한 기종과 판본의 후보 없음 ['5월 A형은 녹음하는 동안 앞쪽 빨간불을 끌 수 있나요?', 'A형 1.1판 | 5월 A형은 녹음하는 동안 앞쪽 표시등을 끌 수 있나요?']",
+     "graph-38-20": "abstain 직접 답하는 문장 없음 []",
+     "extension-38-2": "이미 녹음 중이면 표시등 설정을 바꿀 수 없습니다. True\n녹음 전에 설정에서 표시등을 ‘숨김’으로 바꾸세요. True",
+     "cum-result": "retrieve → judge → compose answer\nmy-course/workflow/chapter38.json"
+    },
+    "solutions": [
+     "route-state-key",
+     "graph-38-17",
+     "graph-38-20",
+     "extension-38-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 39,
+   "source": "site/chapter39/chapter39.ipynb",
+   "sha256": "a9051ddf1dd79722acb78080abc035d9a88525877459057364d10a040a5ffb8c",
+   "student": {
+    "chapter": 39,
+    "mode": "student",
+    "ok": [
+     "small-app-file",
+     "cum-input",
+     "graph-39-02",
+     "graph-39-06",
+     "graph-39-10",
+     "graph39-observed-1",
+     "graph-39-13",
+     "graph-39-14",
+     "graph-39-17",
+     "extension-39-1"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "small-app-file": "button_example.py",
+     "cum-input": "내 작업 · chapter38.json\n한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.\nretrieve → judge → compose",
+     "graph-39-02": "recorder-a-1.0.pdf#p1 A 1.0\nrecorder-a-1.0.pdf#p2 A 1.0\nrecorder-a-1.1.pdf#p1 A 1.1\nrecorder-a-1.1.pdf#p2 A 1.1\nrecorder-b-1.0.pdf#p1 B 1.0\nrecorder-b-1.0.pdf#p2 B 1.0\n색인 버전 recorder-2bfb240a53a6e8ec",
+     "graph-39-06": "chapter39_recorder.py",
+     "graph39-observed-1": "D01 retrieve → judge → compose\n아니요, 녹음 중 앞쪽 빨간불을 안 보이게 할 수 없습니다. ['recorder-a-1.1.pdf#p1']\nD05 retrieve → judge → rewrite → retrieve → judge → hold\n선택한 설명서에서 답을 확인할 근거가 부족합니다. []",
+     "graph-39-14": "경로 연습 retrieve → judge → compose"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 39,
+    "mode": "solutions",
+    "ok": [
+     "small-app-file",
+     "cum-input",
+     "graph-39-02",
+     "graph-39-06",
+     "graph-39-10",
+     "graph-39-11",
+     "graph39-observed-1",
+     "graph-39-13",
+     "graph-39-14",
+     "graph-39-17",
+     "graph-39-18",
+     "extension-39-1",
+     "extension-39-2"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "small-app-file": "button_example.py",
+     "cum-input": "내 작업 · chapter38.json\n한 번에 길게 녹음하면 45분마다 새 파일이 열립니다. 파일이 바뀌어도 녹음은 계속됩니다.\nretrieve → judge → compose",
+     "graph-39-02": "recorder-a-1.0.pdf#p1 A 1.0\nrecorder-a-1.0.pdf#p2 A 1.0\nrecorder-a-1.1.pdf#p1 A 1.1\nrecorder-a-1.1.pdf#p2 A 1.1\nrecorder-b-1.0.pdf#p1 B 1.0\nrecorder-b-1.0.pdf#p2 B 1.0\n색인 버전 recorder-2bfb240a53a6e8ec",
+     "graph-39-06": "chapter39_recorder.py",
+     "graph-39-11": "4월 A형으로 46분 녹음하면 중간에 녹음이 끊기나요? recorder-a-1.1.pdf 2\nTrue",
+     "graph39-observed-1": "D01 retrieve → judge → compose\n아니요, 녹음 중 앞쪽 빨간불을 안 보이게 할 수 없습니다. ['recorder-a-1.1.pdf#p1']\nD05 retrieve → judge → rewrite → retrieve → judge → hold\n선택한 설명서에서 답을 확인할 근거가 부족합니다. []",
+     "graph-39-14": "경로 연습 retrieve → judge → compose",
+     "extension-39-2": "다음 질문에 쓸 기종 B\n첫 답에 표시할 기종 A 1.1"
+    },
+    "solutions": [
+     "graph-39-11",
+     "graph-39-18",
+     "extension-39-2"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 40,
+   "source": "site/chapter40/chapter40.ipynb",
+   "sha256": "d3a646516f32deada508ff7e374a76082930556d433df3db5a5a3f3bbba32692",
+   "student": {
+    "chapter": 40,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls40-04",
+     "ls40-06",
+     "ls40-09",
+     "ls40-11",
+     "ls40-work-2",
+     "walk-15-2",
+     "ls40-13",
+     "ls40-15",
+     "ls40-18",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "사과",
+     "cum-input": "내 작업 · chapter39-handoff.json\n경로 연습 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n첫 후보 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2', 'recorder-a-1.0.pdf#p1', 'recorder-a-1.1.pdf#p1']\n최종 인용 ['recorder-a-1.1.pdf#p2']",
+     "ls40-04": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls40-06": "녹음 전 표시등을 숨김으로 설정하세요. recorder-b-1.0.pdf 1",
+     "ls40-11": "압축을 푼 폴더의 터미널에서 실행: python -m streamlit run my-recorder-evaluation/review_app.py",
+     "walk-15-2": "True\nFalse",
+     "ls40-13": "{'id': 'D04', 'question': '2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?', 'model': 'A', 'edition': '1.1'}\n{'action': 'answer', 'source': 'recorder-a-1.1.pdf', 'page': 2, 'reference_answer': '45분마다 파일이 나뉘고 녹음은 계속된다.'}",
+     "cum-result": "평가자만 읽는 쪽 recorder-a-1.1.pdf 2\nmy-course/workflow/chapter40.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 40,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls40-04",
+     "ls40-06",
+     "ls40-09",
+     "ls40-11",
+     "ls40-work-2",
+     "ls40-work-3",
+     "walk-15-2",
+     "ls40-13",
+     "ls40-15",
+     "ls40-18",
+     "ls40-19",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "사과",
+     "cum-input": "내 작업 · chapter39-handoff.json\n경로 연습 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?\n첫 후보 ['recorder-a-1.1.pdf#p2', 'recorder-a-1.0.pdf#p2', 'recorder-a-1.0.pdf#p1', 'recorder-a-1.1.pdf#p1']\n최종 인용 ['recorder-a-1.1.pdf#p2']",
+     "ls40-04": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls40-06": "녹음 전 표시등을 숨김으로 설정하세요. recorder-b-1.0.pdf 1",
+     "ls40-11": "압축을 푼 폴더의 터미널에서 실행: python -m streamlit run my-recorder-evaluation/review_app.py",
+     "ls40-work-3": "{'보라': '첫 검색 후보에 A형 1.1판 1쪽이 있는가', '초록': '근거 판단 뒤에 선택된 쪽의 모델명이 A인가'}",
+     "walk-15-2": "True\nFalse",
+     "ls40-13": "{'id': 'D04', 'question': '2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?', 'model': 'A', 'edition': '1.1'}\n{'action': 'answer', 'source': 'recorder-a-1.1.pdf', 'page': 2, 'reference_answer': '45분마다 파일이 나뉘고 녹음은 계속된다.'}",
+     "ls40-19": "{'source': 'recorder-a-1.0.pdf', 'page': 2, 'action': 'answer', 'reference_answer': '30분마다 새 파일이 열립니다.'}",
+     "cum-result": "평가자만 읽는 쪽 recorder-a-1.1.pdf 2\nmy-course/workflow/chapter40.json"
+    },
+    "solutions": [
+     "ls40-work-3",
+     "ls40-19"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 41,
+   "source": "site/chapter41/chapter41.ipynb",
+   "sha256": "817ab60b0b04bcc5f5116aa55ad6118e525f8f5388057cbed6996c99578ccce0",
+   "student": {
+    "chapter": 41,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls41-03",
+     "ls41-05",
+     "ls41-08",
+     "eligible-score-task",
+     "ls41-11",
+     "ls41-work-2",
+     "ls41-14",
+     "ls41-16",
+     "ls41-18",
+     "ls41-21",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "0",
+     "cum-input": "내 작업 · chapter40.json\n2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요? 경로 연습\n45분마다 파일이 나뉘고 녹음은 계속된다.",
+     "ls41-03": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls41-05": "2027년 5월 기준으로 B형에서 녹음 파일을 무선으로 보내는 방법이 있나요?\n기대하는 행동 abstain",
+     "ls41-08": "[{'key': 'action_match', 'score': 1}, {'key': 'retrieval_rr', 'score': 0.5}, {'key': 'citation_has_gold', 'score': 1}]",
+     "ls41-11": "lcel-k4 → 2027년 5월 기준으로 B형에서 녹음 파일을 무선으로 보내는 방법은 없습니다. 자료에 따르면 B형 1.0판(2027년 4월 1일부터 적용)에서는 녹음 파일을 컴퓨터로 옮길 때 케이블로 연결하여 RECORD 폴더에서 복사하는 방법만 안내되어 있습니다. 무선 전송에 관한 내용은 전혀 언급되어 있지 않습니다.[recorder-b-1.0.pdf#p2]\ngraph-k4 → 선택한 설명서에서 답을 확인할 근거가 부족합니다.\ngraph-k2 → 선택한 설명서에서 답을 확인할 근거가 부족합니다.",
+     "ls41-work-2": "30분마다 나뉩니다. ['recorder-a-1.0.pdf#p2']",
+     "cum-result": "{'results': [{'key': 'action_match', 'score': 1}, {'key': 'retrieval_rr', 'score': 1.0}, {'key': 'citation_has_gold', 'score': 1}]}\nmy-course/workflow/chapter41.json"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 41,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls41-03",
+     "ls41-05",
+     "ls41-08",
+     "eligible-score-task",
+     "eligible-score-key",
+     "ls41-11",
+     "ls41-work-2",
+     "ls41-work-3",
+     "ls41-14",
+     "ls41-16",
+     "ls41-18",
+     "ls41-21",
+     "ls41-22",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "0",
+     "cum-input": "내 작업 · chapter40.json\n2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요? 경로 연습\n45분마다 파일이 나뉘고 녹음은 계속된다.",
+     "ls41-03": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls41-05": "2027년 5월 기준으로 B형에서 녹음 파일을 무선으로 보내는 방법이 있나요?\n기대하는 행동 abstain",
+     "ls41-08": "[{'key': 'action_match', 'score': 1}, {'key': 'retrieval_rr', 'score': 0.5}, {'key': 'citation_has_gold', 'score': 1}]",
+     "eligible-score-key": "[{'key': 'action_match', 'score': 1}]\n[{'key': 'action_match', 'score': 0}]",
+     "ls41-11": "lcel-k4 → 2027년 5월 기준으로 B형에서 녹음 파일을 무선으로 보내는 방법은 없습니다. 자료에 따르면 B형 1.0판(2027년 4월 1일부터 적용)에서는 녹음 파일을 컴퓨터로 옮길 때 케이블로 연결하여 RECORD 폴더에서 복사하는 방법만 안내되어 있습니다. 무선 전송에 관한 내용은 전혀 언급되어 있지 않습니다.[recorder-b-1.0.pdf#p2]\ngraph-k4 → 선택한 설명서에서 답을 확인할 근거가 부족합니다.\ngraph-k2 → 선택한 설명서에서 답을 확인할 근거가 부족합니다.",
+     "ls41-work-2": "30분마다 나뉩니다. ['recorder-a-1.0.pdf#p2']",
+     "ls41-work-3": "2027년 5월 기준으로 B형에서 녹음 파일을 무선으로 보내는 방법은 없습니다. 자료에 따르면 B형 1.0판(2027년 4월 1일부터 적용)에서는 녹음 파일을 컴퓨터로 옮길 때 케이블로 연결하여 RECORD 폴더에서 복사하는 방법만 안내되어 있습니다. 무선 전송에 관한 내용은 전혀 언급되어 있지 않습니다.[recorder-b-1.0.pdf#p2]",
+     "ls41-22": "45분마다 녹음이 멈춥니다.",
+     "cum-result": "{'results': [{'key': 'action_match', 'score': 1}, {'key': 'retrieval_rr', 'score': 1.0}, {'key': 'citation_has_gold', 'score': 1}]}\nmy-course/workflow/chapter41.json"
+    },
+    "solutions": [
+     "eligible-score-key",
+     "ls41-work-3",
+     "ls41-22"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  },
+  {
+   "chapter": 42,
+   "source": "site/chapter42/chapter42.ipynb",
+   "sha256": "d1fa7365e5f75e3776913899b087d9b6448748aeaa4c364b082085be73159e8b",
+   "student": {
+    "chapter": 42,
+    "mode": "student",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls42-03",
+     "ls42-05",
+     "ls42-08",
+     "ls42-10",
+     "ls42-13",
+     "ls42-work-2",
+     "ls42-16",
+     "ls42-19",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "통과",
+     "cum-input": "내 작업 · chapter41.json\n후보 k 2\n개발에서 본 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?",
+     "ls42-03": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls42-05": "{'candidate_k': 2, 'baseline_k': 4, 'development_experiments': {}, 'rule': '새로운 근거 없는 기능 단정이 생기면 보류. 답할 수 있는 질문은 판본·시점·행동을 대조한다.'}",
+     "ls42-08": "H01 2027년 5월에 B형으로 이미 녹음을 시작했어요. 지금 표시등을 감추려면 어떻게 하나요?\nH02 2027년 5월에 A형 화면을 어둡게 하면 녹음 중인 빨간 표시등도 꺼지나요?\nH03 2027년 5월 기준으로 B형이 저장 중에 꽉 차면 기존 파일도 없어지나요?\nH04 2027년 5월에 A형을 쓰면 녹음할 때 주변 소음을 자동으로 줄여 주나요?",
+     "cum-result": "my-recorder-evaluation/project-handoff.json 검토 대기"
+    },
+    "solutions": []
+   },
+   "solution": {
+    "chapter": 42,
+    "mode": "solutions",
+    "ok": [
+     "first-example",
+     "cum-input",
+     "ls42-03",
+     "ls42-05",
+     "ls42-08",
+     "ls42-10",
+     "ls42-13",
+     "ls42-work-2",
+     "ls42-work-3",
+     "ls42-16",
+     "ls42-19",
+     "cum-result"
+    ],
+    "errors": [],
+    "skipped": [],
+    "out": {
+     "first-example": "통과",
+     "cum-input": "내 작업 · chapter41.json\n후보 k 2\n개발에서 본 질문 2027년 4월 15일 기준으로 A형의 파일이 나뉘는 간격은 얼마이고 그때 녹음도 멈추나요?",
+     "ls42-03": "LangSmith 연결 설정 False / 모델 연결 설정 False",
+     "ls42-05": "{'candidate_k': 2, 'baseline_k': 4, 'development_experiments': {}, 'rule': '새로운 근거 없는 기능 단정이 생기면 보류. 답할 수 있는 질문은 판본·시점·행동을 대조한다.'}",
+     "ls42-08": "H01 2027년 5월에 B형으로 이미 녹음을 시작했어요. 지금 표시등을 감추려면 어떻게 하나요?\nH02 2027년 5월에 A형 화면을 어둡게 하면 녹음 중인 빨간 표시등도 꺼지나요?\nH03 2027년 5월 기준으로 B형이 저장 중에 꽉 차면 기존 파일도 없어지나요?\nH04 2027년 5월에 A형을 쓰면 녹음할 때 주변 소음을 자동으로 줄여 주나요?",
+     "ls42-work-3": "{'P': '녹음 중 바꿀 수 없는 조작을 지시', 'Q': '원문에 없는 기능을 지원한다고 단정'}",
+     "cum-result": "my-recorder-evaluation/project-handoff.json 검토 대기"
+    },
+    "solutions": [
+     "ls42-work-3"
+    ]
+   },
+   "language": {
+    "scope": "개정한 학생 설명",
+    "structural_gate": "WARN",
+    "change_rate": 0.0,
+    "invariants": "PASS",
+    "re_read": "accept"
+   }
+  }
+ ]
+}

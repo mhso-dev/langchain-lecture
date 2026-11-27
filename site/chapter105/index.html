@@ -21,6 +21,21 @@
 <p class="hero-description">근거 부족, 접근 거부, 저장 여부 미확인의 다음 행동을 각각 설계합니다. 재전송으로 중복 작업이 생길 수 있는 상황을 일반적인 조회 실패와 구분합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>화면 응답과 저장 결과에 맞춰 다음 행동 안내하기</h3><p>104장에서 응답을 받은 화면에 전송 중단 상황을 겹쳐 봅니다. 답을 표시했다는 이유만으로 저장까지 끝났다고 알리면 사용자가 같은 요청을 두 번 보낼 수 있습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter104.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter105-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter104.json&quot;
+sample_file = here / &quot;chapter105-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;view&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter105-start.json
+{&#x27;active_request&#x27;: &#x27;team-99&#x27;, &#x27;pending&#x27;: False, &#x27;answer&#x27;: &#x27;점검 전 전원 표시등을 확인합니다.&#x27;, &#x27;sources&#x27;: [&#x27;RULE-A&#x27;]}</pre></div><p>두 번째 줄은 읽은 파일의 <code>view</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -74,20 +89,9 @@ nresult["결과 수신"]
 <!-- lesson-visual detail-uncertain -->
 <span class="lesson-anchor" id="detail-uncertain"></span>
 <!-- /lesson-visual detail-uncertain -->
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 저장 오류 안내</h3>
-<div class="cell-before"><p>답은 계산했지만 저장이 실패한 save_failure의 상태를 보고, 다음 행동이 들어간 한 줄을 적으세요.</p>
-<p>이 사례의 요청 ID는 save_failure이고 저장 상태는 failed입니다. 오류 코드 storage_failure는 저장 단계의 실패를 뜻합니다. 서버에 요청이 도착했는지조차 모르는 경우와 구분해 화면 문구를 정하세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 2줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">storage_status = <span class="tok-string">"failed"</span>
-<span class="tok-comment"># 저장 상태에 맞춰 다음 행동을 적으세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">storage_status = <span class="tok-string">"failed"</span>
-<span class="tok-keyword">if</span> storage_status == <span class="tok-string">"failed"</span>:
-    print(<span class="tok-string">"계산한 답을 저장하지 못했습니다. 재전송 전에 저장 기록을 확인하세요."</span>)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">계산한 답을 저장하지 못했습니다. 재전송 전에 저장 기록을 확인하세요.</pre></div>
-<div class="cell-after"><p>실패한 대상은 저장입니다. 원문 근거가 없다는 문구를 보여 주거나 자동으로 재전송하면 문제의 위치를 숨기게 됩니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 저장 오류 안내</h3><figure class="code-block"><pre tabindex="0"><code>storage_status = &quot;failed&quot;
+if storage_status == &quot;failed&quot;:
+    print(&quot;계산한 답을 저장하지 못했습니다. 재전송 전에 저장 기록을 확인하세요.&quot;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">계산한 답을 저장하지 못했습니다. 재전송 전에 저장 기록을 확인하세요.</pre></div><div class="cell-after"><p>실패한 대상은 저장입니다. 원문 근거가 없다는 문구를 보여 주거나 자동으로 재전송하면 문제의 위치를 숨기게 됩니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>저장 실패를 안내하는 문장</h3><p><mark>근거 없음과 저장 실패에서는 사용자가 할 다음 행동이 다릅니다.</mark> 문서를 찾지 못하면 추가 자료를 확인할 수 있습니다. 이미 계산한 답의 저장이 실패했다면 같은 요청을 다시 보내기 전에 저장 기록부터 확인하게 안내하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter69/index.html">69장 FastAPI StreamingResponse와 줄 단위 JSON</a></p></aside>
 
 </section>
@@ -97,6 +101,21 @@ nresult["결과 수신"]
 <section class="project-example"><h3>서로의 문안으로 행동 예측하기</h3><p>동료에게 오류 코드와 내부 기록은 가리고 문구만 읽어 주세요. 동료가 “다시 검색한다”, “담당자에게 문의한다”, “같은 요청 기록을 확인한다” 중 어느 행동을 골랐는지 적습니다. 기대와 다르면 내부 오류 이름을 추가하기 전에 다음 행동 문장을 고칩니다.</p></section>
 <aside class="lesson-note"><p><mark>전송이 끊긴 시점에는 저장 성공과 실패 어느 쪽도 단정할 수 없습니다.</mark> 서버가 저장을 마친 직후 연결이 끊겨도 화면에는 응답이 도착하지 않습니다. 접속 오류와 검색 결과 없음은 사용자에게 다른 안내가 필요합니다.</p></aside><p>106장에서는 화면이 받은 요청 ID로 처리·저장·재조회 기록을 실제로 연결합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 화면 응답과 저장 결과에 맞춰 다음 행동 안내하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>status = &quot;미확인&quot;
+notice = (&quot;처리 내역을 확인하세요.&quot; if not incoming[&quot;view&quot;][&quot;pending&quot;] and status == &quot;미확인&quot;
+          else &quot;잠시 뒤 화면을 확인하세요.&quot;)
+new = {**incoming, &quot;storage&quot;: status, &quot;notice&quot;: notice}
+print(incoming[&quot;reply&quot;][&quot;request_id&quot;], notice)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-99 처리 내역을 확인하세요.</pre></div><p>답이 보이더라도 저장 응답을 받지 못했다면 다시 보내기 전에 같은 요청 ID로 처리 여부부터 확인하도록 안내합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter105.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter105.json</pre></div><p>106장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

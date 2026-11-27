@@ -21,6 +21,21 @@
 <p class="hero-description">인수자가 처음 실행할 질문, 예상 답변, 확인할 원문 위치를 README에 정리합니다. 장비 A를 장비 B로 바꾼 입력으로 안내가 다른 규정에도 적용되는지 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>인수 문서에 재현 입력과 복구 한계 적기</h3><p>113장의 복구 기록을 읽고 인수자가 첫 실행에 사용할 질문·예상 답·위치를 한 문서로 묶습니다. 아직 확인하지 못한 요청도 같은 문서에 적습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter113.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter114-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter113.json&quot;
+sample_file = here / &quot;chapter114-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;restore&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter114-start.json
+{&#x27;mount&#x27;: &#x27;p1-json:/app/input106/project-ui/backend/runtime-data&#x27;, &#x27;restore_missing&#x27;: [&#x27;team-99&#x27;], &#x27;environment&#x27;: &#x27;임시 JSON&#x27;}</pre></div><p>두 번째 줄은 읽은 파일의 <code>restore</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -71,36 +86,18 @@ RULE-A · 가상 장비실 규정 A 1쪽 2.1절 · 2026-11-01</pre></div>
 
 <!-- END MOTION -->
 
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 재현 입력 변경</h3>
-<div class="cell-before"><p>선택 시연을 장비 B로 바꾸면 인수자가 대조할 질문·답·절을 갱신해 보세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">rule_b = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 B'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-<span class="tok-comment"># 인수 메모의 질문과 기대 결과 한 줄을 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 11줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">rule_b = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 B'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-print(<span class="tok-string">"장비 B의 점검 전 확인 사항은?"</span>)
-print(f'{rule_b[<span class="tok-string">"text"</span>]} 근거 {rule_b[<span class="tok-string">"id"</span>]} {rule_b[<span class="tok-string">"section"</span>]}절')</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 B의 점검 전 확인 사항은?
-점검 전 고정 장치를 확인합니다. 근거 RULE-B 2.2절</pre></div>
-<div class="cell-after"><p>고정 장치와 RULE-B 2.2절이 한 줄에 들어갑니다. 실행 화면에 그대로 보이는 값이 있으면 인수자가 문제를 설명하기 쉽습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 재현 입력 변경</h3><figure class="code-block"><pre tabindex="0"><code>rule_b = {&#x27;id&#x27;: &#x27;RULE-B&#x27;,
+ &#x27;equipment&#x27;: &#x27;장비 B&#x27;,
+ &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+ &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;,
+ &#x27;page&#x27;: 2,
+ &#x27;section&#x27;: &#x27;2.2&#x27;,
+ &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+ &#x27;version&#x27;: &#x27;rules-v1&#x27;,
+ &#x27;groups&#x27;: [&#x27;public&#x27;, &#x27;admin&#x27;]}
+print(&quot;장비 B의 점검 전 확인 사항은?&quot;)
+print(f&#x27;{rule_b[&quot;text&quot;]} 근거 {rule_b[&quot;id&quot;]} {rule_b[&quot;section&quot;]}절&#x27;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 B의 점검 전 확인 사항은?
+점검 전 고정 장치를 확인합니다. 근거 RULE-B 2.2절</pre></div><div class="cell-after"><p>고정 장치와 RULE-B 2.2절이 한 줄에 들어갑니다. 실행 화면에 그대로 보이는 값이 있으면 인수자가 문제를 설명하기 쉽습니다.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>동료가 실행 결과를 확인할 수 있는 README</h3><p><mark>기대 문장과 함께 어느 문서의 어느 절이 나와야 하는지 적습니다.</mark> 장비 A의 실행 순서를 그대로 두고 입력만 B로 바꿔 보세요. 동료가 다른 정답과 근거를 찾아낼 수 있으면 입력이 바뀌어도 안내를 따라갈 수 있습니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter51/index.html">51장 실험 재현을 위한 README와 실행 기록</a></p></aside>
 
 <p><a class="chapter-link" href="../chapter96/index.html">96장 · 장비가 빠진 질문의 화면 예시</a></p>
@@ -112,6 +109,22 @@ print(f'{rule_b[<span class="tok-string">"text"</span>]} 근거 {rule_b[<span cl
 <section class="project-example"><h3>팀별 인계 문서 고치기</h3><p>README를 처음 받은 사람에게 지정한 한 질문을 실행해 달라고 하세요. 막힌 곳이 환경 준비인지 원문 확인인지 구분한 뒤, 해당 위치의 안내 문장만 고치고 다른 사람이 다시 수행할 수 있게 남깁니다.</p></section>
 <aside class="lesson-note"><p><mark>처음 읽은 사람이 직접 얻은 출력이 인계 확인의 근거입니다.</mark> 작성자가 기대 답을 이미 적어 둔 것만으로는 다른 환경에서 같은 답을 읽었다고 할 수 없습니다.</p></aside><p>115장 리허설에서는 이 첫 실행에서 나온 실제 입력과 출처를 사용해 정상과 예외 시연을 이어 갑니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 인수 문서에 재현 입력과 복구 한계 적기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>sources = incoming[&quot;reply&quot;][&quot;sources&quot;]
+readme = {&quot;question&quot;: incoming[&quot;reply&quot;][&quot;question&quot;], &quot;answer&quot;: incoming[&quot;view&quot;][&quot;answer&quot;],
+          &quot;source&quot;: [f&#x27;{doc[&quot;id&quot;]} / {doc[&quot;page&quot;]}쪽 / {doc[&quot;section&quot;]}절&#x27; for doc in sources],
+          &quot;missing_requests&quot;: incoming[&quot;restore&quot;][&quot;restore_missing&quot;], &quot;peer_run&quot;: &quot;미확인&quot;}
+new = {&quot;readme&quot;: readme, &quot;regression&quot;: incoming[&quot;regression&quot;], &quot;deployment&quot;: incoming[&quot;deployment&quot;]}
+print(readme[&quot;question&quot;], readme[&quot;source&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은? [&#x27;RULE-A / 1쪽 / 2.1절&#x27;]</pre></div><p>문서만 받고도 질문을 넣고 어느 절을 열어야 하는지 알 수 있습니다. 공개 자료에 후보가 없으면 source가 비므로 실제 원문을 보완한 뒤 인수하세요.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter114.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter114.json</pre></div><p>115장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

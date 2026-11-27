@@ -4,7 +4,7 @@
 <script defer src="../assets/deep-link.js"></script>
 
 
-<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"></head>
+<link rel="stylesheet" href="../assets/practice-space.css"><script defer src="../assets/practice-space.js"></script><link rel="stylesheet" href="../assets/example-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><link rel="stylesheet" href="../assets/guided-reading.css"><script defer src="../assets/mermaid/mermaid.tiny.js"></script><script defer src="../assets/workflows.js"></script></head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 <!-- COURSE_NAV -->
@@ -12,7 +12,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 059</p>
 <span class="sidebar-title">대화 문맥의 최근 턴과 요약 메모리</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>슬라이싱으로 최근 발화 선택</a><a href="#nb-summary"><span>03</span>요약과 원문 기록의 정보 손실 대조</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">대화 이력에서 다음 질문에 다시 쓸 원문 고르기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-window"><span>02</span>슬라이싱으로 최근 발화 선택</a><a href="#nb-summary"><span>03</span>요약과 원문 기록의 정보 손실 대조</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</a><a href="#sources"><span>06</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -28,6 +28,22 @@
 <a class="download" href="chapter59.ipynb" download="chapter59.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>59장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>58장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-58.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-58.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;question&#x27;: &#x27;대출 기간은 며칠인가요?&#x27;,
+     &#x27;instruction&#x27;: &#x27;lookup_loan 도구를 최대 1회 호출하세요. 빈 결과면 문서 번호를 다시 물으세요.&#x27;}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-window" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>슬라이싱으로 최근 발화 선택</h2>
 </div>
@@ -131,7 +147,9 @@ print("\n".join([updated_summary, *recent]))</code></pre></figure>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><h2>체크포인트에 보관한 기록과 모델에 보낼 대화 창 나누기</h2></div></header>
 <p>발표 장소를 처음에 알려 준 뒤 마감과 분량을 추가한 상황입니다. 마지막 두 메시지만 보내면 처음 장소가 빠집니다. 35장의 체크포인터에 전체 기록을 남겨 두고, 이번 요청에 건넬 문자열만 작게 만들어 봅니다.</p>
-<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 같은 스레드에서 전체 할 일 복원하기</h3><div class="cell-before"><p>수업용 대화의 각 문장을 HumanMessage로 저장합니다. 기록을 보관하는 노드는 모델을 호출하지 않습니다. 체크포인트에 어떤 메시지가 보존되는지와 최근 두 메시지에 무엇이 보이는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from langchain_core.messages import HumanMessage
+<article class="notebook-cell" data-cell="6" data-task="0"><h3 id="workshop-step-1">셀 06 · 같은 스레드에서 전체 할 일 복원하기</h3><div class="cell-before"><p>수업용 대화의 각 문장을 HumanMessage로 저장합니다. 기록을 보관하는 노드는 모델을 호출하지 않습니다. 체크포인트에 어떤 메시지가 보존되는지와 최근 두 메시지에 무엇이 보이는지 확인하세요.</p></div><figure class="workflow-reading" data-workflow><h3>실행 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    S([START]) --> K["keep · 메시지 유지"]
+    K --> E([END])</script></figure><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-6">복사</button></figcaption><pre tabindex="0"><code id="code-6">from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import StateGraph, MessagesState, START, END
 
@@ -165,6 +183,18 @@ print(len(history_app.get_state(room_config).values[&quot;messages&quot;]))</cod
 </header>
 <ul class="references"><li><a href="https://docs.langchain.com/oss/python/langchain/short-term-memory" target="_blank" rel="noopener noreferrer">단기 기억 공식 문서 ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>대화 이력에서 다음 질문에 다시 쓸 원문 고르기</h3><p>58장에서 선택한 지침을 읽고 고객에게 대출 규정을 알려 줍니다. 이어서 고객이 짧게 답해 달라고 할 때 어떤 기록이 필요한지 살펴보세요.</p><pre tabindex="0"><code>record = previous[&quot;record&quot;]
+turns_desk = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: previous[&quot;question&quot;]},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: record[&quot;text&quot;]},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;앞으로는 짧게 답해 주세요.&quot;},
+]
+recent = turns_desk[-2:]
+print([turn[&quot;content&quot;] for turn in recent])</code></pre><p>실행 결과</p><pre>[&#x27;대출 기간은 14일입니다.&#x27;, &#x27;앞으로는 짧게 답해 주세요.&#x27;]</pre><p>마지막 두 턴에는 도구에서 읽은 원문과 고객의 새 요청이 남습니다. 첫 질문은 recent의 범위 밖에 있지만 원래 turns_desk에는 그대로 있습니다.</p><h3>직접 확인하기</h3><p>마지막 턴과 조회한 규정을 분리해 새 대화에 쓸 선호를 만드세요. 현재 답변에만 필요한 규정이 선호에 섞이면 안 됩니다.</p><pre tabindex="0"><code># 사용자의 마지막 메시지에서 짧은 답 요청을 찾아 short 또는 standard를 출력하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>preference = &quot;short&quot; if &quot;짧게&quot; in recent[-1][&quot;content&quot;] else &quot;standard&quot;
+print(preference)</code></pre><p>기본 자료로 실행한 결과</p><pre><code>short</code></pre><p>사용자의 마지막 발화에서만 선호를 고릅니다. 다음 장은 그 값을 사용자별로 보관합니다.</p></details><h3>60장에 넘길 결과 저장하기</h3><p>60장은 마지막 요청을 사용자 계정에 저장하고 다른 계정에서도 보이는지 검사합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record, &quot;owner&quot;: record[&quot;owner&quot;], &quot;turns&quot;: recent}
+target = work / &quot;agent-59.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-59.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

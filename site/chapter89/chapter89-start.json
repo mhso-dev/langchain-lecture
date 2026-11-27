@@ -1,0 +1,40 @@
+{
+  "contracts": [
+    {
+      "id": "Q01",
+      "q": "장비 A의 점검 전 확인 사항은?",
+      "status": "answered",
+      "source_id": "RULE-A",
+      "expected_fields": [
+        "id",
+        "source",
+        "page",
+        "section",
+        "revised_on",
+        "version"
+      ]
+    },
+    {
+      "id": "Q02",
+      "q": "점검 전 확인 사항은?",
+      "status": "need_clarification",
+      "source_id": null,
+      "expected_fields": []
+    },
+    {
+      "id": "Q03",
+      "q": "장비 A를 다음 달에 교체하나요?",
+      "status": "no_evidence",
+      "source_id": null,
+      "expected_fields": []
+    }
+  ],
+  "fields": [
+    "id",
+    "source",
+    "page",
+    "section",
+    "revised_on",
+    "version"
+  ]
+}

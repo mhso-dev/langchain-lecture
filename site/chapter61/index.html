@@ -13,14 +13,14 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 61 / MCP</p>
 <span class="sidebar-title">FastMCP 도구 등록과 클라이언트 호출</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-server"><span>02</span>FastMCP의 tool() 데코레이터</a><a href="#nb-call"><span>03</span>list_tools()와 call_tool()</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>별도 프로세스의 도구를 stdio로 호출하기</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">FastMCP로 내 문서의 원문을 조회하기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-server"><span>02</span>FastMCP의 tool() 데코레이터</a><a href="#nb-call"><span>03</span>list_tools()와 call_tool()</a><a href="#recap"><span>04</span>복습과 실습 점검</a><a href="#workshop"><span>05</span>별도 프로세스의 도구를 stdio로 호출하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
 <main id="main"><article class="lesson"><header class="hero"><div class="hero-top"><span class="chapter-tag">CHAPTER 61 / MCP</span><span class="template-badge">학생용 교재</span></div>
 <h1>FastMCP 도구 등록과 클라이언트 호출</h1>
 <p class="hero-description">도서관 시간표 함수를 FastMCP 서버에 등록합니다. MCP 클라이언트에서 도구 명세를 조회하고 요일 인자를 전달해 서버의 실제 반환값을 읽습니다.</p>
-<div class="hero-meta"><span>입문</span><span>교육일 061 · 8H</span><span>6일 요청·응답 · 16일 도구 왕복 · 55일 도구 등록</span></div>
+<div class="hero-meta"><span>입문</span><span>교육일 061 · 8H</span><span>55장 도구 등록과 60장 사용자별 선호</span></div>
 </header>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
@@ -29,6 +29,21 @@
 <a class="download" href="chapter61.ipynb" download="chapter61.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>61장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">별도 프로세스의 도구를 stdio로 호출하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 mcp 1.30.0입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>60장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-60.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-60.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;style&#x27;: &#x27;short&#x27;}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-server" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>FastMCP의 tool() 데코레이터</h2>
 </div>
@@ -181,6 +196,26 @@ print(loan_reply.isError, loan_reply.structuredContent[&quot;days&quot;])</code>
 </article>
 <aside class="lesson-note"><p><mark>서버에 등록할 함수는 실제로 실행되는 서버 프로세스 안에 있어야 합니다.</mark> 노트북에서 같은 이름의 함수를 직접 호출하는 실험으로는 MCP 등록이나 stdio 연결이 동작하는지 확인할 수 없습니다.</p></aside><p>62장에서는 도구 이름과 인자를 유지하고 두 프로그램이 메시지를 전하는 방법을 바꿉니다.</p>
 </section>
+<section class="lesson-section" id="desk-lab"><h3>FastMCP로 내 문서의 원문을 조회하기</h3><p>60장의 문서와 답변 선호를 읽는 MCP 서버를 만듭니다. 먼저 도구의 이름을 확인하고, 같은 세션에서 문서 번호를 인자로 보내 실제 반환값을 확인하세요.</p><pre tabindex="0"><code>from mcp.server.fastmcp import FastMCP
+from mcp.shared.memory import create_connected_server_and_client_session
+record = previous[&quot;record&quot;]
+desk_server = FastMCP(&quot;loan-desk&quot;, log_level=&quot;ERROR&quot;)
+@desk_server.tool()
+def lookup_loan(doc_id: str) -&gt; dict[str, str | bool]:
+    &quot;&quot;&quot;문서 번호로 대출 규정과 답변 형식을 조회한다.&quot;&quot;&quot;
+    if doc_id != record[&quot;id&quot;]:
+        return {&quot;found&quot;: False}
+    return {&quot;found&quot;: True, &quot;text&quot;: record[&quot;text&quot;], &quot;style&quot;: previous[&quot;style&quot;]}
+async with create_connected_server_and_client_session(desk_server) as desk_session:
+    catalog = await desk_session.list_tools()
+    result = await desk_session.call_tool(&quot;lookup_loan&quot;, {&quot;doc_id&quot;: record[&quot;id&quot;]})
+reply = result.structuredContent
+print(catalog.tools[0].name, reply[&quot;text&quot;], reply[&quot;style&quot;])</code></pre><p>실행 결과</p><pre>lookup_loan 대출 기간은 14일입니다. short</pre><p>list_tools는 도구 이름을 알려 줍니다. 원문은 그 다음 call_tool의 structuredContent에 들어 있습니다. 이 실습은 같은 프로세스에서 MCP 세션을 열어 메시지를 주고받습니다.</p><h3>직접 확인하기</h3><p>같은 서버에 다른 문서 번호를 보내세요. 서버가 정상 응답했지만 문서가 없는 경우를 읽습니다.</p><pre tabindex="0"><code># call_tool에 missing을 넣고 isError와 found를 출력하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>async with create_connected_server_and_client_session(desk_server) as desk_session:
+    missing = await desk_session.call_tool(&quot;lookup_loan&quot;, {&quot;doc_id&quot;: &quot;missing&quot;})
+print(missing.isError, missing.structuredContent[&quot;found&quot;])</code></pre><p>기본 자료로 실행한 결과</p><pre><code>False False</code></pre><p>첫 False는 도구 실행이 끝났다는 뜻입니다. 둘째 False는 해당 번호의 규정을 찾지 못했다는 뜻입니다.</p></details><h3>62장에 넘길 결과 저장하기</h3><p>62장은 같은 이름과 인자로 다시 MCP를 호출하고 LangChain 도구가 어떤 값을 돌려주는지 비교합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record, &quot;tool&quot;: catalog.tools[0].name, &quot;args&quot;: {&quot;doc_id&quot;: record[&quot;id&quot;]}, &quot;reply&quot;: reply}
+target = work / &quot;agent-61.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-61.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

@@ -1,0 +1,40 @@
+{
+  "manifest": [
+    {
+      "citations": [
+        "course-guide-v1:p2"
+      ],
+      "expected": [
+        "p2"
+      ],
+      "id": "Q01",
+      "passed": true,
+      "question": "과제는 어디에 내나요?"
+    },
+    {
+      "citations": [],
+      "expected": [],
+      "id": "Q02",
+      "passed": true,
+      "question": "내 점수는 몇 점인가요?"
+    },
+    {
+      "citations": [
+        "course-guide-v1:p3"
+      ],
+      "expected": [
+        "p3"
+      ],
+      "id": "Q03",
+      "passed": true,
+      "question": "과제 업로드가 실패했어요. 어떻게 해야 하나요?"
+    }
+  ],
+  "sha256": "1f1c674d4f98fae8f8cb1d644892d66f14ef2d99aed5ed84fcfda90d5c33a9ef",
+  "fixes": [
+    "Q03"
+  ],
+  "peer_run": "미확인",
+  "evaluated_path": "실험 후보",
+  "baseline_decision": "기준선 유지"
+}

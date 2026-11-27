@@ -1,0 +1,146 @@
+{
+  "68": {
+    "title": "TestClient로 대출 문의 한 건 보내기",
+    "input": "my-course/agent-api-case.json",
+    "output": "service-lab/api.json",
+    "application": "200 loan-01",
+    "exercise": "422 k",
+    "actual_read": "복귀 예시 agent-api-case.json"
+  },
+  "69": {
+    "title": "StreamingResponse의 완료 사건에서 답변 확정하기",
+    "input": "service-lab/api.json",
+    "output": "service-lab/stream.json",
+    "application": "['start', 'delta', 'done']",
+    "exercise": "False True",
+    "actual_read": "내 실습 파일 api.json"
+  },
+  "70": {
+    "title": "SQLite에 완료한 대화 한 건 저장하기",
+    "input": "service-lab/stream.json",
+    "output": "service-lab/stored.json",
+    "application": "loan-demo loan-01",
+    "exercise": "1",
+    "actual_read": "내 실습 파일 stream.json"
+  },
+  "71": {
+    "title": "Dockerfile에 API 시작 모듈과 포트 지정하기",
+    "input": "service-lab/stored.json",
+    "output": "service-lab/container.json",
+    "application": "loan-demo loan-01",
+    "exercise": "main:app 8000",
+    "actual_read": "내 실습 파일 stored.json"
+  },
+  "72": {
+    "title": "Compose에서 포트와 DB 볼륨 확인하기",
+    "input": "service-lab/container.json",
+    "output": "service-lab/compose.json",
+    "application": "127.0.0.1:8080:8000 course-pg:/var/lib/postgresql/data",
+    "exercise": "course-pg True",
+    "actual_read": "내 실습 파일 container.json"
+  },
+  "73": {
+    "title": "문서 ID와 거리로 pgvector 검색 결과 검산하기",
+    "input": "service-lab/compose.json",
+    "output": "service-lab/nearest.json",
+    "application": "[('loan-01', 0.0), ('return-note', 1.41)]",
+    "exercise": "return-note",
+    "actual_read": "내 실습 파일 compose.json"
+  },
+  "74": {
+    "title": "배포 점검에서 HTTP 상태와 본문 따로 검사하기",
+    "input": "service-lab/nearest.json",
+    "output": "service-lab/probe.json",
+    "application": "http://127.0.0.1:8080/turn True",
+    "exercise": "False",
+    "actual_read": "내 실습 파일 nearest.json"
+  },
+  "75": {
+    "title": "SQLite 백업 사본에서 원문까지 대조하기",
+    "input": "service-lab/probe.json",
+    "output": "service-lab/restore.json",
+    "application": "True loan-01",
+    "exercise": "False",
+    "actual_read": "내 실습 파일 probe.json"
+  },
+  "76": {
+    "title": "unittest로 복원 확인을 CI 검사로 옮기기",
+    "input": "service-lab/restore.json",
+    "output": "service-lab/ci.json",
+    "application": "test_restore.RestoreTest.test_restored_row 0",
+    "exercise": "True True",
+    "actual_read": "내 실습 파일 restore.json"
+  },
+  "77": {
+    "title": "SHA-256으로 승인한 후보와 실행할 후보 대조하기",
+    "input": "service-lab/ci.json",
+    "output": "service-lab/candidate.json",
+    "application": "True 64",
+    "exercise": "False",
+    "actual_read": "내 실습 파일 ci.json"
+  },
+  "78": {
+    "title": "HTML 폼에서 검사할 후보 식별하기",
+    "input": "service-lab/candidate.json",
+    "output": "service-lab/form.json",
+    "application": "['1', '2']",
+    "exercise": "2 revision-b",
+    "actual_read": "내 실습 파일 candidate.json"
+  },
+  "79": {
+    "title": "fetch 요청 본문에 선택한 ID 담기",
+    "input": "service-lab/form.json",
+    "output": "service-lab/selection.json",
+    "application": "{'id': 2, 'done': True} revision-b",
+    "exercise": "True True",
+    "actual_read": "내 실습 파일 form.json"
+  },
+  "80": {
+    "title": "버전 검사로 투두 변경 한 번만 승인하기",
+    "input": "service-lab/selection.json",
+    "output": "service-lab/approval.json",
+    "application": "200 409 1",
+    "exercise": "False 0",
+    "actual_read": "내 실습 파일 selection.json"
+  },
+  "81": {
+    "title": "검색 단계에서 처음 틀린 값을 기록하기",
+    "input": "service-lab/approval.json",
+    "output": "service-lab/evaluation/baseline.json",
+    "application": "A1 30 [200, 409]",
+    "exercise": "A1",
+    "actual_read": "내 실습 파일 approval.json"
+  },
+  "82": {
+    "title": "동일 질문에서 정답 순위와 인용 지지 나눠 채점하기",
+    "input": "service-lab/evaluation/baseline.json",
+    "output": "service-lab/evaluation/ranking.json",
+    "application": "{'recall': 1.0, 'mrr': 0.5} {'recall': 1.0, 'mrr': 1.0}",
+    "exercise": "True False",
+    "actual_read": "내 실습 파일 baseline.json"
+  },
+  "83": {
+    "title": "승인 경로와 실제 변경 횟수 함께 검사하기",
+    "input": "service-lab/evaluation/ranking.json",
+    "output": "service-lab/evaluation/trajectory.json",
+    "application": "True 1",
+    "exercise": "False",
+    "actual_read": "내 실습 파일 ranking.json"
+  },
+  "84": {
+    "title": "같은 시험 사례로 배포 후보의 회귀 판정하기",
+    "input": "service-lab/evaluation/trajectory.json",
+    "output": "service-lab/evaluation/gate.json",
+    "application": "july-deadline 시험 배포",
+    "exercise": "보류",
+    "actual_read": "내 실습 파일 trajectory.json"
+  },
+  "85": {
+    "title": "실패 질문 재실행 뒤 팀 인수 파일 만들기",
+    "input": "service-lab/evaluation/gate.json",
+    "output": "service-lab/evaluation/release.json",
+    "application": "인계 90 [30, 90]",
+    "exercise": "True",
+    "actual_read": "내 실습 파일 gate.json"
+  }
+}

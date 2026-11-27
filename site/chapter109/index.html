@@ -21,6 +21,21 @@
 <p class="hero-description">가상의 읽기 전용 기록에서 세션 소유자와 자료 접근 범위를 검수합니다. 거부 응답의 노출 필드와 정상 사용자의 조회 결과를 각각 확인합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>공개 응답에 허용한 필드만 남기기</h3><p>108장의 평가 기록을 가진 팀이 소유자 확인에 실패한 경우를 살펴봅니다. 이미 거부된 예시 기록을 화면으로 옮길 때는 허용한 오류 필드만 구성합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter108.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter109-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter108.json&quot;
+sample_file = here / &quot;chapter109-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;answer_review&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter109-start.json
+{&#x27;doc&#x27;: True, &#x27;fact&#x27;: True, &#x27;case&#x27;: &#x27;Q01&#x27;, &#x27;split&#x27;: &#x27;공개 개발 예시&#x27;}</pre></div><p>두 번째 줄은 읽은 파일의 <code>answer_review</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -68,38 +83,18 @@ None not_attempted</pre></div>
 
 
 <span class="lesson-anchor" id="workflow-authorize-own-session"></span><span class="lesson-anchor" id="workflow-authorize-own-session-caption"></span>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 정상 소유자 응답</h3>
-<div class="cell-before"><p>같은 세션 이름을 가진 두 사용자 예제에서 bob의 정상 결과를 읽어 보세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">normal_result = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
- <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
- <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
- <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
-<span class="tok-comment"># 정상 응답의 상태와 근거 문서 ID를 표시하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 12줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">normal_result = {<span class="tok-string">'status'</span>: <span class="tok-string">'answered'</span>,
- <span class="tok-string">'answer'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'sources'</span>: [{<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
-              <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
-              <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
-              <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
-              <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
-              <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
-              <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>}],
- <span class="tok-string">'mode'</span>: <span class="tok-string">'local_rule_fixture'</span>,
- <span class="tok-string">'model_calls'</span>: <span class="tok-number">0</span>}
-print(normal_result[<span class="tok-string">"status"</span>], normal_result[<span class="tok-string">"sources"</span>][<span class="tok-number">0</span>][<span class="tok-string">"id"</span>])</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">answered RULE-B</pre></div>
-<div class="cell-after"><p>answered와 RULE-B가 나옵니다. 자신의 기록은 읽을 수 있으므로 앞의 거부 사례와 함께 읽어야 경계의 효과를 설명할 수 있습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 정상 소유자 응답</h3><figure class="code-block"><pre tabindex="0"><code>normal_result = {&#x27;status&#x27;: &#x27;answered&#x27;,
+ &#x27;answer&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+ &#x27;sources&#x27;: [{&#x27;id&#x27;: &#x27;RULE-B&#x27;,
+              &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+              &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;,
+              &#x27;page&#x27;: 2,
+              &#x27;section&#x27;: &#x27;2.2&#x27;,
+              &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+              &#x27;version&#x27;: &#x27;rules-v1&#x27;}],
+ &#x27;mode&#x27;: &#x27;local_rule_fixture&#x27;,
+ &#x27;model_calls&#x27;: 0}
+print(normal_result[&quot;status&quot;], normal_result[&quot;sources&quot;][0][&quot;id&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">answered RULE-B</pre></div><div class="cell-after"><p>answered와 RULE-B가 나옵니다. 자신의 기록은 읽을 수 있으므로 앞의 거부 사례와 함께 읽어야 경계의 효과를 설명할 수 있습니다.</p></div></article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>조회 거부 뒤 정상 사용자의 경로도 검증하기</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
 nrequest["bob의 요청"]
   nowner["소유자·세션"]
@@ -131,6 +126,22 @@ print(display_a[&quot;message&quot;])</code></pre></figure>
 <section class="project-example"><h3>정상 사용자의 회귀 확인</h3><p>거부 사례의 공개 문구를 바꾼 다음에는 bob이 자기 대화에서 정상적으로 받은 normal_result도 다시 확인하세요. 정상 응답까지 일괄해서 오류 문구로 바꾸면 노출은 줄어도 정당한 사용자가 서비스를 이용할 수 없습니다.</p></section>
 <aside class="lesson-note"><p><mark>사용자에게 보일 필드는 내부 기록을 복사한 뒤 지우기보다 허용한 값으로 새로 구성할 수 있습니다.</mark> 운영 기록에 나중에 내부 사유 필드가 추가되어도 위 함수의 공개 JSON에는 두 필드만 들어갑니다.</p></aside><p>110장의 측정 로그도 먼저 필요한 필드를 정하고, 질문 본문·세션 소유자의 불필요한 사본을 만들지 않습니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 공개 응답에 허용한 필드만 남기기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>internal = {**observed, &quot;request_id&quot;: incoming[&quot;reply&quot;][&quot;request_id&quot;],
+            &quot;evaluation&quot;: incoming[&quot;answer_review&quot;]}
+public_error = public_session_error(internal)
+new = {**incoming, &quot;public_error&quot;: public_error,
+       &quot;visible_keys&quot;: sorted(public_error), &quot;evaluation_exposed&quot;: &quot;evaluation&quot; in public_error}
+print(new[&quot;visible_keys&quot;], new[&quot;evaluation_exposed&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;code&#x27;, &#x27;message&#x27;] False</pre></div><p>사용자 메시지에는 내부 요청 ID와 평가 결과가 없습니다. 팀의 API가 소유자를 실제로 확인하는지는 공개 메시지의 모양과 따로 검증해야 합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter109.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter109.json</pre></div><p>110장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

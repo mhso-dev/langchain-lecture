@@ -1,0 +1,29 @@
+{
+  "review": {
+    "question": "A형 녹음기는 한 번에 몇 시간 녹음할 수 있나요?",
+    "decision": "검토 대기",
+    "reference": {
+      "source": "예시 설명서",
+      "page": 2,
+      "reference_answer": "예시 원문 확인",
+      "action": "출처 확인"
+    },
+    "evidence_mode": "기록 읽기"
+  },
+  "cases": [
+    {
+      "id": "Q01",
+      "question": "과제는 어디에 내나요?",
+      "action": "답변",
+      "expected": [
+        "p2"
+      ]
+    },
+    {
+      "id": "Q02",
+      "question": "내 점수는 몇 점인가요?",
+      "action": "보류",
+      "expected": []
+    }
+  ]
+}

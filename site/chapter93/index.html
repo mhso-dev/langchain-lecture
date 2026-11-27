@@ -21,6 +21,21 @@
 <p class="hero-description">질문 검증, 자료 조회, 출처 표시, 종료를 상태별로 나눕니다. Q03의 일정 문의가 no_evidence로 끝나는 조건과 빈 입력의 처리 경로를 비교합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>오답 문항으로 종료 경로 확인하기</h3><p>92장에서 상태가 달랐던 질문을 골라 그래프에 넣습니다. 어느 노드까지 지나갔는지를 원문 위치 누락 문제와 구별합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/final/chapter92.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter93-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/final/chapter92.json&quot;
+sample_file = here / &quot;chapter93-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;issues&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter93-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;장비 A의 점검 전 확인 사항은?&#x27;, &#x27;mismatch&#x27;: [&#x27;page&#x27;]}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;question&#x27;: &#x27;장비 A를 다음 달에 교체하나요?&#x27;, &#x27;mismatch&#x27;: [&#x27;status&#x27;, &#x27;doc&#x27;]}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>issues</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -74,20 +89,16 @@ c -->|없음| e["check_equipment"]</script><figcaption>strip 결과가 비었는
 
 
 <span class="lesson-anchor" id="workflow-q01-service-contract"></span><span class="lesson-anchor" id="workflow-q01-service-contract-caption"></span>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3 id="example-cell-2">과제 02 · 선택 연습 · 빈 입력의 상태 전이</h3>
-<div class="cell-before"><p>공백만 넣었을 때 짧은 분기의 종료 위치를 표시하세요. 질문을 더 받으면 되는 상태와 구분해 봅니다.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2"><span class="tok-comment"># next_step을 호출하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 1줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">print(next_step(<span class="tok-string">"   "</span>))</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">invalid_input</pre></div>
-<div class="cell-after"><p>invalid_input을 돌려줍니다. 여기서 멈추면 자료를 읽는 비용도 생기지 않습니다.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="example-cell-2">팀 참고 예시 · 빈 입력의 상태 전이</h3><figure class="code-block"><pre tabindex="0"><code>print(next_step(&quot;   &quot;))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">invalid_input</pre></div><div class="cell-after"><p>invalid_input을 돌려줍니다. 여기서 멈추면 자료를 읽는 비용도 생기지 않습니다.</p></div></article>
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>라우터가 종료시킨 요청을 노드 방문 기록으로 확인하기</h2></div></header>
 <p>92장에서 Q03은 검색 전에 끝내기로 했습니다. 노트북의 next_step을 실제 LangGraph 조건부 간선에 연결하고 Q03의 방문 노드를 출력합니다. 이 작은 그래프는 경로 설계를 검증하기 위한 것입니다.</p>
-<article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 조건부 간선의 두 목적지 등록</h3><div class="cell-before"><p>분류 결과가 check_equipment일 때에만 lookup으로 갑니다. 나머지 경로에서는 classify가 적어 둔 판단을 보존하고 종료합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from typing import TypedDict
+<figure class="workflow-reading" data-workflow><h3>질문 분류와 조회 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+  S["START"] --> C["classify · 질문 분류"]
+  C -->|invalid_input| E["END"]
+  C -->|no_evidence| E
+  C -->|check_equipment| L["lookup · 방문 기록"]
+  L --> E</script><figcaption>classify의 반환값이 check_equipment일 때 lookup을 실행합니다.</figcaption></figure><article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-1">셀 04 · 조건부 간선의 두 목적지 등록</h3><div class="cell-before"><p>분류 결과가 check_equipment일 때에만 lookup으로 갑니다. 나머지 경로에서는 classify가 적어 둔 판단을 보존하고 종료합니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
 class RouteState(TypedDict):
@@ -116,6 +127,27 @@ print(routed[&quot;route&quot;], routed[&quot;visits&quot;])</code></pre></figur
 <section class="project-example"><h3>팀 그래프에서 경로를 추적하기</h3><p>질문을 “장비 A의 점검 전 확인 사항은?”으로 바꿉니다. 이번에는 lookup까지 기록돼야 합니다. 장비명이 빠진 점검 질문도 이 간단한 분류기에서는 check_equipment가 나옵니다. 팀의 조회 노드에서 장비를 정할 수 없을 때 어디서 되묻고 끝낼지 표시하세요.</p></section>
 <aside class="lesson-note"><p><mark>끝났다는 출력만으로는 도구 호출을 생략했는지 알 수 없습니다.</mark> 방문 노드 목록에 lookup이 있으면 일단 조회 단계에 진입했습니다. 실제 조회 건수는 조회 함수 안에서 따로 확인합니다.</p></aside><p>94장에서 조회 노드가 읽을 원문·판본·권한 정보를 준비하고 95장에서 실제 검색 함수로 연결합니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 오답 문항으로 종료 경로 확인하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="workflow-reading" id="team-route" data-workflow><h3>팀 문항이 거치는 노드</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+  S["START"] --> C["classify · 질문 분류"]
+  C -->|invalid_input| E["END"]
+  C -->|no_evidence| E
+  C -->|check_equipment| L["lookup · 방문 기록"]
+  L --> E</script><figcaption>분류 결과가 check_equipment이면 lookup까지 방문합니다. 교체 일정을 묻는 팀 문항은 classify에서 no_evidence로 종료합니다.</figcaption></figure><figure class="code-block"><pre tabindex="0"><code>paths = []
+for issue in incoming[&quot;issues&quot;]:
+    out = routes.invoke({&quot;question&quot;: issue[&quot;question&quot;], &quot;route&quot;: &quot;&quot;, &quot;visits&quot;: []})
+    paths.append({**issue, &quot;route&quot;: out[&quot;route&quot;], &quot;visits&quot;: out[&quot;visits&quot;]})
+new = {&quot;quality_reference&quot;: incoming[&quot;quality_reference&quot;], &quot;paths&quot;: paths, &quot;documents&quot;: incoming[&quot;documents&quot;]}
+print([(row[&quot;id&quot;], row[&quot;visits&quot;]) for row in paths])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, [&#x27;classify&#x27;, &#x27;lookup&#x27;]), (&#x27;Q03&#x27;, [&#x27;classify&#x27;])]</pre></div><p>교체 시기를 묻는 문항에서 classify만 방문하면 조회를 실행하지 않고 끝난 것입니다. 위치 필드가 빠진 문항은 원문 처리 단계로 넘깁니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter93.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter93.json</pre></div><p>94장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

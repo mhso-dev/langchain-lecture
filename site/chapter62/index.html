@@ -13,7 +13,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>CHAPTER 62 / MCP</p>
 <span class="sidebar-title">MCP 도구와 LangChain 에이전트 연결</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-session"><span>02</span>클라이언트 세션과 도구 어댑터</a><a href="#nb-mismatch"><span>03</span>구조화된 도구 결과의 값 검증</a><a href="#nb-agent"><span>04</span>create_agent와 ToolMessage의 결과 전달</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">비동기 LangChain 도구에서 MCP 결과 읽기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-session"><span>02</span>클라이언트 세션과 도구 어댑터</a><a href="#nb-mismatch"><span>03</span>구조화된 도구 결과의 값 검증</a><a href="#nb-agent"><span>04</span>create_agent와 ToolMessage의 결과 전달</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -29,6 +29,23 @@
 <a class="download" href="chapter62.ipynb" download="chapter62.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>62장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다. 예제에 사용한 외부 패키지는 langchain 1.4.6, langchain-core 1.6.12, langsmith 0.14.11, mcp 1.30.0입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>61장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-61.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-61.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;tool&#x27;: &#x27;lookup_loan&#x27;,
+     &#x27;args&#x27;: {&#x27;doc_id&#x27;: &#x27;loan-01&#x27;},
+     &#x27;reply&#x27;: {&#x27;found&#x27;: True, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;, &#x27;style&#x27;: &#x27;short&#x27;}}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-session" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>클라이언트 세션과 도구 어댑터</h2>
 </div>
@@ -83,15 +100,15 @@ print(result)</code></pre></figure>
 <p id="example-analysis">주말 시간 문자열이 돌아왔어도 어느 경로에서 얻었는지 구분해야 합니다. 여기서는 LangChain 쪽 도구 호출이 MCP 서버의 함수를 거칩니다. 연결 코드를 수정한 뒤에는 사람이 읽는 시간뿐 아니라 요청한 요일과 응답의 요일도 대조합니다.</p>
 </article>
 <span class="lesson-anchor" id="direct"></span><div class="lesson-explanation" id="reading-direct"><h3>LangChain 도구가 호출하는 MCP 도구</h3><p>61장의 get_library_hours를 호출하는 쪽은 이제 LangChain 도구 lookup입니다. 두 이름 사이에서 day가 그대로 전달되는지 보세요.</p><div class="worked-case" id="flow-6"><h3>셀 04 · 평일 운영 시간이 도구 메시지에 담기는 과정</h3>
-<p>셀 02에서는 주말을 직접 요청했습니다. 여기서는 셀 04의 모델이 평일을 요청합니다. 같은 hours-1을 요청과 결과에서 찾아보세요.</p>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p>
 <article id="flow-6-step-0"><small>STEP 01 · 모델</small><h4>평일 인자의 도구 요청</h4>
-<p>대본 모델이 lookup에 전달할 요일과 호출 ID를 만듭니다.</p><pre>lookup(day="weekday") · id=hours-1</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션의 호출 전달</h4>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>lookup(day="weekday") · id=call_qUxLpAH8lHUWDNL4WinDU43n</pre></article><article id="flow-6-step-1"><small>STEP 02 · 어댑터</small><h4>MCP 세션의 호출 전달</h4>
 <p>lookup은 현재 열린 세션에서 서버 도구를 부릅니다.</p><pre>session.call_tool("get_library_hours", {"day": "weekday"})</pre></article><article id="flow-6-step-2"><small>STEP 03 · 서버</small><h4>서버의 시간표 조회</h4>
 <p>서버가 요청 요일과 시간을 돌려줍니다. 어댑터가 요일을 확인하고 hours를 반환합니다.</p><pre>day = weekday
 hours = 09:00~18:00</pre></article><article id="flow-6-step-3"><small>STEP 04 · 프레임워크</small><h4>입력 요일과 반환값 대조</h4>
-<p>도구가 돌려준 시간이 같은 ID의 도구 메시지 본문에 들어갑니다.</p><pre>ToolMessage · tool_call_id=hours-1
+<p>도구가 돌려준 시간이 같은 ID의 도구 메시지 본문에 들어갑니다.</p><pre>ToolMessage · tool_call_id=call_qUxLpAH8lHUWDNL4WinDU43n
 content = 09:00~18:00</pre></article><article id="flow-6-step-4"><small>STEP 05 · 셀 04</small><h4>ToolMessage로 결과 반환</h4>
-<p>마지막 모델 문장은 대본에 들어 있습니다. 실제로 받은 시간은 메시지의 호출 ID와 함께 출력합니다.</p><pre>hours-1 09:00~18:00</pre></article></div></div>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><pre>call_qUxLpAH8lHUWDNL4WinDU43n 09:00~18:00</pre></article></div></div>
 <span class="lesson-anchor" id="adapter"></span><div class="lesson-explanation" id="reading-adapter"><h3>응답의 어느 값을 모델에 넘길까?</h3><p>MCP는 day와 hours 등이 담긴 결과를 돌려줍니다. lookup은 reply.isError를 먼저 확인하고 반환된 day가 요청과 일치할 때에만 hours 문자열을 넘깁니다.</p></div>
 <span class="lesson-anchor" id="session"></span><div class="lesson-explanation" id="reading-session"><h3>열린 세션의 수명</h3><p>make_lookup(session)은 도구가 쓸 세션을 기억합니다. 실제 lookup.ainvoke도 async with 블록 안에서 실행해야 합니다. 블록이 끝나면 연결 수명도 끝납니다.</p></div>
 
@@ -117,7 +134,7 @@ requested = <span class="tok-string">'weekend'</span>
 <details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 3줄</span><button class="copy-button js-only" data-copy="code-4" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-4">received = {<span class="tok-string">'day'</span>: <span class="tok-string">'weekday'</span>, <span class="tok-string">'hours'</span>: <span class="tok-string">'09:00~18:00'</span>}
 requested = <span class="tok-string">'weekend'</span>
 print(received[<span class="tok-string">'day'</span>] == requested)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">False</pre></div>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">False</pre></div>
 <div class="cell-after"><p>요일 비교 결과는 False입니다. 서버가 반환한 값 자체는 ‘09:00~18:00’으로 정상처럼 보이지만 주말 요청에는 쓸 수 없습니다. make_lookup에서 이 경우에 해당하는 오류 이름은 result_day_mismatch입니다.</p>
 </div>
 </details>
@@ -132,45 +149,39 @@ print(received[<span class="tok-string">'day'</span>] == requested)</code></pre>
 <h2>create_agent와 ToolMessage의 결과 전달</h2>
 </div>
 </header>
-<p>평일 요청 한 건을 내는 대본 모델을 실제 create_agent에 연결합니다. 최종 답안은 대본에 고정했으므로 도구가 어디에서 무엇을 가져왔는지는 도구 메시지로 확인하세요.</p>
+<p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p>
 
 <span class="lesson-anchor" id="workflow-mcp-tool-message"></span><span class="lesson-anchor" id="workflow-mcp-tool-message-caption"></span>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3 id="example-cell-4">셀 04 · ToolMessage에서 도구 응답 추출</h3>
 <div class="cell-before"><p>lookup에 등록한 실행 함수가 MCP를 한 번 부릅니다. 수업용 모델과 서버 모두 네트워크를 사용하지 않습니다.</p>
 </div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5"><span class="tok-keyword">from</span> langchain.agents <span class="tok-keyword">import</span> create_agent
-<span class="tok-keyword">from</span> langchain_core.language_models.fake_chat_models <span class="tok-keyword">import</span> FakeMessagesListChatModel
-<span class="tok-keyword">from</span> langchain_core.messages <span class="tok-keyword">import</span> AIMessage
-<span class="tok-keyword">from</span> langsmith <span class="tok-keyword">import</span> tracing_context
+<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>예제</span><span class="code-actions"><span>python · 20줄</span><button class="copy-button js-only" data-copy="code-5" type="button" aria-label="예제 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="예제"><code id="code-5">from langchain.agents import create_agent
+from langsmith import tracing_context
+import os
+from langchain_openai import ChatOpenAI
 
-<span class="tok-keyword">class</span> DemoModel(FakeMessagesListChatModel):
-    <span class="tok-keyword">def</span> bind_tools(self, tools, **kwargs):
-        <span class="tok-keyword">return</span> self
-
-model = DemoModel(responses=[
-    AIMessage(content=<span class="tok-string">""</span>, tool_calls=[{<span class="tok-string">"name"</span>: <span class="tok-string">"lookup"</span>, <span class="tok-string">"args"</span>: {<span class="tok-string">"day"</span>: <span class="tok-string">"weekday"</span>}, <span class="tok-string">"id"</span>: <span class="tok-string">"hours-1"</span>}]),
-    AIMessage(content=<span class="tok-string">"조회가 끝났습니다."</span>),
-])
-<span class="tok-keyword">async</span> <span class="tok-keyword">with</span> create_connected_server_and_client_session(server) <span class="tok-keyword">as</span> session:
-    agent = create_agent(model, tools=[make_lookup(session)])
-    <span class="tok-keyword">with</span> tracing_context(enabled=<span class="tok-keyword">False</span>):
-        state = <span class="tok-keyword">await</span> agent.ainvoke({<span class="tok-string">"messages"</span>: [(<span class="tok-string">"user"</span>, <span class="tok-string">"평일 운영 시간은?"</span>)]})
-<span class="tok-keyword">for</span> message <span class="tok-keyword">in</span> state[<span class="tok-string">"messages"</span>]:
-    <span class="tok-keyword">if</span> message.type == <span class="tok-string">"tool"</span>:
+# 수업 커널에 %pip install langchain-openai 를 실행하고 OPENAI_API_KEY를 설정하세요.
+model = ChatOpenAI(model=os.getenv(&quot;OPENAI_MODEL&quot;) or &quot;gpt-4o-mini&quot;, timeout=45, max_retries=1)
+async with create_connected_server_and_client_session(server) as session:
+    agent = create_agent(model, tools=[make_lookup(session)], system_prompt=&quot;운영 시간은 반드시 lookup으로 조회한 뒤 답하세요.&quot;)
+    with tracing_context(enabled=False):
+        state = await agent.ainvoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;평일 운영 시간은?&quot;)]})
+for message in state[&quot;messages&quot;]:
+    if message.type == &quot;tool&quot;:
         print(message.tool_call_id, message.content)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">hours-1 09:00~18:00</pre></div>
-<div class="cell-after"><p>hours-1은 에이전트가 요청과 결과를 연결하는 호출 ID입니다. 뒤의 09:00~18:00이 MCP가 반환한 시간입니다. 외부 HTTP 접속 시간이나 원격 인증을 확인한 기록은 아닙니다.</p>
+<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">call_qUxLpAH8lHUWDNL4WinDU43n 09:00~18:00</pre></div>
+<div class="cell-after"><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p>
 </div>
 </article>
 <figure class="workflow-reading" id="guided-workflow" data-workflow><h3>모델이 MCP 서버의 값을 받는 경로</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
-m["테스트 모델"] -->|hours-1| a["lookup 어댑터"] --> c["MCP 세션"] --> s["서버 시간표 도구"]
+m["질문을 받은 실제 모델"] -->|실행 시 생성한 호출 ID| a["lookup 어댑터"] --> c["MCP 세션"] --> s["서버 시간표 도구"]
 s --> v["응답 값 확인"] --> t["ToolMessage"] --> m
-m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_agent에 등록한 lookup이 열린 MCP 세션을 사용합니다. 도구의 반환값은 hours-1에 대응하는 ToolMessage로 모델 대화에 합류합니다.</figcaption></figure>
+m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_agent에 등록한 lookup이 열린 MCP 세션을 사용합니다. 도구의 반환값은 call_qUxLpAH8lHUWDNL4WinDU43n에 대응하는 ToolMessage로 모델 대화에 합류합니다.</figcaption></figure>
 
-<aside id="guided-reading" class="lesson-note"><h3>MCP 결과가 모델의 대화에 들어오는 지점</h3><p><mark>어댑터가 받은 값과 ToolMessage에 담긴 값을 같은 호출 ID로 연결합니다.</mark> 서버가 돌려준 운영 시간이 정상이어도 요청한 요일과 다르면 다른 질문의 답입니다. 세션 안에서 값을 검사한 뒤 메시지의 hours-1과 요청을 대조하세요.</p><p class="reuse-note">선수 개념 · <a href="../chapter61/index.html">61장 FastMCP 도구 등록과 클라이언트 호출</a></p></aside>
+<aside id="guided-reading" class="lesson-note"><h3>MCP 결과가 모델의 대화에 들어오는 지점</h3><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter61/index.html">61장 FastMCP 도구 등록과 클라이언트 호출</a></p></aside>
 
 <span class="lesson-anchor" id="environment"></span><span class="lesson-anchor" id="reading-environment"></span>
-<span class="lesson-anchor" id="comparison"></span><div class="lesson-explanation" id="reading-comparison"><h3>최종 문장과 도구의 반환값</h3><p>고정 모델의 마지막 답은 ‘조회가 끝났습니다.’입니다. 실제 운영 시간은 요청 hours-1과 짝인 ToolMessage의 content에서 읽습니다.</p></div>
+<span class="lesson-anchor" id="comparison"></span><div class="lesson-explanation" id="reading-comparison"><h3>최종 문장과 도구의 반환값</h3><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p></div>
 <span class="lesson-anchor" id="handoff"></span><span class="lesson-anchor" id="reading-handoff"></span>
 
 </section>
@@ -178,7 +189,7 @@ m -->|새 도구 요청 없음| e["최종 답변"]</script><figcaption>create_ag
 <h2>복습과 실습 점검</h2>
 </div>
 </header>
-<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 서버가 다른 요일을 보냈을 때 거절하기</h3><div class="cell-before"><p>주말 조회에 평일 값을 돌려주는 응답을 재현하세요. 아래 대역은 네트워크 없이 그 응답만 전달합니다. make_lookup의 요일 검사에서 어떤 오류가 발생하는지 확인하세요.</p></div>
+<article class="notebook-cell" id="applied-practice" data-cell="5" data-task="1"><h3>과제 05 · 서버가 다른 요일을 보냈을 때 거절하기</h3><div class="cell-before"><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p></div>
 <figure class="code-block"><figcaption><span>Python</span><button type="button" class="copy-button js-only" data-copy="applied-starter" aria-label="코드 복사">복사</button></figcaption><pre tabindex="0"><code id="applied-starter">from types import SimpleNamespace
 
 class WrongDaySession:
@@ -197,7 +208,7 @@ try:
     await lookup_wrong_day.ainvoke({"day": "weekend"})
 except ValueError as error:
     print(error)</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">result_day_mismatch</pre></div><div class="cell-after"><p>응답에는 정상적인 시간 문자열이 들어 있지만 요청은 주말이고 응답은 평일입니다. 이 검사를 빼면 에이전트는 평일 시간을 주말 답으로 받습니다. 이 과제는 어댑터의 오류 분기만 실행하며 MCP 연결은 앞선 셀에서 확인합니다.</p></div></details></article>
+<div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">result_day_mismatch</pre></div><div class="cell-after"><p>응답에는 정상적인 시간 문자열이 들어 있지만 요청은 주말이고 응답은 평일입니다. 이 검사를 빼면 에이전트는 평일 시간을 주말 답으로 받습니다. 이 과제는 어댑터의 오류 분기만 실행하며 MCP 연결은 앞선 셀에서 확인합니다.</p></div></details></article>
 </section>
 
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">06</span><div><h2>같은 MCP 도구를 HTTP 경유 에이전트에 연결하기</h2></div></header>
@@ -224,23 +235,44 @@ async def names_from(session):
 print(await with_http_session(names_from))</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[&#x27;get_library_hours&#x27;]</pre></div><div class="cell-after"><p>get_library_hours가 보이면 HTTP 경로로 목록 조회에 성공한 것입니다. 이 결과만으로는 운영 시간 응답이 사용자에게 돌아오는지 알 수 없습니다. 다음 과제에서는 같은 경로로 실제 도구를 호출합니다.</p></div>
 </article>
-<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 에이전트의 도구 결과에서 호출 ID와 시간 찾기</h3><div class="cell-before"><p>HTTP 세션을 받는 비동기 함수를 작성하세요. 열린 세션을 make_lookup에 넘겨 도구를 만들고, 주말을 묻는 요청 ID를 http-weekend로 정한 DemoModel과 create_agent에 연결하세요. 최종 상태에서 tool 메시지의 ID와 결과를 출력하세요.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># async def ask_over_http(session): ...
+<article class="notebook-cell" data-cell="7" data-task="1"><h3 id="workshop-step-2">과제 07 · 에이전트의 도구 결과에서 호출 ID와 시간 찾기</h3><div class="cell-before"><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p></div><figure class="code-block"><figcaption><span>노트북에서 직접 작성</span><button type="button" class="copy-button js-only" aria-label="노트북에서 직접 작성 코드 복사" data-copy="code-7">복사</button></figcaption><pre tabindex="0"><code id="code-7"># async def ask_over_http(session): ...
 # await with_http_session(ask_over_http)로 실행하세요.</code></pre></figure>
 <details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><figure class="code-block"><figcaption><span>정답</span><button type="button" class="copy-button js-only" aria-label="정답 코드 복사" data-copy="workshop-solution-2">복사</button></figcaption><pre tabindex="0"><code id="workshop-solution-2">async def ask_over_http(session):
-    decision = AIMessage(content=&quot;&quot;, tool_calls=[{
-        &quot;name&quot;: &quot;lookup&quot;, &quot;args&quot;: {&quot;day&quot;: &quot;weekend&quot;}, &quot;id&quot;: &quot;http-weekend&quot;,
-    }])
-    model = DemoModel(responses=[decision, AIMessage(content=&quot;조회를 마쳤습니다.&quot;)])
-    service_agent = create_agent(model, tools=[make_lookup(session)])
+    service_agent = create_agent(model, tools=[make_lookup(session)], system_prompt=&quot;시간은 lookup으로 조회하세요.&quot;)
     with tracing_context(enabled=False):
         result = await service_agent.ainvoke({&quot;messages&quot;: [(&quot;user&quot;, &quot;주말에는 언제 여나요?&quot;)]})
     reply = next(m for m in result[&quot;messages&quot;] if m.type == &quot;tool&quot;)
     return reply.tool_call_id, reply.content
 
-print(await with_http_session(ask_over_http))</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">(&#x27;http-weekend&#x27;, &#x27;10:00~16:00&#x27;)</pre></div><p>http-weekend와 10:00~16:00가 한 쌍으로 돌아옵니다. graph의 lookup 도구가 MCP 서버 쪽 이름 get_library_hours로 호출한 뒤 구조화 응답에서 시간을 꺼냈습니다. HTTP 전송은 실제 SDK를 사용했고 모델의 선택 순서는 대본으로 고정했습니다.</p></details>
+print(await with_http_session(ask_over_http))</code></pre></figure><div class="output"><p class="eyebrow">출력 예시 · 모델 문구와 호출 ID는 실행마다 달라집니다</p><pre tabindex="0">(&#x27;call_0SY2QCqfLmJBzRE9cxGOtc01&#x27;, &#x27;10:00~16:00&#x27;)</pre></div><p>실제 모델이 선택한 lookup의 인자, MCP 서버가 돌려준 시간, 최종 답변을 차례로 대조하세요. 실행 시 생성된 호출 ID로 요청과 결과를 연결합니다.</p></details>
 </article>
 <aside class="lesson-note"><p><mark>목록에서 본 서버 도구 이름과 모델이 요청한 도구 이름은 다를 수 있습니다.</mark> 이 어댑터에서 모델은 lookup을 요청하고 MCP 세션은 get_library_hours를 요청합니다. 연결 문제를 찾을 때는 두 이름을 각각의 등록 위치에서 확인하세요.</p></aside><p>같은 MCP 어댑터를 실제 주소로 옮길 때는 네트워크 연결과 접근 권한을 별도로 점검합니다.</p>
 </section>
+<section class="lesson-section" id="desk-lab"><h3>비동기 LangChain 도구에서 MCP 결과 읽기</h3><p>61장이 남긴 이름과 인자를 에이전트가 호출할 수 있는 도구에 연결합니다. 이전 응답은 비교용으로 남기고 새 MCP 세션에서 조회를 다시 실행하세요.</p><pre tabindex="0"><code>from langchain_core.tools import tool
+from mcp.server.fastmcp import FastMCP
+from mcp.shared.memory import create_connected_server_and_client_session
+record = previous[&quot;record&quot;]
+desk_server = FastMCP(&quot;loan-desk&quot;, log_level=&quot;ERROR&quot;)
+@desk_server.tool()
+def lookup_loan(doc_id: str) -&gt; dict[str, str | bool]:
+    &quot;&quot;&quot;문서 번호로 규정을 조회한다.&quot;&quot;&quot;
+    return {&quot;text&quot;: record[&quot;text&quot;]} if doc_id == record[&quot;id&quot;] else {}
+tool_events = []
+async with create_connected_server_and_client_session(desk_server) as desk_session:
+    @tool
+    async def read_rule(doc_id: str) -&gt; str:
+        &quot;&quot;&quot;문서 번호로 MCP 서버의 대출 규정 본문을 읽는다.&quot;&quot;&quot;
+        result = await desk_session.call_tool(previous[&quot;tool&quot;], {&quot;doc_id&quot;: doc_id})
+        if result.isError:
+            raise RuntimeError(&quot;MCP 조회 실패&quot;)
+        tool_events.append({&quot;name&quot;: previous[&quot;tool&quot;], &quot;args&quot;: {&quot;doc_id&quot;: doc_id}})
+        return result.structuredContent.get(&quot;text&quot;, &quot;&quot;)
+    linked_text = await read_rule.ainvoke(previous[&quot;args&quot;])
+print(linked_text, linked_text == previous[&quot;reply&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>대출 기간은 14일입니다. True</pre><p>ainvoke가 MCP 응답에서 text만 꺼냅니다. 기본 자료에서는 61장의 원문과 같아 True가 나옵니다. 여기서는 에이전트 선택 이전에 어댑터를 직접 시험합니다.</p><h3>직접 확인하기</h3><p>61장 기록의 번호와 새 조회의 원문을 한 쌍으로 묶으세요. 인용을 만들 사람이 두 값을 각각 꺼낼 수 있어야 합니다.</p><pre tabindex="0"><code># args에서 문서 번호를, linked_text에서 조회 응답을 읽어 딕셔너리를 만드세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>citation = {&quot;id&quot;: previous[&quot;args&quot;][&quot;doc_id&quot;], &quot;text&quot;: linked_text}
+print(citation[&quot;id&quot;], citation[&quot;text&quot;])</code></pre><p>기본 자료로 실행한 결과</p><pre><code>loan-01 대출 기간은 14일입니다.</code></pre><p>도구 호출에 넣은 번호와 같은 실행의 원문을 묶습니다. 54장에서 바꾼 원문이라면 새 값이 나옵니다.</p></details><h3>63장에 넘길 결과 저장하기</h3><p>63장은 이 근거를 서비스 응답의 sources에 넣습니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record, &quot;evidence&quot;: {&quot;id&quot;: previous[&quot;args&quot;][&quot;doc_id&quot;], &quot;text&quot;: linked_text}, &quot;events&quot;: tool_events}
+target = work / &quot;agent-62.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-62.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

@@ -21,6 +21,21 @@
 <p class="hero-description">운영 안내 서비스가 문서 확인 없이 답하는 경우를 줄이기 위해 필수 검색 경로를 검토합니다. 선택형 도구 경로와 같은 입력을 처리한 뒤 호출 횟수와 종료 상태를 비교합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>채택 전 후보와 기준선의 실행 경로 분리하기</h3><p>46장의 결정대로 기존 그래프를 먼저 실행합니다. 같은 요청에 후보 규칙도 따로 적용해 어떤 후보 문단이 실제로 존재하는지 확인하고 두 실행의 결과를 다른 필드에 넣습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/midterm/chapter46.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter47-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/midterm/chapter46.json&quot;
+sample_file = here / &quot;chapter47-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;runs&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter47-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;과제는 어디에 내나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p2&#x27;], &#x27;hits&#x27;: [&#x27;p2&#x27;], &#x27;passed&#x27;: True, &#x27;candidate&#x27;: [&#x27;p2&#x27;]}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;question&#x27;: &#x27;내 점수는 몇 점인가요?&#x27;, &#x27;action&#x27;: &#x27;보류&#x27;, &#x27;expected&#x27;: [], &#x27;hits&#x27;: [], &#x27;passed&#x27;: True, &#x27;candidate&#x27;: []}, {&#x27;id&#x27;: &#x27;Q03&#x27;, &#x27;question&#x27;: &#x27;과제 업로드가 실패했어요. 어떻게 해야 하나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p3&#x27;], &#x27;hits&#x27;: [], &#x27;passed&#x27;: False, &#x27;candidate&#x27;: [&#x27;p3&#x27;]}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>runs</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -102,6 +117,11 @@ print(repeated[<span class="tok-string">'retrieval_calls'</span>], repeated[<spa
 </section>
 <section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>검색을 한 번만 허용하는 그래프를 실제로 실행하기</h2></div></header>
 <p>팀은 인사에는 검색 없이 답하고, 제출 위치를 묻는 입력에는 검색을 한 번만 쓰기로 했습니다. 앞에서 읽은 정책 기록을 이번에는 실행 가능한 두 간선으로 옮깁니다.</p>
+<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>질문에 따라 검색을 생략하는 팀 그래프</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    s["START"] --> c{"질문에 과제가 있는가?"}
+    c -->|예| l["lookup · 검색 횟수 증가"]
+    c -->|아니요| e["END"]
+    l --> e</script><figcaption>needs_guide가 lookup 또는 finish를 반환합니다. lookup 뒤에 END가 있어 이 구현은 질문 하나당 최대 한 번 검색합니다.</figcaption></figure>
 <article class="notebook-cell" data-cell="3" data-task="0"><h3 id="workshop-step-1">셀 03 · 조건과 노드를 분리한 그래프 연결</h3><div class="cell-before"><p>제출 위치만 지원하는 작은 경로입니다. 판단 함수가 세는 값과 검색 노드에서 늘어나는 값을 어디에 두었는지 비교하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-3">복사</button></figcaption><pre tabindex="0"><code id="code-3">from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
@@ -126,11 +146,10 @@ event = desk_app.invoke({&quot;question&quot;: &quot;과제는 어디에 내나�
 print(event[&quot;calls&quot;], event[&quot;hits&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">1 [&#x27;course-guide-v1:p2&#x27;]</pre></div><div class="cell-after"><p>결과의 1은 검색 노드를 실제로 통과하며 증가한 횟수입니다. 고정 규칙으로 분기했고 외부 모델은 호출하지 않았습니다.</p></div>
 </article>
-<figure class="workflow-reading" id="workshop-workflow" data-workflow><h3>질문에 따라 검색을 생략하는 팀 그래프</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
-    s["START"] --> c{"질문에 과제가 있는가?"}
-    c -->|예| l["lookup · 검색 횟수 증가"]
-    c -->|아니요| e["END"]
-    l --> e</script><figcaption>needs_guide가 lookup 또는 finish를 반환합니다. lookup 뒤에 END가 있어 이 구현은 질문 하나당 최대 한 번 검색합니다.</figcaption></figure>
+
+<figure class="workflow-reading" id="hello-route" data-workflow><h3>인사말의 실제 끝점</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    s["START · 인사말"] --> c{"needs_guide · 과제가 있는가?"}
+    c -->|finish| e["END · 검색 생략"]</script><figcaption>인사말에는 과제가 없어 START에서 END로 바로 이동합니다.</figcaption></figure>
 <article class="notebook-cell" data-cell="4" data-task="0"><h3 id="workshop-step-2">셀 04 · 다른 끝점에서 호출 횟수 읽기</h3><div class="cell-before"><p>인사를 넣고 같은 그래프가 검색 노드를 통과하는지 확인하세요.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-4">복사</button></figcaption><pre tabindex="0"><code id="code-4">hello = desk_app.invoke({&quot;question&quot;: &quot;안녕하세요&quot;, &quot;hits&quot;: [], &quot;calls&quot;: 0})
 print(hello[&quot;calls&quot;], hello[&quot;hits&quot;])</code></pre></figure>
 <div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">0 []</pre></div><div class="cell-after"><p>0과 빈 목록이 함께 나옵니다. “과제 양식은?”처럼 분기는 통과하지만 문서를 못 찾는 입력을 넣으면 1과 빈 목록이 나옵니다.</p></div>
@@ -138,6 +157,33 @@ print(hello[&quot;calls&quot;], hello[&quot;hits&quot;])</code></pre></figure>
 <section class="project-example"><h3>항상 찾아야 하는 팀 서비스라면</h3><p>검색이 필수인 규정 조회 서비스는 시작점에서 lookup으로 직접 연결할 수 있습니다. 인사와 규정 질문을 각각 보내고, 선택 경로와 검색 횟수·사용자 안내가 어떻게 달라졌는지 비교하세요.</p></section>
 <aside class="lesson-note"><p><mark>후보가 비었다는 사실만으로는 어떤 간선을 지났는지 알 수 없습니다.</mark> 노드 진입 시에만 calls를 증가시키면 검색 생략과 검색 실패를 같은 빈 목록에서 구별할 수 있습니다.</p></aside><p>48장 화면에는 현재 응답의 hits와 calls를 함께 전달해 빈 상태를 설명하세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 채택 전 후보와 기준선의 실행 경로 분리하기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="workflow-reading" id="team-route" data-workflow><h3>팀 문항이 거치는 노드</h3><div class="workflow-view" hidden></div><script type="text/plain">flowchart TD
+    s["START"] --> c{"질문에 과제가 있는가?"}
+    c -->|예| l["lookup · 검색 횟수 증가"]
+    c -->|아니요| e["END"]
+    l --> e</script><figcaption>graph_ids는 그래프가 조회한 문단입니다. 뒤에서 따로 계산하는 experiment_ids는 같은 질문을 후보 규칙에 적용한 결과입니다.</figcaption></figure><figure class="code-block"><pre tabindex="0"><code>paths = []
+rule = incoming[&quot;candidate_rule&quot;]
+for row in incoming[&quot;runs&quot;]:
+    event = desk_app.invoke({&quot;question&quot;: row[&quot;question&quot;], &quot;hits&quot;: [], &quot;calls&quot;: 0})
+    baseline_ids = [key for key in event[&quot;hits&quot;] if key.split(&quot;:&quot;)[-1] in incoming[&quot;documents&quot;]]
+    experiment_ids = list(baseline_ids)
+    if event[&quot;calls&quot;] and any(term in row[&quot;question&quot;] for term in rule[&quot;terms&quot;]):
+        if rule[&quot;document&quot;] in incoming[&quot;documents&quot;]:
+            experiment_ids = [&quot;course-guide-v1:&quot; + rule[&quot;document&quot;]]
+    paths.append({**row, &quot;graph_calls&quot;: event[&quot;calls&quot;], &quot;graph_ids&quot;: baseline_ids,
+                  &quot;experiment_ids&quot;: experiment_ids})
+new = {&quot;runs&quot;: paths, &quot;documents&quot;: incoming[&quot;documents&quot;], &quot;decision&quot;: incoming[&quot;decision&quot;]}
+print([(row[&quot;id&quot;], row[&quot;graph_ids&quot;], row[&quot;experiment_ids&quot;]) for row in paths])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">[(&#x27;Q01&#x27;, [&#x27;course-guide-v1:p2&#x27;], [&#x27;course-guide-v1:p2&#x27;]), (&#x27;Q02&#x27;, [], []), (&#x27;Q03&#x27;, [], [&#x27;course-guide-v1:p3&#x27;])]</pre></div><p>Q03에서 graph_ids는 비고 experiment_ids에는 p3이 남습니다. 이 팀은 후보를 정식으로 채택하지 않았습니다. 이후 화면 비교에서도 두 경로의 결과를 구별해야 합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter47.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter47.json</pre></div><p>48장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

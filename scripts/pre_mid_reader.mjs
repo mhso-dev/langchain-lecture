@@ -172,7 +172,7 @@ const sections = units.map(([first, last, label, hours], index) => {
 const catalog = readFileSync(homePath,'utf8');
 const marker = '<!-- PRE_MID_CATALOG -->';
 if (!catalog.includes(marker)) throw new Error('개편 목차 위치를 확인하세요.');
-writeFileSync(homePath,catalog.replace(marker, () => '<p class="notice"><a href="pre-mid/reading-guide.html">전반부 1~42장 개정 교재</a> · <a href="pre-mid/course-guide.html">336시간 수업 운영표</a> · <a download href="daily/pre-mid.zip">1~42장 노트북과 실습 자료 받기</a></p>'+sections.join('\n')).replace('updates/index.html#classroom-edition','updates/index.html#whole-reading'));
+writeFileSync(homePath,catalog.replace(marker, () => '<p class="notice"><a href="pre-mid/reading-guide.html">전반부 1~42장 개정 교재</a> · <a href="pre-mid/course-guide.html">336시간 수업 운영표</a> · <a download href="daily/pre-mid.zip">1~42장 노트북과 실습 자료 받기</a></p>'+sections.join('\n')).replace('updates/index.html#classroom-edition','updates/index.html#cumulative-practice'));
 const update = join(output, 'updates/index.html');
 // Keep previous revision notes pointed at the source snapshot that they describe.
 const archive = 'https://github.com/mhso-dev/langchain-lecture/blob/2ea3ce8dc28cf6d3e96c55a0d14cd8fbf27d034b/site/';
@@ -242,3 +242,27 @@ insertAfterMain(update, `<section class="edition-group" id="whole-reading"><h2>1
 insertAfterMain(update, `<section class="edition-group" id="practice-inputs"><h2>11월 27일 · 전반부 실습 입력과 결과 개정</h2><p><a href="../pre-mid/reading-guide.html">1~42장 전체 개정 본문과 실습 열기</a>. 1~5장은 문법과 디자인 패턴 두 경로에서 고른 뒤, 각 장의 코드와 결과를 확인할 수 있습니다.</p></section>`);
 
 insertAfterMain(update, `<section class="edition-group" id="langgraph-intro"><h2>11월 27일 · 33장 LangGraph 입문</h2><p><a href="../chapter33/index.html#cell-graph-33-00">LangGraph의 역할과 상태·노드·간선</a>을 먼저 읽고, <a href="../chapter33/index.html#cell-graph-33-07">두 노드가 연결된 그림과 실행 코드</a>를 대조합니다.</p></section>`);
+
+const earlyPractice = [
+  ...Array.from({length: 5}, (_, i) => ['python-basics', 'a0' + (i + 1) + '-save-goal']),
+  ['team-git', 'git-case-save-goal'], ['team-git', 'git-verify-case-goal'],
+  ['prompt-workshop', 'sdk08-save-goal'], ['prompt-workshop', 'sdk09-open-goal'],
+  ['prompt-workshop', 'sdk10-open-goal'], ['chat-workshop', 'chat11-read'],
+  ['chat-workshop', 'chat12-prepare-goal'], ['chat-workshop', 'chat13-transfer'],
+];
+const practiceChanges = Array.from({length: 116}, (_, i) => {
+  const n = i + 1;
+  const early = earlyPractice[i];
+  const chapter = chapterPath(n);
+  const pathname = early ? 'pre-mid/' + early[0] + '/index.html' : chapter;
+  const anchor = early ? 'cell-' + early[1] : n <= 24 ? 'cell-carry-' + n + '-0'
+    : n <= 42 ? 'cell-cum-input-title' : n <= 52 || n >= 86 ? 'team-case'
+    : n <= 67 ? 'desk-lab' : 'service-practice';
+  const page = readFileSync(join(output, pathname), 'utf8');
+  if (!page.includes('id="' + anchor + '"')) throw new Error(pathname + '#' + anchor);
+  const heading = (page.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? '').replace(/<[^>]+>/g, '').trim();
+  const label = early ? revised[i].title : heading.replace(/^\d+\s*[장일]\s*[·.\-]?\s*/, '');
+  const second = n <= 5 ? ' · <a href="../pre-mid/python-patterns/index.html#cell-b0' + n + '-save-goal">디자인 패턴</a>' : '';
+  return '<li><a href="../' + pathname + '#' + anchor + '">' + n + '장 · ' + label + '</a>' + second + '</li>';
+});
+insertAfterMain(update, '<section class="edition-group" id="cumulative-practice"><h2>11월 27일 · 1~116장 누적 실습</h2><p>앞 장에서 만든 파일을 열고 새 기능을 적용하는 절입니다. 프로젝트 장에는 팀이 바꾸어 쓸 완성 예시와 다시 시작할 파일이 있습니다.</p><ol>' + practiceChanges.join('') + '</ol></section>');

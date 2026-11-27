@@ -21,6 +21,21 @@
 <p class="hero-description">가상 운영 안내의 세 문단에 문항별 기대 근거를 연결합니다. 평일 수업 시각과 주말 일정처럼 표현은 가깝지만 답변 가능 여부가 다른 질문을 평가 자료에 포함합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>수용 기준에서 평가 문항 만들기</h3><p>43장에서 고른 질문의 ID와 기대 행동을 평가표로 옮깁니다. 정답으로 표시한 문단이 실제 안내문에 있는지 확인합니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>team-project/midterm/chapter43.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter44-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;team-project/midterm/chapter43.json&quot;
+sample_file = here / &quot;chapter44-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;cases&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter44-start.json
+[{&#x27;id&#x27;: &#x27;Q01&#x27;, &#x27;question&#x27;: &#x27;과제는 어디에 내나요?&#x27;, &#x27;action&#x27;: &#x27;답변&#x27;, &#x27;expected&#x27;: [&#x27;p2&#x27;]}, {&#x27;id&#x27;: &#x27;Q02&#x27;, &#x27;question&#x27;: &#x27;내 점수는 몇 점인가요?&#x27;, &#x27;action&#x27;: &#x27;보류&#x27;, &#x27;expected&#x27;: []}]</pre></div><p>두 번째 줄은 읽은 파일의 <code>cases</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -109,6 +124,23 @@ print(by_paragraph[fixed_items[&quot;Q03&quot;][0]])</code></pre></figure>
 <section class="project-example"><h3>팀 문서가 개정됐다면</h3><p>쪽수가 바뀌어도 찾을 수 있는 문단 ID와 문서 버전을 같이 적으세요. 이전 판에는 있고 새 판에서 사라진 근거는 질문 표에서 임의로 다른 문단과 연결하기 전에 담당자가 다시 읽습니다.</p></section>
 <aside class="lesson-note"><p><mark>참조 검사는 문단의 존재까지만 확인합니다.</mark> p9를 실제로 존재하는 p1로 바꾸면 검사 결과는 비지만, 평일 시작 시각을 읽어도 제출 오류는 해결할 수 없습니다.</p></aside><p>45장의 기준선 실행에는 확인을 마친 질문·문단 쌍과 답변 불가 문항을 함께 건네세요.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 수용 기준에서 평가 문항 만들기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>cases = list(incoming[&quot;cases&quot;])
+cases.append({&quot;id&quot;: &quot;Q03&quot;, &quot;question&quot;: &quot;과제 업로드가 실패했어요. 어떻게 해야 하나요?&quot;,
+              &quot;action&quot;: &quot;답변&quot;, &quot;expected&quot;: [&quot;p3&quot;]})
+refs = {row[&quot;id&quot;]: row[&quot;expected&quot;] for row in cases}
+missing = unknown_evidence(refs, by_paragraph)
+new = {&quot;cases&quot;: cases, &quot;documents&quot;: by_paragraph, &quot;unresolved&quot;: missing}
+print(missing, refs)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">{} {&#x27;Q01&#x27;: [&#x27;p2&#x27;], &#x27;Q02&#x27;: [], &#x27;Q03&#x27;: [&#x27;p3&#x27;]}</pre></div><p>p2는 과제함 안내, p3은 오류 처리 절차입니다. 43장에서 추가한 질문도 cases에 남습니다. 팀 문서에 존재하지 않는 문단을 가리키면 검사에서 그 ID가 나옵니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/midterm/chapter44.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/midterm/chapter44.json</pre></div><p>45장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

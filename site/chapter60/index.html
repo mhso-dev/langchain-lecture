@@ -14,7 +14,7 @@
 </header>
 <aside class="sidebar" id="sidebar"><div class="sidebar-top"><span class="eyebrow">LEARNING NOTE</span><p>DAY 060</p>
 <span class="sidebar-title">사용자별 장기 기억과 SQL 저장</span></div>
-<nav aria-label="단원 목차"><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>새 대화에서 같은 사람의 선호만 불러오기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
+<nav aria-label="단원 목차"><a href="#desk-input">이어 할 자료</a><a href="#desk-lab">SQLite UPSERT로 사용자별 답변 선호 보관하기</a><a href="#start"><span>01</span>실습 노트북과 실행 환경</a><a href="#nb-key"><span>02</span>사용자 ID와 설정 키의 복합 조건</a><a href="#nb-owner"><span>03</span>선호 정보의 수정과 삭제</a><a href="#nb-sql"><span>04</span>SQL WHERE로 소유자별 조회</a><a href="#recap"><span>05</span>복습과 실습 점검</a><a href="#workshop"><span>06</span>새 대화에서 같은 사람의 선호만 불러오기</a><a href="#sources"><span>07</span>참고 자료와 실행 환경</a></nav>
 <div class="sidebar-bottom"><div class="reading-track js-only"><span></span></div>
 <span class="reading-label js-only" aria-live="off">읽기 진행 0%</span></div>
 </aside>
@@ -30,6 +30,23 @@
 <a class="download" href="chapter60.ipynb" download="chapter60.ipynb"><span class="download-icon" aria-hidden="true">↓</span><span><strong>60장 수업 노트북 (.ipynb)</strong><small>Jupyter에서 열고 Python 커널을 선택한 뒤 위에서부터 실행하세요.</small></span><span aria-hidden="true">↗</span></a><p class="reuse-note"><a href="#workshop">새 대화에서 같은 사람의 선호만 불러오기</a></p><div class="prose"><p>실행을 확인한 커널은 Python 3.12.15입니다.</p>
 </div>
 </section>
+<section class="lesson-section" id="desk-input"><h3>59장의 결과 열기</h3><p>같은 폴더에 내려받은 노트북을 여세요. 먼저 my-course/agent-59.json를 읽습니다. 파일이 없으면 시작 셀의 완성 예시로 연습할 수 있습니다.</p><pre tabindex="0"><code>from pathlib import Path
+import json
+folder = Path.cwd()
+if (folder.name == &quot;daily&quot; or (folder.name.startswith(&quot;chapter&quot;) and folder.name[7:].isdigit())):
+    folder = folder.parent
+work = folder / &quot;my-course&quot;
+work.mkdir(exist_ok=True)
+source_file = work / &quot;agent-59.json&quot;
+if source_file.exists():
+    previous = json.loads(source_file.read_text(encoding=&quot;utf-8&quot;))
+else:
+    previous = {&#x27;record&#x27;: {&#x27;owner&#x27;: &#x27;alice&#x27;, &#x27;id&#x27;: &#x27;loan-01&#x27;, &#x27;text&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+     &#x27;owner&#x27;: &#x27;alice&#x27;,
+     &#x27;turns&#x27;: [{&#x27;role&#x27;: &#x27;assistant&#x27;, &#x27;content&#x27;: &#x27;대출 기간은 14일입니다.&#x27;},
+               {&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: &#x27;앞으로는 짧게 답해 주세요.&#x27;}]}
+print(&quot;내 파일&quot; if source_file.exists() else &quot;완성 예시&quot;, previous[&quot;record&quot;][&quot;text&quot;])</code></pre><p>실행 결과</p><pre>완성 예시 대출 기간은 14일입니다.</pre></section>
+
 <section id="nb-key" class="lesson-section"><header class="section-heading"><span class="section-number">02</span><div><p class="eyebrow"></p>
 <h2>사용자 ID와 설정 키의 복합 조건</h2>
 </div>
@@ -210,6 +227,24 @@ else:
 <ul class="references"><li><a href="https://www.psycopg.org/psycopg3/docs/basic/params.html" target="_blank" rel="noopener noreferrer">Psycopg 값 바인딩 ↗</a><span></span></li>
 <li><a href="https://www.postgresql.org/docs/16/sql-insert.html" target="_blank" rel="noopener noreferrer">PostgreSQL INSERT ↗</a><span></span></li>
 </ul></section>
+<section class="lesson-section" id="desk-lab"><h3>SQLite UPSERT로 사용자별 답변 선호 보관하기</h3><p>59장의 마지막 요청에서 고객이 원하는 답변 길이를 고릅니다. 대화가 끝나도 같은 사용자에게만 이 선호가 적용되도록 파일 데이터베이스에 저장하세요.</p><pre tabindex="0"><code>import sqlite3
+record = previous[&quot;record&quot;]
+owner = previous[&quot;owner&quot;]
+last = previous[&quot;turns&quot;][-1][&quot;content&quot;]
+style = &quot;short&quot; if &quot;짧게&quot; in last else &quot;standard&quot;
+profile_path = work / &quot;preferences.sqlite&quot;
+with sqlite3.connect(profile_path) as profiles:
+    profiles.execute(&quot;CREATE TABLE IF NOT EXISTS prefs (owner TEXT PRIMARY KEY, style TEXT)&quot;)
+    profiles.execute(&quot;INSERT INTO prefs VALUES (?, ?) ON CONFLICT(owner) DO UPDATE SET style=excluded.style&quot;,
+                     (owner, style))
+with sqlite3.connect(profile_path) as reopened:
+    saved_style = reopened.execute(&quot;SELECT style FROM prefs WHERE owner=?&quot;, (owner,)).fetchone()[0]
+print(owner, saved_style)</code></pre><p>실행 결과</p><pre>alice short</pre><p>새 연결에서 다시 읽어도 기본 자료의 alice에게 short가 남습니다. owner가 기본 키여서 같은 사용자의 선호를 두 번 저장해도 그 사용자의 행은 한 개입니다.</p><h3>직접 확인하기</h3><p>저장한 사용자만 대상으로 행 수를 세세요. 이 셀을 다시 실행한 다음에도 같은 소유자의 행이 한 건이어야 합니다.</p><pre tabindex="0"><code># profiles를 다시 열어 owner에 해당하는 행 수를 세세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과 보기</summary><pre><code>with sqlite3.connect(profile_path) as connection:
+    total = connection.execute(&quot;SELECT COUNT(*) FROM prefs WHERE owner=?&quot;, (owner,)).fetchone()[0]
+print(total)</code></pre><p>기본 자료로 실행한 결과</p><pre><code>1</code></pre><p>PRIMARY KEY(owner)와 ON CONFLICT가 같은 소유자의 선호를 새 값으로 바꿉니다.</p></details><h3>61장에 넘길 결과 저장하기</h3><p>61장은 저장한 선호와 문서 원문을 읽는 도구를 MCP로 공개합니다. 저장 셀을 다시 실행하면 같은 파일에 이번 결과를 기록합니다.</p><pre tabindex="0"><code>product = {&quot;record&quot;: record, &quot;style&quot;: saved_style}
+target = work / &quot;agent-60.json&quot;
+target.write_text(json.dumps(product, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(target.name)</code></pre><p>실행 결과</p><pre>agent-60.json</pre></section>
 <footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>

@@ -157,7 +157,35 @@ A True</pre></div>
 </details>
 </article>
 </section>
-<section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>배포 후보와 복귀 버전에 같은 질문 보내기</h2></div></header>
+<section id="service-practice" class="lesson-section"><h2>SHA-256으로 승인한 후보와 실행할 후보 대조하기</h2><p>76장에서 실행한 테스트의 이름과 종료 코드, 출처 ID를 한 파일에 담아 배포 후보로 등록합니다. 시험 직후 파일이 바뀌면 승인했던 내용과 다르다는 사실을 확인합니다.</p><p>노트북을 같은 수업 폴더에 모아 열거나 압축을 푼 장별 폴더에서 실행하세요. 시작 셀은 service-lab/ci.json을 먼저 엽니다. 파일이 없을 때만 셀에 적힌 복귀 예시를 읽습니다.</p><pre><code>from pathlib import Path
+import json
+here = Path.cwd()
+# 각 장 폴더에서 열거나 노트북을 한 폴더에 모아 두어도 같은 실습 폴더를 씁니다.
+course = here.parent if here.name in (&quot;daily&quot;,) or (here.name.startswith(&quot;chapter&quot;) and here.name[7:].isdigit()) else here
+lab = course / &quot;service-lab&quot;
+lab.mkdir(exist_ok=True)
+incoming = course / &quot;service-lab/ci.json&quot;
+if incoming.exists():
+    previous = json.loads(incoming.read_text(encoding=&quot;utf-8&quot;))
+    print(&quot;내 실습 파일&quot;, incoming.name)
+else:
+    previous = {&#x27;test&#x27;: &#x27;test_restore.RestoreTest.test_restored_row&#x27;,
+     &#x27;exit_code&#x27;: 0,
+     &#x27;source_id&#x27;: &#x27;loan-01&#x27;}
+    print(&quot;복귀 예시&quot;, incoming.name)</code></pre><p>예시 실행 결과</p><pre>내 실습 파일 ci.json
+</pre><h2>SHA-256으로 승인한 후보와 실행할 후보 대조하기 실습</h2><p>앞에서 확인한 최소 예제에 내 실습 파일의 값을 넣습니다.</p><pre><code>from hashlib import sha256
+payload = json.dumps(previous, sort_keys=True, ensure_ascii=False).encode()
+approved = sha256(payload).hexdigest()
+def can_release(body, expected_hash, exit_code):
+    return exit_code == 0 and sha256(body).hexdigest() == expected_hash
+result = {&quot;test&quot;: previous[&quot;test&quot;], &quot;source_id&quot;: previous[&quot;source_id&quot;], &quot;candidate&quot;: approved,
+          &quot;approved&quot;: can_release(payload, approved, previous[&quot;exit_code&quot;])}
+print(result[&quot;approved&quot;], len(approved))</code></pre><p>예시 실행 결과</p><pre>True 64
+</pre><p>여기서 해시를 구한 대상은 테스트 결과 파일입니다. 레지스트리에 이미지를 올린 뒤에는 그 레지스트리가 돌려준 이미지 digest를 배포 설정에서 확인합니다.</p><p><strong>직접 해 보기</strong></p><p>시험 대상 뒤에 공백 한 바이트를 붙이세요. 종료 코드가 0이어도 승인이 거절되는지 검사합니다.</p><pre><code># payload에 공백 한 바이트를 더해 can_release를 호출하세요.</code></pre><details class="notebook-answer"><summary>정답 코드와 실행 결과</summary><pre><code>print(can_release(payload + b&quot; &quot;, approved, 0))</code></pre><pre>False</pre><p>공백 한 바이트가 추가된 파일은 승인한 파일과 해시가 다릅니다.</p></details><p><strong>78장에서 다시 열 파일</strong></p><p>방금 계산한 값을 service-lab/candidate.json에 저장합니다. 같은 장에서 조건을 바꾸고 다시 저장하면 다음 장도 그 값을 읽습니다.</p><pre><code>destination = lab / &quot;candidate.json&quot;
+destination.parent.mkdir(parents=True, exist_ok=True)
+destination.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding=&quot;utf-8&quot;)
+print(destination.name)</code></pre><p>예시 실행 결과</p><pre>candidate.json
+</pre></section><section id="workshop" class="lesson-section"><header class="section-heading"><span class="section-number">04</span><div><h2>배포 후보와 복귀 버전에 같은 질문 보내기</h2></div></header>
 <p>앞에서는 배포 후보의 지문을 비교했습니다. 이제 상태 경로는 정상인데 실제 질문에서 출처가 사라지는 후보를 검사합니다. 두 FastAPI 앱을 TestClient로 열어 운영 전환 판단에 필요한 요청과 응답을 직접 확인합니다.</p>
 <article class="notebook-cell" data-cell="5" data-task="0"><h3 id="workshop-step-1">셀 05 · 기능이 깨진 후보에서도 상태 검사는 통과할까?</h3><div class="cell-before"><p>두 앱은 같은 상태 경로를 제공합니다. A는 제출 안내의 출처를 보내고 B는 출처 목록을 비워 둔 수업용 후보입니다.</p></div><figure class="code-block"><figcaption><span>예제</span><button type="button" class="copy-button js-only" aria-label="예제 코드 복사" data-copy="code-5">복사</button></figcaption><pre tabindex="0"><code id="code-5">from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -215,7 +243,7 @@ A True</pre></div><p>B False 뒤에 A True가 나옵니다. 두 번째 True는 �
 <li><a href="https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency" target="_blank" rel="noopener noreferrer">동시 실행 제어 ↗</a><span></span></li>
 <li><a href="https://docs.github.com/en/actions/tutorials/authenticate-with-github_token" target="_blank" rel="noopener noreferrer">GITHUB_TOKEN 권한 ↗</a><span></span></li>
 </ul></section>
-<footer class="lesson-footer"><span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
+<footer class="lesson-footer"><a href="#service-practice">이어지는 서비스 실습</a> <span>LLM Learning Studio</span><a href="#main">맨 위로 ↑</a></footer>
 </article>
 </main>
 <div class="toast" role="status" aria-live="polite"></div>

@@ -21,6 +21,21 @@
 <p class="hero-description">최종 프로젝트의 예시는 가상 장비실 규정 조회 서비스입니다. 장비 A의 점검 질문에 답하고 해당 규정의 절을 제시하는 경로를 첫 시연 범위로 정합니다.</p>
 <div class="hero-meta"><span>선택형 프로젝트 안내</span><span>프로젝트 참고 안내 · 시간 배분 자율</span><span>앞선 수업의 필요한 개념만 선택해 활용합니다. 제공 구현과 자신의 프로젝트는 구분합니다.</span></div>
 </header>
+<section class="lesson-section" id="team-input"><h3>배포 판단에서 첫 시연 조건 고르기</h3><p>팀이 만들 서비스는 장비별 점검 절차를 안내합니다. 85장에서 기대와 관찰이 달랐던 사례를 읽고 첫 시연에서 같은 문제가 생기면 무엇을 확인할지 적습니다.</p><p>이 프로젝트의 노트북은 한 폴더에서 열어 주세요. 첫 셀은 <code>service-lab/evaluation/release.json</code>을 먼저 찾습니다. 팀 파일이 없으면 <a href="chapter86-start.json" download>이 장의 시작 예시</a>를 노트북 옆에 내려받으세요. 출력 첫 줄에서 어느 파일을 읽었는지 확인할 수 있습니다.</p><figure class="code-block"><pre tabindex="0"><code>from pathlib import Path
+import json
+import re
+
+here = Path.cwd()
+project_root = here.parent if re.fullmatch(r&quot;chapter[0-9]+&quot;, here.name) else here
+team_file = project_root / &quot;service-lab/evaluation/release.json&quot;
+sample_file = here / &quot;chapter86-start.json&quot;
+input_file = team_file if team_file.is_file() else sample_file
+if not input_file.is_file():
+    raise FileNotFoundError(&quot;이 장의 시작 예시를 내려받아 노트북 옆에 두세요.&quot;)
+incoming = json.loads(input_file.read_text(encoding=&quot;utf-8&quot;))
+print(&quot;팀 기록&quot; if input_file == team_file else &quot;교재 예시&quot;, input_file.name)
+print(incoming[&#x27;case_id&#x27;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">교재 예시 chapter86-start.json
+S01</pre></div><p>두 번째 줄은 읽은 파일의 <code>case_id</code> 값입니다.</p></section>
 <section id="start" class="lesson-section"><header class="section-heading"><span class="section-number">01</span><div><p class="eyebrow"></p>
 <h2>실습 노트북과 실행 환경</h2>
 </div>
@@ -69,34 +84,16 @@ print(rule[<span class="tok-string">"source"</span>], rule[<span class="tok-stri
 </div>
 </header>
 <p>채워진 메모　프로젝트 PROJECT-EQUIPMENT-01 · 사용자 교대 점검 담당자 · 자료 가상 규정 rules-v1 · 목표 질문에 맞는 근거와 개정일 확인 · 제외 실제 점검 승인, 직원 평가, 예약·결제, 실제 사용자 인증. 주제를 검토하는 동료에게는 “찾은 원문을 보고 다음에 무엇을 할 수 있나?”라고 물어보세요.</p>
-<article class="notebook-cell" data-cell="2" data-task="1"><h3>과제 02 · 선택 연습 · 장비별 예시 입력</h3>
-<div class="cell-before"><p>같은 역할이 장비 B를 맡았을 때 보여 줄 근거 문장과 절을 이어 쓰세요.</p>
-</div>
-<figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>노트북에서 직접 작성</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-2" type="button" aria-label="노트북에서 직접 작성 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="노트북에서 직접 작성"><code id="code-2">other_rule = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 B'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-<span class="tok-comment"># other_rule에서 문장과 절을 꺼내 화면 안내를 작성하세요.</span></code></pre></figure>
-<details class="notebook-answer"><summary>풀이와 실행 결과 보기</summary><figure class="code-block"><figcaption><span><span class="code-dot" aria-hidden="true"></span>풀이 예시</span><span class="code-actions"><span>python · 10줄</span><button class="copy-button js-only" data-copy="code-3" type="button" aria-label="풀이 예시 코드 복사">복사</button></span></figcaption><pre tabindex="0" aria-label="풀이 예시"><code id="code-3">other_rule = {<span class="tok-string">'id'</span>: <span class="tok-string">'RULE-B'</span>,
- <span class="tok-string">'equipment'</span>: <span class="tok-string">'장비 B'</span>,
- <span class="tok-string">'text'</span>: <span class="tok-string">'점검 전 고정 장치를 확인합니다.'</span>,
- <span class="tok-string">'source'</span>: <span class="tok-string">'가상 장비실 규정 B'</span>,
- <span class="tok-string">'page'</span>: <span class="tok-number">2</span>,
- <span class="tok-string">'section'</span>: <span class="tok-string">'2.2'</span>,
- <span class="tok-string">'revised_on'</span>: <span class="tok-string">'2026-11-01'</span>,
- <span class="tok-string">'version'</span>: <span class="tok-string">'rules-v1'</span>,
- <span class="tok-string">'groups'</span>: [<span class="tok-string">'public'</span>, <span class="tok-string">'admin'</span>]}
-print(f"{other_rule[<span class="tok-string">'text'</span>]} ({other_rule[<span class="tok-string">'section'</span>]}절)")</code></pre></figure>
-<div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다. (2.2절)</pre></div>
-<div class="cell-after"><p>“점검 전 고정 장치를 확인합니다. (2.2절)”이 됩니다. 주제를 바꿀 때도 이처럼 질문과 원문을 한 쌍으로 남기세요.</p>
-</div>
-</details>
-</article>
+<article class="notebook-cell" data-task="0"><h3 id="prompt-2">팀 참고 예시 · 장비별 예시 입력</h3><figure class="code-block"><pre tabindex="0"><code>other_rule = {&#x27;id&#x27;: &#x27;RULE-B&#x27;,
+ &#x27;equipment&#x27;: &#x27;장비 B&#x27;,
+ &#x27;text&#x27;: &#x27;점검 전 고정 장치를 확인합니다.&#x27;,
+ &#x27;source&#x27;: &#x27;가상 장비실 규정 B&#x27;,
+ &#x27;page&#x27;: 2,
+ &#x27;section&#x27;: &#x27;2.2&#x27;,
+ &#x27;revised_on&#x27;: &#x27;2026-11-01&#x27;,
+ &#x27;version&#x27;: &#x27;rules-v1&#x27;,
+ &#x27;groups&#x27;: [&#x27;public&#x27;, &#x27;admin&#x27;]}
+print(f&quot;{other_rule[&#x27;text&#x27;]} ({other_rule[&#x27;section&#x27;]}절)&quot;)</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">점검 전 고정 장치를 확인합니다. (2.2절)</pre></div><div class="cell-after"><p>“점검 전 고정 장치를 확인합니다. (2.2절)”이 됩니다. 주제를 바꿀 때도 이처럼 질문과 원문을 한 쌍으로 남기세요.</p></div></article>
 <aside id="guided-reading" class="lesson-note"><h3>팀의 첫 시연 질문을 정할 때</h3><p><mark>장비 이름이 바뀌면 정답 문장과 근거 절도 함께 바뀌어야 합니다.</mark> 질문의 단어 하나만 바꾼 짝을 준비하세요. 같은 답을 항상 출력하는 예시도 첫 질문 하나는 맞힐 수 있으므로 두 입력을 번갈아 시연합니다.</p><p class="reuse-note">선수 개념 · <a href="../chapter43/index.html">43장 RAG 프로젝트의 문제 정의와 수용 기준</a></p></aside>
 
 </section>
@@ -107,6 +104,21 @@ print(f"{other_rule[<span class="tok-string">'text'</span>]} ({other_rule[<span 
 <section class="project-example"><h3>팀 주제로 바꾸기</h3><p>문서의 이름과 사용자의 마지막 행동을 한 쌍으로 바꾸세요. 학사 규정이라면 ‘신청 가능 여부를 승인한다’와 ‘해당 학기의 신청 기한이 적힌 절을 찾는다’가 각각 어떤 자료를 요구하는지 비교해 한 쪽을 고릅니다.</p></section>
 <aside class="lesson-note"><p><mark>사용자가 마지막에 직접 할 행동이 시연의 종료 조건입니다.</mark> 답이 화면에 뜬 뒤 원문을 찾을 수 없으면 조회 시연은 아직 끝나지 않았습니다.</p></aside><p>87장에 전달할 것은 선택한 질문 한 문장, 공개할 수 있는 근거 위치, 도움 없이 관찰할 마지막 행동입니다.</p>
 </section>
+<section class="lesson-section" id="team-case"><h3>팀 사례에 적용하기 · 배포 판단에서 첫 시연 조건 고르기</h3><p>위 예제에 첫 셀에서 읽어 둔 팀 기록을 넣어 봅니다.</p><figure class="code-block"><pre tabindex="0"><code>new = {&quot;previous_release&quot;: incoming,
+       &quot;scenario&quot;: {&quot;id&quot;: &quot;Q01&quot;, &quot;question&quot;: &quot;장비 A의 점검 전 확인 사항은?&quot;,
+                    &quot;source_id&quot;: rule[&quot;id&quot;], &quot;expected&quot;: rule[&quot;text&quot;]},
+       &quot;acceptance&quot;: &quot;사용자가 답을 읽고 원문 쪽과 절을 찾는다.&quot;}
+print(new[&quot;scenario&quot;][&quot;question&quot;], new[&quot;acceptance&quot;])</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">장비 A의 점검 전 확인 사항은? 사용자가 답을 읽고 원문 쪽과 절을 찾는다.</pre></div><p>표본의 배포 판단이 보류여도 팀은 기획을 시작할 수 있습니다. 이전 서비스의 실패 사례와 이번 서비스에서 보여 줄 규정은 따로 기록합니다.</p><figure class="code-block"><pre tabindex="0"><code>output_file = project_root / &quot;team-project/final/chapter86.json&quot;
+output_file.parent.mkdir(parents=True, exist_ok=True)
+with output_file.open(&quot;a+&quot;, encoding=&quot;utf-8&quot;) as handle:
+    handle.seek(0)
+    previous_text = handle.read()
+    if previous_text and json.loads(previous_text) != new:
+        raise FileExistsError(&quot;같은 장의 다른 결과가 있습니다. 기존 JSON을 다른 이름으로 보관한 뒤 다시 실행하세요.&quot;)
+    if not previous_text:
+        json.dump(new, handle, ensure_ascii=False, indent=2)
+        handle.write(&quot;\n&quot;)
+print(output_file.relative_to(project_root).as_posix())</code></pre></figure><div class="output"><p class="eyebrow">실행 결과</p><pre tabindex="0">team-project/final/chapter86.json</pre></div><p>87장 첫 셀이 이 파일을 읽습니다. 입력을 바꿔 다시 실행할 때는 기존 결과 파일의 이름을 바꿔 보관하세요.</p></section>
 <section id="recap" class="lesson-section"><header class="section-heading"><span class="section-number">05</span><div><p class="eyebrow"></p>
 <h2>적용 과제와 인계 기준</h2>
 </div>

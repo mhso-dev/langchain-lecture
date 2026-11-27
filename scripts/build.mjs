@@ -14,7 +14,7 @@ if (chapters.length !== 116 || chapters.some((name, i) => name !== chapterName(i
 rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
 // Keep retired teaching media in the source archive and exclude it from the student site.
-const retiredFiles = new Set(['.DS_Store', 'three.min.js', 'pdf-layers.js', 'pdf-layers.css', 'chunk-lab.html', '__pycache__', '.ipynb_checkpoints']);
+const retiredFiles = new Set(['.DS_Store', 'three.min.js', 'pdf-layers.js', 'pdf-layers.css', 'chunk-lab.html', '__pycache__', '.ipynb_checkpoints', 'my-course']);
 function publishable(path) {
   return !path.endsWith('.pyc') && !retiredFiles.has(basename(path)) && !/\.(?:mp4|webm|gif|png|jpe?g|webp)$/i.test(path);
 }
@@ -23,10 +23,10 @@ cpSync(source, output, { recursive: true, filter: publishable });
 function courseNav(day) {
   const link = (n, text) => '<a href="../' + chapterName(n) + '/index.html">' + text + '</a>';
   const links = ['<a href="../index.html">전체 목차</a>', '<span>' + day + '장</span>'];
-  const previous = day === 53 ? 42 : day - 1;
-  const next = day === 42 ? 53 : day + 1;
+  const previous = day - 1;
+  const next = day + 1;
   if (day > 1) links.push(link(previous, '이전 장'));
-  if (day !== 85 && day < chapters.length) links.push(link(next, '다음 장'));
+  if (day < chapters.length) links.push(link(next, '다음 장'));
   return '<nav class="course-nav" aria-label="교재 탐색">' + links.join(' ') + '</nav>';
 }
 for (const [index, chapter] of chapters.entries()) {

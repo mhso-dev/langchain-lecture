@@ -41,7 +41,10 @@ def run(day, solved, full):
                 following=''.join(cells[idx+1]['source']).lstrip()
                 if following.startswith('<details'):
                     match=re.search(r'<pre[^>]*><code[^>]*>(.*?)</code></pre>',following,re.S)
-                    if match:code=html.unescape(match[1])
+                    if match:
+                        answer = html.unescape(match[1])
+                        # The RAG exercise answers finish the provided starter inputs.
+                        code = code + "\n" + answer if key.startswith("carry-try-") else answer
             if full:
                 if day==60:code=code.replace('run_profile_db = False','run_profile_db = True')
                 if day==71:
@@ -71,6 +74,9 @@ if __name__=='__main__':
     args=parser.parse_args()
     args.out.mkdir(exist_ok=True,parents=True)
     if args.mode:
+        if os.environ.get("HK_COURSE_OFFLINE") == "1":
+            os.environ["PYTHON_DOTENV_DISABLED"] = "1"
+            os.environ.pop("OPENAI_API_KEY", None)
         day, = args.days
         r = run(day, args.mode == "solution", args.full)
         last = r["cells"][-1]

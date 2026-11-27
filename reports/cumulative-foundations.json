@@ -1,0 +1,385 @@
+{
+  "date": "2026-11-27",
+  "os": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.15",
+  "kernel": "fresh ipykernel InProcessKernelManager per workbook, isolated temporary course",
+  "offline": [
+    {
+      "route": "A",
+      "mode": "solution",
+      "executed": {
+        "diagnostic": {
+          "code": 6,
+          "answers": 3
+        },
+        "python-basics": {
+          "code": 52,
+          "answers": 16
+        },
+        "team-git": {
+          "code": 16,
+          "answers": 3
+        }
+      },
+      "artifacts": {
+        "a01.json": 125,
+        "a02.json": [
+          124,
+          0,
+          30
+        ],
+        "a03.json": [
+          124,
+          30
+        ],
+        "a04.json": [
+          [
+            2,
+            4
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "git-case-a.json": {
+          "input": [
+            124,
+            30
+          ],
+          "expected": 154,
+          "observed": 154
+        },
+        "git-submission.json": {
+          "input": [
+            124,
+            30
+          ],
+          "expected": 154,
+          "observed": 154
+        }
+      }
+    },
+    {
+      "route": "A",
+      "mode": "starter",
+      "executed": {
+        "diagnostic": {
+          "code": 6,
+          "answers": 0
+        },
+        "python-basics": {
+          "code": 52,
+          "answers": 0
+        },
+        "team-git": {
+          "code": 16,
+          "answers": 0
+        }
+      },
+      "artifacts": {
+        "a01.json": 125,
+        "a02.json": [
+          124,
+          0,
+          30
+        ],
+        "a03.json": [
+          124,
+          30
+        ],
+        "a04.json": [
+          [
+            2,
+            4
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "git-case-a.json": {
+          "input": [
+            124,
+            30
+          ],
+          "expected": 154,
+          "observed": 154
+        },
+        "git-submission.json": {
+          "input": [
+            124,
+            30
+          ],
+          "expected": 154,
+          "observed": 154
+        }
+      }
+    },
+    {
+      "route": "B",
+      "mode": "solution",
+      "executed": {
+        "diagnostic": {
+          "code": 6,
+          "answers": 3
+        },
+        "python-patterns": {
+          "code": 44,
+          "answers": 16
+        },
+        "team-git": {
+          "code": 16,
+          "answers": 3
+        }
+      },
+      "artifacts": {
+        "b01.json": [
+          "키",
+          "우산",
+          "장갑",
+          "텀블러"
+        ],
+        "b02.json": [
+          "우산",
+          "키",
+          "장갑",
+          "텀블러"
+        ],
+        "b03.json": {
+          "name": "우산",
+          "line": "**우산**"
+        },
+        "b04.json": {
+          "name": "우산",
+          "line": "[우산]",
+          "log": [
+            "우산"
+          ]
+        },
+        "git-case-b.json": {
+          "input": " 우산 ",
+          "expected": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ],
+          "observed": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ]
+        },
+        "git-submission.json": {
+          "input": " 우산 ",
+          "expected": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ],
+          "observed": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "route": "B",
+      "mode": "starter",
+      "executed": {
+        "diagnostic": {
+          "code": 6,
+          "answers": 0
+        },
+        "python-patterns": {
+          "code": 44,
+          "answers": 0
+        },
+        "team-git": {
+          "code": 16,
+          "answers": 0
+        }
+      },
+      "artifacts": {
+        "b01.json": [
+          "키",
+          "우산",
+          "장갑",
+          "텀블러"
+        ],
+        "b02.json": [
+          "우산",
+          "키",
+          "장갑",
+          "텀블러"
+        ],
+        "b03.json": {
+          "name": "우산",
+          "line": "**우산**"
+        },
+        "b04.json": {
+          "name": "우산",
+          "line": "[우산]",
+          "log": [
+            "우산"
+          ]
+        },
+        "git-case-b.json": {
+          "input": " 우산 ",
+          "expected": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ],
+          "observed": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ]
+        },
+        "git-submission.json": {
+          "input": " 우산 ",
+          "expected": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ],
+          "observed": [
+            "[우산]",
+            [
+              "우산"
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "sdk_transport_substituted": [
+    {
+      "mode": "solution",
+      "runs": {
+        "prompt-workshop": {
+          "code": 25,
+          "solution_cells": 6,
+          "excluded": []
+        },
+        "chat-workshop": {
+          "code": 17,
+          "solution_cells": 3,
+          "excluded": [
+            "packages",
+            "echo-server",
+            "echo-stop",
+            "start-app",
+            "chat-server-stop"
+          ]
+        }
+      },
+      "ui_initial": "모델 요청 0건 · 저장된 대화 0쌍",
+      "ui_loaded_and_sent": "모델 요청 1건 · 저장된 대화 2쌍",
+      "reset": true,
+      "case": {
+        "context": "5월 21일 오후 4시에 가온관 305호에서 모입니다.",
+        "question": "어디에서 모이나요?",
+        "expected_fragment": "305호"
+      },
+      "model": "SDK methods replaced only in test",
+      "streamlit": "1.67.0",
+      "openai": "3.35.1"
+    },
+    {
+      "mode": "starter",
+      "runs": {
+        "prompt-workshop": {
+          "code": 25,
+          "solution_cells": 0,
+          "excluded": []
+        },
+        "chat-workshop": {
+          "code": 17,
+          "solution_cells": 0,
+          "excluded": [
+            "packages",
+            "echo-server",
+            "echo-stop",
+            "start-app",
+            "chat-server-stop"
+          ]
+        }
+      },
+      "ui_initial": "모델 요청 0건 · 저장된 대화 0쌍",
+      "ui_loaded_and_sent": "모델 요청 1건 · 저장된 대화 2쌍",
+      "reset": false,
+      "case": {
+        "context": "5월 21일 오후 4시에 가온관 305호에서 모입니다.",
+        "question": "어디에서 모이나요?",
+        "expected_fragment": "305호"
+      },
+      "model": "SDK methods replaced only in test",
+      "streamlit": "1.67.0",
+      "openai": "3.35.1"
+    }
+  ],
+  "openai_connection": "APIConnectionError; actual request attempted once, no model response",
+  "distribution": {
+    "diagnostic": {
+      "sha256": "07b90b7bcd30dfec4bc287fe4c7bd7adba996d23af02ad020573219164ca9c08",
+      "closed_details": 3
+    },
+    "python-basics": {
+      "sha256": "25f0e06312198d5ea5d87357721c25249e5bb01fdbae9784edb657b3b75de260",
+      "closed_details": 17
+    },
+    "python-patterns": {
+      "sha256": "0ce60f1a511ed36f77db920a434d14e0a4d8f4325242718827944cd03f2f2f94",
+      "closed_details": 17
+    },
+    "team-git": {
+      "sha256": "0f964b7bd267754288dcc5f09088ce0e9ce2bedec7c6c28ae135945dab28e3ab",
+      "closed_details": 9
+    },
+    "prompt-workshop": {
+      "sha256": "85e4f795a7cc32b3b716403af52133edb602557ba798d5687f2e9820c08473c7",
+      "closed_details": 13
+    },
+    "chat-workshop": {
+      "sha256": "81b5a93e2b558d66206efca09bef2c9acd174ea3c680b5a61a622dbdd1d39225",
+      "closed_details": 9
+    }
+  },
+  "variants": {
+    "A": {
+      "extra_seconds": 2,
+      "channel_total": 149
+    },
+    "B": {
+      "priority": "장갑",
+      "display": "[장갑]",
+      "history": [
+        "장갑"
+      ]
+    },
+    "fallback": [
+      "a03-open",
+      "b04-open"
+    ]
+  },
+  "language_gate": "판정: WARN  (장르=report)\n  [WARN  ] P0_문자율\n           문자 변경률 0.4% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인\n  [PASS  ] P1_목표달성\n           윤문 전에 걸린 보정 완료 S1 지표가 없다\n  [PASS  ] P2_전멸\n           대구 0 → 0\n  [PASS  ] P3_불변식\n           수치·인용·이모지·격식 이상 없음\n  [REPORT] P4_터치율\n           원문 문장 8/414개가 그대로 남지 않았다 (1.9%)\n  [REPORT] P5_리듬\n           평균 34.0자 · 단문 19.9% · 최장 2연속 — 참고 기준선 안\n\nP1은 stdev가 추정치인 z에 기대므로 지시적 수치다. P0·P2는 정확한 셈이다. 이 게이트는 구조를 볼 뿐 의미를 보지 않는다 — 의미 보존 판정은 따로 해야 한다.\n",
+  "independent_review": "/root/reviewer: accept after re-execution",
+  "not_verified": [
+    "live model in revised input",
+    "GitHub peer PR",
+    "student WSL",
+    "macOS Chrome viewport: spawn closed",
+    "classroom duration"
+  ]
+}
