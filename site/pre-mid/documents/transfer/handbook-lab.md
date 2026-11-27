@@ -4,7 +4,7 @@
 
 [하람페이 운영 편람 36쪽](operations.pdf) · [학생용 문의 10건](questions.csv) · [쪽별 지점·대상·유효기간](pages.csv) · [PDF에서 추출한 원문](page-text.json) · [실습 노트북](handbook-evidence.ipynb)
 
-**준비.** 교재의 [1~42장 자료 묶음](../../../daily/pre-mid.zip)을 풀고 Jupyter에서 `pre-mid/documents/transfer/handbook-evidence.ipynb`를 엽니다. 노트북의 기본 실습은 Python 표준 라이브러리만 사용합니다. PDF에서 미리 추출한 쪽별 텍스트를 함께 제공하므로 별도 모델이나 계정 없이 후보 검색·조건 대조를 반복할 수 있습니다. 실제 PDF의 쪽 번호는 1부터 세며, 화면에 보이는 ‘운영 편람 · 01쪽’이 첫 페이지입니다.
+**준비.** 교재 화면 상단에서 1~42장 자료 묶음을 받아 압축을 푼 뒤 Jupyter에서 `pre-mid/documents/transfer/handbook-evidence.ipynb`를 엽니다. 노트북의 기본 실습은 Python 표준 라이브러리만 사용합니다. PDF에서 미리 추출한 쪽별 텍스트를 함께 제공하므로 별도 모델이나 계정 없이 후보 검색·조건 대조를 반복할 수 있습니다. 실제 PDF의 쪽 번호는 1부터 세며, 화면에 보이는 ‘운영 편람 · 01쪽’이 첫 페이지입니다.
 
 ## 1. 답을 보지 않고 기준부터 적기
 
